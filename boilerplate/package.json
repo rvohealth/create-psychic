@@ -1,0 +1,23 @@
+{
+  "name": "api",
+  "version": "0.0.0",
+  "description": "api",
+  "main": "src/app.ts",
+  "license": "Apache-2.0",
+  "scripts": {
+    "build": "yarn --cwd=api tsc",
+    "prod": "yarn --cwd=api prod",
+    "dev": "yarn --cwd=api dev",
+    "db": "yarn --cwd=api db",
+    "db:migrate": "yarn --cwd=api db:migrate",
+    "db:rollback": "yarn --cwd=api db:rollback",
+    "db:drop": "yarn --cwd=api db:drop",
+    "db:create": "yarn --cwd=api db:create",
+    "g:migration": "yarn --cwd=api g:migration",
+    "spec": "yarn --cwd=api uspec && yarn --cwd=api fspec",
+    "uspec": "yarn --cwd=api uspec",
+    "fspec": "yarn --cwd=api fspec",
+    "console": "yarn --cwd=api console",
+    "c": "yarn --cwd=api c"
+  }
+}
