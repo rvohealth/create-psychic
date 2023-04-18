@@ -25,31 +25,35 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const colors = __importStar(require("colorette"));
 function logo() {
-    return (colors.bgCyan(colors.black(`
+    return (colors.bgMagentaBright(colors.black(`
       ,▄█▄                                               
     ]█▄▄                         ╓█████▌                 
     ▐██████▄                   ▄█████▓╣█                 
      ║████████▄,  ,  ,,▄,▄▄▄▓██████╬╬╣╣▌                 
       ╚███╣██████████▓▓▓▓██████████╩╠╬▓                  
        ╙█╬╬╬▓███████████████████████▒▓▌                  `)) +
-        colors.bgCyan(colors.black(`
+        colors.bgMagentaBright(colors.black(`
         ╙▓█▓██████████████████████████                   
-         ╚██████▀███████████`) + colors.yellow(`╩█▓▌`) + colors.black(`▐▓████▄                  
-         '║█████`) + colors.yellow(`\`╣█Γ║`) + colors.black(`████████▄▄φ▓█████▌                  
+         ╚██████▀███████████`) +
+            colors.greenBright(`╩█▓▌`) +
+            colors.black(`▐▓████▄                  
+         '║█████`) +
+            colors.greenBright(`\`╣█Γ║`) +
+            colors.black(`████████▄▄φ▓█████▌                  
           ║█████████████████████▓█████▌                  
            █████████████▓▓████████████                   `)) +
-        colors.bgCyan(colors.black(`
+        colors.bgMagentaBright(colors.black(`
            ║█████████████████████████                    
           ]█████████████████████████                     
          ,▓██████████████████████████                    
         ▓█████████████████████████████µ                  `)) +
-        colors.bgCyan(colors.black(`
+        colors.bgMagentaBright(colors.black(`
        ▐███████████████████████████████▄▄                
        ║█████████████████████████████████╬╬╣▓            
    ,╔╦║███████████████████████████████████▓╬╬╣           
 ,≥≥⌠░░░╠▓████████████████████████████████████▓▓          
 ,;=-',▄█████████████████████████████████████████▓        `)) +
-        colors.bgMagentaBright(colors.magenta(`
+        colors.bgGreenBright(colors.magenta(`
                                                          
                                                          
                                                          

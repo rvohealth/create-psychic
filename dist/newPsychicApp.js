@@ -77,6 +77,7 @@ function newHowlApp(appName, { api = false, ws = false, redis = false, uuids = f
         yield (0, sspawn_1.default)(`cd ./${appName} && git init`);
         yield (0, sspawn_1.default)(`cd ./${appName} && git add --all && git commit -m 'psychic init'`);
         console.log('building project...');
+        yield (0, sspawn_1.default)(`yarn --cwd=${projectPath} dream sync:existing`);
         yield (0, sspawn_1.default)(`yarn --cwd=${projectPath} sync`);
         if (!api) {
             console.log('building client dependencies...');
@@ -129,7 +130,7 @@ function newHowlApp(appName, { api = false, ws = false, redis = false, uuids = f
     # files and make sure they have database credentials set correctly.
     # you can see conf/db.js to see how those credentials are used.
 `;
-        console.log(logo_1.default);
+        console.log((0, logo_1.default)());
         console.log(helloMessage);
     });
 }
