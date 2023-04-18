@@ -61,6 +61,7 @@ export default async function newHowlApp(
   await sspawn(`cd ./${appName} && git add --all && git commit -m 'psychic init'`)
 
   console.log('building project...')
+  await sspawn(`yarn --cwd=${projectPath} sync:existing`)
   await sspawn(`yarn --cwd=${projectPath} sync`)
 
   if (!api) {
