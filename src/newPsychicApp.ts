@@ -116,6 +116,6 @@ export default async function newHowlApp(
     # files and make sure they have database credentials set correctly.
     # you can see conf/db.js to see how those credentials are used.
 `
-  console.log(logo)
+  console.log(logo())
   console.log(helloMessage)
 }
