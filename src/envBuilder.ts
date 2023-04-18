@@ -10,6 +10,8 @@ export default class EnvBuilder {
     return `\
 DB_USER=
 DB_NAME=${snakeify(appName)}_${env}
+DB_PORT=5432
+DB_HOST=localhost
 APP_ENCRYPTION_KEY='${key}'
 `
   }
