@@ -1,0 +1,5 @@
+models_path: 'src/app/models'
+migrations_path: 'src/db/migrations'
+associations_path: 'src/db/associations.ts'
+schema_path: 'src/db/schema.ts'
+dream_config_path: 'src/conf/dream.ts'
