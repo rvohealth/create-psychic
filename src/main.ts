@@ -30,6 +30,14 @@ program
   .action(newPsychicApp)
 
 program
+  .command('clean')
+  .description('create a controller, model, migration, and serializer for a resource')
+  .argument('<name>', 'name of the resource')
+  .action(async () => {
+    await sspawn('yarn psy clean')
+  })
+
+program
   .command('generate:resource')
   .alias('g:resource')
   .description('create a controller, model, migration, and serializer for a resource')

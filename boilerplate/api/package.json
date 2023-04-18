@@ -13,10 +13,10 @@
     "sync": "yarn psy sync:all && yarn dream sync:existing",
     "uspec": "yarn sync && jest --config=./spec/unit/jest.config.js --runInBand --forceExit",
     "fspec": "yarn sync && jest --config=./spec/features/jest.config.js --runInBand --forceExit",
-    "postinstall": "yarn dream sync:existing"
+    "postinstall": "yarn psy clean && yarn dream sync:existing"
   },
   "dependencies": {
-    "psychic": "https://github.com/avocadojesus/psychic.git#aee3449"
+    "psychic": "https://github.com/avocadojesus/psychic.git#89b294c"
   },
   "devDependencies": {
     "@types/supertest": "^2.0.12",

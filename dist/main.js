@@ -33,6 +33,13 @@ program
     .option('--uuids', 'indicate that you would like to have psychic provide a lean redis client. This is used for performing background jobs, but can also be exploited for other queue operations.')
     .action(newPsychicApp_1.default);
 program
+    .command('clean')
+    .description('create a controller, model, migration, and serializer for a resource')
+    .argument('<name>', 'name of the resource')
+    .action(() => __awaiter(void 0, void 0, void 0, function* () {
+    yield (0, sspawn_1.default)('yarn psy clean');
+}));
+program
     .command('generate:resource')
     .alias('g:resource')
     .description('create a controller, model, migration, and serializer for a resource')
