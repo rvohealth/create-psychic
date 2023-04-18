@@ -24,7 +24,7 @@ export default async function newHowlApp(
   const hiddenFiles = ['sequelizerc']
   if (api) {
     projectPath = `./${appName}`
-    copyRecursive(__dirname + '/../../boilerplate/api', `./${appName}`)
+    copyRecursive(__dirname + '/../boilerplate/api', `./${appName}`)
 
     hiddenFiles.forEach(file => {
       fs.cpSync(`./${appName}/${file}`, `./${appName}/.${file}`)
@@ -32,7 +32,7 @@ export default async function newHowlApp(
     })
   } else {
     projectPath = `./${appName}/api`
-    copyRecursive(__dirname + '/../../boilerplate', `./${appName}`)
+    copyRecursive(__dirname + '/../boilerplate', `./${appName}`)
     hiddenFiles.forEach(file => {
       fs.cpSync(`./${appName}/api/${file}`, `./${appName}/api/.${file}`)
       fs.unlinkSync(`./${appName}/api/${file}`)
