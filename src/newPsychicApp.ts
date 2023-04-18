@@ -44,15 +44,15 @@ export default async function newHowlApp(
     fs.cpSync(`${projectPath}/src/app/models/user.uuid.ts`, `${projectPath}/src/app/models/user.ts`)
     fs.unlinkSync(`${projectPath}/src/app/models/user.uuid.ts`)
 
-    fs.unlinkSync(`${projectPath}/src/db/migrations/1673997146315-create_users.ts`)
+    fs.unlinkSync(`${projectPath}/src/db/migrations/1673997146315-create-users.ts`)
     fs.cpSync(
-      `${projectPath}/src/db/migrations/1673997146315-create_users.uuid.ts`,
-      `${projectPath}/src/db/migrations/1673997146315-create_users.ts`
+      `${projectPath}/src/db/migrations/1673997146315-create-users.uuid.ts`,
+      `${projectPath}/src/db/migrations/1673997146315-create-users.ts`
     )
-    fs.unlinkSync(`${projectPath}/src/db/migrations/1673997146315-create_users.uuid.ts`)
+    fs.unlinkSync(`${projectPath}/src/db/migrations/1673997146315-create-users.uuid.ts`)
   } else {
     fs.unlinkSync(`${projectPath}/src/app/models/user.uuid.ts`)
-    fs.unlinkSync(`${projectPath}/src/db/migrations/1673997146315-create_users.uuid.ts`)
+    fs.unlinkSync(`${projectPath}/src/db/migrations/1673997146315-create-users.uuid.ts`)
   }
 
   fs.writeFileSync(`${projectPath}/.env`, EnvBuilder.build({ appName, env: 'development' }))
