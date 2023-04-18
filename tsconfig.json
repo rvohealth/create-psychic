@@ -1,4 +1,8 @@
 {
+  "ts-node": {
+    "ignore": [],
+    "include": ["src/**/*", "node_modules/dream/src/**/*", "node_modules/psychic/src/**/*"]
+  },
   "compilerOptions": {
     "baseUrl": "src",
     "outDir": "dist",
