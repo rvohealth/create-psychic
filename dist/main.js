@@ -45,7 +45,8 @@ program
     .description('create a controller, model, migration, and serializer for a resource')
     .argument('<name>', 'name of the resource')
     .action(() => __awaiter(void 0, void 0, void 0, function* () {
-    yield (0, sspawn_1.default)(`yarn psy g:resource ${program.args.join(' ')}`);
+    const [_, ...args] = program.args;
+    yield (0, sspawn_1.default)(`yarn psy g:resource ${args.join(' ')}`);
 }));
 program
     .command('generate:controller')
@@ -53,7 +54,8 @@ program
     .description('g:controller <name> [...methods] create a new psychic controller')
     .argument('<name>', 'name of the controller')
     .action(() => __awaiter(void 0, void 0, void 0, function* () {
-    yield (0, sspawn_1.default)(`yarn psy g:controller ${program.args.join(' ')}`);
+    const [_, ...args] = program.args;
+    yield (0, sspawn_1.default)(`yarn psy g:controller ${args.join(' ')}`);
 }));
 program
     .command('generate:model')
@@ -61,7 +63,8 @@ program
     .description('g:model <name> [...attributes] create a new dream model')
     .argument('<name>', 'name of the model')
     .action(() => __awaiter(void 0, void 0, void 0, function* () {
-    yield (0, sspawn_1.default)(`yarn dream g:model ${program.args.join(' ')}`);
+    const [_, ...args] = program.args;
+    yield (0, sspawn_1.default)(`yarn dream g:model ${args.join(' ')}`);
 }));
 program
     .command('generate:migration')
@@ -69,7 +72,8 @@ program
     .description('g:migration <name> create a new dream migration')
     .argument('<name>', 'name of the migration')
     .action(() => __awaiter(void 0, void 0, void 0, function* () {
-    yield (0, sspawn_1.default)(`yarn dream g:migration ${program.args.join(' ')}`);
+    const [_, ...args] = program.args;
+    yield (0, sspawn_1.default)(`yarn dream g:migration ${args.join(' ')}`);
 }));
 (0, dreamcmd_1.default)(program, 'db:create', 'creates the database');
 (0, dreamcmd_1.default)(program, 'db:drop', 'drops the database');
