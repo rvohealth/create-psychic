@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "baseUrl": "src",
+    "outDir": "dist",
+    "strict": true,
+    "target": "es6",
+    "module": "commonjs",
+    "sourceMap": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "paths": {
+      "@src/*": ["*"]
+    }
+  },
+  "include": ["src", "noop"],
+  "exclude": ["./boilerplate/*"]
+}
