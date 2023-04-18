@@ -43,7 +43,8 @@ program
   .description('create a controller, model, migration, and serializer for a resource')
   .argument('<name>', 'name of the resource')
   .action(async () => {
-    await sspawn(`yarn psy g:resource ${program.args.join(' ')}`)
+    const [_, ...args] = program.args
+    await sspawn(`yarn psy g:resource ${args.join(' ')}`)
   })
 
 program
@@ -52,7 +53,8 @@ program
   .description('g:controller <name> [...methods] create a new psychic controller')
   .argument('<name>', 'name of the controller')
   .action(async () => {
-    await sspawn(`yarn psy g:controller ${program.args.join(' ')}`)
+    const [_, ...args] = program.args
+    await sspawn(`yarn psy g:controller ${args.join(' ')}`)
   })
 
 program
@@ -61,7 +63,8 @@ program
   .description('g:model <name> [...attributes] create a new dream model')
   .argument('<name>', 'name of the model')
   .action(async () => {
-    await sspawn(`yarn dream g:model ${program.args.join(' ')}`)
+    const [_, ...args] = program.args
+    await sspawn(`yarn dream g:model ${args.join(' ')}`)
   })
 
 program
@@ -70,7 +73,8 @@ program
   .description('g:migration <name> create a new dream migration')
   .argument('<name>', 'name of the migration')
   .action(async () => {
-    await sspawn(`yarn dream g:migration ${program.args.join(' ')}`)
+    const [_, ...args] = program.args
+    await sspawn(`yarn dream g:migration ${args.join(' ')}`)
   })
 
 dreamcmd(program, 'db:create', 'creates the database')
