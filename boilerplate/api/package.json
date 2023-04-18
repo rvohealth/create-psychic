@@ -15,7 +15,7 @@
     "fspec": "yarn sync && jest --config=./spec/features/jest.config.js --runInBand --forceExit"
   },
   "dependencies": {
-    "psychic": "https://github.com/avocadojesus/psychic.git#a8c36aa"
+    "psychic": "https://github.com/avocadojesus/psychic.git#f9330d2"
   },
   "devDependencies": {
     "@types/supertest": "^2.0.12",

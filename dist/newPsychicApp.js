@@ -48,7 +48,7 @@ function newHowlApp(appName, { api = false, ws = false, redis = false, uuids = f
         const hiddenFiles = ['sequelizerc'];
         if (api) {
             projectPath = `./${appName}`;
-            (0, copyRecursive_1.default)(__dirname + '/../../boilerplate/api', `./${appName}`);
+            (0, copyRecursive_1.default)(__dirname + '/../boilerplate/api', `./${appName}`);
             hiddenFiles.forEach(file => {
                 fs.cpSync(`./${appName}/${file}`, `./${appName}/.${file}`);
                 fs.unlinkSync(`./${appName}/${file}`);
@@ -56,23 +56,11 @@ function newHowlApp(appName, { api = false, ws = false, redis = false, uuids = f
         }
         else {
             projectPath = `./${appName}/api`;
-            (0, copyRecursive_1.default)(__dirname + '/../../boilerplate', `./${appName}`);
+            (0, copyRecursive_1.default)(__dirname + '/../boilerplate', `./${appName}`);
             hiddenFiles.forEach(file => {
                 fs.cpSync(`./${appName}/api/${file}`, `./${appName}/api/.${file}`);
                 fs.unlinkSync(`./${appName}/api/${file}`);
             });
-        }
-        if (uuids) {
-            fs.unlinkSync(`${projectPath}/src/app/models/user.ts`);
-            fs.cpSync(`${projectPath}/src/app/models/user.uuid.ts`, `${projectPath}/src/app/models/user.ts`);
-            fs.unlinkSync(`${projectPath}/src/app/models/user.uuid.ts`);
-            fs.unlinkSync(`${projectPath}/src/db/migrations/1673997146315-create_users.ts`);
-            fs.cpSync(`${projectPath}/src/db/migrations/1673997146315-create_users.uuid.ts`, `${projectPath}/src/db/migrations/1673997146315-create_users.ts`);
-            fs.unlinkSync(`${projectPath}/src/db/migrations/1673997146315-create_users.uuid.ts`);
-        }
-        else {
-            fs.unlinkSync(`${projectPath}/src/app/models/user.uuid.ts`);
-            fs.unlinkSync(`${projectPath}/src/db/migrations/1673997146315-create_users.uuid.ts`);
         }
         fs.writeFileSync(`${projectPath}/.env`, envBuilder_1.default.build({ appName, env: 'development' }));
         fs.writeFileSync(`${projectPath}/.env.test`, envBuilder_1.default.build({ appName, env: 'test' }));
@@ -89,7 +77,7 @@ function newHowlApp(appName, { api = false, ws = false, redis = false, uuids = f
         yield (0, sspawn_1.default)(`cd ./${appName} && git init`);
         yield (0, sspawn_1.default)(`cd ./${appName} && git add --all && git commit -m 'psychic init'`);
         console.log('building project...');
-        yield (0, sspawn_1.default)(`yarn --cwd=${projectPath} build`);
+        yield (0, sspawn_1.default)(`yarn --cwd=${projectPath} sync`);
         if (!api) {
             console.log('building client dependencies...');
             yield (0, sspawn_1.default)(`yarn --cwd=${rootPath}/client install`);
