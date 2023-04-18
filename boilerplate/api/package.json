@@ -12,7 +12,8 @@
     "dev": "NODE_ENV=development ts-node ./src/main.ts",
     "sync": "yarn psy sync:all && yarn dream sync:existing",
     "uspec": "yarn sync && jest --config=./spec/unit/jest.config.js --runInBand --forceExit",
-    "fspec": "yarn sync && jest --config=./spec/features/jest.config.js --runInBand --forceExit"
+    "fspec": "yarn sync && jest --config=./spec/features/jest.config.js --runInBand --forceExit",
+    "postinstall": "yarn dream sync:existing"
   },
   "dependencies": {
     "psychic": "https://github.com/avocadojesus/psychic.git#aee3449"
