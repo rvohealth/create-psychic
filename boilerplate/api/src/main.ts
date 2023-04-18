@@ -1,7 +1,7 @@
-import './.howl/init'
-import { env, HowlServer } from 'howl'
+import './.psy/init'
+import { env, PsychicServer } from 'psychic'
 
 env.load()
 
-const server = new HowlServer()
+const server = new PsychicServer()
 server.start()

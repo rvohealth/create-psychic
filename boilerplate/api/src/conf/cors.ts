@@ -5,8 +5,6 @@ export default async () => {
 
   return {
     credentials: true,
-    origin: [
-      clientConfig.host,
-    ]
+    origin: [clientConfig.host],
   }
 }

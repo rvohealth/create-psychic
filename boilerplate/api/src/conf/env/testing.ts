@@ -1,4 +1,3 @@
-import { HowlConfig } from 'howl'
+import { Application } from 'express'
 
-export default async (config: HowlConfig) => {
-}
+export default (app: Application) => {}

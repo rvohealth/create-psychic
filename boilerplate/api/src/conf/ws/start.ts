@@ -1,7 +1,5 @@
-import { Server } from 'socket.io'
+import { Server as SocketServer } from 'socket.io'
 
-// this function is called each time the socket server is started. This
-// happens once per each express server boot.
+// this is called once per each express boot
 
-export default async (io: Server) => {
-}
+export default async (server: SocketServer) => {}

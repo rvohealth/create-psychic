@@ -8,5 +8,4 @@ import { Socket } from 'socket.io'
 //
 // for more information, see https://socket.io/docs/v3/client-socket-instance
 
-export default async (socket: Socket) => {
-}
+export default async (socket: Socket) => {}
