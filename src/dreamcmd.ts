@@ -16,7 +16,7 @@ export default function dreamcmd(
           ? `NODE_ENV=${process.env.NODE_ENV} `
           : ''
 
-      const cmd = `${nodeEnvString} ${commandString}`
+      const cmd = `${nodeEnvString} yarn dream ${commandString}`
       if (process.env.DEBUG == '1')
         console.log(`[DEBUG]: the following yarn command is being aliased by psychic cli: ${cmd}`)
 
