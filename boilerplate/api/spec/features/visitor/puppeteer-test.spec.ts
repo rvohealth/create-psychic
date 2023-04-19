@@ -1,6 +1,4 @@
 import { PsychicServer } from 'psychic'
-import * as request from 'supertest'
-import sleep from '../../helpers/sleep'
 const server = new PsychicServer()
 
 describe('ensure puppeteer is working', () => {
