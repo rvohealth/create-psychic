@@ -1,8 +1,8 @@
 import 'expect-puppeteer'
-import { env } from 'psychic'
+import * as dotenv from 'dotenv'
 import truncate from '../../helpers/truncate'
 
-env.load()
+dotenv.config({ path: '.env.test' })
 
 beforeEach(async () => {
   await truncate()
