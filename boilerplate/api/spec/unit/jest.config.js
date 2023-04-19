@@ -6,13 +6,9 @@ module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
   transform: { '^.+\\.tsx?$': 'ts-jest' },
-  moduleNameMapper: {
-    '^app/(.*)': '<rootDir>../../src/app/$1',
-    '^conf/(.*)': '<rootDir>../../src/conf/$1',
-    '^.howl/(.*)': '<rootDir>../../src/.howl/$1',
-  },
-  setupFiles: [ 'jest-plugin-context/setup' ],
-  setupFilesAfterEnv: [ '<rootDir>setup/hooks.ts' ],
-  globalSetup: '<rootDir>/setup/globalSetup.ts',
-  globalTeardown: '<rootDir>setup/globalTeardown.ts',
+  transformIgnorePatterns: ['<rootDir>/node_modules/dream/src'],
+  setupFiles: ['jest-plugin-context/setup'],
+  setupFilesAfterEnv: ['<rootDir>setup/hooks.ts'],
+  globalSetup: '<rootDir>setup/beforeAll.ts',
+  globalTeardown: '<rootDir>setup/afterAll.ts',
 }
