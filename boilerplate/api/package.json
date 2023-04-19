@@ -12,14 +12,18 @@
     "dev": "NODE_ENV=development ts-node ./src/main.ts",
     "sync": "yarn psy sync:all && yarn dream sync:existing",
     "uspec": "yarn sync && jest --config=./spec/unit/jest.config.js --runInBand --forceExit",
-    "fspec": "yarn sync && jest --config=./spec/features/jest.config.js --runInBand --forceExit",
+    "fspec": "jest --config=./spec/features/jest.config.js --runInBand --forceExit",
     "postinstall": "yarn psy clean && yarn dream sync:existing"
   },
   "dependencies": {
     "psychic": "https://github.com/avocadojesus/psychic.git#dd1a540"
   },
   "devDependencies": {
+    "@types/expect-puppeteer": "^5.0.3",
+    "@types/puppeteer": "^7.0.4",
     "@types/supertest": "^2.0.12",
+    "jest-puppeteer": "^8.0.6",
+    "puppeteer": "^19.9.1",
     "supertest": "^6.3.3"
   }
 }

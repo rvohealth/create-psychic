@@ -2,6 +2,7 @@ import { env } from 'psychic'
 // import '../../../src/helpers/loadEnv'
 // import * as devServer from 'jest-dev-server'
 
+process.env.NODE_ENV = 'test'
 env.load()
 
 export default async function () {

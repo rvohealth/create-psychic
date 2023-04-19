@@ -1,5 +1,4 @@
 import { Client } from 'pg'
-import dbConfig from '../../src/conf/dream'
 
 export default async function truncate() {
   // this was only ever written to clear the db between tests,
@@ -7,11 +6,11 @@ export default async function truncate() {
   if (process.env.NODE_ENV !== 'test') return false
 
   const client = new Client({
-    host: dbConfig.db.host || 'localhost',
-    port: dbConfig.db.port ? parseInt(dbConfig.db.port) : 5432,
-    database: dbConfig.db.name,
-    user: dbConfig.db.user,
-    password: dbConfig.db.password,
+    host: process.env.DB_HOST || 'localhost',
+    port: process.env.DB_PORT ? parseInt(process.env.DB_PORT) : 5432,
+    database: process.env.DB_NAME,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
   })
   await client.connect()
 
@@ -26,7 +25,7 @@ FOR row IN SELECT table_name
   AND table_schema='public'
   AND table_name NOT IN ('migrations')
 LOOP
-  EXECUTE format('TRUNCATE TABLE %I CONTINUE IDENTITY RESTRICT;',row.table_name);
+  EXECUTE format('TRUNCATE TABLE %I CASCADE;',row.table_name);
 END LOOP;
 END;
 $$;
