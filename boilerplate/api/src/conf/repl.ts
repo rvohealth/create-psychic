@@ -1,16 +1,16 @@
+import * as dotenv from 'dotenv'
 import * as repl from 'node:repl'
 import * as fs from 'fs/promises'
 import * as path from 'path'
-import { loadDreamYamlFile } from '../../src/helpers/path'
+
+dotenv.config()
 
 const replServer = repl.start('> ')
 export default (async function () {
-  const yamlConf = await loadDreamYamlFile()
-  const dreamPaths = await getFiles(
-    process.env.CORE_DEVELOPMENT === '1' ? `./${yamlConf.models_path}` : `../../${yamlConf.models_path}`
-  )
+  const dreamPaths = await (await getFiles('./src/app/models')).filter(file => /\.ts$/.test(file))
   for (const dreamPath of dreamPaths) {
-    const DreamClass = (await import(dreamPath)).default
+    const importablePath = dreamPath.replace(/.*\/src/, '..')
+    const DreamClass = (await import(importablePath)).default
     replServer.context[(DreamClass as any).name] = DreamClass
   }
 })()
