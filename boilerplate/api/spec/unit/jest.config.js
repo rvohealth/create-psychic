@@ -7,7 +7,7 @@ module.exports = {
   testEnvironment: 'node',
   transform: { '^.+\\.tsx?$': 'ts-jest' },
   transformIgnorePatterns: ['<rootDir>/node_modules/dream/src'],
-  setupFiles: ['jest-plugin-context/setup'],
+  // setupFiles: ['jest-plugin-context/setup'],
   setupFilesAfterEnv: ['<rootDir>setup/hooks.ts'],
   globalSetup: '<rootDir>setup/beforeAll.ts',
   globalTeardown: '<rootDir>setup/afterAll.ts',
