@@ -7,17 +7,17 @@ module.exports = {
   },
   browserContext: 'default',
   server: [
-    // {
-    //   command: "BROWSER=none PORT=3000 REACT_APP_HOWL_ENV=test yarn --cwd=../client start",
-    //   host: '127.0.0.1',
-    //   debug: process.env.DEBUG === '1',
-    //   launchTimeout: 20000,
-    //   port: 3000,
-    //   usedPortAction: 'kill',
-    //   waitOnScheme: {
-    //     verbose: process.env.DEBUG === '1',
-    //   },
-    // },
+    {
+      command: 'BROWSER=none PORT=3001 REACT_APP_HOWL_ENV=test yarn --cwd=../client start',
+      host: '127.0.0.1',
+      debug: process.env.DEBUG === '1',
+      launchTimeout: 20000,
+      port: 3001,
+      usedPortAction: 'kill',
+      waitOnScheme: {
+        verbose: process.env.DEBUG === '1',
+      },
+    },
     {
       command: 'ts-node ./src/spec-server.ts',
       launchTimeout: 20000,
