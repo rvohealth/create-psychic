@@ -1,6 +1,5 @@
-const baseUrl = () => process.env.REACT_APP_HOWL_ENV === 'test' ?
-  'http://localhost:7778' :
-  'http://localhost:7777'
+const baseUrl = () =>
+  process.env.REACT_APP_PSYCHIC_ENV === 'test' ? 'http://localhost:7778' : 'http://localhost:7777'
 
 const routes = {
   baseURL: baseUrl(),
@@ -21,4 +20,3 @@ const routes = {
 }
 
 export default routes
-

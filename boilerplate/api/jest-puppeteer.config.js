@@ -8,7 +8,7 @@ module.exports = {
   browserContext: 'default',
   server: [
     {
-      command: 'BROWSER=none PORT=3000 REACT_APP_HOWL_ENV=test yarn --cwd=../client start',
+      command: 'BROWSER=none PORT=3000 REACT_APP_PSYCHIC_ENV=test yarn --cwd=../client start',
       host: '127.0.0.1',
       debug: process.env.DEBUG === '1',
       launchTimeout: 20000,
