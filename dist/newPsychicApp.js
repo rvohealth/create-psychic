@@ -45,22 +45,13 @@ function newHowlApp(appName, { api = false, ws = false, redis = false, uuids = f
     return __awaiter(this, void 0, void 0, function* () {
         let projectPath;
         let rootPath = `./${appName}`;
-        const hiddenFiles = ['sequelizerc'];
         if (api) {
             projectPath = `./${appName}`;
             (0, copyRecursive_1.default)(__dirname + '/../boilerplate/api', `./${appName}`);
-            hiddenFiles.forEach(file => {
-                fs.cpSync(`./${appName}/${file}`, `./${appName}/.${file}`);
-                fs.unlinkSync(`./${appName}/${file}`);
-            });
         }
         else {
             projectPath = `./${appName}/api`;
             (0, copyRecursive_1.default)(__dirname + '/../boilerplate', `./${appName}`);
-            hiddenFiles.forEach(file => {
-                fs.cpSync(`./${appName}/api/${file}`, `./${appName}/api/.${file}`);
-                fs.unlinkSync(`./${appName}/api/${file}`);
-            });
         }
         fs.writeFileSync(`${projectPath}/.env`, envBuilder_1.default.build({ appName, env: 'development' }));
         fs.writeFileSync(`${projectPath}/.env.test`, envBuilder_1.default.build({ appName, env: 'test' }));
