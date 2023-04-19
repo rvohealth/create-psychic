@@ -1,0 +1,7 @@
+import { PsychicController } from 'psychic'
+
+export default class PingController extends PsychicController {
+  public ping() {
+    this.ok({ hello: 'world' })
+  }
+}
