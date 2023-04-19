@@ -13,6 +13,7 @@
     "sync": "yarn psy sync:all && yarn dream sync:existing",
     "uspec": "yarn sync && jest --config=./spec/unit/jest.config.js --runInBand --forceExit",
     "fspec": "jest --config=./spec/features/jest.config.js --runInBand --forceExit",
+    "console": "npx ts-node --project ./tsconfig.json ./src/conf/repl.ts",
     "postinstall": "yarn psy clean && yarn dream sync:existing"
   },
   "dependencies": {
