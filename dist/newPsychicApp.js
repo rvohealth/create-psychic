@@ -36,13 +36,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs = __importStar(require("fs"));
+const c = __importStar(require("colorette"));
 const confBuilder_1 = __importDefault(require("./confBuilder"));
 const copyRecursive_1 = __importDefault(require("./copyRecursive"));
 const envBuilder_1 = __importDefault(require("./envBuilder"));
 const sspawn_1 = __importDefault(require("./sspawn"));
 const logo_1 = __importDefault(require("./logo"));
+const log_1 = __importDefault(require("./log"));
 function newHowlApp(appName, { api = false, ws = false, redis = false, uuids = false, }) {
     return __awaiter(this, void 0, void 0, function* () {
+        log_1.default.clear();
+        log_1.default.write((0, logo_1.default)() + '\n\n', { cache: true });
+        log_1.default.write(c.magentaBright(`Installing psychic framework to ./${appName}`), { cache: true });
+        log_1.default.write(c.blue(`Step 1. writing boilerplate to ${appName}...`));
         let projectPath;
         let rootPath = `./${appName}`;
         if (api) {
@@ -53,75 +59,83 @@ function newHowlApp(appName, { api = false, ws = false, redis = false, uuids = f
             projectPath = `./${appName}/api`;
             (0, copyRecursive_1.default)(__dirname + '/../boilerplate', `./${appName}`);
         }
+        log_1.default.restoreCache();
+        log_1.default.write(c.blue(`Step 1. write boilerplate to ${appName}: Done!`), { cache: true });
+        log_1.default.write(c.blueBright(`Step 2. building default config files...`));
         fs.writeFileSync(`${projectPath}/.env`, envBuilder_1.default.build({ appName, env: 'development' }));
         fs.writeFileSync(`${projectPath}/.env.test`, envBuilder_1.default.build({ appName, env: 'test' }));
-        console.log('building default configs');
         fs.writeFileSync(projectPath + '/src/conf/app.yml', confBuilder_1.default.buildAll({
             api,
             ws,
             redis,
             uuids,
         }));
-        console.log('installing yarn dependencies...');
+        log_1.default.restoreCache();
+        log_1.default.write(c.blueBright(`Step 2. build default config files: Done!`), { cache: true });
+        log_1.default.write(c.cyan(`Step 3. Installing psychic dependencies...`));
         yield (0, sspawn_1.default)(`cd ${projectPath} && yarn install`);
-        console.log('initializing git repository...');
+        log_1.default.restoreCache();
+        log_1.default.write(c.cyan(`Step 3. Install psychic dependencies: Done!`), { cache: true });
+        log_1.default.write(c.cyanBright(`Step 4. Initializing git repository...`));
         yield (0, sspawn_1.default)(`cd ./${appName} && git init`);
         yield (0, sspawn_1.default)(`cd ./${appName} && git add --all && git commit -m 'psychic init'`);
-        console.log('building project...');
+        log_1.default.restoreCache();
+        log_1.default.write(c.cyanBright(`Step 4. Initialize git repository: Done!`), { cache: true });
+        log_1.default.write(c.greenBright(`Step 5. Building project...`));
         yield (0, sspawn_1.default)(`yarn --cwd=${projectPath} dream sync:existing`);
         yield (0, sspawn_1.default)(`yarn --cwd=${projectPath} sync`);
         if (!api) {
-            console.log('building client dependencies...');
             yield (0, sspawn_1.default)(`yarn --cwd=${rootPath}/client install`);
         }
+        log_1.default.restoreCache();
+        log_1.default.write(c.greenBright(`Step 5. Build project: Done!`), { cache: true });
         const helloMessage = `
-    finished! cd into ${appName} to get started
+      finished! cd into ${appName} to get started
 
-    to create a database,
-      $ psy db:create
-      $ NODE_ENV=test psy db:create
+      to create a database,
+        $ psy db:create
+        $ NODE_ENV=test psy db:create
 
-    to migrate a database,
-      $ psy db:migrate
-      $ NODE_ENV=test psy db:migrate
+      to migrate a database,
+        $ psy db:migrate
+        $ NODE_ENV=test psy db:migrate
 
-    to rollback a database
-      $ psy db:rollback
-      $ NODE_ENV=test psy db:rollback
+      to rollback a database
+        $ psy db:rollback
+        $ NODE_ENV=test psy db:rollback
 
-    to drop a database
-      $ psy db:drop
-      $ NODE_ENV=test psy db:drop
+      to drop a database
+        $ psy db:drop
+        $ NODE_ENV=test psy db:drop
 
-    to create a resource (model, migration, serializer, and controller)
-      $ psy g:resource user-profile user:belongs_to likes_chalupas:boolean some_id:uuid
+      to create a resource (model, migration, serializer, and controller)
+        $ psy g:resource user-profile user:belongs_to likes_chalupas:boolean some_id:uuid
 
-      # NOTE: doing it this way, you will still need to
-      # plug the routes manually in your conf/routes.ts file
+        # NOTE: doing it this way, you will still need to
+        # plug the routes manually in your conf/routes.ts file
 
-    to create a model
-      $ psy g:model user-profile user:belongs_to likes_chalupas:boolean some_id:uuid
+      to create a model
+        $ psy g:model user-profile user:belongs_to likes_chalupas:boolean some_id:uuid
 
-    to create a migration
-      $ psy g:migration create-user-profiles
+      to create a migration
+        $ psy g:migration create-user-profiles
 
-    to start a dev server at localhost:7777,
-      $ psy dev
+      to start a dev server at localhost:7777,
+        $ psy dev
 
-    to run unit tests,
-      $ psy uspec
+      to run unit tests,
+        $ psy uspec
 
-    to run feature tests,
-      $ psy fspec
+      to run feature tests,
+        $ psy fspec
 
-    to run unit tests, and then if they pass, run feature tests,
-      $ psy spec
+      to run unit tests, and then if they pass, run feature tests,
+        $ psy spec
 
-    # NOTE: before you get started, be sure to visit your .env and .env.test
-    # files and make sure they have database credentials set correctly.
-    # you can see conf/db.js to see how those credentials are used.
-`;
-        console.log((0, logo_1.default)());
+      # NOTE: before you get started, be sure to visit your .env and .env.test
+      # files and make sure they have database credentials set correctly.
+      # you can see conf/db.js to see how those credentials are used.
+  `;
         console.log(helloMessage);
     });
 }
