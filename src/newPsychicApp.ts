@@ -80,18 +80,12 @@ export default async function newHowlApp(
   log.write(c.greenBright(`Step 5. Build project: Done!`), { cache: true })
   const helloMessage = `
 ${c.greenBright(
-  `Welcome to Psychic! What does your fortune hold? cd into ${c.magentaBright(appName)} to find out!`
+  c.bold(
+    c.italic(
+      `Welcome to Psychic! What does your fortune hold? cd into ${c.magentaBright(appName)} to find out!`
+    )
+  )
 )}
-
-▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▓▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒▒▒▒▒▒▒
-▒▒▒▒▒▒▒▒▒▒▒▓▓▓▓▒▒▒▒▒▒▒▒▓▓▓▓▒▒▒▒▒▒▒▒▒▒
-▒▒▒▒▒▒▒▓▓▓▓  ▒▒▒▒████▒▒▒▒  ▓▓▓▓▒▒▒▒▒▒
-▒▒▒▒▒▓▓    ▒▒▒▒████████▒▒▒▒    ▓▓▒▒▒▒
-▒▒▒▓▓        ▒▒████████▒▒▒▒      ▓▓▒▒
-▒▓▓▒▒▓▓    ▒▒▒▒▒▒████▒▒▒▒▒▒    ▓▓▒▒▓▓
-▒▒▒▒▒▒▒▓▓    ▒▒▒▒▒▒▒▒▒▒▒▒    ▓▓▒▒▒▒▒▒
-▒▒▒▒▒▒▒▒▒▓▓▓▓  ▒▒▒▒▒▒▒▒  ▓▓▓▓▒▒▒▒▒▒▒▒
-▒▒▒▒▒▒▒▒▒▒▒▒▒▓▓▓▓▓▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒▒▒▒▒
 
 ${c.magenta(`to create a database,`)}
   $ psy db:create
