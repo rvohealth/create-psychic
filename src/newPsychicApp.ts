@@ -79,57 +79,57 @@ export default async function newHowlApp(
   log.restoreCache()
   log.write(c.greenBright(`Step 5. Build project: Done!`), { cache: true })
   const helloMessage = `
-  ${c.greenBright(
-    c.bold(
-      c.italic(
-        `Welcome to Psychic! What does your fortune hold?\ncd into ${c.magentaBright(appName)} to find out!`
-      )
+${c.greenBright(
+  c.bold(
+    c.italic(
+      `Welcome to Psychic! What does your fortune hold?\ncd into ${c.magentaBright(appName)} to find out!`
     )
-  )}
+  )
+)}
 
-  ${c.magenta(`to create a database,`)}
-    $ psy db:create
-    $ NODE_ENV=test psy db:create
+${c.magenta(`to create a database,`)}
+  $ psy db:create
+  $ NODE_ENV=test psy db:create
 
-  ${c.magentaBright(`to migrate a database,`)}
-    $ psy db:migrate
-    $ NODE_ENV=test psy db:migrate
+${c.magentaBright(`to migrate a database,`)}
+  $ psy db:migrate
+  $ NODE_ENV=test psy db:migrate
 
-  ${c.redBright(`to rollback a database,`)}
-    $ psy db:rollback
-    $ NODE_ENV=test psy db:rollback
+${c.redBright(`to rollback a database,`)}
+  $ psy db:rollback
+  $ NODE_ENV=test psy db:rollback
 
-  ${c.blueBright(`to drop a database,`)}
-    $ psy db:drop
-    $ NODE_ENV=test psy db:drop
+${c.blueBright(`to drop a database,`)}
+  $ psy db:drop
+  $ NODE_ENV=test psy db:drop
 
-  ${c.green(`to create a resource (model, migration, serializer, and controller)`)}
-    $ psy g:resource user-profile user:belongs_to likes_chalupas:boolean some_id:uuid
+${c.green(`to create a resource (model, migration, serializer, and controller)`)}
+  $ psy g:resource user-profile user:belongs_to likes_chalupas:boolean some_id:uuid
 
-    # NOTE: doing it this way, you will still need to
-    # plug the routes manually in your conf/routes.ts file
+  # NOTE: doing it this way, you will still need to
+  # plug the routes manually in your conf/routes.ts file
 
-  ${c.greenBright(`to create a model`)}
-    $ psy g:model user-profile user:belongs_to likes_chalupas:boolean some_id:uuid
+${c.greenBright(`to create a model`)}
+  $ psy g:model user-profile user:belongs_to likes_chalupas:boolean some_id:uuid
 
-  ${c.yellow(`to create a migration`)}
-    $ psy g:migration create-user-profiles
+${c.yellow(`to create a migration`)}
+  $ psy g:migration create-user-profiles
 
-  ${c.yellowBright(`to start a dev server at localhost:7777,`)}
-    $ psy dev
+${c.yellowBright(`to start a dev server at localhost:7777,`)}
+  $ psy dev
 
-  ${c.magentaBright(`to run unit tests,`)}
-    $ psy uspec
+${c.magentaBright(`to run unit tests,`)}
+  $ psy uspec
 
-  ${c.magentaBright(`to run feature tests,`)}
-    $ psy fspec
+${c.magentaBright(`to run feature tests,`)}
+  $ psy fspec
 
-  ${c.magentaBright(`to run unit tests, and then if they pass, run feature tests,`)}
-    $ psy spec
+${c.magentaBright(`to run unit tests, and then if they pass, run feature tests,`)}
+  $ psy spec
 
-  # NOTE: before you get started, be sure to visit your ${c.magenta('.env')} and ${c.magenta('.env.test')}
-  # files and make sure they have database credentials set correctly.
-  # you can see conf/dream.ts to see how those credentials are used.
+# NOTE: before you get started, be sure to visit your ${c.magenta('.env')} and ${c.magenta('.env.test')}
+# files and make sure they have database credentials set correctly.
+# you can see conf/dream.ts to see how those credentials are used.
     `
   console.log(helloMessage)
 }
