@@ -57,6 +57,9 @@ export default async function newHowlApp(
   log.write(c.cyan(`Step 3. Installing psychic dependencies...`))
   await sspawn(`cd ${projectPath} && yarn install`)
 
+  // sleeping here because yarn has a delayed print that we need to clean up
+  await sleep(1000)
+
   log.restoreCache()
   log.write(c.cyan(`Step 3. Install psychic dependencies: Done!`), { cache: true })
   log.write(c.cyanBright(`Step 4. Initializing git repository...`))
