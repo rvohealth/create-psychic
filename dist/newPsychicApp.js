@@ -93,51 +93,51 @@ function newHowlApp(appName, { api = false, ws = false, redis = false, uuids = f
         log_1.default.restoreCache();
         log_1.default.write(c.greenBright(`Step 5. Build project: Done!`), { cache: true });
         const helloMessage = `
-  finished! cd into ${appName} to get started
+  ${c.greenBright(`finished! cd into ${appName} to get started`)}
 
-  to create a database,
+  ${c.magenta(`to create a database,`)}
     $ psy db:create
     $ NODE_ENV=test psy db:create
 
-  to migrate a database,
+  ${c.magentaBright(`to migrate a database,`)}
     $ psy db:migrate
     $ NODE_ENV=test psy db:migrate
 
-  to rollback a database
+  ${c.redBright(`to rollback a database,`)}
     $ psy db:rollback
     $ NODE_ENV=test psy db:rollback
 
-  to drop a database
+  ${c.blueBright(`to drop a database,`)}
     $ psy db:drop
     $ NODE_ENV=test psy db:drop
 
-  to create a resource (model, migration, serializer, and controller)
+  ${c.green(`to create a resource (model, migration, serializer, and controller)`)}
     $ psy g:resource user-profile user:belongs_to likes_chalupas:boolean some_id:uuid
 
     # NOTE: doing it this way, you will still need to
     # plug the routes manually in your conf/routes.ts file
 
-  to create a model
+  ${c.greenBright(`to create a model`)}
     $ psy g:model user-profile user:belongs_to likes_chalupas:boolean some_id:uuid
 
-  to create a migration
+  ${c.yellow(`to create a migration`)}
     $ psy g:migration create-user-profiles
 
-  to start a dev server at localhost:7777,
+  ${c.yellowBright(`to start a dev server at localhost:7777,`)}
     $ psy dev
 
-  to run unit tests,
+  ${c.magentaBright(`to run unit tests,`)}
     $ psy uspec
 
-  to run feature tests,
+  ${c.magentaBright(`to run feature tests,`)}
     $ psy fspec
 
-  to run unit tests, and then if they pass, run feature tests,
+  ${c.magentaBright(`to run unit tests, and then if they pass, run feature tests,`)}
     $ psy spec
 
-  # NOTE: before you get started, be sure to visit your .env and .env.test
+  # NOTE: before you get started, be sure to visit your ${c.magenta('.env')} and ${c.magenta('.env.test')}
   # files and make sure they have database credentials set correctly.
-  # you can see conf/db.js to see how those credentials are used.
+  # you can see conf/dream.ts to see how those credentials are used.
   `;
         console.log(helloMessage);
     });
