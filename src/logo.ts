@@ -40,7 +40,7 @@ export default function logo() {
 ,≥≥⌠░░░╠▓████████████████████████████████████▓▓          
 ,;=-',▄█████████████████████████████████████████▓        `)
     ) +
-    colors.bgGreenBright(
+    colors.bgGreen(
       colors.magenta(
         `
                                                          
