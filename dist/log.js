@@ -14,15 +14,20 @@ class Logger {
     loader(text) {
         this.loaders.push(new Loader('cats').start(text));
     }
-    restoreCache() {
+    restoreCache(preRestoreContent) {
         this.loaders.forEach(loader => loader.stop());
         this.clear();
+        if (preRestoreContent)
+            this.write(preRestoreContent);
         this.cache.forEach(str => {
             this.write(str);
         });
     }
     clear() {
-        console.clear();
+        // console.clear()
+        // @ts-ignore
+        process.stdout.clearLine();
+        process.stdout.cursorTo(0);
     }
 }
 exports.Logger = Logger;

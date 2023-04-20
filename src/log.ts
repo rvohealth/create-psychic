@@ -12,16 +12,22 @@ export class Logger {
     this.loaders.push(new Loader('cats').start(text))
   }
 
-  public restoreCache() {
+  public restoreCache(preRestoreContent?: string) {
     this.loaders.forEach(loader => loader.stop())
     this.clear()
+
+    if (preRestoreContent) this.write(preRestoreContent)
+
     this.cache.forEach(str => {
       this.write(str)
     })
   }
 
   public clear() {
-    console.clear()
+    // console.clear()
+    // @ts-ignore
+    process.stdout.clearLine()
+    process.stdout.cursorTo(0)
   }
 }
 
