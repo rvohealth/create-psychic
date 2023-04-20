@@ -24,7 +24,7 @@ export class Logger {
   }
 
   public clear() {
-    // console.clear()
+    console.clear()
     // @ts-ignore
     process.stdout.clearLine()
     process.stdout.cursorTo(0)
