@@ -82,7 +82,9 @@ export default async function newHowlApp(
 ${c.greenBright(
   c.bold(
     c.italic(
-      `Welcome to Psychic! What does your fortune hold?\ncd into ${c.magentaBright(appName)} to find out!`
+      `Welcome to Psychic! What fortunes await your futures?\ncd into ${c.magentaBright(
+        appName
+      )} to find out!`
     )
   )
 )}

@@ -93,7 +93,7 @@ function newHowlApp(appName, { api = false, ws = false, redis = false, uuids = f
         log_1.default.restoreCache();
         log_1.default.write(c.greenBright(`Step 5. Build project: Done!`), { cache: true });
         const helloMessage = `
-${c.greenBright(c.bold(c.italic(`Welcome to Psychic! What does your fortune hold?\ncd into ${c.magentaBright(appName)} to find out!`)))}
+${c.greenBright(c.bold(c.italic(`Welcome to Psychic! What fortunes await your futures?\ncd into ${c.magentaBright(appName)} to find out!`)))}
 
 ${c.magenta(`to create a database,`)}
   $ psy db:create
