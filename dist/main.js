@@ -75,13 +75,19 @@ program
     const [_, ...args] = program.args;
     yield (0, sspawn_1.default)(`yarn dream g:migration ${args.join(' ')}`);
 }));
+program
+    .command('routes')
+    .alias('routes:list')
+    .description('lists the routes known by your application')
+    .action(() => __awaiter(void 0, void 0, void 0, function* () {
+    yield (0, sspawn_1.default)(`yarn psy routes`);
+}));
 (0, dreamcmd_1.default)(program, 'db:create', 'creates the database');
 (0, dreamcmd_1.default)(program, 'db:drop', 'drops the database');
 (0, dreamcmd_1.default)(program, 'db:migrate', 'runs migrations');
 (0, dreamcmd_1.default)(program, 'db:rollback', 'rolls back migrations');
 (0, yarncmd_1.default)(program, 'dev', 'starts the local dev server');
 (0, yarncmd_1.default)(program, 'db', 'starts the local dev server');
-(0, yarncmd_1.default)(program, 'routes', 'lists routes');
 (0, yarncmd_1.default)(program, 'build', 'builds typescript project');
 (0, yarncmd_1.default)(program, 'prod', 'launches production server');
 (0, yarncmd_1.default)(program, 'g:migration', 'generates a new migration');

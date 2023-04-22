@@ -17,7 +17,7 @@
     "postinstall": "yarn psy clean && yarn dream sync:existing"
   },
   "dependencies": {
-    "psychic": "https://github.com/avocadojesus/psychic.git#09c0a13"
+    "psychic": "https://github.com/avocadojesus/psychic.git#b812305"
   },
   "devDependencies": {
     "@types/expect-puppeteer": "^5.0.3",
