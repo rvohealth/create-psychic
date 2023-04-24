@@ -58,6 +58,15 @@ program
     yield (0, sspawn_1.default)(`yarn psy g:controller ${args.join(' ')}`);
 }));
 program
+    .command('generate:serializer')
+    .alias('g:serializer')
+    .description('g:serializer <name> [...attributes] create a new psychic serializer')
+    .argument('<name>', 'name of the serializer')
+    .action(() => __awaiter(void 0, void 0, void 0, function* () {
+    const [_, ...args] = program.args;
+    yield (0, sspawn_1.default)(`yarn psy g:serializer ${args.join(' ')}`);
+}));
+program
     .command('generate:model')
     .alias('g:model')
     .description('g:model <name> [...attributes] create a new dream model')
