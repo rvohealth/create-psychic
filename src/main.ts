@@ -103,6 +103,14 @@ program
     await sspawn(`yarn console`)
   })
 
+program
+  .command('spec')
+  .description('runs either a feauture spec, unit spec, or all specs, depending on what is passed.')
+  .action(async () => {
+    const [_, ...args] = program.args
+    await sspawn(`yarn psy spec ${args.join(' ')}`)
+  })
+
 dreamcmd(program, 'db:create', 'creates the database')
 dreamcmd(program, 'db:drop', 'drops the database')
 dreamcmd(program, 'db:migrate', 'runs migrations')

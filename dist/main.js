@@ -98,6 +98,13 @@ program
     .action(() => __awaiter(void 0, void 0, void 0, function* () {
     yield (0, sspawn_1.default)(`yarn console`);
 }));
+program
+    .command('spec')
+    .description('runs either a feauture spec, unit spec, or all specs, depending on what is passed.')
+    .action(() => __awaiter(void 0, void 0, void 0, function* () {
+    const [_, ...args] = program.args;
+    yield (0, sspawn_1.default)(`yarn psy spec ${args.join(' ')}`);
+}));
 (0, dreamcmd_1.default)(program, 'db:create', 'creates the database');
 (0, dreamcmd_1.default)(program, 'db:drop', 'drops the database');
 (0, dreamcmd_1.default)(program, 'db:migrate', 'runs migrations');
