@@ -95,6 +95,13 @@ program
     await sspawn(`yarn psy routes`)
   })
 
+program
+  .command('console')
+  .description('enters a command line repl')
+  .action(async () => {
+    await sspawn(`yarn psy console`)
+  })
+
 dreamcmd(program, 'db:create', 'creates the database')
 dreamcmd(program, 'db:drop', 'drops the database')
 dreamcmd(program, 'db:migrate', 'runs migrations')
