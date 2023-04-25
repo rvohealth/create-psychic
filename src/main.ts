@@ -97,9 +97,10 @@ program
 
 program
   .command('console')
+  .alias('c')
   .description('enters a command line repl')
   .action(async () => {
-    await sspawn(`yarn psy console`)
+    await sspawn(`yarn console`)
   })
 
 dreamcmd(program, 'db:create', 'creates the database')

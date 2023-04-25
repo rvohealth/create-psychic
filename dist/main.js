@@ -91,6 +91,13 @@ program
     .action(() => __awaiter(void 0, void 0, void 0, function* () {
     yield (0, sspawn_1.default)(`yarn psy routes`);
 }));
+program
+    .command('console')
+    .alias('c')
+    .description('enters a command line repl')
+    .action(() => __awaiter(void 0, void 0, void 0, function* () {
+    yield (0, sspawn_1.default)(`yarn console`);
+}));
 (0, dreamcmd_1.default)(program, 'db:create', 'creates the database');
 (0, dreamcmd_1.default)(program, 'db:drop', 'drops the database');
 (0, dreamcmd_1.default)(program, 'db:migrate', 'runs migrations');
