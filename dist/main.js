@@ -114,7 +114,6 @@ program
 (0, yarncmd_1.default)(program, 'build', 'builds typescript project');
 (0, yarncmd_1.default)(program, 'prod', 'launches production server');
 (0, yarncmd_1.default)(program, 'g:migration', 'generates a new migration');
-(0, yarncmd_1.default)(program, 'spec', 'runs unit and feature specs');
 (0, yarncmd_1.default)(program, 'uspec', 'runs unit specs');
 (0, yarncmd_1.default)(program, 'fspec', 'runs feature specs');
 (0, yarncmd_1.default)(program, 'console', 'starts repl');
