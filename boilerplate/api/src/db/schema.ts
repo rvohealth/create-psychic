@@ -7,6 +7,10 @@ export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
 
 export type Timestamp = ColumnType<DateTime>
 
-export interface DB {}
+export interface DB {
+  __placeholder__: {}
+}
 
-export const DBColumns = {}
+export const DBColumns = {
+  __placeholder__: [] as string[],
+}
