@@ -105,10 +105,24 @@ program
     const [_, ...args] = program.args;
     yield (0, sspawn_1.default)(`yarn psy spec ${args.join(' ')}`);
 }));
+program
+    .command('db:rollback')
+    .description('db:rollback rolls back the migration')
+    .option('--step <integer>', '--step <integer> number of steps back to travel')
+    .action(() => __awaiter(void 0, void 0, void 0, function* () {
+    const [_, ...args] = program.args;
+    yield (0, sspawn_1.default)(`yarn dream db:rollback ${args.join(' ')}`);
+}));
+program
+    .command('db:reset')
+    .description('db:rollback rolls back the migration')
+    .action(() => __awaiter(void 0, void 0, void 0, function* () {
+    const [_, ...args] = program.args;
+    yield (0, sspawn_1.default)(`yarn dream db:reset ${args.join(' ')}`);
+}));
 (0, dreamcmd_1.default)(program, 'db:create', 'creates the database');
 (0, dreamcmd_1.default)(program, 'db:drop', 'drops the database');
 (0, dreamcmd_1.default)(program, 'db:migrate', 'runs migrations');
-(0, dreamcmd_1.default)(program, 'db:rollback', 'rolls back migrations');
 (0, yarncmd_1.default)(program, 'dev', 'starts the local dev server');
 (0, yarncmd_1.default)(program, 'db', 'starts the local dev server');
 (0, yarncmd_1.default)(program, 'build', 'builds typescript project');
