@@ -12,6 +12,7 @@ DB_NAME=${snakeify(appName)}_${env}
 DB_PORT=5432
 DB_HOST=localhost
 APP_ENCRYPTION_KEY='${(0, generateEncryptionKey_1.default)()}'
+TZ=UTC
 `;
     }
 }
