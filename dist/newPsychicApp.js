@@ -86,7 +86,6 @@ function newHowlApp(appName, { api = false, ws = false, redis = false, uuids = f
         log_1.default.write(c.cyanBright(`Step 4. Initialize git repository: Done!`), { cache: true });
         log_1.default.write(c.greenBright(`Step 5. Building project...`));
         yield (0, sspawn_1.default)(`yarn --cwd=${projectPath} dream sync:existing`);
-        yield (0, sspawn_1.default)(`yarn --cwd=${projectPath} sync`);
         if (!api) {
             yield (0, sspawn_1.default)(`yarn --cwd=${rootPath}/client install`);
         }

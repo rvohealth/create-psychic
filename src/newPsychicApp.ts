@@ -70,7 +70,6 @@ export default async function newHowlApp(
   log.write(c.cyanBright(`Step 4. Initialize git repository: Done!`), { cache: true })
   log.write(c.greenBright(`Step 5. Building project...`))
   await sspawn(`yarn --cwd=${projectPath} dream sync:existing`)
-  await sspawn(`yarn --cwd=${projectPath} sync`)
 
   if (!api) {
     await sspawn(`yarn --cwd=${rootPath}/client install`)
