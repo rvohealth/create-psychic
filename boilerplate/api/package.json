@@ -14,10 +14,10 @@
     "uspec": "yarn sync && jest --config=./spec/unit/jest.config.js --runInBand --forceExit",
     "fspec": "jest --config=./spec/features/jest.config.js --runInBand --forceExit",
     "console": "npx ts-node --project ./tsconfig.json ./src/conf/repl.ts",
-    "postinstall": "yarn psy clean && yarn dream sync:existing"
+    "postinstall": "yarn dream sync:existing && yarn psy clean"
   },
   "dependencies": {
-    "psychic": "https://avocadojesus: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@github.com/avocadojesus/psychic.git#dde0931"
+    "psychic": "https://avocadojesus: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@github.com/avocadojesus/psychic.git#02dbd64"
   },
   "devDependencies": {
     "@types/expect-puppeteer": "^5.0.3",
