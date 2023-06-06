@@ -8,7 +8,7 @@ import logo from './logo'
 import log from './log'
 import sleep from './sleep'
 
-export default async function newHowlApp(
+export default async function newPsychiclApp(
   appName: string,
   {
     api = false,
