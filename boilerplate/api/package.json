@@ -10,11 +10,13 @@
     "psy": "yarn --cwd=node_modules/psychic psy",
     "dream": "yarn --cwd=node_modules/dream dream",
     "dev": "NODE_ENV=development ts-node ./src/main.ts",
-    "sync": "yarn psy sync:all && yarn dream sync:existing",
-    "uspec": "yarn sync && jest --config=./spec/unit/jest.config.js --runInBand --forceExit",
-    "fspec": "jest --config=./spec/features/jest.config.js --runInBand --forceExit",
-    "console": "npx ts-node --project ./tsconfig.json ./src/conf/repl.ts",
-    "postinstall": "yarn dream sync:existing && yarn psy clean"
+    "sync": "yarn psy sync:all",
+    "uspec": "yarn dream sync:existing && jest --config=./spec/unit/jest.config.js --runInBand --forceExit",
+    "uspec:fast": "jest --config=./spec/unit/jest.config.js --runInBand --forceExit",
+    "fspec": "yarn dream sync:existing && jest --config=./spec/features/jest.config.js --runInBand --forceExit",
+    "fspec:fast": "jest --config=./spec/features/jest.config.js --runInBand --forceExit",
+    "console": "yarn dream sync:existing && npx ts-node --project ./tsconfig.json ./src/conf/repl.ts",
+    "postinstall": "yarn dream sync:existing"
   },
   "dependencies": {
     "psychic": "https://avocadojesus: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@github.com/avocadojesus/psychic.git#a9437af"
