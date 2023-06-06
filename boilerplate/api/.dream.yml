@@ -1,4 +1,5 @@
 models_path: 'src/app/models'
+serializers_path: 'src/app/serializers'
 migrations_path: 'src/db/migrations'
 associations_path: 'src/db/associations.ts'
 schema_path: 'src/db/schema.ts'
