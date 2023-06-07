@@ -1,6 +1,6 @@
 import 'expect-puppeteer'
 import * as dotenv from 'dotenv'
-import truncate from '../../helpers/truncate'
+import { truncate } from 'dream/spec-helpers'
 
 dotenv.config({ path: '.env.test' })
 
