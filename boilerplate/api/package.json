@@ -13,8 +13,8 @@
     "sync": "yarn psy sync:all",
     "uspec": "yarn dream sync:existing && jest --config=./spec/unit/jest.config.js --runInBand --forceExit",
     "uspec:fast": "jest --config=./spec/unit/jest.config.js --runInBand --forceExit",
-    "fspec": "yarn dream sync:existing && jest --config=./spec/features/jest.config.js --runInBand --forceExit",
-    "fspec:fast": "jest --config=./spec/features/jest.config.js --runInBand --forceExit",
+    "fspec": "yarn dream sync:existing && jest --clearCache && jest --config=./spec/features/jest.config.js --runInBand --forceExit",
+    "fspec:fast": "jest --clearCache && jest --config=./spec/features/jest.config.js --runInBand --forceExit",
     "console": "yarn dream sync:existing && npx ts-node --project ./tsconfig.json ./src/conf/repl.ts",
     "postinstall": "yarn dream sync:existing"
   },
