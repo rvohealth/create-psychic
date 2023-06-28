@@ -1,7 +1,5 @@
-import './.psy/init'
-import { env, PsychicServer } from 'psychic'
-
-env.load()
+import './conf/loadEnv'
+import { PsychicServer } from 'psychic'
 
 const server = new PsychicServer()
 server.start()
