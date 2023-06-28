@@ -1,9 +1,11 @@
 module.exports = {
   launch: {
-    dumpio: true,
-    headless: process.env.BROWSER !== '1',
-    args: ['--disable-infobars', '--window-size=1200,800'],
+    dumpio: process.env.DEBUG === '1',
+    headless: process.env.BROWSER !== '1' ? 'new' : false,
+    args: ['--disable-infobars', '--window-size=1200,800', '--disable-extensions'],
     defaultViewport: null,
+    product: 'chrome',
+    executablePath: process.env.CHROME_PATH || undefined,
   },
   browserContext: 'default',
   server: [
@@ -20,6 +22,7 @@ module.exports = {
     },
     {
       command: 'ts-node ./src/spec-server.ts',
+      host: '127.0.0.1',
       launchTimeout: 20000,
       debug: process.env.DEBUG === '1',
       port: 7778,
