@@ -44,7 +44,7 @@ const sspawn_1 = __importDefault(require("./sspawn"));
 const logo_1 = __importDefault(require("./logo"));
 const log_1 = __importDefault(require("./log"));
 const sleep_1 = __importDefault(require("./sleep"));
-function newHowlApp(appName, { api = false, ws = false, redis = false, uuids = false, }) {
+function newPsychiclApp(appName, { api = false, ws = false, redis = false, uuids = false, }) {
     return __awaiter(this, void 0, void 0, function* () {
         log_1.default.clear();
         log_1.default.write((0, logo_1.default)() + '\n\n', { cache: true });
@@ -141,5 +141,5 @@ ${c.magentaBright(`to run unit tests, and then if they pass, run feature tests,`
         console.log(helloMessage);
     });
 }
-exports.default = newHowlApp;
+exports.default = newPsychiclApp;
 //# sourceMappingURL=newPsychicApp.js.map
