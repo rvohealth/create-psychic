@@ -131,6 +131,7 @@ program
 dreamcmd(program, 'db:create', 'creates the database')
 dreamcmd(program, 'db:drop', 'drops the database')
 dreamcmd(program, 'db:migrate', 'runs migrations')
+dreamcmd(program, 'db:seed', 'seeds your database')
 yarncmd(program, 'dev', 'starts the local dev server')
 yarncmd(program, 'db', 'starts the local dev server')
 yarncmd(program, 'build', 'builds typescript project')

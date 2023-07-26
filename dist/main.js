@@ -123,6 +123,7 @@ program
 (0, dreamcmd_1.default)(program, 'db:create', 'creates the database');
 (0, dreamcmd_1.default)(program, 'db:drop', 'drops the database');
 (0, dreamcmd_1.default)(program, 'db:migrate', 'runs migrations');
+(0, dreamcmd_1.default)(program, 'db:seed', 'seeds your database');
 (0, yarncmd_1.default)(program, 'dev', 'starts the local dev server');
 (0, yarncmd_1.default)(program, 'db', 'starts the local dev server');
 (0, yarncmd_1.default)(program, 'build', 'builds typescript project');
