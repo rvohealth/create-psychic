@@ -117,21 +117,22 @@ program
   .option('--step <integer>', '--step <integer> number of steps back to travel')
   .action(async () => {
     const [_, ...args] = program.args
-    await sspawn(`yarn dream db:rollback ${args.join(' ')}`)
+    await sspawn(`yarn psy db:rollback ${args.join(' ')}`)
   })
 
 program
   .command('db:reset')
-  .description('db:rollback rolls back the migration')
+  .description('db:reset drops, creates, migrates, and seeds your database, followed by a type sync')
   .action(async () => {
     const [_, ...args] = program.args
-    await sspawn(`yarn dream db:reset ${args.join(' ')}`)
+    await sspawn(`yarn psy db:reset ${args.join(' ')}`)
   })
 
 dreamcmd(program, 'db:create', 'creates the database')
 dreamcmd(program, 'db:drop', 'drops the database')
 dreamcmd(program, 'db:migrate', 'runs migrations')
 dreamcmd(program, 'db:seed', 'seeds your database')
+dreamcmd(program, 'sync:existing', 'syncs type files to dream')
 yarncmd(program, 'dev', 'starts the local dev server')
 yarncmd(program, 'db', 'starts the local dev server')
 yarncmd(program, 'build', 'builds typescript project')
