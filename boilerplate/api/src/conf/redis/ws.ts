@@ -1,3 +1,4 @@
+import { developmentOrTestEnv } from 'dream'
 import { PsychicRedisConnectionOptions } from 'psychic'
 
 export default async (): Promise<PsychicRedisConnectionOptions> => {
@@ -11,6 +12,6 @@ export default async (): Promise<PsychicRedisConnectionOptions> => {
     password,
     host,
     port,
-    secure: false,
+    secure: !developmentOrTestEnv(),
   }
 }
