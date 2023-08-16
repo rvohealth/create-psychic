@@ -20,7 +20,7 @@
     "postinstall": "NODE_ENV=development yarn psy sync:routes"
   },
   "dependencies": {
-    "psychic": "https://avocadojesus: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@github.com/avocadojesus/psychic.git#b57b81c"
+    "psychic": "https://avocadojesus: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@github.com/avocadojesus/psychic.git#5477cdf"
   },
   "devDependencies": {
     "@types/expect-puppeteer": "^5.0.3",
