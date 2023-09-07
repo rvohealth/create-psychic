@@ -7,20 +7,25 @@
   "license": "Apache 2.09",
   "private": true,
   "scripts": {
-    "psy": "NODE_ENV=development yarn dream sync:existing && yarn --cwd=node_modules/psychic psy",
-    "dream": "yarn --cwd=node_modules/dream dream",
-    "dev": "NODE_ENV=development ts-node ./src/main.ts",
-    "prod": "NODE_ENV=production ts-node ./src/main.ts",
+    "psy": "APP_ROOT_PATH=$(pwd) yarn --cwd=node_modules/psychic psy",
+    "psyjs": "APP_ROOT_PATH=$(pwd) yarn --cwd=node_modules/psychic psyjs",
+    "build": "APP_ROOT_PATH=$(pwd) yarn --cwd=node_modules/psychic build && echo \"building your app...\" && rm -rf dist && APP_ROOT_PATH=$(pwd) npx tsc -p ./tsconfig.build.json && yarn after-build",
+    "after-build": "cp ./src/conf/app.yml ./dist/src/conf/app.yml && cp -R ./openapi ./dist",
+    "dream": "APP_ROOT_PATH=$(pwd) yarn --cwd=node_modules/dream dream",
+    "dreamjs": "APP_ROOT_PATH=$(pwd) yarn --cwd=node_modules/dream dreamjs",
+    "dev": "APP_ROOT_PATH=$(pwd) NODE_ENV=development TS_SAFE=1 ts-node --transpile-only ./src/main.ts",
+    "prod": "APP_ROOT_PATH=$(pwd) NODE_ENV=production node ./dist/src/main.js",
+    "worker": "APP_ROOT_PATH=$(pwd) NODE_ENV=production node ./dist/src/worker.js",
     "sync": "yarn psy sync:all",
-    "uspec": "yarn psy sync:routes && jest --config=./spec/unit/jest.config.js --runInBand --forceExit",
-    "uspec:fast": "jest --config=./spec/unit/jest.config.js --runInBand --forceExit",
-    "fspec": "yarn psy sync:routes && jest --clearCache && jest --config=./spec/features/jest.config.js --runInBand --forceExit",
-    "fspec:fast": "jest --clearCache && jest --config=./spec/features/jest.config.js --runInBand --forceExit",
-    "console": "yarn psy sync:routes && npx ts-node --project ./tsconfig.json ./src/conf/repl.ts",
-    "postinstall": "NODE_ENV=development yarn psy sync:routes"
+    "uspec": "yarn dream sync:existing && APP_ROOT_PATH=$(pwd) TS_SAFE=1 jest --config=./spec/unit/jest.config.js --runInBand --forceExit --verbose",
+    "uspec:fast": "APP_ROOT_PATH=$(pwd) OMIT_OPEN_API_COMPILATION=1 TS_SAFE=1 jest --config=./spec/unit/jest.config.js --runInBand --forceExit --verbose",
+    "fspec": "yarn dream sync:existing && APP_ROOT_PATH=$(pwd) TS_SAFE=1 jest --clearCache && jest --config=./spec/features/jest.config.js --runInBand --forceExit --verbose",
+    "fspec:fast": "APP_ROOT_PATH=$(pwd) OMIT_OPEN_API_COMPILATION=1 TS_SAFE=1 jest --clearCache && jest --config=./spec/features/jest.config.js --runInBand --forceExit --verbose",
+    "console": "TS_SAFE=1 yarn dream sync:existing && TS_SAFE=1 APP_ROOT_PATH=$(pwd) npx ts-node --project ./tsconfig.json ./src/conf/repl.ts",
+    "postinstall": "yarn build"
   },
   "dependencies": {
-    "psychic": "https://avocadojesus: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@github.com/avocadojesus/psychic.git#5477cdf"
+    "psychic": "https://avocadojesus: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@github.com/avocadojesus/psychic.git#b6343f8"
   },
   "devDependencies": {
     "@types/expect-puppeteer": "^5.0.3",
