@@ -1,9 +1,9 @@
 {
-  "name": "psychic-cli",
-  "version": "0.0.0",
-  "description": "howl cli",
+  "name": "@rvohealth/psychic-cli",
+  "version": "0.1.0",
+  "description": "psychic cli",
   "main": "src/dist/main.js",
-  "repository": "https://github.com/avocadojesus/psychic-cli.git",
+  "repository": "https://github.com/rvohealth/psychic-cli.git",
   "author": "avocadojesus",
   "license": "Apache-2.0",
   "private": true,

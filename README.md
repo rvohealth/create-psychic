@@ -1,6 +1,6 @@
 - [Overview](#overview)
 - [Installation](#installation)
-- [Howl CLI](#howl-cli)
+- [Howl CLI](#psychic-cli)
   - [howl help](#howl-help)
   - [howl new](#howl-new)
   - [howl generate](#howl-generate)
@@ -26,13 +26,13 @@ Howl is a slim MVC-based nodejs web framework which simply packages together a r
 
 # Installation
 
-If you are looking to create a new howl app, you do not actually need to deal directly with this repo. Instead, you can install howl as a [global cli tool](https://github.com/avocadojesus/howl-cli) using the following:
+If you are looking to create a new howl app, you do not actually need to deal directly with this repo. Instead, you can install howl as a [global cli tool](https://github.com/rvohealth/psychic-cli) using the following:
 
 ```bash
-yarn global add https://github.com/avocadojesus/howl-cli
+yarn global add https://github.com/rvohealth/psychic-cli
 ```
 
-Although the package is called `howl-cli`, the executable installed to your machine will actually just be called `howl`. This executable can be used to do everything, from generating a new howl app, to running migrations, generating models, controllers, serializers, resources, and [more](#howl-cli).
+Although the package is called `psychic-cli`, the executable installed to your machine will actually just be called `howl`. This executable can be used to do everything, from generating a new howl app, to running migrations, generating models, controllers, serializers, resources, and [more](#psychic-cli).
 
 The cli repo is a lightweight node script meant to provide basic generative functions, and otherwise simply acts as a puppet master running your yarn scripts for you.
 
