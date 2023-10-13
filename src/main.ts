@@ -10,6 +10,7 @@ import yarncmd from './yarncmd'
 import dreamcmd from './dreamcmd'
 import newPsychicApp from './newPsychicApp'
 import sspawn from './sspawn'
+import psycmd from './psycmd'
 
 const program = new Command()
 
@@ -130,7 +131,8 @@ program
 
 dreamcmd(program, 'db:create', 'creates the database')
 dreamcmd(program, 'db:drop', 'drops the database')
-dreamcmd(program, 'db:migrate', 'runs migrations')
+psycmd(program, 'db:migrate', 'runs migrations')
+psycmd(program, 'sync:routes', 'syncs routes')
 dreamcmd(program, 'db:seed', 'seeds your database')
 dreamcmd(program, 'sync:existing', 'syncs type files to dream')
 yarncmd(program, 'dev', 'starts the local dev server')
