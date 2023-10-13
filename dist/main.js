@@ -22,6 +22,7 @@ const yarncmd_1 = __importDefault(require("./yarncmd"));
 const dreamcmd_1 = __importDefault(require("./dreamcmd"));
 const newPsychicApp_1 = __importDefault(require("./newPsychicApp"));
 const sspawn_1 = __importDefault(require("./sspawn"));
+const psycmd_1 = __importDefault(require("./psycmd"));
 const program = new commander_1.Command();
 program
     .command('new')
@@ -122,7 +123,8 @@ program
 }));
 (0, dreamcmd_1.default)(program, 'db:create', 'creates the database');
 (0, dreamcmd_1.default)(program, 'db:drop', 'drops the database');
-(0, dreamcmd_1.default)(program, 'db:migrate', 'runs migrations');
+(0, psycmd_1.default)(program, 'db:migrate', 'runs migrations');
+(0, psycmd_1.default)(program, 'sync:routes', 'syncs routes');
 (0, dreamcmd_1.default)(program, 'db:seed', 'seeds your database');
 (0, dreamcmd_1.default)(program, 'sync:existing', 'syncs type files to dream');
 (0, yarncmd_1.default)(program, 'dev', 'starts the local dev server');
