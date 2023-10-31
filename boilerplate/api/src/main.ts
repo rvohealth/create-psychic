@@ -1,5 +1,13 @@
 import './conf/loadEnv'
 import { PsychicServer } from '@rvohealth/psychic'
 
-const server = new PsychicServer()
-server.start()
+async function start() {
+  const server = new PsychicServer()
+  await server.start()
+
+  process.on('SIGINT', async () => {
+    await server.stop()
+  })
+}
+
+start()
