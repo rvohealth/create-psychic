@@ -23,7 +23,7 @@
     "postinstall": "yarn build"
   },
   "dependencies": {
-    "@rvohealth/psychic": "^0.1.6"
+    "@rvohealth/psychic": "^0.1.27"
   },
   "devDependencies": {
     "@types/expect-puppeteer": "^5.0.3",
