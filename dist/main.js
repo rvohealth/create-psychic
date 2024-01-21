@@ -77,6 +77,13 @@ program
     yield (0, sspawn_1.default)(`yarn dream g:model ${args.join(' ')}`);
 }));
 program
+    .command('generate:api')
+    .alias('g:api')
+    .description('g:api generates client types (for use in front-end client)')
+    .action(() => __awaiter(void 0, void 0, void 0, function* () {
+    yield (0, sspawn_1.default)('yarn dream g:api');
+}));
+program
     .command('generate:migration')
     .alias('g:migration')
     .description('g:migration <name> create a new dream migration')
@@ -126,7 +133,6 @@ program
 (0, psycmd_1.default)(program, 'db:migrate', 'runs migrations');
 (0, psycmd_1.default)(program, 'sync:routes', 'syncs routes');
 (0, dreamcmd_1.default)(program, 'db:seed', 'seeds your database');
-(0, dreamcmd_1.default)(program, 'sync:existing', 'syncs type files to dream');
 (0, yarncmd_1.default)(program, 'dev', 'starts the local dev server');
 (0, yarncmd_1.default)(program, 'db', 'starts the local dev server');
 (0, yarncmd_1.default)(program, 'build', 'builds typescript project');
