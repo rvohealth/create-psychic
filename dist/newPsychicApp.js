@@ -85,7 +85,8 @@ function newPsychiclApp(appName, { api = false, ws = false, redis = false, uuids
         log_1.default.restoreCache();
         log_1.default.write(c.cyanBright(`Step 4. Initialize git repository: Done!`), { cache: true });
         log_1.default.write(c.greenBright(`Step 5. Building project...`));
-        yield (0, sspawn_1.default)(`yarn --cwd=${projectPath} dream sync:all`);
+        // don't sync yet, since we need to run migrations first
+        // await sspawn(`yarn --cwd=${projectPath} dream sync:existing`)
         if (!api) {
             yield (0, sspawn_1.default)(`yarn --cwd=${rootPath}/client install`);
         }

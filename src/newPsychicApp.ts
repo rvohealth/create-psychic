@@ -69,7 +69,9 @@ export default async function newPsychiclApp(
   log.restoreCache()
   log.write(c.cyanBright(`Step 4. Initialize git repository: Done!`), { cache: true })
   log.write(c.greenBright(`Step 5. Building project...`))
-  await sspawn(`yarn --cwd=${projectPath} dream sync:all`)
+
+  // don't sync yet, since we need to run migrations first
+  // await sspawn(`yarn --cwd=${projectPath} dream sync:existing`)
 
   if (!api) {
     await sspawn(`yarn --cwd=${rootPath}/client install`)
