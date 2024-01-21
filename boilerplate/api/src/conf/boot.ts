@@ -1,3 +1,3 @@
-import { PsychicConfig } from 'psychic'
+import { PsychicConfig } from '@rvohealth/psychic'
 
 export default (psyConf: PsychicConfig) => {}

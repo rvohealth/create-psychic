@@ -3,7 +3,7 @@ import * as repl from 'node:repl'
 import * as fs from 'fs/promises'
 import * as path from 'path'
 import { DateTime } from 'luxon'
-import { Dream, pascalize } from 'psychic'
+import { Dream, pascalize } from '@rvohealth/psychic'
 
 const replServer = repl.start('> ')
 export default (async function () {
