@@ -1,17 +1,16 @@
-import { developmentOrTestEnv } from 'dream'
-import { PsychicRedisConnectionOptions } from 'psychic'
+import { PsychicRedisConnectionOptions } from '@rvohealth/psychic'
 
 export default async (): Promise<PsychicRedisConnectionOptions> => {
-  const username = process.env.BACKGROUND_JOB_REDIS_USER || undefined
-  const password = process.env.BACKGROUND_JOB_REDIS_PASSWORD || undefined
-  const host = process.env.BACKGROUND_JOB_REDIS_HOST || 'localhost'
-  const port = process.env.BACKGROUND_JOB_REDIS_PORT || ''
+  const username = process.env.BACKGROUND_JOBS_REDIS_USERNAME || undefined
+  const password = process.env.BACKGROUND_JOBS_REDIS_PASSWORD || undefined
+  const host = process.env.BACKGROUND_JOBS_REDIS_HOST || 'localhost'
+  const port = process.env.BACKGROUND_JOBS_REDIS_PORT || ''
 
   return {
     username,
     password,
     host,
     port,
-    secure: !developmentOrTestEnv(),
+    secure: process.env.NODE_ENV === 'production',
   }
 }
