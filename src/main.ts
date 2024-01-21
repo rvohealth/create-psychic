@@ -79,6 +79,14 @@ program
   })
 
 program
+  .command('generate:api')
+  .alias('g:api')
+  .description('g:api generates client types (for use in front-end client)')
+  .action(async () => {
+    await sspawn('yarn dream g:api')
+  })
+
+program
   .command('generate:migration')
   .alias('g:migration')
   .description('g:migration <name> create a new dream migration')
@@ -134,7 +142,6 @@ dreamcmd(program, 'db:drop', 'drops the database')
 psycmd(program, 'db:migrate', 'runs migrations')
 psycmd(program, 'sync:routes', 'syncs routes')
 dreamcmd(program, 'db:seed', 'seeds your database')
-dreamcmd(program, 'sync:existing', 'syncs type files to dream')
 yarncmd(program, 'dev', 'starts the local dev server')
 yarncmd(program, 'db', 'starts the local dev server')
 yarncmd(program, 'build', 'builds typescript project')
