@@ -1,4 +1,4 @@
-import { PsychicServer } from 'psychic'
+import { PsychicServer } from '@rvohealth/psychic'
 import * as request from 'supertest'
 const server = new PsychicServer()
 
