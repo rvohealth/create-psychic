@@ -1,6 +1,6 @@
 models_path: 'src/app/models'
 serializers_path: 'src/app/serializers'
-client_api_schema_path: '../client/schema.ts'
+client_api_schema_path: '../client/src/api/schema.ts'
 conf_path: 'src/conf'
 migrations_path: 'src/db/migrations'
 associations_path: 'src/db/associations.ts'
