@@ -1,14 +1,4 @@
-const SENSITIVE_FIELDS = [
-  'pass*',
-  'token*',
-  'auth*',
-  'secret*',
-  'password',
-  'token',
-  'authentication',
-  'authorization',
-  'secret',
-]
+const SENSITIVE_FIELDS = ['password', 'token', 'authentication', 'authorization', 'secret']
 
 const defaultRequestFilter = {
   maskBody: SENSITIVE_FIELDS,
@@ -17,13 +7,29 @@ const defaultRequestFilter = {
   maxBodyLength: 500,
 }
 
-export default async () => {
+export function loggerOptions() {
   return {
-    request: defaultRequestFilter,
+    request: {
+      ...defaultRequestFilter,
+      excludeHeaders: [
+        'authorization',
+        'content-length',
+        'connection',
+        'cookie',
+        'sec-ch-ua',
+        'sec-ch-ua-mobile',
+        'sec-ch-ua-platform',
+        'sec-fetch-dest',
+        'sec-fetch-mode',
+        'sec-fetch-site',
+        'user-agent',
+      ],
+    },
     response: {
       ...defaultRequestFilter,
       excludeHeaders: ['*'], // Exclude all headers from responses,
       excludeBody: ['*'], // Exclude all body from responses
     },
+    excludeURLs: ['/health_check'],
   }
 }
