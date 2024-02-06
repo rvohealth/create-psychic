@@ -9,4 +9,5 @@ export default async function onServerError(error: unknown, req: Request, res: R
     : ''
 
   if (!res.headersSent) res.status(500).send(message)
+  else if (developmentOrTestEnv()) throw error
 }
