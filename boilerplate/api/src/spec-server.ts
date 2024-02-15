@@ -1,4 +1,4 @@
-import './conf/loadEnv'
+import './conf/global'
 import { PsychicServer } from '@rvohealth/psychic'
 
 process.env.NODE_ENV = 'test'
