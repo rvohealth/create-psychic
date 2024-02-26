@@ -7,7 +7,7 @@
     "baseUrl": "src",
     "outDir": "dist",
     "strict": true,
-    "target": "es6",
+    "target": "ESNext",
     "module": "commonjs",
     "sourceMap": true,
     "esModuleInterop": true,
