@@ -18,7 +18,7 @@
     "sync": "APP_NAME=$npm_package_name APP_VERSION=$npm_package_version yarn psy sync:all",
     "uspec": "APP_NAME=$npm_package_name APP_VERSION=$npm_package_version APP_ROOT_PATH=$(pwd) TS_SAFE=1 jest -w 1 --config=./spec/unit/jest.config.js --forceExit --verbose --logHeapUsage",
     "fspec": "APP_NAME=$npm_package_name APP_VERSION=$npm_package_version APP_ROOT_PATH=$(pwd) TS_SAFE=1 jest --clearCache && jest --config=./spec/features/jest.config.js --runInBand --forceExit --verbose --logHeapUsage",
-    "console": "APP_NAME=$npm_package_name APP_VERSION=$npm_package_version TS_SAFE=1 APP_ROOT_PATH=$(pwd) npx ts-node --project ./tsconfig.json ./src/conf/repl.ts"
+    "console": "APP_NAME=$npm_package_name APP_VERSION=$npm_package_version TS_SAFE=1 APP_ROOT_PATH=$(pwd) npx ts-node --transpile-only --project ./tsconfig.json ./src/conf/repl.ts"
   },
   "dependencies": {
     "@rvohealth/dream": "^0.1.70",
