@@ -24,6 +24,53 @@
 
 Psychic is a slim MVC-based nodejs web framework which simply packages together a routing engine (using [expressjs](NEED_LINK)), an ORM (using [sequelize-typescript](NEED_LINK)), a websocket client (using [socket.io](NEED_LINK)), and a redis client (using [redis](NEED_LINK)), and an optional view layer provided by react. The routing engine has been slightly enhanced to provide resourceful routing patterns, and a controller layer is also provided to allow classic routing paradigms expressed in other major monoliths, since this is not provided out of the box by express.
 
+# Quickstart
+
+```bash
+# install global cli
+yarn global add https://github.com/rvohealth/psychic-cli@latest
+
+# use global cli to create a new app
+psy new myapp
+
+cd myapp
+
+# use whichever code editor you like, just need to edit this file to add the username
+# used by postgres. This is usually the username used by the computer, or else 'postgres'
+vim ./api/.env
+
+DB_USER=<YOUR_POSTGRES_USERNAME>
+DB_NAME=howyadoin_development
+...
+
+# do the same thing for the .env.test file, which is used to provision your testing environment
+vim ./api/.env.test
+
+DB_USER=<YOUR_POSTGRES_USERNAME>
+DB_NAME=howyadoin_test
+...
+
+cd api
+NODE_ENV=development yarn psy db:create
+NODE_ENV=test yarn psy db:create
+
+yarn psy g:resource api/v1/users user email:string password:string rvoId:string type:enum:user_types:Internal,External
+
+NODE_ENV=development yarn psy db:migrate
+NODE_ENV=test yarn psy db:migrate
+```
+
+Once your resource is generated, open conf/routes.ts and add the following:
+
+```ts
+  ...
+  r.namespace('api', r => {
+    r.namespace('v1', r => {
+      r.resources('users')
+    })
+  })
+```
+
 # Installation
 
 If you are looking to create a new psy app, you do not actually need to deal directly with this repo. Instead, you can install psy as a [global cli tool](https://github.com/rvohealth/psychic-cli) using the following:
@@ -309,7 +356,7 @@ The following attributes are suppported by the generate model api:
 ### psy generate controller
 
 ```bash
-yarn psy generate:controller admin-users
+yarn psy generate:controller users
 
 # to limit the methods included in the boilerplate
 yarn psy generate:controller api/v1/users users index create show
