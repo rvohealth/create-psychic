@@ -21,13 +21,14 @@
     "console": "APP_NAME=$npm_package_name APP_VERSION=$npm_package_version TS_SAFE=1 APP_ROOT_PATH=$(pwd) npx ts-node --transpile-only --project ./tsconfig.json ./src/conf/repl.ts"
   },
   "dependencies": {
-    "@rvohealth/dream": "^0.1.70",
-    "@rvohealth/psychic": "^0.1.61"
+    "@rvohealth/dream": "^0.1.89",
+    "@rvohealth/psychic": "^0.1.64"
   },
   "devDependencies": {
     "@types/expect-puppeteer": "^5.0.3",
     "@types/jest-environment-puppeteer": "^5.0.3",
     "@types/supertest": "^2.0.12",
+    "express-requests-logger": "^4.0.0",
     "jest-puppeteer": "^8.0.6",
     "puppeteer": "^19.9.1",
     "supertest": "^6.3.3",
