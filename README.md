@@ -22,7 +22,7 @@
 
 # Overview
 
-Psychic is a slim MVC-based nodejs web framework which simply packages together a routing engine (using [expressjs](NEED_LINK)), an ORM (using [kysely-typescript](NEED_LINK)), a websocket client (using [socket.io](NEED_LINK)), and a redis client (using [redis](NEED_LINK)), and an optional view layer provided by react. The routing engine has been slightly enhanced to provide resourceful routing patterns, and a controller layer is also provided to allow classic routing paradigms expressed in other major monoliths, since this is not provided out of the box by express.
+Psychic is a slim MVC-based nodejs web framework which simply packages together a routing engine (using [expressjs](https://expressjs.com)), an ORM (using [kysely](https://kysely.dev)), a websocket client (using [socket.io](NEED_LINK)), and a redis client (using [redis](NEED_LINK)), and an optional view layer provided by react. The routing engine has been slightly enhanced to provide resourceful routing patterns, and a controller layer is also provided to allow classic routing paradigms expressed in other major monoliths, since this is not provided out of the box by express.
 
 # Quickstart
 
