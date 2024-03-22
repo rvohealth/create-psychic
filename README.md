@@ -71,6 +71,65 @@ Once your resource is generated, open conf/routes.ts and add the following:
   })
 ```
 
+Now that we have a backend, let's kick on our webserver and begin writing an app to connect to
+
+```bash
+# generate client schema to use within front end
+yarn psy g:api
+
+# without REACT=1, the react client will not start up
+REACT=1 yarn dev
+```
+
+Now, create API bindings to use with your react front end to connect to your new routes
+
+```ts
+// add the following to your client app routes:
+// client/src/app/config/routes.ts
+
+  app: {
+    ...
+    v1: {
+      users: {
+        index: '/api/v1/users',
+        create: '/api/v1/users',
+        show: '/api/v1/users/:id',
+        update: '/api/v1/users/:id',
+        destroy: '/api/v1/users/:id',
+      },
+    },
+    ...
+  }
+```
+
+Add a new api service to use throughout your app:
+
+```ts
+// client/src/app/api/users.ts
+
+import routes from '../config/routes'
+import { api } from './common'
+import { User } from './schema'
+
+export default class UsersAPI {
+  static create(opts: Partial<User>) {
+    return api.post(routes.api.v1.users.create, { user: opts })
+  }
+
+  static show(id: string) {
+    return api.post(routes.api.v1.users.show(id))
+  }
+
+  static update(id: string, opts: Partial<User>) {
+    return api.patch(routes.api.v1.users.show(id), { user: opts })
+  }
+
+  static destroy(id: string) {
+    return api.patch(routes.api.v1.users.destroy(id))
+  }
+}
+```
+
 # Installation
 
 If you are looking to create a new psy app, you do not actually need to deal directly with this repo. Instead, you can install psy as a [global cli tool](https://github.com/rvohealth/psychic-cli) using the following:
