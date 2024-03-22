@@ -21,8 +21,8 @@
     "console": "APP_NAME=$npm_package_name APP_VERSION=$npm_package_version TS_SAFE=1 APP_ROOT_PATH=$(pwd) npx ts-node --transpile-only --project ./tsconfig.json ./src/conf/repl.ts"
   },
   "dependencies": {
-    "@rvohealth/dream": "^0.1.89",
-    "@rvohealth/psychic": "^0.1.64"
+    "@rvohealth/dream": "^0.1.92",
+    "@rvohealth/psychic": "^0.1.65"
   },
   "devDependencies": {
     "@types/expect-puppeteer": "^5.0.3",
