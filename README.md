@@ -22,7 +22,7 @@
 
 # Overview
 
-Psychic is a slim MVC-based nodejs web framework which simply packages together a routing engine (using [expressjs](NEED_LINK)), an ORM (using [sequelize-typescript](NEED_LINK)), a websocket client (using [socket.io](NEED_LINK)), and a redis client (using [redis](NEED_LINK)), and an optional view layer provided by react. The routing engine has been slightly enhanced to provide resourceful routing patterns, and a controller layer is also provided to allow classic routing paradigms expressed in other major monoliths, since this is not provided out of the box by express.
+Psychic is a slim MVC-based nodejs web framework which simply packages together a routing engine (using [expressjs](NEED_LINK)), an ORM (using [kysely-typescript](NEED_LINK)), a websocket client (using [socket.io](NEED_LINK)), and a redis client (using [redis](NEED_LINK)), and an optional view layer provided by react. The routing engine has been slightly enhanced to provide resourceful routing patterns, and a controller layer is also provided to allow classic routing paradigms expressed in other major monoliths, since this is not provided out of the box by express.
 
 # Quickstart
 
@@ -443,12 +443,11 @@ yarn psy generate:migration create-users
 ```ts
 // api/src/db/migrations/1680193523953-create-users.ts
 
-/** @type {import('sequelize-cli').Migration} */
-module.exports = {
-  async up(queryinterface, Sequelize) {},
+import { Kysely, sql } from 'kysely'
 
-  async down(queryinterface, Sequelize) {},
-}
+export async function up(db: Kysely<any>): Promise<void> {}
+
+export async function down(db: Kysely<any>): Promise<void> {}
 ```
 
 ### psy generate resource
@@ -587,7 +586,7 @@ REACT=1 yarn psy dev
 
 ## psy db create
 
-Creates a database using the underlyiing sequelize cli
+Creates a database using the underlyiing kysely cli
 
 ```bash
 yarn psy db:create
@@ -598,7 +597,7 @@ NODE_ENV=test yarn psy db:create
 
 ## psy db drop
 
-Drops a database using the underlyiing sequelize cli
+Drops a database using the underlyiing kysely cli
 
 ```bash
 yarn psy db:drop
@@ -609,7 +608,7 @@ NODE_ENV=test yarn psy db:drop
 
 ## psy db migrate
 
-Runs migrations using undelrying sequelize cli
+Runs migrations using undelrying kysely cli
 
 ```bash
 yarn psy db:create
@@ -620,7 +619,7 @@ NODE_ENV=test yarn psy db:create
 
 ## psy db rollback
 
-Rolls back recent migrations using undelrying sequelize cli
+Rolls back recent migrations using undelrying kysely cli
 
 ```bash
 yarn psy db:rollback
@@ -637,11 +636,13 @@ Lists all routes exposed by the underlying express app
 yarn psy routes
 
 # output:
-POST /login
-POST /logout
-GET /me
-POST /users
-GET /users
+GET     ping                ping#ping
+GET     /api/v1/users       Api/V1/Users#index
+POST    /api/v1/users       Api/V1/Users#create
+PUT     /api/v1/users/:id   Api/V1/Users#update
+PATCH   /api/v1/users/:id   Api/V1/Users#update
+GET     /api/v1/users/:id   Api/V1/Users#show
+DELETE  /api/v1/users/:id   Api/V1/Users#destroy
 ```
 
 ## psy build
