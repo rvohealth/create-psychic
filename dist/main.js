@@ -4,15 +4,6 @@
 // https://www.freecodecamp.org/news/node-js-child-processes-everything-you-need-to-know-e69498fe970a/
 // commanderjs docs:
 // https://github.com/tj/commander.js#quick-start
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -37,97 +28,97 @@ program
     .command('clean')
     .description('create a controller, model, migration, and serializer for a resource')
     .argument('<name>', 'name of the resource')
-    .action(() => __awaiter(void 0, void 0, void 0, function* () {
-    yield (0, sspawn_1.default)('yarn psy clean');
-}));
+    .action(async () => {
+    await (0, sspawn_1.default)('yarn psy clean');
+});
 program
     .command('generate:resource')
     .alias('g:resource')
     .description('create a controller, model, migration, and serializer for a resource')
     .argument('<name>', 'name of the resource')
-    .action(() => __awaiter(void 0, void 0, void 0, function* () {
+    .action(async () => {
     const [_, ...args] = program.args;
-    yield (0, sspawn_1.default)(`yarn psy g:resource ${args.join(' ')}`);
-}));
+    await (0, sspawn_1.default)(`yarn psy g:resource ${args.join(' ')}`);
+});
 program
     .command('generate:controller')
     .alias('g:controller')
     .description('g:controller <name> [...methods] create a new psychic controller')
     .argument('<name>', 'name of the controller')
-    .action(() => __awaiter(void 0, void 0, void 0, function* () {
+    .action(async () => {
     const [_, ...args] = program.args;
-    yield (0, sspawn_1.default)(`yarn psy g:controller ${args.join(' ')}`);
-}));
+    await (0, sspawn_1.default)(`yarn psy g:controller ${args.join(' ')}`);
+});
 program
     .command('generate:serializer')
     .alias('g:serializer')
     .description('g:serializer <name> [...attributes] create a new psychic serializer')
     .argument('<name>', 'name of the serializer')
-    .action(() => __awaiter(void 0, void 0, void 0, function* () {
+    .action(async () => {
     const [_, ...args] = program.args;
-    yield (0, sspawn_1.default)(`yarn psy g:serializer ${args.join(' ')}`);
-}));
+    await (0, sspawn_1.default)(`yarn psy g:serializer ${args.join(' ')}`);
+});
 program
     .command('generate:model')
     .alias('g:model')
     .description('g:model <name> [...attributes] create a new dream model')
     .argument('<name>', 'name of the model')
-    .action(() => __awaiter(void 0, void 0, void 0, function* () {
+    .action(async () => {
     const [_, ...args] = program.args;
-    yield (0, sspawn_1.default)(`yarn dream g:model ${args.join(' ')}`);
-}));
+    await (0, sspawn_1.default)(`yarn dream g:model ${args.join(' ')}`);
+});
 program
     .command('generate:api')
     .alias('g:api')
     .description('g:api generates client types (for use in front-end client)')
-    .action(() => __awaiter(void 0, void 0, void 0, function* () {
-    yield (0, sspawn_1.default)('yarn dream g:api');
-}));
+    .action(async () => {
+    await (0, sspawn_1.default)('yarn dream g:api');
+});
 program
     .command('generate:migration')
     .alias('g:migration')
     .description('g:migration <name> create a new dream migration')
     .argument('<name>', 'name of the migration')
-    .action(() => __awaiter(void 0, void 0, void 0, function* () {
+    .action(async () => {
     const [_, ...args] = program.args;
-    yield (0, sspawn_1.default)(`yarn dream g:migration ${args.join(' ')}`);
-}));
+    await (0, sspawn_1.default)(`yarn dream g:migration ${args.join(' ')}`);
+});
 program
     .command('routes')
     .alias('routes:list')
     .description('lists the routes known by your application')
-    .action(() => __awaiter(void 0, void 0, void 0, function* () {
-    yield (0, sspawn_1.default)(`yarn psy routes`);
-}));
+    .action(async () => {
+    await (0, sspawn_1.default)(`yarn psy routes`);
+});
 program
     .command('console')
     .alias('c')
     .description('enters a command line repl')
-    .action(() => __awaiter(void 0, void 0, void 0, function* () {
-    yield (0, sspawn_1.default)(`yarn console`);
-}));
+    .action(async () => {
+    await (0, sspawn_1.default)(`yarn console`);
+});
 program
     .command('spec')
     .description('runs either a feauture spec, unit spec, or all specs, depending on what is passed.')
-    .action(() => __awaiter(void 0, void 0, void 0, function* () {
+    .action(async () => {
     const [_, ...args] = program.args;
-    yield (0, sspawn_1.default)(`yarn psy spec ${args.join(' ')}`);
-}));
+    await (0, sspawn_1.default)(`yarn psy spec ${args.join(' ')}`);
+});
 program
     .command('db:rollback')
     .description('db:rollback rolls back the migration')
     .option('--step <integer>', '--step <integer> number of steps back to travel')
-    .action(() => __awaiter(void 0, void 0, void 0, function* () {
+    .action(async () => {
     const [_, ...args] = program.args;
-    yield (0, sspawn_1.default)(`yarn psy db:rollback ${args.join(' ')}`);
-}));
+    await (0, sspawn_1.default)(`yarn psy db:rollback ${args.join(' ')}`);
+});
 program
     .command('db:reset')
     .description('db:reset drops, creates, migrates, and seeds your database, followed by a type sync')
-    .action(() => __awaiter(void 0, void 0, void 0, function* () {
+    .action(async () => {
     const [_, ...args] = program.args;
-    yield (0, sspawn_1.default)(`yarn psy db:reset ${args.join(' ')}`);
-}));
+    await (0, sspawn_1.default)(`yarn psy db:reset ${args.join(' ')}`);
+});
 (0, dreamcmd_1.default)(program, 'db:create', 'creates the database');
 (0, dreamcmd_1.default)(program, 'db:drop', 'drops the database');
 (0, psycmd_1.default)(program, 'db:migrate', 'runs migrations');

@@ -13,7 +13,11 @@ function sspawn(command, opts = {}) {
 }
 exports.default = sspawn;
 function ssspawn(command, opts = {}) {
-    return (0, child_process_1.spawn)(command, Object.assign({ stdio: 'inherit', shell: true }, opts));
+    return (0, child_process_1.spawn)(command, {
+        stdio: 'inherit',
+        shell: true,
+        ...opts,
+    });
 }
 exports.ssspawn = ssspawn;
 //# sourceMappingURL=sspawn.js.map
