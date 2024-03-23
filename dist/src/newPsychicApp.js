@@ -36,6 +36,8 @@ const logo_1 = __importDefault(require("./logo"));
 const log_1 = __importDefault(require("./log"));
 const sleep_1 = __importDefault(require("./sleep"));
 const gatherUserInput_1 = __importDefault(require("./gatherUserInput"));
+const packagejsonBuilder_1 = __importDefault(require("./packagejsonBuilder"));
+const viteConfBuilder_1 = __importDefault(require("./viteConfBuilder"));
 async function newPsychiclApp(appName) {
     const userOptions = await (0, gatherUserInput_1.default)();
     log_1.default.clear();
@@ -64,6 +66,7 @@ async function newPsychiclApp(appName) {
         redis: userOptions.redis,
         uuids: userOptions.useUuids,
     }));
+    fs.writeFileSync(projectPath + '/package.json', await packagejsonBuilder_1.default.buildAPI(userOptions));
     log_1.default.restoreCache();
     log_1.default.write(c.green(`Step 2. build default config files: Done!`), { cache: true });
     log_1.default.write(c.green(`Step 3. Installing psychic dependencies...`));
@@ -74,7 +77,6 @@ async function newPsychiclApp(appName) {
     log_1.default.write(c.green(`Step 3. Install psychic dependencies: Done!`), { cache: true });
     log_1.default.write(c.green(`Step 4. Initializing git repository...`));
     await (0, sspawn_1.default)(`cd ./${appName} && git init`);
-    await (0, sspawn_1.default)(`cd ./${appName} && git add --all && git commit -m 'psychic init'`);
     log_1.default.restoreCache();
     log_1.default.write(c.green(`Step 4. Initialize git repository: Done!`), { cache: true });
     log_1.default.write(c.green(`Step 5. Building project...`));
@@ -87,16 +89,30 @@ async function newPsychiclApp(appName) {
                 await (0, sspawn_1.default)(`cd ${rootPath} && yarn create vite client --template react-ts && cd client`);
                 fs.mkdirSync(`./${appName}/client/src/api`);
                 fs.mkdirSync(`./${appName}/client/src/config`);
-                (0, copyRecursive_1.default)(__dirname + '/../boilerplate/react/api/common.ts', `${projectPath}/../client/src/api/common.ts`);
-                (0, copyRecursive_1.default)(__dirname + '/../boilerplate/react/config/routes.ts', `${projectPath}/../client/src/config/routes.ts`);
+                (0, copyRecursive_1.default)(__dirname + '/../boilerplate/client/api/common.ts', `${projectPath}/../client/src/api/common.ts`);
+                (0, copyRecursive_1.default)(__dirname + '/../boilerplate/client/config/routes.ts', `${projectPath}/../client/src/config/routes.ts`);
+                (0, copyRecursive_1.default)(__dirname + '/../boilerplate/client/node-version', `${projectPath}/../client/.node-version`);
+                fs.writeFileSync(projectPath + '/../client/vite.config.ts', viteConfBuilder_1.default.build(userOptions));
                 break;
             case 'vue':
                 await (0, sspawn_1.default)(`cd ${rootPath} && yarn create vite client --template vue-ts`);
+                fs.mkdirSync(`./${appName}/client/src/api`);
+                fs.mkdirSync(`./${appName}/client/src/config`);
+                (0, copyRecursive_1.default)(__dirname + '/../boilerplate/client/api/common.ts', `${projectPath}/../client/src/api/common.ts`);
+                (0, copyRecursive_1.default)(__dirname + '/../boilerplate/client/config/routes.ts', `${projectPath}/../client/src/config/routes.ts`);
+                (0, copyRecursive_1.default)(__dirname + '/../boilerplate/client/node-version', `${projectPath}/../client/.node-version`);
+                fs.writeFileSync(projectPath + '/../client/vite.config.ts', viteConfBuilder_1.default.build(userOptions));
                 break;
             case 'nuxt':
                 await (0, sspawn_1.default)(`cd ${rootPath} && yarn create nuxt-app client`);
+                fs.mkdirSync(`./${appName}/client/api`);
+                fs.mkdirSync(`./${appName}/client/config`);
+                (0, copyRecursive_1.default)(__dirname + '/../boilerplate/client/api/common.ts', `${projectPath}/../client/api/common.ts`);
+                (0, copyRecursive_1.default)(__dirname + '/../boilerplate/client/config/routes.ts', `${projectPath}/../client/config/routes.ts`);
+                (0, copyRecursive_1.default)(__dirname + '/../boilerplate/client/node-version', `${projectPath}/../client/.node-version`);
                 break;
         }
+        await (0, sspawn_1.default)(`cd ${projectPath}/../client && yarn install`);
         try {
             await (0, sspawn_1.default)(`cd ${projectPath}/../client yarn add axios`);
         }
@@ -110,6 +126,7 @@ async function newPsychiclApp(appName) {
             console.error(err);
         }
     }
+    await (0, sspawn_1.default)(`cd ./${appName} && git add --all && git commit -m 'psychic init'`);
     log_1.default.restoreCache();
     log_1.default.write(c.green(`Step 5. Build project: Done!`), { cache: true });
     const helloMessage = `
