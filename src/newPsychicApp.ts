@@ -7,80 +7,159 @@ import sspawn from './sspawn'
 import logo from './logo'
 import log from './log'
 import sleep from './sleep'
+import gatherUserInput from './gatherUserInput'
+import PackagejsonBuilder from './packagejsonBuilder'
+import ViteConfBuilder from './viteConfBuilder'
 
-export default async function newPsychiclApp(
-  appName: string,
-  {
-    api = false,
-    ws = false,
-    redis = false,
-    uuids = false,
-  }: {
-    api?: boolean
-    ws?: boolean
-    redis?: boolean
-    uuids?: boolean
-  }
-) {
+export default async function newPsychiclApp(appName: string) {
+  const userOptions = await gatherUserInput()
+
   log.clear()
   log.write(logo() + '\n\n', { cache: true })
-  log.write(c.magentaBright(`Installing psychic framework to ./${appName}`), { cache: true })
-  log.write(c.blue(`Step 1. writing boilerplate to ${appName}...`))
+  log.write(c.green(`Installing psychic framework to ./${appName}`), { cache: true })
+  log.write(c.green(`Step 1. writing boilerplate to ${appName}...`))
   let projectPath: string
   let rootPath = `./${appName}`
-  if (api) {
+
+  if (userOptions.apiOnly) {
     projectPath = `./${appName}`
     copyRecursive(__dirname + '/../boilerplate/api', `./${appName}`)
   } else {
     projectPath = `./${appName}/api`
-    copyRecursive(__dirname + '/../boilerplate', `./${appName}`)
+    fs.mkdirSync(`./${appName}`)
+    copyRecursive(__dirname + '/../boilerplate/api', projectPath)
   }
 
   log.restoreCache()
-  log.write(c.blue(`Step 1. write boilerplate to ${appName}: Done!`), { cache: true })
-  log.write(c.blueBright(`Step 2. building default config files...`))
+  log.write(c.green(`Step 1. write boilerplate to ${appName}: Done!`), { cache: true })
+  log.write(c.green(`Step 2. building default config files...`))
   fs.writeFileSync(`${projectPath}/.env`, EnvBuilder.build({ appName, env: 'development' }))
   fs.writeFileSync(`${projectPath}/.env.test`, EnvBuilder.build({ appName, env: 'test' }))
 
   fs.writeFileSync(
     projectPath + '/src/conf/app.yml',
     ConfBuilder.buildAll({
-      api,
-      ws,
-      redis,
-      uuids,
+      api: userOptions.apiOnly,
+      ws: userOptions.ws,
+      redis: userOptions.redis,
+      uuids: userOptions.useUuids,
     })
   )
 
+  fs.writeFileSync(projectPath + '/package.json', await PackagejsonBuilder.buildAPI(userOptions))
+
   log.restoreCache()
-  log.write(c.blueBright(`Step 2. build default config files: Done!`), { cache: true })
-  log.write(c.cyan(`Step 3. Installing psychic dependencies...`))
+  log.write(c.green(`Step 2. build default config files: Done!`), { cache: true })
+  log.write(c.green(`Step 3. Installing psychic dependencies...`))
   await sspawn(`cd ${projectPath} && yarn install`)
 
   // sleeping here because yarn has a delayed print that we need to clean up
   await sleep(1000)
 
   log.restoreCache()
-  log.write(c.cyan(`Step 3. Install psychic dependencies: Done!`), { cache: true })
-  log.write(c.cyanBright(`Step 4. Initializing git repository...`))
+  log.write(c.green(`Step 3. Install psychic dependencies: Done!`), { cache: true })
+  log.write(c.green(`Step 4. Initializing git repository...`))
   await sspawn(`cd ./${appName} && git init`)
-  await sspawn(`cd ./${appName} && git add --all && git commit -m 'psychic init'`)
 
   log.restoreCache()
-  log.write(c.cyanBright(`Step 4. Initialize git repository: Done!`), { cache: true })
-  log.write(c.greenBright(`Step 5. Building project...`))
+  log.write(c.green(`Step 4. Initialize git repository: Done!`), { cache: true })
+  log.write(c.green(`Step 5. Building project...`))
 
   // don't sync yet, since we need to run migrations first
   // await sspawn(`yarn --cwd=${projectPath} dream sync:existing`)
 
-  if (!api) {
-    await sspawn(`yarn --cwd=${rootPath}/client install`)
+  const errors: string[] = []
+  if (!userOptions.apiOnly) {
+    switch (userOptions.client) {
+      case 'react':
+        await sspawn(`cd ${rootPath} && yarn create vite client --template react-ts && cd client`)
+
+        fs.mkdirSync(`./${appName}/client/src/api`)
+        fs.mkdirSync(`./${appName}/client/src/config`)
+
+        copyRecursive(
+          __dirname + '/../boilerplate/client/api/common.ts',
+          `${projectPath}/../client/src/api/common.ts`
+        )
+        copyRecursive(
+          __dirname + '/../boilerplate/client/config/routes.ts',
+          `${projectPath}/../client/src/config/routes.ts`
+        )
+        copyRecursive(
+          __dirname + '/../boilerplate/client/node-version',
+          `${projectPath}/../client/.node-version`
+        )
+
+        fs.writeFileSync(projectPath + '/../client/vite.config.ts', ViteConfBuilder.build(userOptions))
+
+        break
+
+      case 'vue':
+        await sspawn(`cd ${rootPath} && yarn create vite client --template vue-ts`)
+        fs.mkdirSync(`./${appName}/client/src/api`)
+        fs.mkdirSync(`./${appName}/client/src/config`)
+
+        copyRecursive(
+          __dirname + '/../boilerplate/client/api/common.ts',
+          `${projectPath}/../client/src/api/common.ts`
+        )
+        copyRecursive(
+          __dirname + '/../boilerplate/client/config/routes.ts',
+          `${projectPath}/../client/src/config/routes.ts`
+        )
+        copyRecursive(
+          __dirname + '/../boilerplate/client/node-version',
+          `${projectPath}/../client/.node-version`
+        )
+
+        fs.writeFileSync(projectPath + '/../client/vite.config.ts', ViteConfBuilder.build(userOptions))
+        break
+
+      case 'nuxt':
+        await sspawn(`cd ${rootPath} && yarn create nuxt-app client`)
+
+        fs.mkdirSync(`./${appName}/client/api`)
+        fs.mkdirSync(`./${appName}/client/config`)
+
+        copyRecursive(
+          __dirname + '/../boilerplate/client/api/common.ts',
+          `${projectPath}/../client/api/common.ts`
+        )
+        copyRecursive(
+          __dirname + '/../boilerplate/client/config/routes.ts',
+          `${projectPath}/../client/config/routes.ts`
+        )
+        copyRecursive(
+          __dirname + '/../boilerplate/client/node-version',
+          `${projectPath}/../client/.node-version`
+        )
+
+        break
+    }
+
+    await sspawn(`cd ${projectPath}/../client && yarn install`)
+
+    try {
+      await sspawn(`cd ${projectPath}/../client yarn add axios`)
+    } catch (err) {
+      errors.push(
+        `
+          ATTENTION:
+            we attempted to install axios for you in your client folder,
+            but it failed. The error we received was:
+
+        `
+      )
+      console.error(err)
+    }
   }
 
+  await sspawn(`cd ./${appName} && git add --all && git commit -m 'psychic init'`)
+
   log.restoreCache()
-  log.write(c.greenBright(`Step 5. Build project: Done!`), { cache: true })
+  log.write(c.green(`Step 5. Build project: Done!`), { cache: true })
   const helloMessage = `
-${c.greenBright(
+${c.green(
   c.bold(
     c.italic(
       `Welcome to Psychic! What fortunes await your futures?\ncd into ${c.magentaBright(
@@ -91,48 +170,51 @@ ${c.greenBright(
 )}
 
 ${c.magenta(`to create a database,`)}
-  $ psy db:create
-  $ NODE_ENV=test psy db:create
+  ${c.magenta(`$ NODE_ENV=development yarn psy db:create`)}
+  ${c.magenta(`$ NODE_ENV=test yarn psy db:create`)}
 
 ${c.magentaBright(`to migrate a database,`)}
-  $ psy db:migrate
-  $ NODE_ENV=test psy db:migrate
+  ${c.magentaBright(`$ NODE_ENV=development yarn psy db:migrate`)}
+  ${c.magentaBright(`$ NODE_ENV=test yarn psy db:migrate`)}
 
 ${c.redBright(`to rollback a database,`)}
-  $ psy db:rollback
-  $ NODE_ENV=test psy db:rollback
+  ${c.redBright(`$ NODE_ENV=development yarn psy db:rollback`)}
+  ${c.redBright(`$ NODE_ENV=test yarn psy db:rollback --step=1`)}
 
 ${c.blueBright(`to drop a database,`)}
-  $ psy db:drop
-  $ NODE_ENV=test psy db:drop
+  ${c.blueBright(`$ NODE_ENV=development yarn psy db:drop`)}
+  ${c.blueBright(`$ NODE_ENV=test yarn psy db:drop`)}
 
 ${c.green(`to create a resource (model, migration, serializer, and controller)`)}
-  $ psy g:resource user-profile user:belongs_to likes_chalupas:boolean some_id:uuid
+  ${c.green(
+    `$ yarn psy g:resource api/v1/users user organization:belongs_to favorites:enum:favorite_foods:Chalupas,Other`
+  )}
 
   # NOTE: doing it this way, you will still need to
-  # plug the routes manually in your conf/routes.ts file
+  # plug the routes manually in your api/src/app/conf/routes.ts file
 
 ${c.greenBright(`to create a model`)}
-  $ psy g:model user-profile user:belongs_to likes_chalupas:boolean some_id:uuid
+  ${c.greenBright(`$ yarn psy g:model user organization:belongs_to likes_chalupas:boolean some_id:uuid`)}
 
 ${c.yellow(`to create a migration`)}
-  $ psy g:migration create-user-profiles
+  ${c.yellow(`$ yarn psy g:migration create-users`)}
 
-${c.yellowBright(`to start a dev server at localhost:7777,`)}
-  $ psy dev
+${c.yellowBright(`to start a dev server at http://localhost:7777,`)}
+  ${c.yellowBright(`$ yarn psy dev`)}
 
 ${c.magentaBright(`to run unit tests,`)}
-  $ psy uspec
+  ${c.magentaBright(`$ yarn psy uspec`)}
 
 ${c.magentaBright(`to run feature tests,`)}
-  $ psy fspec
-
-${c.magentaBright(`to run unit tests, and then if they pass, run feature tests,`)}
-  $ psy spec
+  ${c.magentaBright(`$ yarn psy fspec`)}
 
 # NOTE: before you get started, be sure to visit your ${c.magenta('.env')} and ${c.magenta('.env.test')}
 # files and make sure they have database credentials set correctly.
 # you can see conf/dream.ts to see how those credentials are used.
     `
   console.log(helloMessage)
+
+  errors.forEach(err => {
+    console.log(err)
+  })
 }
