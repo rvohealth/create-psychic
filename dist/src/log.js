@@ -2,8 +2,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Logger = void 0;
 class Logger {
-    cache = [];
-    loaders = [];
+    constructor() {
+        this.cache = [];
+        this.loaders = [];
+    }
     write(text, { cache = false } = {}) {
         console.log(text);
         if (cache)
@@ -30,10 +32,9 @@ class Logger {
 }
 exports.Logger = Logger;
 class Loader {
-    type;
-    index = 0;
-    interval = null;
     constructor(type) {
+        this.index = 0;
+        this.interval = null;
         this.type = type;
     }
     start(text) {

@@ -1,3 +1,5 @@
+import apiRoutes from '../api/apiRoutes'
+
 const baseUrl = () => {
   if (process.env.REACT_APP_API_HOST) return process.env.REACT_APP_API_HOST
   return process.env.REACT_APP_PSYCHIC_ENV === 'test' ? 'http://localhost:7778' : 'http://localhost:7777'
@@ -14,8 +16,7 @@ const routes = {
   },
 
   api: {
-    login: '/login',
-    logout: '/logout',
+    ...apiRoutes,
   },
 }
 

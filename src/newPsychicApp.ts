@@ -10,6 +10,7 @@ import sleep from './sleep'
 import gatherUserInput from './gatherUserInput'
 import PackagejsonBuilder from './packagejsonBuilder'
 import ViteConfBuilder from './viteConfBuilder'
+import ESLintConfBuilder from './eslintConfBuilder'
 
 export default async function newPsychiclApp(appName: string) {
   const userOptions = await gatherUserInput()
@@ -74,13 +75,9 @@ export default async function newPsychiclApp(appName: string) {
       case 'react':
         await sspawn(`cd ${rootPath} && yarn create vite client --template react-ts && cd client`)
 
-        fs.mkdirSync(`./${appName}/client/src/api`)
         fs.mkdirSync(`./${appName}/client/src/config`)
 
-        copyRecursive(
-          __dirname + '/../boilerplate/client/api/common.ts',
-          `${projectPath}/../client/src/api/common.ts`
-        )
+        copyRecursive(__dirname + '/../boilerplate/client/api', `${projectPath}/../client/src/api`)
         copyRecursive(
           __dirname + '/../boilerplate/client/config/routes.ts',
           `${projectPath}/../client/src/config/routes.ts`
@@ -91,18 +88,15 @@ export default async function newPsychiclApp(appName: string) {
         )
 
         fs.writeFileSync(projectPath + '/../client/vite.config.ts', ViteConfBuilder.build(userOptions))
+        fs.writeFileSync(projectPath + '/../client/.eslintrc.cjs', ESLintConfBuilder.buildForViteReact())
 
         break
 
       case 'vue':
         await sspawn(`cd ${rootPath} && yarn create vite client --template vue-ts`)
-        fs.mkdirSync(`./${appName}/client/src/api`)
         fs.mkdirSync(`./${appName}/client/src/config`)
 
-        copyRecursive(
-          __dirname + '/../boilerplate/client/api/common.ts',
-          `${projectPath}/../client/src/api/common.ts`
-        )
+        copyRecursive(__dirname + '/../boilerplate/client/api', `${projectPath}/../client/src/api`)
         copyRecursive(
           __dirname + '/../boilerplate/client/config/routes.ts',
           `${projectPath}/../client/src/config/routes.ts`
@@ -118,13 +112,9 @@ export default async function newPsychiclApp(appName: string) {
       case 'nuxt':
         await sspawn(`cd ${rootPath} && yarn create nuxt-app client`)
 
-        fs.mkdirSync(`./${appName}/client/api`)
         fs.mkdirSync(`./${appName}/client/config`)
 
-        copyRecursive(
-          __dirname + '/../boilerplate/client/api/common.ts',
-          `${projectPath}/../client/api/common.ts`
-        )
+        copyRecursive(__dirname + '/../boilerplate/client/api', `${projectPath}/../client/src/api`)
         copyRecursive(
           __dirname + '/../boilerplate/client/config/routes.ts',
           `${projectPath}/../client/config/routes.ts`
@@ -137,10 +127,10 @@ export default async function newPsychiclApp(appName: string) {
         break
     }
 
-    await sspawn(`cd ${projectPath}/../client && yarn install`)
+    await sspawn(`cd ${projectPath}/../client && yarn install --ignore-engines`)
 
     try {
-      await sspawn(`cd ${projectPath}/../client yarn add axios`)
+      await sspawn(`cd ${projectPath}/../client && yarn add axios --ignore-engines`)
     } catch (err) {
       errors.push(
         `

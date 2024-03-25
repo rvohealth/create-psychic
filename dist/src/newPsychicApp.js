@@ -38,6 +38,7 @@ const sleep_1 = __importDefault(require("./sleep"));
 const gatherUserInput_1 = __importDefault(require("./gatherUserInput"));
 const packagejsonBuilder_1 = __importDefault(require("./packagejsonBuilder"));
 const viteConfBuilder_1 = __importDefault(require("./viteConfBuilder"));
+const eslintConfBuilder_1 = __importDefault(require("./eslintConfBuilder"));
 async function newPsychiclApp(appName) {
     const userOptions = await (0, gatherUserInput_1.default)();
     log_1.default.clear();
@@ -87,34 +88,32 @@ async function newPsychiclApp(appName) {
         switch (userOptions.client) {
             case 'react':
                 await (0, sspawn_1.default)(`cd ${rootPath} && yarn create vite client --template react-ts && cd client`);
-                fs.mkdirSync(`./${appName}/client/src/api`);
                 fs.mkdirSync(`./${appName}/client/src/config`);
-                (0, copyRecursive_1.default)(__dirname + '/../boilerplate/client/api/common.ts', `${projectPath}/../client/src/api/common.ts`);
+                (0, copyRecursive_1.default)(__dirname + '/../boilerplate/client/api', `${projectPath}/../client/src/api`);
                 (0, copyRecursive_1.default)(__dirname + '/../boilerplate/client/config/routes.ts', `${projectPath}/../client/src/config/routes.ts`);
                 (0, copyRecursive_1.default)(__dirname + '/../boilerplate/client/node-version', `${projectPath}/../client/.node-version`);
                 fs.writeFileSync(projectPath + '/../client/vite.config.ts', viteConfBuilder_1.default.build(userOptions));
+                fs.writeFileSync(projectPath + '/../client/.eslintrc.cjs', eslintConfBuilder_1.default.buildForViteReact());
                 break;
             case 'vue':
                 await (0, sspawn_1.default)(`cd ${rootPath} && yarn create vite client --template vue-ts`);
-                fs.mkdirSync(`./${appName}/client/src/api`);
                 fs.mkdirSync(`./${appName}/client/src/config`);
-                (0, copyRecursive_1.default)(__dirname + '/../boilerplate/client/api/common.ts', `${projectPath}/../client/src/api/common.ts`);
+                (0, copyRecursive_1.default)(__dirname + '/../boilerplate/client/api', `${projectPath}/../client/src/api`);
                 (0, copyRecursive_1.default)(__dirname + '/../boilerplate/client/config/routes.ts', `${projectPath}/../client/src/config/routes.ts`);
                 (0, copyRecursive_1.default)(__dirname + '/../boilerplate/client/node-version', `${projectPath}/../client/.node-version`);
                 fs.writeFileSync(projectPath + '/../client/vite.config.ts', viteConfBuilder_1.default.build(userOptions));
                 break;
             case 'nuxt':
                 await (0, sspawn_1.default)(`cd ${rootPath} && yarn create nuxt-app client`);
-                fs.mkdirSync(`./${appName}/client/api`);
                 fs.mkdirSync(`./${appName}/client/config`);
-                (0, copyRecursive_1.default)(__dirname + '/../boilerplate/client/api/common.ts', `${projectPath}/../client/api/common.ts`);
+                (0, copyRecursive_1.default)(__dirname + '/../boilerplate/client/api', `${projectPath}/../client/src/api`);
                 (0, copyRecursive_1.default)(__dirname + '/../boilerplate/client/config/routes.ts', `${projectPath}/../client/config/routes.ts`);
                 (0, copyRecursive_1.default)(__dirname + '/../boilerplate/client/node-version', `${projectPath}/../client/.node-version`);
                 break;
         }
-        await (0, sspawn_1.default)(`cd ${projectPath}/../client && yarn install`);
+        await (0, sspawn_1.default)(`cd ${projectPath}/../client && yarn install --ignore-engines`);
         try {
-            await (0, sspawn_1.default)(`cd ${projectPath}/../client yarn add axios`);
+            await (0, sspawn_1.default)(`cd ${projectPath}/../client && yarn add axios --ignore-engines`);
         }
         catch (err) {
             errors.push(`
