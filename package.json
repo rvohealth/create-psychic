@@ -15,6 +15,10 @@
     "psy": "ts-node ./src/main.ts",
     "postinstall": "yarn build"
   },
+  "resolutions": {
+    "string-width": "^4.2.3",
+    "wrap-ansi": "^8.1.0"
+  },
   "dependencies": {
     "@inquirer/prompts": "^4.3.0",
     "@types/node": "^18.11.18",
