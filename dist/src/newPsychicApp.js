@@ -1,119 +1,94 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const fs = __importStar(require("fs"));
-const c = __importStar(require("colorette"));
-const confBuilder_1 = __importDefault(require("./confBuilder"));
-const copyRecursive_1 = __importDefault(require("./copyRecursive"));
-const envBuilder_1 = __importDefault(require("./envBuilder"));
-const sspawn_1 = __importDefault(require("./sspawn"));
-const logo_1 = __importDefault(require("./logo"));
-const log_1 = __importDefault(require("./log"));
-const sleep_1 = __importDefault(require("./sleep"));
-const gatherUserInput_1 = __importDefault(require("./gatherUserInput"));
-const packagejsonBuilder_1 = __importDefault(require("./packagejsonBuilder"));
-const viteConfBuilder_1 = __importDefault(require("./viteConfBuilder"));
-const eslintConfBuilder_1 = __importDefault(require("./eslintConfBuilder"));
-async function newPsychiclApp(appName) {
-    const userOptions = await (0, gatherUserInput_1.default)();
-    log_1.default.clear();
-    log_1.default.write((0, logo_1.default)() + '\n\n', { cache: true });
-    log_1.default.write(c.green(`Installing psychic framework to ./${appName}`), { cache: true });
-    log_1.default.write(c.green(`Step 1. writing boilerplate to ${appName}...`));
+import * as fs from 'fs';
+import * as c from 'colorette';
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import ConfBuilder from './confBuilder.js';
+import copyRecursive from './copyRecursive.js';
+import EnvBuilder from './envBuilder.js';
+import sspawn from './sspawn.js';
+import logo from './logo.js';
+import log from './log.js';
+import sleep from './sleep.js';
+import gatherUserInput from './gatherUserInput.js';
+import PackagejsonBuilder from './packagejsonBuilder.js';
+import ViteConfBuilder from './viteConfBuilder.js';
+import ESLintConfBuilder from './eslintConfBuilder.js';
+const __dirname = dirname(fileURLToPath(import.meta.url));
+export default async function newPsychiclApp(appName) {
+    const userOptions = await gatherUserInput();
+    log.clear();
+    log.write(logo() + '\n\n', { cache: true });
+    log.write(c.green(`Installing psychic framework to ./${appName}`), { cache: true });
+    log.write(c.green(`Step 1. writing boilerplate to ${appName}...`));
     let projectPath;
     let rootPath = `./${appName}`;
     if (userOptions.apiOnly) {
         projectPath = `./${appName}`;
-        (0, copyRecursive_1.default)(__dirname + '/../boilerplate/api', `./${appName}`);
+        copyRecursive(__dirname + '/../boilerplate/api', `./${appName}`);
     }
     else {
         projectPath = `./${appName}/api`;
         fs.mkdirSync(`./${appName}`);
-        (0, copyRecursive_1.default)(__dirname + '/../boilerplate/api', projectPath);
+        copyRecursive(__dirname + '/../boilerplate/api', projectPath);
     }
-    log_1.default.restoreCache();
-    log_1.default.write(c.green(`Step 1. write boilerplate to ${appName}: Done!`), { cache: true });
-    log_1.default.write(c.green(`Step 2. building default config files...`));
-    fs.writeFileSync(`${projectPath}/.env`, envBuilder_1.default.build({ appName, env: 'development' }));
-    fs.writeFileSync(`${projectPath}/.env.test`, envBuilder_1.default.build({ appName, env: 'test' }));
-    fs.writeFileSync(projectPath + '/src/conf/app.yml', confBuilder_1.default.buildAll({
+    log.restoreCache();
+    log.write(c.green(`Step 1. write boilerplate to ${appName}: Done!`), { cache: true });
+    log.write(c.green(`Step 2. building default config files...`));
+    fs.writeFileSync(`${projectPath}/.env`, EnvBuilder.build({ appName, env: 'development' }));
+    fs.writeFileSync(`${projectPath}/.env.test`, EnvBuilder.build({ appName, env: 'test' }));
+    fs.writeFileSync(projectPath + '/src/conf/app.yml', ConfBuilder.buildAll({
         api: userOptions.apiOnly,
         ws: userOptions.ws,
         redis: userOptions.redis,
         uuids: userOptions.useUuids,
     }));
-    fs.writeFileSync(projectPath + '/package.json', await packagejsonBuilder_1.default.buildAPI(userOptions));
-    log_1.default.restoreCache();
-    log_1.default.write(c.green(`Step 2. build default config files: Done!`), { cache: true });
-    log_1.default.write(c.green(`Step 3. Installing psychic dependencies...`));
-    await (0, sspawn_1.default)(`cd ${projectPath} && yarn install`);
+    fs.writeFileSync(projectPath + '/package.json', await PackagejsonBuilder.buildAPI(userOptions));
+    log.restoreCache();
+    log.write(c.green(`Step 2. build default config files: Done!`), { cache: true });
+    log.write(c.green(`Step 3. Installing psychic dependencies...`));
+    await sspawn(`cd ${projectPath} && yarn install`);
     // sleeping here because yarn has a delayed print that we need to clean up
-    await (0, sleep_1.default)(1000);
-    log_1.default.restoreCache();
-    log_1.default.write(c.green(`Step 3. Install psychic dependencies: Done!`), { cache: true });
-    log_1.default.write(c.green(`Step 4. Initializing git repository...`));
-    await (0, sspawn_1.default)(`cd ./${appName} && git init`);
-    log_1.default.restoreCache();
-    log_1.default.write(c.green(`Step 4. Initialize git repository: Done!`), { cache: true });
-    log_1.default.write(c.green(`Step 5. Building project...`));
+    await sleep(1000);
+    log.restoreCache();
+    log.write(c.green(`Step 3. Install psychic dependencies: Done!`), { cache: true });
+    log.write(c.green(`Step 4. Initializing git repository...`));
+    await sspawn(`cd ./${appName} && git init`);
+    log.restoreCache();
+    log.write(c.green(`Step 4. Initialize git repository: Done!`), { cache: true });
+    log.write(c.green(`Step 5. Building project...`));
     // don't sync yet, since we need to run migrations first
     // await sspawn(`yarn --cwd=${projectPath} dream sync:existing`)
     const errors = [];
     if (!userOptions.apiOnly) {
         switch (userOptions.client) {
             case 'react':
-                await (0, sspawn_1.default)(`cd ${rootPath} && yarn create vite client --template react-ts && cd client`);
+                await sspawn(`cd ${rootPath} && yarn create vite client --template react-ts && cd client`);
                 fs.mkdirSync(`./${appName}/client/src/config`);
-                (0, copyRecursive_1.default)(__dirname + '/../boilerplate/client/api', `${projectPath}/../client/src/api`);
-                (0, copyRecursive_1.default)(__dirname + '/../boilerplate/client/config/routes.ts', `${projectPath}/../client/src/config/routes.ts`);
-                (0, copyRecursive_1.default)(__dirname + '/../boilerplate/client/node-version', `${projectPath}/../client/.node-version`);
-                fs.writeFileSync(projectPath + '/../client/vite.config.ts', viteConfBuilder_1.default.build(userOptions));
-                fs.writeFileSync(projectPath + '/../client/.eslintrc.cjs', eslintConfBuilder_1.default.buildForViteReact());
+                copyRecursive(__dirname + '/../boilerplate/client/api', `${projectPath}/../client/src/api`);
+                copyRecursive(__dirname + '/../boilerplate/client/config/routes.ts', `${projectPath}/../client/src/config/routes.ts`);
+                copyRecursive(__dirname + '/../boilerplate/client/node-version', `${projectPath}/../client/.node-version`);
+                fs.writeFileSync(projectPath + '/../client/vite.config.ts', ViteConfBuilder.build(userOptions));
+                fs.writeFileSync(projectPath + '/../client/.eslintrc.cjs', ESLintConfBuilder.buildForViteReact());
                 break;
             case 'vue':
-                await (0, sspawn_1.default)(`cd ${rootPath} && yarn create vite client --template vue-ts`);
+                await sspawn(`cd ${rootPath} && yarn create vite client --template vue-ts`);
                 fs.mkdirSync(`./${appName}/client/src/config`);
-                (0, copyRecursive_1.default)(__dirname + '/../boilerplate/client/api', `${projectPath}/../client/src/api`);
-                (0, copyRecursive_1.default)(__dirname + '/../boilerplate/client/config/routes.ts', `${projectPath}/../client/src/config/routes.ts`);
-                (0, copyRecursive_1.default)(__dirname + '/../boilerplate/client/node-version', `${projectPath}/../client/.node-version`);
-                fs.writeFileSync(projectPath + '/../client/vite.config.ts', viteConfBuilder_1.default.build(userOptions));
+                copyRecursive(__dirname + '/../boilerplate/client/api', `${projectPath}/../client/src/api`);
+                copyRecursive(__dirname + '/../boilerplate/client/config/routes.ts', `${projectPath}/../client/src/config/routes.ts`);
+                copyRecursive(__dirname + '/../boilerplate/client/node-version', `${projectPath}/../client/.node-version`);
+                fs.writeFileSync(projectPath + '/../client/vite.config.ts', ViteConfBuilder.build(userOptions));
                 break;
             case 'nuxt':
-                await (0, sspawn_1.default)(`cd ${rootPath} && yarn create nuxt-app client`);
+                await sspawn(`cd ${rootPath} && yarn create nuxt-app client`);
                 fs.mkdirSync(`./${appName}/client/config`);
-                (0, copyRecursive_1.default)(__dirname + '/../boilerplate/client/api', `${projectPath}/../client/src/api`);
-                (0, copyRecursive_1.default)(__dirname + '/../boilerplate/client/config/routes.ts', `${projectPath}/../client/config/routes.ts`);
-                (0, copyRecursive_1.default)(__dirname + '/../boilerplate/client/node-version', `${projectPath}/../client/.node-version`);
+                copyRecursive(__dirname + '/../boilerplate/client/api', `${projectPath}/../client/src/api`);
+                copyRecursive(__dirname + '/../boilerplate/client/config/routes.ts', `${projectPath}/../client/config/routes.ts`);
+                copyRecursive(__dirname + '/../boilerplate/client/node-version', `${projectPath}/../client/.node-version`);
                 break;
         }
-        await (0, sspawn_1.default)(`cd ${projectPath}/../client && yarn install --ignore-engines`);
+        await sspawn(`cd ${projectPath}/../client && yarn install --ignore-engines`);
         try {
-            await (0, sspawn_1.default)(`cd ${projectPath}/../client && yarn add axios --ignore-engines`);
+            await sspawn(`cd ${projectPath}/../client && yarn add axios --ignore-engines`);
         }
         catch (err) {
             errors.push(`
@@ -125,9 +100,9 @@ async function newPsychiclApp(appName) {
             console.error(err);
         }
     }
-    await (0, sspawn_1.default)(`cd ./${appName} && git add --all && git commit -m 'psychic init'`);
-    log_1.default.restoreCache();
-    log_1.default.write(c.green(`Step 5. Build project: Done!`), { cache: true });
+    await sspawn(`cd ./${appName} && git add --all && git commit -m 'psychic init'`);
+    log.restoreCache();
+    log.write(c.green(`Step 5. Build project: Done!`), { cache: true });
     const helloMessage = `
 ${c.green(c.bold(c.italic(`Welcome to Psychic! What fortunes await your futures?\ncd into ${c.magentaBright(appName)} to find out!`)))}
 
@@ -177,5 +152,4 @@ ${c.magentaBright(`to run feature tests,`)}
         console.log(err);
     });
 }
-exports.default = newPsychiclApp;
 //# sourceMappingURL=newPsychicApp.js.map

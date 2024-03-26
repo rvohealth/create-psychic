@@ -1,5 +1,5 @@
 import * as readline from 'readline'
-import prompts from 'prompts'
+import { input, select } from '@inquirer/prompts'
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -11,7 +11,7 @@ const options: NewAppCLIOptions = {
   redis: false,
   ws: false,
   useUuids: false,
-  client: 'react',
+  client: null,
 }
 
 export interface NewAppCLIOptions {
@@ -22,96 +22,99 @@ export interface NewAppCLIOptions {
   client: FrontEndClientType
 }
 
-export type FrontEndClientType = 'react' | 'vue' | 'nuxt'
-
-async function apiOnlyQuestion() {
-  const answer = await prompts([
-    {
-      type: 'multiselect',
-      name: 'apiOnly',
-      message: 'api only?',
-      instructions: false,
-      choices: [
-        { title: 'y', value: true },
-        { title: 'f', value: false },
-      ],
-    },
-  ])
-  options.apiOnly = answer.apiOnly
-}
+export type FrontEndClientType = 'react' | 'vue' | 'nuxt' | null
 
 async function redisQuestion() {
-  const answer = await prompts([
-    {
-      type: 'multiselect',
-      name: 'redis',
-      message: 'redis?',
-      instructions: false,
-      choices: [
-        { title: 'y', value: true },
-        { title: 'f', value: false },
-      ],
-    },
-  ])
-  options.redis = answer.redis
+  const answer = await select({
+    message: 'redis?',
+    choices: [
+      {
+        name: 'y',
+        value: true,
+        // description: 'npm is the most popular package manager',
+      },
+      {
+        name: 'n',
+        value: false,
+      },
+    ],
+  })
+  options.redis = answer
 }
 
 async function wsQuestion() {
-  const answer = await prompts([
-    {
-      type: 'multiselect',
-      name: 'websockets',
-      message: 'websockets?',
-      instructions: false,
-      choices: [
-        { title: 'y', value: true },
-        { title: 'f', value: false },
-      ],
-    },
-  ])
-
-  options.ws = answer.websockets
+  const answer = await select({
+    message: 'websockets?',
+    choices: [
+      {
+        name: 'y',
+        value: true,
+        // description: 'npm is the most popular package manager',
+      },
+      {
+        name: 'n',
+        value: false,
+      },
+    ],
+  })
+  options.ws = answer
 }
 
 async function primaryKeyTypeQuestion() {
-  const answer = await prompts([
-    {
-      type: 'multiselect',
-      name: 'primaryKeyType',
-      message: 'primary key type?',
-      instructions: false,
-      choices: [
-        { title: 'integer', value: 'integer' },
-        { title: 'uuid', value: 'uuid' },
-      ],
-    },
-  ])
-
-  options.useUuids = answer.primaryKeyType === 'uuid'
+  const answer = await select({
+    message: 'primary key type?',
+    choices: [
+      {
+        name: 'integer',
+        value: 'integer',
+        // description: 'npm is the most popular package manager',
+      },
+      {
+        name: 'uuid',
+        value: 'uuid',
+      },
+    ],
+  })
+  options.useUuids = answer === 'uuid'
 }
 
 async function clientQuestion() {
   if (options.apiOnly) return
 
-  const answer = await prompts([
-    {
-      type: 'multiselect',
-      name: 'clientFramework',
-      message: 'which front end client would you like to use?',
-      instructions: false,
-      choices: [
-        { title: 'redux', value: 'redux' },
-        { title: 'vue', value: 'vue' },
-        { title: 'nuxt', value: 'nuxt' },
-      ],
-    },
-  ])
+  const answer = await select({
+    message: 'which front end client would you like to use?',
+    choices: [
+      {
+        name: 'react',
+        value: 'react',
+        description: 'use a react app with typescript and redux',
+      },
+      {
+        name: 'vue',
+        value: 'vue',
+        description: 'use a vue app with typescript',
+      },
+      {
+        name: 'nuxt',
+        value: 'nuxt',
+        description: 'use a nuxt app with vue and typescript',
+      },
+      {
+        name: 'api only',
+        value: null,
+        description: 'do not create a front end client, only an api server',
+      },
+    ],
+  })
 
-  options.client = answer.clientFramework as FrontEndClientType
+  if (!answer) {
+    options.apiOnly = true
+  } else {
+    options.client = answer as FrontEndClientType
+  }
 }
 
 export default async function gatherUserInput() {
-  await apiOnlyQuestion()
   await redisQuestion()
   await wsQuestion()
   await clientQuestion()

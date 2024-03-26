@@ -1,30 +1,5 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const readline = __importStar(require("readline"));
-const prompts_1 = require("@inquirer/prompts");
+import * as readline from 'readline';
+import { select } from '@inquirer/prompts';
 const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
@@ -34,27 +9,10 @@ const options = {
     redis: false,
     ws: false,
     useUuids: false,
-    client: 'react',
+    client: null,
 };
-async function apiOnlyQuestion() {
-    const answer = await (0, prompts_1.select)({
-        message: 'api only?',
-        choices: [
-            {
-                name: 'y',
-                value: true,
-                // description: 'npm is the most popular package manager',
-            },
-            {
-                name: 'n',
-                value: false,
-            },
-        ],
-    });
-    options.apiOnly = answer;
-}
 async function redisQuestion() {
-    const answer = await (0, prompts_1.select)({
+    const answer = await select({
         message: 'redis?',
         choices: [
             {
@@ -71,7 +29,7 @@ async function redisQuestion() {
     options.redis = answer;
 }
 async function wsQuestion() {
-    const answer = await (0, prompts_1.select)({
+    const answer = await select({
         message: 'websockets?',
         choices: [
             {
@@ -88,7 +46,7 @@ async function wsQuestion() {
     options.ws = answer;
 }
 async function primaryKeyTypeQuestion() {
-    const answer = await (0, prompts_1.select)({
+    const answer = await select({
         message: 'primary key type?',
         choices: [
             {
@@ -107,7 +65,7 @@ async function primaryKeyTypeQuestion() {
 async function clientQuestion() {
     if (options.apiOnly)
         return;
-    const answer = await (0, prompts_1.select)({
+    const answer = await select({
         message: 'which front end client would you like to use?',
         choices: [
             {
@@ -125,17 +83,25 @@ async function clientQuestion() {
                 value: 'nuxt',
                 description: 'use a nuxt app with vue and typescript',
             },
+            {
+                name: 'api only',
+                value: null,
+                description: 'do not create a front end client, only an api server',
+            },
         ],
     });
-    options.client = answer;
+    if (!answer) {
+        options.apiOnly = true;
+    }
+    else {
+        options.client = answer;
+    }
 }
-async function gatherUserInput() {
-    await apiOnlyQuestion();
+export default async function gatherUserInput() {
     await redisQuestion();
     await wsQuestion();
     await clientQuestion();
     await primaryKeyTypeQuestion();
     return options;
 }
-exports.default = gatherUserInput;
 //# sourceMappingURL=gatherUserInput.js.map

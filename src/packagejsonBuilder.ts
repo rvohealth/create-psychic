@@ -1,8 +1,11 @@
-import { NewAppCLIOptions } from './gatherUserInput'
+import { NewAppCLIOptions } from './gatherUserInput.js'
+import { createRequire } from 'node:module'
+
+const require = createRequire(import.meta.url)
 
 export default class PackagejsonBuilder {
   public static async buildAPI(userOptions: NewAppCLIOptions) {
-    const packagejson = (await import('../boilerplate/api/package.json')).default
+    const packagejson = require('../boilerplate/api/package.json')
 
     if (userOptions.apiOnly) return JSON.stringify(packagejson, null, 2)
 

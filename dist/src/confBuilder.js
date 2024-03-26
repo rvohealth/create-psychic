@@ -1,6 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-class ConfBuilder {
+export default class ConfBuilder {
     static buildAll({ api, redis, ws, uuids, }) {
         const opts = [];
         if (api)
@@ -20,5 +18,4 @@ psychic:
 `;
     }
 }
-exports.default = ConfBuilder;
 //# sourceMappingURL=confBuilder.js.map
