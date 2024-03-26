@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "@rvohealth/dream": "^0.1.92",
-    "@rvohealth/psychic": "^0.1.66"
+    "@rvohealth/psychic": "^0.1.67"
   },
   "devDependencies": {
     "@types/expect-puppeteer": "^5.0.3",
