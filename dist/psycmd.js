@@ -1,10 +1,5 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const sspawn_1 = __importDefault(require("./sspawn"));
-function psycmd(program, commandString, description, aliasString) {
+import sspawn from './sspawn.js';
+export default function psycmd(program, commandString, description, aliasString) {
     program
         .command(commandString)
         .description(description)
@@ -15,8 +10,7 @@ function psycmd(program, commandString, description, aliasString) {
         const cmd = `${nodeEnvString} yarn psy ${commandString}`;
         if (process.env.DEBUG == '1')
             console.log(`[DEBUG]: the following yarn command is being aliased by psychic cli: ${cmd}`);
-        await (0, sspawn_1.default)(cmd);
+        await sspawn(cmd);
     });
 }
-exports.default = psycmd;
 //# sourceMappingURL=psycmd.js.map

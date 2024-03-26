@@ -1,16 +1,21 @@
 import * as fs from 'fs'
 import * as c from 'colorette'
-import ConfBuilder from './confBuilder'
-import copyRecursive from './copyRecursive'
-import EnvBuilder from './envBuilder'
-import sspawn from './sspawn'
-import logo from './logo'
-import log from './log'
-import sleep from './sleep'
-import gatherUserInput from './gatherUserInput'
-import PackagejsonBuilder from './packagejsonBuilder'
-import ViteConfBuilder from './viteConfBuilder'
-import ESLintConfBuilder from './eslintConfBuilder'
+import { dirname } from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+import ConfBuilder from './confBuilder.js'
+import copyRecursive from './copyRecursive.js'
+import EnvBuilder from './envBuilder.js'
+import sspawn from './sspawn.js'
+import logo from './logo.js'
+import log from './log.js'
+import sleep from './sleep.js'
+import gatherUserInput from './gatherUserInput.js'
+import PackagejsonBuilder from './packagejsonBuilder.js'
+import ViteConfBuilder from './viteConfBuilder.js'
+import ESLintConfBuilder from './eslintConfBuilder.js'
+
+const __dirname = dirname(fileURLToPath(import.meta.url))
 
 export default async function newPsychiclApp(appName: string) {
   const userOptions = await gatherUserInput()

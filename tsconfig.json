@@ -1,14 +1,15 @@
 {
   "ts-node": {
     "ignore": [],
-    "include": ["src/**/*", "node_modules/dream/src/**/*", "node_modules/psychic/src/**/*"]
+    "include": ["src/**/*"],
+    "esm": true
   },
   "compilerOptions": {
     "baseUrl": "src",
     "outDir": "dist",
     "strict": true,
-    "target": "es2021",
-    "module": "commonjs",
+    "target": "esnext",
+    "module": "ESNext",
     "sourceMap": true,
     "esModuleInterop": true,
     "moduleResolution": "node",

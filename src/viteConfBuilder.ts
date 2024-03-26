@@ -1,4 +1,4 @@
-import { NewAppCLIOptions } from './gatherUserInput'
+import { NewAppCLIOptions } from './gatherUserInput.js'
 
 export default class ViteConfBuilder {
   public static build(userOptions: NewAppCLIOptions) {

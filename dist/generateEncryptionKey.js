@@ -1,6 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-function generateEncryptionKey() {
+export default function generateEncryptionKey() {
     return (Math.random().toString(36).substr(2, 10) +
         '-' +
         Math.random().toString(36).substr(2, 10) +
@@ -23,5 +21,4 @@ function generateEncryptionKey() {
         '-' +
         Math.random().toString(36).substr(2, 10));
 }
-exports.default = generateEncryptionKey;
 //# sourceMappingURL=generateEncryptionKey.js.map

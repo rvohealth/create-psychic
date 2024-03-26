@@ -1,11 +1,6 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Logger = void 0;
-class Logger {
-    constructor() {
-        this.cache = [];
-        this.loaders = [];
-    }
+export class Logger {
+    cache = [];
+    loaders = [];
     write(text, { cache = false } = {}) {
         console.log(text);
         if (cache)
@@ -30,11 +25,11 @@ class Logger {
         process.stdout.cursorTo(0);
     }
 }
-exports.Logger = Logger;
 class Loader {
+    type;
+    index = 0;
+    interval = null;
     constructor(type) {
-        this.index = 0;
-        this.interval = null;
         this.type = type;
     }
     start(text) {
@@ -70,5 +65,5 @@ const animations = {
     ],
 };
 const log = new Logger();
-exports.default = log;
+export default log;
 //# sourceMappingURL=log.js.map

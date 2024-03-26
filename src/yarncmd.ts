@@ -1,5 +1,5 @@
 import { Command } from 'commander'
-import sspawn from './sspawn'
+import sspawn from './sspawn.js'
 
 export default function yarncmd(
   program: Command,
