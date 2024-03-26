@@ -1,5 +1,5 @@
 import * as readline from 'readline'
-import { input, select } from '@inquirer/prompts'
+import prompts from 'prompts'
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -25,101 +25,89 @@ export interface NewAppCLIOptions {
 export type FrontEndClientType = 'react' | 'vue' | 'nuxt'
 
 async function apiOnlyQuestion() {
-  const answer = await select({
-    message: 'api only?',
-    choices: [
-      {
-        name: 'y',
-        value: true,
-        // description: 'npm is the most popular package manager',
-      },
-      {
-        name: 'n',
-        value: false,
-      },
-    ],
-  })
-  options.apiOnly = answer
+  const answer = await prompts([
+    {
+      type: 'multiselect',
+      name: 'apiOnly',
+      message: 'api only?',
+      instructions: false,
+      choices: [
+        { title: 'y', value: true },
+        { title: 'f', value: false },
+      ],
+    },
+  ])
+  options.apiOnly = answer.apiOnly
 }
 
 async function redisQuestion() {
-  const answer = await select({
-    message: 'redis?',
-    choices: [
-      {
-        name: 'y',
-        value: true,
-        // description: 'npm is the most popular package manager',
-      },
-      {
-        name: 'n',
-        value: false,
-      },
-    ],
-  })
-  options.redis = answer
+  const answer = await prompts([
+    {
+      type: 'multiselect',
+      name: 'redis',
+      message: 'redis?',
+      instructions: false,
+      choices: [
+        { title: 'y', value: true },
+        { title: 'f', value: false },
+      ],
+    },
+  ])
+  options.redis = answer.redis
 }
 
 async function wsQuestion() {
-  const answer = await select({
-    message: 'websockets?',
-    choices: [
-      {
-        name: 'y',
-        value: true,
-        // description: 'npm is the most popular package manager',
-      },
-      {
-        name: 'n',
-        value: false,
-      },
-    ],
-  })
-  options.ws = answer
+  const answer = await prompts([
+    {
+      type: 'multiselect',
+      name: 'websockets',
+      message: 'websockets?',
+      instructions: false,
+      choices: [
+        { title: 'y', value: true },
+        { title: 'f', value: false },
+      ],
+    },
+  ])
+
+  options.ws = answer.websockets
 }
 
 async function primaryKeyTypeQuestion() {
-  const answer = await select({
-    message: 'primary key type?',
-    choices: [
-      {
-        name: 'integer',
-        value: 'integer',
-        // description: 'npm is the most popular package manager',
-      },
-      {
-        name: 'uuid',
-        value: 'uuid',
-      },
-    ],
-  })
-  options.useUuids = answer === 'uuid'
+  const answer = await prompts([
+    {
+      type: 'multiselect',
+      name: 'primaryKeyType',
+      message: 'primary key type?',
+      instructions: false,
+      choices: [
+        { title: 'integer', value: 'integer' },
+        { title: 'uuid', value: 'uuid' },
+      ],
+    },
+  ])
+
+  options.useUuids = answer.primaryKeyType === 'uuid'
 }
 
 async function clientQuestion() {
   if (options.apiOnly) return
 
-  const answer = await select({
-    message: 'which front end client would you like to use?',
-    choices: [
-      {
-        name: 'react',
-        value: 'react',
-        description: 'use a react app with typescript and redux',
-      },
-      {
-        name: 'vue',
-        value: 'vue',
-        description: 'use a vue app with typescript',
-      },
-      {
-        name: 'nuxt',
-        value: 'nuxt',
-        description: 'use a nuxt app with vue and typescript',
-      },
-    ],
-  })
-  options.client = answer as FrontEndClientType
+  const answer = await prompts([
+    {
+      type: 'multiselect',
+      name: 'clientFramework',
+      message: 'which front end client would you like to use?',
+      instructions: false,
+      choices: [
+        { title: 'redux', value: 'redux' },
+        { title: 'vue', value: 'vue' },
+        { title: 'nuxt', value: 'nuxt' },
+      ],
+    },
+  ])
+
+  options.client = answer.clientFramework as FrontEndClientType
 }
 
 export default async function gatherUserInput() {
