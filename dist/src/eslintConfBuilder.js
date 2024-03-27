@@ -1,4 +1,6 @@
-export default class ESLintConfBuilder {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+class ESLintConfBuilder {
     static buildForViteReact() {
         return `\
 module.exports = {
@@ -24,4 +26,5 @@ module.exports = {
 }`;
     }
 }
+exports.default = ESLintConfBuilder;
 //# sourceMappingURL=eslintConfBuilder.js.map

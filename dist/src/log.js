@@ -1,6 +1,11 @@
-export class Logger {
-    cache = [];
-    loaders = [];
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Logger = void 0;
+class Logger {
+    constructor() {
+        this.cache = [];
+        this.loaders = [];
+    }
     write(text, { cache = false } = {}) {
         console.log(text);
         if (cache)
@@ -25,11 +30,11 @@ export class Logger {
         process.stdout.cursorTo(0);
     }
 }
+exports.Logger = Logger;
 class Loader {
-    type;
-    index = 0;
-    interval = null;
     constructor(type) {
+        this.index = 0;
+        this.interval = null;
         this.type = type;
     }
     start(text) {
@@ -65,5 +70,5 @@ const animations = {
     ],
 };
 const log = new Logger();
-export default log;
+exports.default = log;
 //# sourceMappingURL=log.js.map

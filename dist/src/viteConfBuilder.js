@@ -1,4 +1,6 @@
-export default class ViteConfBuilder {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+class ViteConfBuilder {
     static build(userOptions) {
         const frameworkName = clientFrameworkName(userOptions);
         return `
@@ -15,6 +17,7 @@ export default defineConfig({
 `;
     }
 }
+exports.default = ViteConfBuilder;
 function clientFrameworkName(userOptions) {
     switch (userOptions.client) {
         case 'react':

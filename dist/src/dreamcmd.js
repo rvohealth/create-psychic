@@ -1,5 +1,10 @@
-import sspawn from './sspawn.js';
-export default function dreamcmd(program, commandString, description, aliasString) {
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const sspawn_1 = __importDefault(require("./sspawn"));
+function dreamcmd(program, commandString, description, aliasString) {
     program
         .command(commandString)
         .description(description)
@@ -10,7 +15,8 @@ export default function dreamcmd(program, commandString, description, aliasStrin
         const cmd = `${nodeEnvString} yarn dream ${commandString}`;
         if (process.env.DEBUG == '1')
             console.log(`[DEBUG]: the following yarn command is being aliased by psychic cli: ${cmd}`);
-        await sspawn(cmd);
+        await (0, sspawn_1.default)(cmd);
     });
 }
+exports.default = dreamcmd;
 //# sourceMappingURL=dreamcmd.js.map
