@@ -7,17 +7,15 @@
   "author": "avocadojesus",
   "license": "Apache-2.0",
   "private": true,
-  "type": "module",
   "bin": {
     "psy": "./dist/main.js"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "psy": "ts-node --esm ./src/main.ts",
+    "psy": "ts-node ./src/main.ts",
     "postinstall": "yarn build"
   },
   "dependencies": {
-    "@inquirer/prompts": "^4.3.0",
     "@types/node": "^18.11.18",
     "colorette": "^2.0.20",
     "commander": "^10.0.1",

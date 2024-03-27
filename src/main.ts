@@ -6,11 +6,11 @@
 // https://github.com/tj/commander.js#quick-start
 
 import { Command } from 'commander'
-import yarncmd from './yarncmd.js'
-import dreamcmd from './dreamcmd.js'
-import newPsychicApp from './newPsychicApp.js'
-import sspawn from './sspawn.js'
-import psycmd from './psycmd.js'
+import yarncmd from './yarncmd'
+import dreamcmd from './dreamcmd'
+import newPsychicApp from './newPsychicApp'
+import sspawn from './sspawn'
+import psycmd from './psycmd'
 
 const program = new Command()
 

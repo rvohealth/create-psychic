@@ -1,15 +1,20 @@
 #!/usr/bin/env node
+"use strict";
 // nice reference for shell commands:
 // https://www.freecodecamp.org/news/node-js-child-processes-everything-you-need-to-know-e69498fe970a/
 // commanderjs docs:
 // https://github.com/tj/commander.js#quick-start
-import { Command } from 'commander';
-import yarncmd from './yarncmd.js';
-import dreamcmd from './dreamcmd.js';
-import newPsychicApp from './newPsychicApp.js';
-import sspawn from './sspawn.js';
-import psycmd from './psycmd.js';
-const program = new Command();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const commander_1 = require("commander");
+const yarncmd_1 = __importDefault(require("./yarncmd"));
+const dreamcmd_1 = __importDefault(require("./dreamcmd"));
+const newPsychicApp_1 = __importDefault(require("./newPsychicApp"));
+const sspawn_1 = __importDefault(require("./sspawn"));
+const psycmd_1 = __importDefault(require("./psycmd"));
+const program = new commander_1.Command();
 program
     .command('new')
     .description('create a new psychic app')
@@ -18,13 +23,13 @@ program
     .option('--ws', 'indicate that you would like to have psychic provide a lean socket.io provider for you')
     .option('--redis', 'indicate that you would like to have psychic provide a lean redis client. This is used for performing background jobs, but can also be exploited for other queue operations.')
     .option('--uuids', 'indicate that you would like to have psychic provide a lean redis client. This is used for performing background jobs, but can also be exploited for other queue operations.')
-    .action(newPsychicApp);
+    .action(newPsychicApp_1.default);
 program
     .command('clean')
     .description('create a controller, model, migration, and serializer for a resource')
     .argument('<name>', 'name of the resource')
     .action(async () => {
-    await sspawn('yarn psy clean');
+    await (0, sspawn_1.default)('yarn psy clean');
 });
 program
     .command('generate:resource')
@@ -33,7 +38,7 @@ program
     .argument('<name>', 'name of the resource')
     .action(async () => {
     const [_, ...args] = program.args;
-    await sspawn(`yarn psy g:resource ${args.join(' ')}`);
+    await (0, sspawn_1.default)(`yarn psy g:resource ${args.join(' ')}`);
 });
 program
     .command('generate:controller')
@@ -42,7 +47,7 @@ program
     .argument('<name>', 'name of the controller')
     .action(async () => {
     const [_, ...args] = program.args;
-    await sspawn(`yarn psy g:controller ${args.join(' ')}`);
+    await (0, sspawn_1.default)(`yarn psy g:controller ${args.join(' ')}`);
 });
 program
     .command('generate:serializer')
@@ -51,7 +56,7 @@ program
     .argument('<name>', 'name of the serializer')
     .action(async () => {
     const [_, ...args] = program.args;
-    await sspawn(`yarn psy g:serializer ${args.join(' ')}`);
+    await (0, sspawn_1.default)(`yarn psy g:serializer ${args.join(' ')}`);
 });
 program
     .command('generate:model')
@@ -60,14 +65,14 @@ program
     .argument('<name>', 'name of the model')
     .action(async () => {
     const [_, ...args] = program.args;
-    await sspawn(`yarn dream g:model ${args.join(' ')}`);
+    await (0, sspawn_1.default)(`yarn dream g:model ${args.join(' ')}`);
 });
 program
     .command('generate:api')
     .alias('g:api')
     .description('g:api generates client types (for use in front-end client)')
     .action(async () => {
-    await sspawn('yarn dream g:api');
+    await (0, sspawn_1.default)('yarn dream g:api');
 });
 program
     .command('generate:migration')
@@ -76,28 +81,28 @@ program
     .argument('<name>', 'name of the migration')
     .action(async () => {
     const [_, ...args] = program.args;
-    await sspawn(`yarn dream g:migration ${args.join(' ')}`);
+    await (0, sspawn_1.default)(`yarn dream g:migration ${args.join(' ')}`);
 });
 program
     .command('routes')
     .alias('routes:list')
     .description('lists the routes known by your application')
     .action(async () => {
-    await sspawn(`yarn psy routes`);
+    await (0, sspawn_1.default)(`yarn psy routes`);
 });
 program
     .command('console')
     .alias('c')
     .description('enters a command line repl')
     .action(async () => {
-    await sspawn(`yarn console`);
+    await (0, sspawn_1.default)(`yarn console`);
 });
 program
     .command('spec')
     .description('runs either a feauture spec, unit spec, or all specs, depending on what is passed.')
     .action(async () => {
     const [_, ...args] = program.args;
-    await sspawn(`yarn psy spec ${args.join(' ')}`);
+    await (0, sspawn_1.default)(`yarn psy spec ${args.join(' ')}`);
 });
 program
     .command('db:rollback')
@@ -105,28 +110,28 @@ program
     .option('--step <integer>', '--step <integer> number of steps back to travel')
     .action(async () => {
     const [_, ...args] = program.args;
-    await sspawn(`yarn psy db:rollback ${args.join(' ')}`);
+    await (0, sspawn_1.default)(`yarn psy db:rollback ${args.join(' ')}`);
 });
 program
     .command('db:reset')
     .description('db:reset drops, creates, migrates, and seeds your database, followed by a type sync')
     .action(async () => {
     const [_, ...args] = program.args;
-    await sspawn(`yarn psy db:reset ${args.join(' ')}`);
+    await (0, sspawn_1.default)(`yarn psy db:reset ${args.join(' ')}`);
 });
-dreamcmd(program, 'db:create', 'creates the database');
-dreamcmd(program, 'db:drop', 'drops the database');
-psycmd(program, 'db:migrate', 'runs migrations');
-psycmd(program, 'sync:routes', 'syncs routes');
-dreamcmd(program, 'db:seed', 'seeds your database');
-yarncmd(program, 'dev', 'starts the local dev server');
-yarncmd(program, 'db', 'starts the local dev server');
-yarncmd(program, 'build', 'builds typescript project');
-yarncmd(program, 'prod', 'launches production server');
-yarncmd(program, 'g:migration', 'generates a new migration');
-yarncmd(program, 'uspec', 'runs unit specs');
-yarncmd(program, 'fspec', 'runs feature specs');
-yarncmd(program, 'console', 'starts repl');
-yarncmd(program, 'c', 'starts repl (alias for console)');
+(0, dreamcmd_1.default)(program, 'db:create', 'creates the database');
+(0, dreamcmd_1.default)(program, 'db:drop', 'drops the database');
+(0, psycmd_1.default)(program, 'db:migrate', 'runs migrations');
+(0, psycmd_1.default)(program, 'sync:routes', 'syncs routes');
+(0, dreamcmd_1.default)(program, 'db:seed', 'seeds your database');
+(0, yarncmd_1.default)(program, 'dev', 'starts the local dev server');
+(0, yarncmd_1.default)(program, 'db', 'starts the local dev server');
+(0, yarncmd_1.default)(program, 'build', 'builds typescript project');
+(0, yarncmd_1.default)(program, 'prod', 'launches production server');
+(0, yarncmd_1.default)(program, 'g:migration', 'generates a new migration');
+(0, yarncmd_1.default)(program, 'uspec', 'runs unit specs');
+(0, yarncmd_1.default)(program, 'fspec', 'runs feature specs');
+(0, yarncmd_1.default)(program, 'console', 'starts repl');
+(0, yarncmd_1.default)(program, 'c', 'starts repl (alias for console)');
 program.parse();
 //# sourceMappingURL=main.js.map

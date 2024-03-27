@@ -1,5 +1,5 @@
 import { Command } from 'commander'
-import sspawn from './sspawn.js'
+import sspawn from './sspawn'
 
 export default function psycmd(
   program: Command,

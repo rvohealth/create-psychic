@@ -1,5 +1,8 @@
-import { spawn } from 'child_process';
-export default function sspawn(command, opts = {}) {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ssspawn = void 0;
+const child_process_1 = require("child_process");
+function sspawn(command, opts = {}) {
     return new Promise((accept, reject) => {
         ssspawn(command, opts).on('close', code => {
             if (code !== 0)
@@ -8,11 +11,13 @@ export default function sspawn(command, opts = {}) {
         });
     });
 }
-export function ssspawn(command, opts = {}) {
-    return spawn(command, {
+exports.default = sspawn;
+function ssspawn(command, opts = {}) {
+    return (0, child_process_1.spawn)(command, {
         stdio: 'inherit',
         shell: true,
         ...opts,
     });
 }
+exports.ssspawn = ssspawn;
 //# sourceMappingURL=sspawn.js.map
