@@ -28,7 +28,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs = __importStar(require("fs"));
 const c = __importStar(require("colorette"));
-const confBuilder_1 = __importDefault(require("./confBuilder"));
 const copyRecursive_1 = __importDefault(require("./copyRecursive"));
 const envBuilder_1 = __importDefault(require("./envBuilder"));
 const sspawn_1 = __importDefault(require("./sspawn"));
@@ -39,6 +38,8 @@ const gatherUserInput_1 = __importDefault(require("./gatherUserInput"));
 const packagejsonBuilder_1 = __importDefault(require("./packagejsonBuilder"));
 const viteConfBuilder_1 = __importDefault(require("./viteConfBuilder"));
 const eslintConfBuilder_1 = __importDefault(require("./eslintConfBuilder"));
+const appConfigBuilder_1 = __importDefault(require("./appConfigBuilder"));
+const dreamYamlBuilder_1 = __importDefault(require("./dreamYamlBuilder"));
 async function newPsychiclApp(appName) {
     const userOptions = await (0, gatherUserInput_1.default)();
     log_1.default.clear();
@@ -61,13 +62,9 @@ async function newPsychiclApp(appName) {
     log_1.default.write(c.green(`Step 2. building default config files...`));
     fs.writeFileSync(`${projectPath}/.env`, envBuilder_1.default.build({ appName, env: 'development' }));
     fs.writeFileSync(`${projectPath}/.env.test`, envBuilder_1.default.build({ appName, env: 'test' }));
-    fs.writeFileSync(projectPath + '/src/conf/app.yml', confBuilder_1.default.buildAll({
-        api: userOptions.apiOnly,
-        ws: userOptions.ws,
-        redis: userOptions.redis,
-        uuids: userOptions.useUuids,
-    }));
     fs.writeFileSync(projectPath + '/package.json', await packagejsonBuilder_1.default.buildAPI(userOptions));
+    fs.writeFileSync(`${projectPath}/src/conf/app.ts`, await appConfigBuilder_1.default.build({ appName, userOptions }));
+    fs.writeFileSync(projectPath + '/.dream.yml', await dreamYamlBuilder_1.default.build(userOptions));
     log_1.default.restoreCache();
     log_1.default.write(c.green(`Step 2. build default config files: Done!`), { cache: true });
     log_1.default.write(c.green(`Step 3. Installing psychic dependencies...`));
