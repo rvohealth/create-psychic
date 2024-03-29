@@ -36,7 +36,7 @@ const options = {
     apiOnly: false,
     redis: false,
     ws: false,
-    useUuids: false,
+    primaryKeyType: 'bigserial',
     client: null,
 };
 async function redisQuestion() {
@@ -49,10 +49,12 @@ async function wsQuestion() {
 }
 async function primaryKeyTypeQuestion() {
     const answer = await new select_1.default('what primary key type would you like to use?', [
+        'bigserial',
+        'bigint',
         'integer',
         'uuid',
     ]).run();
-    options.useUuids = answer === 'uuid';
+    options.primaryKeyType = answer;
 }
 async function clientQuestion() {
     if (options.apiOnly)

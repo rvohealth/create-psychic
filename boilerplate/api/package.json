@@ -1,14 +1,13 @@
 {
   "name": "psychic-app",
-  "version": "0.0.1-beta1",
+  "version": "0.2.0",
   "main": "src/index.ts",
   "license": "Apache 2.09",
   "private": true,
   "scripts": {
     "psy": "APP_NAME=$npm_package_name APP_VERSION=$npm_package_version APP_ROOT_PATH=$(pwd) yarn --cwd=node_modules/@rvohealth/psychic psy",
     "psyjs": "APP_NAME=$npm_package_name APP_VERSION=$npm_package_version APP_ROOT_PATH=$(pwd) yarn --cwd=node_modules/@rvohealth/psychic psyjs",
-    "build": "APP_NAME=$npm_package_name APP_VERSION=$npm_package_version APP_ROOT_PATH=$(pwd) yarn --cwd=node_modules/@rvohealth/psychic build && echo \"building your app...\" && rm -rf dist && APP_ROOT_PATH=$(pwd) npx tsc -p ./tsconfig.build.json && yarn after-build",
-    "after-build": "cp ./src/conf/app.yml ./dist/src/conf/app.yml && cp -R ./openapi ./dist",
+    "build": "APP_NAME=$npm_package_name APP_VERSION=$npm_package_version APP_ROOT_PATH=$(pwd) yarn --cwd=node_modules/@rvohealth/psychic build && echo \"building your app...\" && rm -rf dist && APP_ROOT_PATH=$(pwd) npx tsc -p ./tsconfig.build.json",
     "dream": "APP_NAME=$npm_package_name APP_VERSION=$npm_package_version APP_ROOT_PATH=$(pwd) yarn --cwd=node_modules/@rvohealth/dream dream",
     "dreamjs": "APP_NAME=$npm_package_name APP_VERSION=$npm_package_version APP_ROOT_PATH=$(pwd) yarn --cwd=node_modules/@rvohealth/dream dreamjs",
     "dev": "APP_NAME=$npm_package_name APP_VERSION=$npm_package_version APP_ROOT_PATH=$(pwd) NODE_ENV=development TS_SAFE=1 WORKER_COUNT=0 ts-node --transpile-only ./src/main.ts",
@@ -21,8 +20,8 @@
     "console": "APP_NAME=$npm_package_name APP_VERSION=$npm_package_version TS_SAFE=1 APP_ROOT_PATH=$(pwd) npx ts-node --transpile-only --project ./tsconfig.json ./src/conf/repl.ts"
   },
   "dependencies": {
-    "@rvohealth/dream": "^0.1.92",
-    "@rvohealth/psychic": "^0.1.67"
+    "@rvohealth/dream": "^0.2.0",
+    "@rvohealth/psychic": "^0.2.1"
   },
   "devDependencies": {
     "@types/expect-puppeteer": "^5.0.3",

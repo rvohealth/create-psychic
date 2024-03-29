@@ -1,7 +1,6 @@
 import * as fs from 'fs'
 import * as c from 'colorette'
 
-import ConfBuilder from './confBuilder'
 import copyRecursive from './copyRecursive'
 import EnvBuilder from './envBuilder'
 import sspawn from './sspawn'
@@ -12,6 +11,8 @@ import gatherUserInput from './gatherUserInput'
 import PackagejsonBuilder from './packagejsonBuilder'
 import ViteConfBuilder from './viteConfBuilder'
 import ESLintConfBuilder from './eslintConfBuilder'
+import AppConfigBuilder from './appConfigBuilder'
+import DreamYamlBuilder from './dreamYamlBuilder'
 
 export default async function newPsychiclApp(appName: string) {
   const userOptions = await gatherUserInput()
@@ -37,18 +38,9 @@ export default async function newPsychiclApp(appName: string) {
   log.write(c.green(`Step 2. building default config files...`))
   fs.writeFileSync(`${projectPath}/.env`, EnvBuilder.build({ appName, env: 'development' }))
   fs.writeFileSync(`${projectPath}/.env.test`, EnvBuilder.build({ appName, env: 'test' }))
-
-  fs.writeFileSync(
-    projectPath + '/src/conf/app.yml',
-    ConfBuilder.buildAll({
-      api: userOptions.apiOnly,
-      ws: userOptions.ws,
-      redis: userOptions.redis,
-      uuids: userOptions.useUuids,
-    })
-  )
-
   fs.writeFileSync(projectPath + '/package.json', await PackagejsonBuilder.buildAPI(userOptions))
+  fs.writeFileSync(`${projectPath}/src/conf/app.ts`, await AppConfigBuilder.build({ appName, userOptions }))
+  fs.writeFileSync(projectPath + '/.dream.yml', await DreamYamlBuilder.build(userOptions))
 
   log.restoreCache()
   log.write(c.green(`Step 2. build default config files: Done!`), { cache: true })
