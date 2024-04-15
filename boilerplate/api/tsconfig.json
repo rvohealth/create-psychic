@@ -23,7 +23,7 @@
     "noFallthroughCasesInSwitch": false,
     "outDir": "./dist",
     "baseUrl": "src",
-    "types": ["jest", "puppeteer", "jest-environment-puppeteer"]
+    "types": ["jest", "puppeteer", "jest-environment-puppeteer", "luxon-jest-matchers"]
   },
   "include": ["src", "spec"]
 }

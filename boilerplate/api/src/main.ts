@@ -5,9 +5,12 @@ async function start() {
   const server = new PsychicServer()
   await server.start()
 
-  process.on('SIGINT', async () => {
-    await server.stop()
+  process.on('SIGINT', () => {
+    server
+      .stop()
+      .then(() => {})
+      .catch(() => {})
   })
 }
 
-start()
+void start()

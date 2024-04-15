@@ -133,14 +133,14 @@ export default async (psy: PsychicConfig) => {
 
   // this function will be run any time a server error is encountered
   // that psychic isn't sure how to respond to (i.e. 500 internal server errors)
-  psy.on('server_error', (err, req, res) => {
+  psy.on('server_error', (err, _, res) => {
     if (!res.headersSent) res.sendStatus(500)
     else if (developmentOrTestEnv()) throw err
   })
 
   // run a callback after the websocket server is initially started
-  psy.on('ws:start', server => {})
+  psy.on('ws:start', () => {})
 
   // run a callback after connection to the websocket service
-  psy.on('ws:connect', socket => {})
+  psy.on('ws:connect', () => {})
 }

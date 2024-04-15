@@ -17,20 +17,31 @@
         "sync": "APP_NAME=$npm_package_name APP_VERSION=$npm_package_version yarn psy sync:all",
         "uspec": "APP_NAME=$npm_package_name APP_VERSION=$npm_package_version APP_ROOT_PATH=$(pwd) TS_SAFE=1 jest -w 1 --config=./spec/unit/jest.config.js --forceExit --verbose --logHeapUsage",
         "fspec": "APP_NAME=$npm_package_name APP_VERSION=$npm_package_version APP_ROOT_PATH=$(pwd) TS_SAFE=1 jest --clearCache && jest --config=./spec/features/jest.config.js --runInBand --forceExit --verbose --logHeapUsage",
-        "console": "APP_NAME=$npm_package_name APP_VERSION=$npm_package_version TS_SAFE=1 APP_ROOT_PATH=$(pwd) npx ts-node --transpile-only --project ./tsconfig.json ./src/conf/repl.ts"
+        "console": "APP_NAME=$npm_package_name APP_VERSION=$npm_package_version TS_SAFE=1 APP_ROOT_PATH=$(pwd) npx ts-node --transpile-only --project ./tsconfig.json ./src/conf/repl.ts",
+        "format": "yarn run prettier . --write",
+        "lint": "yarn run eslint --no-warn-ignored \"src/**/*.ts\" \"spec/**/*.ts\" && yarn run prettier . --check"
     },
     "dependencies": {
-        "@rvohealth/dream": "^0.2.0-beta2",
-        "@rvohealth/psychic": "^0.2.0-beta1"
+        "@rvohealth/dream": "^0.2.12",
+        "@rvohealth/psychic": "^0.2.2"
     },
     "devDependencies": {
+        "@eslint/js": "^9.0.0",
         "@types/expect-puppeteer": "^5.0.3",
-        "@types/jest-environment-puppeteer": "^5.0.3",
+        "@types/jest-environment-puppeteer": "^5.0.6",
         "@types/supertest": "^2.0.12",
+        "@typescript-eslint/eslint-plugin": "^6.20.0",
+        "@typescript-eslint/parser": "^6.20.0",
+        "@typescript/analyze-trace": "^0.10.1",
+        "eslint": "^9.0.0",
         "express-requests-logger": "^4.0.0",
         "jest-puppeteer": "^8.0.6",
-        "puppeteer": "^19.9.1",
+        "jest-puppeteer": "^9.0.2",
+        "luxon-jest-matchers": "^0.1.14",
+        "prettier": "^3.2.5",
+        "puppeteer": "^22.3.0",
         "supertest": "^6.3.3",
-        "typescript": "^5.3.3"
+        "typescript": "^5.4.5",
+        "typescript-eslint": "^7.6.0"
     }
 }
