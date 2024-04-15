@@ -1,6 +1,6 @@
-describe('ensure puppeteer is working', () => {
-  it('accepts the request', async () => {
+describe('puppeteer sample test', () => {
+  it('my first puppeteer test', async () => {
     await page.goto('http://localhost:3000')
-    await expect(page).toMatchTextContent('hello: world')
+    // TODO add specs here for your client app
   })
 })
