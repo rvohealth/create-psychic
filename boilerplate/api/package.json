@@ -23,7 +23,8 @@
   },
   "dependencies": {
     "@rvohealth/dream": "^0.2.12",
-    "@rvohealth/psychic": "^0.2.2"
+    "@rvohealth/psychic": "^0.2.2",
+    "express": "^4.19.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.0.0",
@@ -35,7 +36,6 @@
     "@typescript/analyze-trace": "^0.10.1",
     "eslint": "^9.0.0",
     "express-requests-logger": "^4.0.0",
-    "jest-puppeteer": "^8.0.6",
     "jest-puppeteer": "^9.0.2",
     "luxon-jest-matchers": "^0.1.14",
     "prettier": "^3.2.5",
