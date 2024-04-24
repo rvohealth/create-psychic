@@ -22,8 +22,8 @@
     "lint": "yarn run eslint --no-warn-ignored \"src/**/*.ts\" \"spec/**/*.ts\" && yarn run prettier . --check"
   },
   "dependencies": {
-    "@rvohealth/dream": "^0.2.12",
-    "@rvohealth/psychic": "^0.2.2",
+    "@rvohealth/dream": "^0.3.0",
+    "@rvohealth/psychic": "^0.3.0",
     "express": "^4.19.2"
   },
   "devDependencies": {
