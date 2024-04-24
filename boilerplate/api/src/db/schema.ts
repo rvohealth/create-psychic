@@ -2,10 +2,6 @@ export interface DB {}
 
 export class DBClass {}
 
-export interface InterpretedDB {}
+export const AllColumns = [] as const
 
-export class InterpretedDBClass {}
-
-export const DBColumns = {}
-
-export const DBTypeCache = {} as Partial<Record<keyof DB, any>>
+export const schema = {} as const
