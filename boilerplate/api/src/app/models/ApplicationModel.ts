@@ -1,5 +1,6 @@
 import { Dream, Dreamconf } from '@rvohealth/dream'
-import { AllColumns, DBClass, schema } from '../../db/schema'
+import { AllColumns, DBClass } from '../../db/sync'
+import { schema } from '../../db/schema'
 import dreamconf from '../../conf/dreamconf'
 
 export default class ApplicationModel extends Dream {

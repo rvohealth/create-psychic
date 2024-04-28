@@ -316,7 +316,7 @@ import { DateTime } from 'luxon'
 import { Dream, IdType } from '@rvohealth/dream'
 import ApplicationModel from './ApplicationModel'
 import UserSerializer from '../../../src/app/serializers/UserSerializer'
-import { UserTypesEnum } from '../../../src/db/schema'
+import { UserTypesEnum } from '../../../src/db/sync'
 
 export default class User extends ApplicationModel {
   public get table() {
@@ -504,7 +504,7 @@ import { DateTime } from 'luxon'
 import { Dream, IdType } from '@rvohealth/dream'
 import ApplicationModel from './ApplicationModel'
 import UserSerializer from '../../../src/app/serializers/UserSerializer'
-import { UserTypesEnum } from '../../../src/db/schema'
+import { UserTypesEnum } from '../../../src/db/sync'
 
 export default class User extends ApplicationModel {
   public get table() {
@@ -529,7 +529,7 @@ export default class User extends ApplicationModel {
 // api/src/app/serializers/user.ts
 
 import { DreamSerializer, Attribute } from '@rvohealth/dream'
-import { UserTypesEnum } from '../../../src/db/schema'
+import { UserTypesEnum } from '../../../src/db/sync'
 import User from '../models/User'
 
 export default class UserSerializer<DataType extends User> extends DreamSerializer<DataType> {
