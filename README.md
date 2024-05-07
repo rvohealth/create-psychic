@@ -663,7 +663,7 @@ yarn psy prod
 
 ## psy spec
 
-Psychic is built on jest and playwright, allowing you to build end-to-end feature specs that drive through your react app, hitting your backend api (which we call `feature` specs). Comparitively, we have a concept of `unit` specs, which do not excercise the front end and do not use puppeteer, but instead just use jest by itself.
+Psychic is built on jest and playwright, facilitating writing end-to-end feature specs that drive through your react app, hitting your backend api (which we call `feature` specs). Comparitively, we have a concept of `unit` specs, which do not excercise the front end and do not use puppeteer, but instead just use jest by itself.
 
 To run all of the specs, you can simply run
 
