@@ -22,12 +22,14 @@
         "lint": "yarn run eslint --no-warn-ignored \"src/**/*.ts\" \"spec/**/*.ts\" && yarn run prettier . --check"
     },
     "dependencies": {
-        "@rvohealth/dream": "^0.5.2",
+        "@rvohealth/dream": "^0.5.3",
         "@rvohealth/psychic": "^0.3.9",
         "express": "^4.19.2",
+        "express-winston": "^4.2.0",
         "luxon": "^3.4.4",
         "redis": "^4.6.13",
-        "socket.io": "^4.7.5"
+        "socket.io": "^4.7.5",
+        "winston": "^3.13.0"
     },
     "devDependencies": {
         "@eslint/js": "^9.0.0",
