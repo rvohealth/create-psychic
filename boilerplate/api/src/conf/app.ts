@@ -116,7 +116,7 @@ export default (psy: PsychicConfig) => {
   psy.on('after:routes', () => {})
 
   // run a callback after the config is loaded
-  psy.on('load', () => {
+  psy.on('load', async () => {
     // uncomment to initialize background jobs
     // (this should only be done if useRedis is true)
     <BACKGROUND_CONNECT>
