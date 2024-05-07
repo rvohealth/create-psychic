@@ -79,13 +79,6 @@ export default (psy: PsychicConfig) => {
   psy.on('boot', () => {
     if (!testEnv() || process.env.REQUEST_LOGGING === '1') {
       const SENSITIVE_FIELDS = ['password', 'token', 'authentication', 'authorization', 'secret']
-      const defaultRequestFilter = {
-        maskBody: SENSITIVE_FIELDS,
-        maskQuery: SENSITIVE_FIELDS,
-        maskHeaders: SENSITIVE_FIELDS,
-        maxBodyLength: 500,
-      }
-
 
       psy.app.use(
         expressWinston.logger({
