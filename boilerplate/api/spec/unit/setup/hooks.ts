@@ -1,6 +1,5 @@
 import '../../../src/conf/loadEnv'
 import '@rvohealth/psychic/spec-helpers'
-import 'expect-puppeteer'
 import { truncate } from '@rvohealth/dream/spec-helpers'
 
 process.env.APP_ROOT_PATH = process.cwd()
