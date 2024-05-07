@@ -12,8 +12,8 @@ module.exports = {
   ],
   serverOptions: [
     {
-      command: 'BROWSER=none PORT=3000 REACT_APP_PSYCHIC_ENV=test yarn --cwd=../client dev',
-      host: '127.0.0.1',
+      command: 'BROWSER=none REACT_APP_PSYCHIC_ENV=test yarn client',
+      host: 'localhost',
       debug: process.env.DEBUG === '1',
       launchTimeout: 60000,
       port: 3000,
