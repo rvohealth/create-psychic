@@ -1,6 +1,8 @@
 import { PsychicConfig, background } from '@rvohealth/psychic'
 import { developmentOrTestEnv, testEnv } from '@rvohealth/dream'
-import audit from 'express-requests-logger'
+import expressWinston from 'express-winston'
+import winston from 'winston'
+
 
 export default (psy: PsychicConfig) => {
   // ******
@@ -85,10 +87,15 @@ export default (psy: PsychicConfig) => {
       }
 
 
-      psy.app.use(audit({
-        request: {
-          ...defaultRequestFilter,
-          excludeHeaders: [
+      psy.app.use(
+        expressWinston.logger({
+          transports: [new winston.transports.Console()],
+          format: winston.format.combine(winston.format.colorize(), winston.format.json()),
+          meta: true, // optional: control whether you want to log the meta data about the request (default to true)
+          msg: 'HTTP {{req.method}} {{req.url}}', // optional: customize the default logging message. E.g. "{{res.statusCode}} {{req.method}} {{res.responseTime}}ms {{req.url}}"
+          expressFormat: true, // Use the default Express/morgan request formatting. Enabling this will override any msg if true. Will only output colors with colorize set to true
+          colorize: false, // Color the text and status code, using the Express/morgan color palette (text: gray, status: default green, 3XX cyan, 4XX yellow, 5XX red).
+          headerBlacklist: [
             'authorization',
             'content-length',
             'connection',
@@ -101,14 +108,10 @@ export default (psy: PsychicConfig) => {
             'sec-fetch-site',
             'user-agent',
           ],
-        },
-        response: {
-          ...defaultRequestFilter,
-          excludeHeaders: ['*'], // Exclude all headers from responses,
-          excludeBody: ['*'], // Exclude all body from responses
-        },
-        excludeURLs: ['/health_check'],
-      }))
+          ignoredRoutes: ['/health_check'],
+          bodyBlacklist: SENSITIVE_FIELDS,
+        })
+      )
     }
   })
 
