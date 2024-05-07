@@ -2,11 +2,7 @@ import { PsychicConfig, background } from '@rvohealth/psychic'
 import { developmentOrTestEnv, testEnv } from '@rvohealth/dream'
 import audit from 'express-requests-logger'
 
-export default async (psy: PsychicConfig) => {
-  // uncomment to initialize background jobs
-  // (this should only be done if useRedis is true)
-  <BACKGROUND_CONNECT>
-
+export default (psy: PsychicConfig) => {
   // ******
   // CONFIG:
   // ******
@@ -120,7 +116,11 @@ export default async (psy: PsychicConfig) => {
   psy.on('after:routes', () => {})
 
   // run a callback after the config is loaded
-  psy.on('load', () => {})
+  psy.on('load', () => {
+    // uncomment to initialize background jobs
+    // (this should only be done if useRedis is true)
+    <BACKGROUND_CONNECT>
+  })
 
   // run a callback after the config is loaded, but only if NODE_ENV=development
   psy.on('load:dev', () => {})
