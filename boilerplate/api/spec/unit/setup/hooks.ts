@@ -1,10 +1,22 @@
-import '../../../src/conf/loadEnv'
-import '@rvohealth/psychic/spec-helpers'
-import { truncate } from '@rvohealth/dream/spec-helpers'
+import '@rvohealth/psychic-spec-helpers'
+import '../../../src/conf/global'
 
-process.env.APP_ROOT_PATH = process.cwd()
-process.env.TS_SAFE = '1'
+import { DreamApplication } from '@rvohealth/dream'
+import { truncate } from '@rvohealth/dream-spec-helpers'
+import * as dotenv from 'dotenv'
+import initializePsychicApplication from '../../../src/cli/helpers/initializePsychicApplication'
+import inflections from '../../../src/conf/inflections'
+
+dotenv.config({ path: '.env.test' })
 
 beforeEach(async () => {
-  await truncate()
-})
+  try {
+    await initializePsychicApplication()
+  } catch (err) {
+    console.error(err)
+    throw err
+  }
+
+  inflections()
+  await truncate(DreamApplication)
+}, 15000)

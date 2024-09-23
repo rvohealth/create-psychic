@@ -1,42 +1,65 @@
-import { PsychicConfig, background } from '@rvohealth/psychic'
+import path from 'path'
+import { PsychicApplication, background } from '@rvohealth/psychic'
 import { developmentOrTestEnv, testEnv } from '@rvohealth/dream'
 import expressWinston from 'express-winston'
+import inflections from './inflections'
+import routesCb from './routes'
 import winston from 'winston'
 
 
-export default (psy: PsychicConfig) => {
-  // ******
-  // CONFIG:
-  // ******
+export default async (psy: PsychicApplication) => {
+  await psy.load('controllers', path.join(__dirname, '..', 'app', 'controllers'))
 
-  // the name of your application (no spaces)
-  psy.appName = '<APP_NAME>'
+  psy.set('appName', '<APP_NAME>')
+  psy.set('useWs', <USE_WS>)
+  psy.set('useRedis', <USE_REDIS>)
+  psy.set('apiOnly', <API_ONLY>)
+  psy.set('encryption', {
+    cookies: {
+      current: {
+        algorithm: 'aes-256-gcm',
+        key: process.env.APP_ENCRYPTION_KEY!,
+      },
+    },
+  })
 
-  // set to true to leverage internal websocket bindings to socket.io
-  psy.useWs = <USE_WS>
+  psy.set('apiRoot', path.join(__dirname, '..', '..'))
+  psy.set('clientRoot', path.join(__dirname, '..', '..', '..', 'client'))
+  psy.set('inflections', inflections)
+  psy.set('routes', routesCb)
 
-  // set to true to leverage internal redis bindings.
-  psy.useRedis = <USE_REDIS>
-
-  // set to true if you want to also attach a client app to your project.
-  psy.apiOnly = <API_ONLY>
-
-  // set options to pass to express.json when middleware is booted
-  psy.setJsonOptions({
+  psy.set('json', {
     limit: '20kb',
   })
 
-  // set options to pass to coors when middleware is booted
-  psy.setCorsOptions({
+  psy.set('ssl', {
+    key: process.env.PSYCHIC_SSL_KEY_PATH!,
+    cert: process.env.PSYCHIC_SSL_CERT_PATH!,
+  })
+
+  psy.set('cors', {
     credentials: true,
     origin: [
-      process.env.CLIENT_HOST ||
-        (process.env.NODE_ENV === 'test' ? 'http://localhost:7778' : 'http://localhost:3000'),
+      process.env.CLIENT_HOST || 'http://localhost:3000'
     ],
   })
 
+  psy.set('cookie', {
+    maxAge: {
+      days: 14,
+      hours: 0,
+      minutes: 0,
+      seconds: 0,
+      milliseconds: 0,
+    },
+  })
+
+  psy.set('background', {
+    workerCount: parseInt(process.env.WORKER_COUNT || '1'),
+  })
+
   // configuration options for bullmq queue (used for running background jobs in redis)
-  psy.setBackgroundQueueOptions({
+  psy.set('background:queue', {
     defaultJobOptions: {
       removeOnComplete: 1000,
       removeOnFail: 20000,
@@ -51,10 +74,10 @@ export default (psy: PsychicConfig) => {
   })
 
   // configuration options for bullmq worker (used for running background jobs in redis)
-  psy.setBackgroundWorkerOptions({})
+  psy.set('background:worker', {})
 
   // redis background job credentials
-  psy.setRedisBackgroundJobCredentials({
+  psy.set('redis:background', {
     username: process.env.BACKGROUND_JOBS_REDIS_USER,
     password: process.env.BACKGROUND_JOBS_REDIS_PASSWORD,
     host: process.env.BACKGROUND_JOBS_REDIS_HOST,
@@ -63,7 +86,7 @@ export default (psy: PsychicConfig) => {
   })
 
   // redis websocket credentials
-  psy.setRedisWsCredentials({
+  psy.set('redis:ws', {
     username: process.env.WS_REDIS_USER,
     password: process.env.WS_REDIS_PASSWORD,
     host: process.env.WS_REDIS_HOST,
@@ -71,16 +94,17 @@ export default (psy: PsychicConfig) => {
     secure: process.env.WS_REDIS_USE_SSL === '1',
   })
 
-  // ******
-  // HOOKS:
-  // ******
+  psy.set('openapi', {})
 
   // run a callback on server boot (but before routes are processed)
-  psy.on('boot', () => {
+  psy.on('boot', () => {})
+
+  // run a callback when the express server starts. the express app will be passed to each callback as the first argument
+  psy.on('server:init', app => {
     if (!testEnv() || process.env.REQUEST_LOGGING === '1') {
       const SENSITIVE_FIELDS = ['password', 'token', 'authentication', 'authorization', 'secret']
 
-      psy.app.use(
+      app.use(
         expressWinston.logger({
           transports: [new winston.transports.Console()],
           format: winston.format.combine(winston.format.colorize(), winston.format.json()),
@@ -103,10 +127,11 @@ export default (psy: PsychicConfig) => {
           ],
           ignoredRoutes: ['/health_check'],
           bodyBlacklist: SENSITIVE_FIELDS,
-        })
+        }),
       )
     }
   })
+
 
   // run a callback after routes are done processing
   psy.on('after:routes', () => {})
@@ -124,12 +149,12 @@ export default (psy: PsychicConfig) => {
   // run a callback after the config is loaded, but only if NODE_ENV=test
   psy.on('load:test', () => {})
 
-  // run a callback after the config is loaded, but only if NODE_ENV=prod
+  // run a callback after the config is loaded, but only if NODE_ENV=production
   psy.on('load:prod', () => {})
 
   // this function will be run any time a server error is encountered
   // that psychic isn't sure how to respond to (i.e. 500 internal server errors)
-  psy.on('server_error', (err, _, res) => {
+  psy.on('server:error', (err, _, res) => {
     if (!res.headersSent) res.sendStatus(500)
     else if (developmentOrTestEnv()) throw err
   })
