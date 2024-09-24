@@ -9,8 +9,14 @@ export default class AdminAuthedController extends PsychicController {
     // this.currentAdminUser to an admin user. i.e.
     //
     // const adminToken = this.req.headers['token']
-    // const adminUserId = await Encrypt.decode(token)
+    // const adminUserId = Encrypt.decrypt(token)
     // this.currentAdminUser = await AdminUser.find(adminUserId)
     //
+    //
+    // const adminUserId = this.getCookie('adminToken')
+    // const adminUser = await AdminUser.find(adminUserId)
+    // if (!adminUser) return this.unauthorized()
+
+    // this.currentAdminUser = adminUser
   }
 }
