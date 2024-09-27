@@ -1,4 +1,4 @@
-import { Encrypt } from '@rvohealth/dream'
+import crypto from 'crypto'
 
 export default class EnvBuilder {
   public static build({ env, appName }: { env: 'test' | 'development' | 'production'; appName: string }) {
@@ -7,10 +7,14 @@ DB_USER=
 DB_NAME=${snakeify(appName)}_${env}
 DB_PORT=5432
 DB_HOST=localhost
-APP_ENCRYPTION_KEY="${Encrypt.generateKey('aes-256-gcm')}"
+APP_ENCRYPTION_KEY="${generateKey()}"
 TZ=UTC
 `
   }
+}
+
+function generateKey() {
+  return crypto.randomBytes(32).toString('base64')
 }
 
 // TODO: import from shared space. The version within dream contains the most robust variant of snakeify,
