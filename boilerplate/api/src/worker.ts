@@ -10,7 +10,7 @@ increaseNodeStackTraceLimits()
 async function startBackgroundWorkers() {
   await initializePsychicApplication()
 
-  background.connect()
+  background.work()
 
   background.workers.forEach(worker => {
     worker.on('failed', (job, error) => {
@@ -24,10 +24,16 @@ async function startBackgroundWorkers() {
     stopBackgroundWorkers()
       .then(() => {
         closeAllDbConnections()
-          .then(() => {})
-          .catch(() => {})
+          .then(() => {
+            process.exit()
+          })
+          .catch(() => {
+            process.exit()
+          })
       })
-      .catch(() => {})
+      .catch(() => {
+        process.exit()
+      })
   })
 }
 
