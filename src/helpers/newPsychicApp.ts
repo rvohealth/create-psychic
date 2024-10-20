@@ -1,6 +1,7 @@
 import * as c from 'colorette'
 import * as fs from 'fs'
 
+import path from 'path'
 import AppConfigBuilder from '../file-builders/AppConfigBuilder'
 import DreamConfigBuilder from '../file-builders/DreamConfigBuilder'
 import EnvBuilder from '../file-builders/EnvBuilder'
@@ -33,12 +34,12 @@ export default async function newPsychicApp(appName: string, args: string[]) {
   const rootPath = `./${appName}`
 
   if (userOptions.apiOnly) {
-    projectPath = `./${appName}`
-    copyRecursive(__dirname + '/../../boilerplate/api', `./${appName}`)
+    projectPath = path.join('.', appName)
+    copyRecursive(path.join(__dirname, '..', '..', 'boilerplate', 'api'), path.join('.', appName))
   } else {
-    projectPath = `./${appName}/api`
+    projectPath = path.join('.', appName, 'api')
     fs.mkdirSync(`./${appName}`)
-    copyRecursive(__dirname + '/../../boilerplate/api', projectPath)
+    copyRecursive(path.join(__dirname, '..', '..', 'boilerplate', 'api'), projectPath)
   }
 
   fs.renameSync(`${projectPath}/yarnrc.yml`, `${projectPath}/.yarnrc.yml`)
@@ -50,12 +51,15 @@ export default async function newPsychicApp(appName: string, args: string[]) {
     log.write(c.green(`Step 2. building default config files...`))
   }
 
-  fs.writeFileSync(`${projectPath}/.env`, EnvBuilder.build({ appName, env: 'development' }))
-  fs.writeFileSync(`${projectPath}/.env.test`, EnvBuilder.build({ appName, env: 'test' }))
-  fs.writeFileSync(projectPath + '/package.json', await PackagejsonBuilder.buildAPI(userOptions))
-  fs.writeFileSync(`${projectPath}/src/conf/app.ts`, await AppConfigBuilder.build({ appName, userOptions }))
+  fs.writeFileSync(path.join(projectPath, '.env'), EnvBuilder.build({ appName, env: 'development' }))
+  fs.writeFileSync(path.join(projectPath, '.env.test'), EnvBuilder.build({ appName, env: 'test' }))
+  fs.writeFileSync(path.join(projectPath, 'package.json'), await PackagejsonBuilder.buildAPI(userOptions))
   fs.writeFileSync(
-    `${projectPath}/src/conf/dream.ts`,
+    path.join(projectPath, 'src', 'conf', 'app.ts'),
+    await AppConfigBuilder.build({ appName, userOptions })
+  )
+  fs.writeFileSync(
+    path.join(projectPath, 'src', 'conf', 'dream.ts'),
     await DreamConfigBuilder.build({ appName, userOptions })
   )
 
@@ -66,7 +70,7 @@ export default async function newPsychicApp(appName: string, args: string[]) {
 
     // only run yarn install if not in test env to save time
     await sspawn(
-      `cd ${projectPath} && mkdir node_modules && touch yarn.lock && corepack enable && yarn set version berry && yarn install`
+      `cd ${projectPath} && touch yarn.lock && corepack enable && yarn set version berry && yarn install`
     )
   }
 
@@ -79,7 +83,7 @@ export default async function newPsychicApp(appName: string, args: string[]) {
     log.write(c.green(`Step 4. Initializing git repository...`))
 
     // only do this if not test, since using git in CI will fail
-    await sspawn(`cd ./${appName} && git init`)
+    await sspawn(`cd ${path.join('.', appName)} && git init`)
   }
 
   if (!testEnv()) {
@@ -99,53 +103,59 @@ export default async function newPsychicApp(appName: string, args: string[]) {
         case 'react':
           await sspawn(`cd ${rootPath} && yarn create vite client --template react-ts && cd client`)
 
-          fs.mkdirSync(`./${appName}/client/src/config`)
+          fs.mkdirSync(path.join(appName, 'client', 'src', 'config'))
 
-          copyRecursive(__dirname + '/../../boilerplate/client/api', `${projectPath}/../client/src/api`)
           copyRecursive(
-            __dirname + '/../../boilerplate/client/config/routes.ts',
-            `${projectPath}/../client/src/config/routes.ts`
+            path.join(__dirname, '..', '..', 'boilerplate', 'client', 'api'),
+            path.join(projectPath, '..', 'client', 'src', 'api')
           )
           copyRecursive(
-            __dirname + '/../../boilerplate/client/node-version',
-            `${projectPath}/../client/.node-version`
+            path.join(__dirname, '..', '..', 'boilerplate', 'client', 'config', 'routes.ts'),
+            path.join(projectPath, '..', 'client', 'src', 'config', 'routes.ts')
           )
 
-          fs.writeFileSync(projectPath + '/../client/vite.config.ts', ViteConfBuilder.build(userOptions))
-          fs.writeFileSync(projectPath + '/../client/.eslintrc.cjs', ESLintConfBuilder.buildForViteReact())
+          fs.writeFileSync(
+            path.join(projectPath, '..', 'client', 'vite.config.ts'),
+            ViteConfBuilder.build(userOptions)
+          )
+          fs.writeFileSync(
+            path.join(projectPath, '..', 'client', '.eslintrc.cjs'),
+            ESLintConfBuilder.buildForViteReact()
+          )
 
           break
 
         case 'vue':
           await sspawn(`cd ${rootPath} && yarn create vite client --template vue-ts`)
-          fs.mkdirSync(`./${appName}/client/src/config`)
+          fs.mkdirSync(path.join('.', appName, 'client', 'src', 'config'))
 
-          copyRecursive(__dirname + '/../../boilerplate/client/api', `${projectPath}/../client/src/api`)
           copyRecursive(
-            __dirname + '/../../boilerplate/client/config/routes.ts',
-            `${projectPath}/../client/src/config/routes.ts`
+            path.join(__dirname, '..', '..', 'boilerplate', 'client', 'api'),
+            path.join(projectPath, '..', 'client', 'src', 'api')
           )
           copyRecursive(
-            __dirname + '/../../boilerplate/client/node-version',
-            `${projectPath}/../client/.node-version`
+            path.join(__dirname, '..', '..', 'boilerplate', 'client', 'config', 'routes.ts'),
+            path.join(projectPath, '..', 'client', 'src', 'config', 'routes.ts')
           )
 
-          fs.writeFileSync(projectPath + '/../client/vite.config.ts', ViteConfBuilder.build(userOptions))
+          fs.writeFileSync(
+            path.join(projectPath, '..', 'client', 'vite.config.ts'),
+            ViteConfBuilder.build(userOptions)
+          )
           break
 
         case 'nuxt':
           await sspawn(`cd ${rootPath} && yarn create nuxt-app client`)
 
-          fs.mkdirSync(`./${appName}/client/config`)
+          fs.mkdirSync(path.join('.', appName, 'client', 'config'))
 
-          copyRecursive(__dirname + '/../../boilerplate/client/api', `${projectPath}/../client/src/api`)
           copyRecursive(
-            __dirname + '/../../boilerplate/client/config/routes.ts',
-            `${projectPath}/../client/config/routes.ts`
+            path.join(__dirname, '..', '..', 'boilerplate', 'client', 'api'),
+            path.join(projectPath, '..', 'client', 'src', 'api')
           )
           copyRecursive(
-            __dirname + '/../../boilerplate/client/node-version',
-            `${projectPath}/../client/.node-version`
+            path.join(__dirname, '..', '..', 'boilerplate', 'client', 'config', 'routes.ts'),
+            path.join(projectPath, '..', 'client', 'config', 'routes.ts')
           )
 
           break
@@ -154,11 +164,15 @@ export default async function newPsychicApp(appName: string, args: string[]) {
       if (!testEnv()) {
         // only bother installing packages if not in test env to save time
         await sspawn(
-          `cd ${projectPath}/../client && mkdir node_modules && touch yarn.lock && corepack enable && yarn set version berry && yarn install`
+          `cd ${path.join(
+            projectPath,
+            '..',
+            'client'
+          )} && touch yarn.lock && corepack enable && yarn set version berry && yarn install`
         )
 
         try {
-          await sspawn(`cd ${projectPath}/../client && yarn add axios`)
+          await sspawn(`cd ${path.join(projectPath, '..', 'client')} && yarn add axios`)
         } catch (err) {
           errors.push(
             `
@@ -175,7 +189,7 @@ export default async function newPsychicApp(appName: string, args: string[]) {
 
   if (!testEnv()) {
     // do not use git during tests, since this will break in CI
-    await sspawn(`cd ./${appName} && git add --all && git commit -m 'psychic init' --quiet`)
+    await sspawn(`cd ${path.join('.', appName)} && git add --all && git commit -m 'psychic init' --quiet`)
 
     log.restoreCache()
     log.write(c.green(`Step 5. Build project: Done!`), { cache: true })
