@@ -1,6 +1,6 @@
 {
   "name": "@rvohealth/psychic-cli",
-  "version": "0.2.1-fgbeta-1",
+  "version": "0.2.1",
   "description": "psychic cli",
   "main": "src/dist/psy.js",
   "repository": "https://github.com/rvohealth/psychic-cli.git",
