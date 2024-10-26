@@ -1,6 +1,6 @@
 {
   "name": "@rvohealth/psychic-cli",
-  "version": "0.2.0",
+  "version": "0.2.1-fgbeta-1",
   "description": "psychic cli",
   "main": "src/dist/psy.js",
   "repository": "https://github.com/rvohealth/psychic-cli.git",
@@ -14,7 +14,7 @@
   ],
   "scripts": {
     "publish": "yarn npm publish",
-    "build": "rm -r dist && tsc -p tsconfig.json && rm -r dist/boilerplate && cp -r boilerplate dist/boilerplate/",
+    "build": "mkdir -p dist && rm -r dist && tsc -p tsconfig.json && rm -r dist/boilerplate && cp -r boilerplate dist/boilerplate/",
     "psy": "npx ts-node ./src/psy.ts",
     "prepack": "yarn build"
   },
