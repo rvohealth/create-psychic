@@ -1,10 +1,10 @@
-import { PsychicController, BeforeAction } from '@rvohealth/psychic'
+import { BeforeAction, PsychicController } from '@rvohealth/psychic'
 
 export default class AdminAuthedController extends PsychicController {
   // protected currentAdminUser: User
   @BeforeAction()
-  public async authenticate() {
-    throw `TODO: Implement admin authentication scheme!`
+  protected async authenticate() {
+    throw new Error(`TODO: Implement admin authentication scheme!`)
     // implement an authentication pattern that ends with you setting
     // this.currentAdminUser to an admin user. i.e.
     //
