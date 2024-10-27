@@ -168,7 +168,7 @@ export default async function newPsychicApp(appName: string, args: string[]) {
             projectPath,
             '..',
             'client'
-          )} && touch yarn.lock && corepack enable && yarn set version berry && yarn install`
+          )} && touch yarn.lock && corepack enable && yarn set version berry && yarn install && yarn add @rvohealth/dream @rvohealth/psychic`
         )
 
         try {
