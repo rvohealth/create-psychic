@@ -1,8 +1,8 @@
-import apiRoutes from '../api/apiRoutes'
+import viteEnvValue from '../helpers/viteEnvValue'
 
 const baseUrl = () => {
-  if (process.env.REACT_APP_API_HOST) return process.env.REACT_APP_API_HOST
-  return process.env.REACT_APP_PSYCHIC_ENV === 'test' ? 'http://localhost:7778' : 'http://localhost:7777'
+  if (viteEnvValue('VITE_API_HOST')) return viteEnvValue('VITE_API_HOST')
+  return viteEnvValue('VITE_API_HOST') === 'test' ? 'http://localhost:7779' : 'http://localhost:7777'
 }
 
 const routes = {
@@ -13,10 +13,6 @@ const routes = {
     login: '/login',
     logout: '/logout',
     signup: '/signup',
-  },
-
-  api: {
-    ...apiRoutes,
   },
 }
 
