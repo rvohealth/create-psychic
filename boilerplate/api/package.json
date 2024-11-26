@@ -62,7 +62,7 @@
     "jest-environment-node": "^29.7.0",
     "jest-playwright-preset": "^4.0.0",
     "jest-runner": "^29.7.0",
-    "kysely-codegen": "~0.16.4",
+    "kysely-codegen": "~0.17.0",
     "luxon-jest-matchers": "^0.1.14",
     "playwright": "^1.46.1",
     "playwright-chromium": "^1.46.1",

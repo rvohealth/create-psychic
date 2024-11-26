@@ -70,7 +70,7 @@ export default async function newPsychicApp(appName: string, args: string[]) {
 
     // only run yarn install if not in test env to save time
     await sspawn(
-      `cd ${projectPath} && touch yarn.lock && corepack enable && yarn set version berry && yarn install`
+      `cd ${projectPath} && touch yarn.lock && corepack enable && yarn set version stable && yarn install && yarn add @rvohealth/dream @rvohealth/psychic`
     )
   }
 
@@ -99,9 +99,12 @@ export default async function newPsychicApp(appName: string, args: string[]) {
 
   if (!testEnv() || process.env.REALLY_BUILD_CLIENT_DURING_SPECS === '1')
     if (!userOptions.apiOnly) {
+      const yarnVersion = 'corepack enable && yarn set version stable'
       switch (userOptions.client) {
         case 'react':
-          await sspawn(`cd ${rootPath} && yarn create vite client --template react-ts && cd client`)
+          await sspawn(
+            `cd ${rootPath} && ${yarnVersion} && yarn create vite client --template react-ts && rm package.json && cd client`
+          )
 
           fs.mkdirSync(path.join(appName, 'client', 'src', 'config'))
 
@@ -126,7 +129,7 @@ export default async function newPsychicApp(appName: string, args: string[]) {
           break
 
         case 'vue':
-          await sspawn(`cd ${rootPath} && yarn create vite client --template vue-ts`)
+          await sspawn(`cd ${rootPath} && ${yarnVersion} && yarn create vite client --template vue-ts`)
           fs.mkdirSync(path.join('.', appName, 'client', 'src', 'config'))
 
           copyRecursive(
@@ -145,7 +148,7 @@ export default async function newPsychicApp(appName: string, args: string[]) {
           break
 
         case 'nuxt':
-          await sspawn(`cd ${rootPath} && yarn create nuxt-app client`)
+          await sspawn(`cd ${rootPath} && ${yarnVersion} && yarn create nuxt-app client`)
 
           fs.mkdirSync(path.join('.', appName, 'client', 'config'))
 
@@ -168,7 +171,7 @@ export default async function newPsychicApp(appName: string, args: string[]) {
             projectPath,
             '..',
             'client'
-          )} && touch yarn.lock && corepack enable && yarn set version stable && yarn install && yarn add @rvohealth/dream @rvohealth/psychic`
+          )} && touch yarn.lock && corepack enable && yarn set version stable && yarn install`
         )
 
         try {
