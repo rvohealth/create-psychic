@@ -166,27 +166,7 @@ export default async function newPsychicApp(appName: string, args: string[]) {
 
       if (!testEnv()) {
         // only bother installing packages if not in test env to save time
-        await sspawn(
-          `cd ${path.join(
-            projectPath,
-            '..',
-            'client'
-          )} && touch yarn.lock && corepack enable && yarn set version stable && yarn install`
-        )
-
-        try {
-          await sspawn(`cd ${path.join(projectPath, '..', 'client')} && yarn add axios`)
-        } catch (err) {
-          errors.push(
-            `
-          ATTENTION:
-            we attempted to install axios for you in your client folder,
-            but it failed. The error we received was:
-
-        `
-          )
-          console.error(err)
-        }
+        await sspawn(`cd ${path.join(projectPath, '..', 'client')} && touch yarn.lock && yarn install`)
       }
     }
 
