@@ -714,6 +714,12 @@ User {
 }
 ```
 
-## quick commit
+## Questions?
 
-yarn && yarn build && git add --all; git commit -m 'update psy'; git push
+- **Ask them on [Stack Overflow](https://stackoverflow.com)**, using the `[psychic]` tag.
+
+## Contributing
+
+Psychic is an open source library, so we encourage you to actively contribute. Visit our [Contributing](https://github.com/rvohealth/psychic-cli/CONTRIBUTING.md) guide to learn more about the processes we use for submitting pull requests or issues.
+
+Are you trying to report a possible security vulnerability? Visit our [Security Policy](https://github.com/rvohealth/psychic-cli/SECURITY.md) for guidelines about how to proceed.
