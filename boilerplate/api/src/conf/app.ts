@@ -1,6 +1,8 @@
+import os from 'os'
 import path from 'path'
 import { PsychicApplication, background } from '@rvohealth/psychic'
-import { developmentOrTestEnv, testEnv } from '@rvohealth/dream'
+import Redis, { Cluster } from 'ioredis'
+import AppEnv from '../app/helpers/AppEnv'
 import expressWinston from 'express-winston'
 import inflections from './inflections'
 import routesCb from './routes'
@@ -18,7 +20,7 @@ export default async (psy: PsychicApplication) => {
     cookies: {
       current: {
         algorithm: 'aes-256-gcm',
-        key: process.env.APP_ENCRYPTION_KEY!,
+        key: AppEnv.string('APP_ENCRYPTION_KEY'),
       },
     },
   })
@@ -33,15 +35,16 @@ export default async (psy: PsychicApplication) => {
   })
 
   psy.set('ssl', {
-    key: process.env.PSYCHIC_SSL_KEY_PATH!,
-    cert: process.env.PSYCHIC_SSL_CERT_PATH!,
+    key: AppEnv.string('PSYCHIC_SSL_KEY_PATH', { optional: true }),
+    cert: AppEnv.string('PSYCHIC_SSL_CERT_PATH', { optional: true }),
   })
 
   psy.set('cors', {
     credentials: true,
     origin: [
-      process.env.CLIENT_HOST || 'http://localhost:3000'
+      AppEnv.string('CLIENT_HOST', { optional: true }) || 'http://localhost:3000'
     ],
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
   })
 
   psy.set('cookie', {
@@ -55,53 +58,117 @@ export default async (psy: PsychicApplication) => {
   })
 
   psy.set('background', {
-    workerCount: parseInt(process.env.WORKER_COUNT || '1'),
+    defaultWorkstream: {
+      // https://docs.bullmq.io/guide/parallelism-and-concurrency
+      workerCount: os.cpus().length,
+      concurrency: 100,
+    },
+
+    namedWorkstreams: [
+    ],
+
+    defaultBullMQQueueOptions: {
+      defaultJobOptions: {
+        removeOnComplete: 1000,
+        removeOnFail: 20000,
+        // 524,288,000 ms (~6.1 days) using algorithm:
+        // "2 ^ (attempts - 1) * delay"
+        attempts: 20,
+        backoff: {
+          type: 'exponential',
+          delay: 1000,
+        },
+      },
+    },
+
+    defaultQueueConnection: AppEnv.isProduction
+      ? new Cluster(
+          [
+            {
+              host: AppEnv.string('BG_JOBS_REDIS_HOST'),
+              port: AppEnv.integer('BG_JOBS_REDIS_PORT')
+            },
+          ],
+          {
+            dnsLookup: (address, callback) => callback(null, address),
+            redisOptions: {
+              username: AppEnv.string('BG_JOBS_REDIS_USERNAME'),
+              password: AppEnv.string('BG_JOBS_REDIS_PASSWORD'),
+              tls: AppEnv.isProduction ? {} : undefined,
+            },
+            enableOfflineQueue: false,
+          }
+        )
+      : new Redis({
+          host: AppEnv.string('BG_JOBS_REDIS_HOST', { optional: true }) || 'localhost',
+          port: AppEnv.integer('BG_JOBS_REDIS_PORT', { optional: true }) || '6379',
+          username: AppEnv.string('BG_JOBS_REDIS_USERNAME', { optional: true }),
+          password: AppEnv.string('BG_JOBS_REDIS_PASSWORD', { optional: true }),
+          tls: AppEnv.isProduction ? {} : undefined,
+          enableOfflineQueue: false,
+        }),
+
+    defaultWorkerConnection: !process.env.WORKER_SERVICE
+      ? undefined
+      : AppEnv.isProduction
+        ? new Cluster(
+            [
+              {
+                host: AppEnv.string('BG_JOBS_REDIS_HOST'),
+                port: AppEnv.integer('BG_JOBS_REDIS_PORT'),
+              },
+            ],
+            {
+              dnsLookup: (address, callback) => callback(null, address),
+              redisOptions: {
+                username: AppEnv.string('BG_JOBS_REDIS_USERNAME'),
+                password: AppEnv.string('BG_JOBS_REDIS_PASSWORD'),
+                tls: AppEnv.isProduction ? {} : undefined,
+                maxRetriesPerRequest: null,
+              },
+            }
+          )
+        : new Redis({
+            host: AppEnv.string('BG_JOBS_REDIS_HOST', { optional: true }) || 'localhost',
+            port: AppEnv.integer('BG_JOBS_REDIS_PORT', { optional: true }) || '6379',
+            username: AppEnv.string('BG_JOBS_REDIS_USERNAME', { optional: true }),
+            password: AppEnv.string('BG_JOBS_REDIS_PASSWORD', { optional: true }),
+            tls: AppEnv.isProduction ? {} : undefined,
+            maxRetriesPerRequest: null,
+          }),
   })
 
-  // configuration options for bullmq queue (used for running background jobs in redis)
-  psy.set('background:queue', {
-    defaultJobOptions: {
-      removeOnComplete: 1000,
-      removeOnFail: 20000,
-      // 524,288,000 ms (~6.1 days) using algorithm:
-      // "2 ^ (attempts - 1) * delay"
-      attempts: 20,
-      backoff: {
-        type: 'exponential',
-        delay: 1000,
+  psy.set('websockets', {
+    connection: AppEnv.isProduction
+      ? new Redis({
+          host: AppEnv.string('WS_REDIS_HOST'),
+          port: AppEnv.integer('WS_REDIS_PORT'),
+          username: AppEnv.string('WS_REDIS_USERNAME', { optional: true }),
+          password: AppEnv.string('WS_REDIS_PASSWORD', { optional: true }),
+          tls: AppEnv.isProduction ? {} : undefined,
+          maxRetriesPerRequest: null,
+        })
+      : new Redis({
+          host: AppEnv.string('WS_REDIS_HOST', { optional: true }) || 'localhost',
+          port: AppEnv.integer('WS_REDIS_PORT', { optional: true }) || '6379',
+          username: AppEnv.string('WS_REDIS_USERNAME', { optional: true }),
+          password: AppEnv.string('WS_REDIS_PASSWORD', { optional: true }),
+          tls: AppEnv.isProduction ? {} : undefined,
+          maxRetriesPerRequest: null,
+        }),
+  })
+
+  psy.set('openapi', {
+    defaults: {
+      components: {
+        schemas: {},
       },
     },
   })
 
-  // configuration options for bullmq worker (used for running background jobs in redis)
-  psy.set('background:worker', {})
-
-  // redis background job credentials
-  psy.set('redis:background', {
-    username: process.env.BACKGROUND_JOBS_REDIS_USER,
-    password: process.env.BACKGROUND_JOBS_REDIS_PASSWORD,
-    host: process.env.BACKGROUND_JOBS_REDIS_HOST,
-    port: process.env.BACKGROUND_JOBS_REDIS_PORT,
-    secure: process.env.BACKGROUND_JOBS_REDIS_USE_SSL === '1',
-  })
-
-  // redis websocket credentials
-  psy.set('redis:ws', {
-    username: process.env.WS_REDIS_USER,
-    password: process.env.WS_REDIS_PASSWORD,
-    host: process.env.WS_REDIS_HOST,
-    port: process.env.WS_REDIS_PORT,
-    secure: process.env.WS_REDIS_USE_SSL === '1',
-  })
-
-  psy.set('openapi', {})
-
-  // run a callback on server boot (but before routes are processed)
-  psy.on('boot', () => {})
-
   // run a callback when the express server starts. the express app will be passed to each callback as the first argument
   psy.on('server:init', app => {
-    if (!testEnv() || process.env.REQUEST_LOGGING === '1') {
+    if (!AppEnv.isTest || AppEnv.boolean('REQUEST_LOGGING')) {
       const SENSITIVE_FIELDS = ['password', 'token', 'authentication', 'authorization', 'secret']
 
       app.use(
@@ -137,7 +204,7 @@ export default async (psy: PsychicApplication) => {
   psy.on('after:routes', () => {})
 
   // run a callback after the config is loaded
-  psy.on('load', async () => {
+  psy.on('load', () => {
     // uncomment to initialize background jobs
     // (this should only be done if useRedis is true)
     <BACKGROUND_CONNECT>
@@ -156,7 +223,7 @@ export default async (psy: PsychicApplication) => {
   // that psychic isn't sure how to respond to (i.e. 500 internal server errors)
   psy.on('server:error', (err, _, res) => {
     if (!res.headersSent) res.sendStatus(500)
-    else if (developmentOrTestEnv()) throw err
+    else if (AppEnv.isDevelopmentOrTest) throw err
   })
 
   // run a callback after the websocket server is initially started

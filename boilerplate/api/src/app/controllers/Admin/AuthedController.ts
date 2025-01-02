@@ -1,6 +1,7 @@
-import { BeforeAction, PsychicController } from '@rvohealth/psychic'
+import { BeforeAction } from '@rvohealth/psychic'
+import ApplicationController from '../ApplicationController'
 
-export default class AdminAuthedController extends PsychicController {
+export default class AdminAuthedController extends ApplicationController {
   // protected currentAdminUser: User
   @BeforeAction()
   protected async authenticate() {

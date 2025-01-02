@@ -12,7 +12,11 @@ export default async function (app: DreamApplication) {
   await app.load('serializers', path.join(__dirname, '..', 'app', 'serializers'))
   await app.load('services', path.join(__dirname, '..', 'app', 'services'))
 
+  // provides a list of path overrides for your app. This is optional, and will default
+  // to the paths expected for a typical psychic application.
   app.set('paths', {})
+
+  app.set('parallelTests', Number(process.env.DREAM_PARALLEL_TESTS || '1'))
 
   app.set('db', {
     primary: {
