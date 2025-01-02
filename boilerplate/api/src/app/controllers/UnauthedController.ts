@@ -1,3 +1,3 @@
-import { PsychicController, BeforeAction } from '@rvohealth/psychic'
+import ApplicationController from './ApplicationController'
 
-export default class UnauthedController extends PsychicController {}
+export default class UnauthedController extends ApplicationController {}

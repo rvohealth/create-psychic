@@ -103,7 +103,7 @@ export default async function newPsychicApp(appName: string, args: string[]) {
       switch (userOptions.client) {
         case 'react':
           await sspawn(
-            `cd ${rootPath} && ${yarnVersion} && yarn create vite client --template react-ts && rm package.json && cd client`
+            `cd ${rootPath} && ${yarnVersion} && yarn create vite client --template react-ts && cd client && touch yarn.lock`
           )
 
           fs.mkdirSync(path.join(appName, 'client', 'src', 'config'))
