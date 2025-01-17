@@ -34,10 +34,16 @@ export default async (psy: PsychicApplication) => {
     limit: '20kb',
   })
 
-  psy.set('ssl', {
-    key: AppEnv.string('PSYCHIC_SSL_KEY_PATH', { optional: true }),
-    cert: AppEnv.string('PSYCHIC_SSL_CERT_PATH', { optional: true }),
-  })
+  // Encryption between the load balancer and your Psychic webservers
+  // is an important part of encryption-in-transit. This SSL
+  // certificate will be a self-signed certificate. It is separate
+  // from the SSL certificate that you'll install on your load balancer.
+  if (AppEnv.isProduction) {
+    psy.set('ssl', {
+      key: AppEnv.string('SSL_KEY_PATH'),
+      cert: AppEnv.string('SSL_CERT_PATH'),
+    })
+  }
 
   psy.set('cors', {
     credentials: true,
