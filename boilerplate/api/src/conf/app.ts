@@ -173,7 +173,9 @@ export default async (psy: PsychicApplication) => {
   })
 
   // run a callback when the express server starts. the express app will be passed to each callback as the first argument
-  psy.on('server:init', app => {
+  psy.on('server:init', psychicServer => {
+    const app = psychicServer.expressApp
+
     if (!AppEnv.isTest || AppEnv.boolean('REQUEST_LOGGING')) {
       const SENSITIVE_FIELDS = ['password', 'token', 'authentication', 'authorization', 'secret']
 
@@ -205,6 +207,13 @@ export default async (psy: PsychicApplication) => {
     }
   })
 
+  psy.on('server:shutdown', () => {
+    // run custom code when server is shutdown
+  })
+
+  psy.on('worker:shutdown', () => {
+    // run custom code when background workers are shut down
+  })
 
   // run a callback after routes are done processing
   psy.on('after:routes', () => {})
