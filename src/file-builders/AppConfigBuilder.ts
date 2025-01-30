@@ -11,11 +11,13 @@ export default class AppConfigBuilder {
     return contents
       .replace(
         '<BACKGROUND_CONNECT>',
-        opts.userOptions.redis ? 'background.connect()' : '// background.connect()'
+        opts.userOptions.backgroundWorkers ? '\n    background.connect()\n  ' : ''
+      )
+      .replace(
+        '<BACKGROUND_IMPORT>',
+        opts.userOptions.backgroundWorkers ? "\nimport { background } from '@rvohealth/psychic-workers'" : ''
       )
       .replace('<APP_NAME>', opts.appName)
       .replace('<API_ONLY>', opts.userOptions.apiOnly.toString())
-      .replace('<USE_REDIS>', opts.userOptions.redis.toString())
-      .replace('<USE_WS>', opts.userOptions.ws.toString())
   }
 }

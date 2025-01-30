@@ -3,7 +3,7 @@ import Select from './select'
 
 export interface NewAppCLIOptions {
   apiOnly: boolean
-  redis: boolean
+  backgroundWorkers: boolean
   ws: boolean
   primaryKeyType: 'uuid' | 'integer' | 'bigint' | 'bigserial'
   client: FrontEndClientType
@@ -14,15 +14,21 @@ export const clientTypes = ['react', 'vue', 'nuxt', 'none (api only)', 'none'] a
 
 export type FrontEndClientType = 'react' | 'vue' | 'nuxt' | null
 
-async function redisQuestion(args: string[], options: NewAppCLIOptions) {
-  const [redisArg, value] = argAndValue('--redis', args)
-  if (redisArg) {
-    options.redis = value === 'true' || value === null
+async function backgroundWorkersQuestion(args: string[], options: NewAppCLIOptions) {
+  const [workersArg, value] = argAndValue('--workers', args)
+  if (workersArg) {
+    options.backgroundWorkers = value === 'true' || value === null
     return
   }
 
-  const answer = await new Select('redis?', ['yes', 'no'] as const).run()
-  options.redis = answer === 'yes'
+  const [noWorkersArg] = argAndValue('--no-workers', args)
+  if (noWorkersArg) {
+    options.backgroundWorkers = false
+    return
+  }
+
+  const answer = await new Select('background workers?', ['yes', 'no'] as const).run()
+  options.backgroundWorkers = answer === 'yes'
   console.log('')
 }
 
@@ -30,6 +36,12 @@ async function wsQuestion(args: string[], options: NewAppCLIOptions) {
   const [wsArg, value] = argAndValue('--ws', args)
   if (wsArg) {
     options.ws = value === 'true' || value === null
+    return
+  }
+
+  const [noWorkersArg] = argAndValue('--no-ws', args)
+  if (noWorkersArg) {
+    options.ws = false
     return
   }
 
@@ -70,13 +82,13 @@ async function primaryKeyTypeQuestion(args: string[], options: NewAppCLIOptions)
 export default async function gatherUserInput(args: string[]) {
   const options: NewAppCLIOptions = {
     apiOnly: false,
-    redis: false,
+    backgroundWorkers: false,
     ws: false,
     primaryKeyType: 'bigserial',
     client: null,
   }
 
-  await redisQuestion(args, options)
+  await backgroundWorkersQuestion(args, options)
   await wsQuestion(args, options)
   await clientQuestion(args, options)
   await primaryKeyTypeQuestion(args, options)
