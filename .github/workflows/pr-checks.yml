@@ -1,0 +1,79 @@
+name: PR Checks
+on:
+  - pull_request
+
+jobs:
+  spec:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    env:
+      NODE_ENV: test
+      PORT: 7777
+      TZ: UTC
+      GITHUB_OAUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - run: npm install -g corepack
+      - run: corepack enable
+
+      - run: 'echo "nodeLinker: node-modules" > ./.yarnrc.yml'
+      - run: 'echo -e "npmScopes:" >> ./.yarnrc.yml'
+      - run: 'echo -e "  rvohealth:" >> ./.yarnrc.yml'
+      - run: 'echo -e "    npmAuthToken: ''${{ secrets.GITHUB_TOKEN }}''" >> ./.yarnrc.yml'
+      - run: 'echo -e "    npmRegistryServer: ''https://npm.pkg.github.com''" >> ./.yarnrc.yml'
+
+      - name: Cache node_modules
+        id: cache-node-modules
+        uses: actions/cache@v4
+        with:
+          path: ~/.yarn-cache
+          key: ${{ runner.os }}-cache-node-modules-${{ hashFiles('**/yarn.lock') }}
+
+      - if: ${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+        name: List the state of node modules
+        continue-on-error: true
+        run: yarn list
+      - run: yarn install --immutable
+      - run: yarn spec
+
+  check-build:
+    name: Check build
+    runs-on: ubuntu-latest
+    env:
+      NODE_ENV: development
+      YARN_CACHE_FOLDER: ~/.yarn-cache
+      GITHUB_OAUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - run: npm install -g corepack
+      - run: corepack enable
+
+      - run: 'echo "nodeLinker: node-modules" > ./.yarnrc.yml'
+      - run: 'echo -e "npmScopes:" >> ./.yarnrc.yml'
+      - run: 'echo -e "  rvohealth:" >> ./.yarnrc.yml'
+      - run: 'echo -e "    npmAuthToken: ''${{ secrets.GITHUB_TOKEN }}''" >> ./.yarnrc.yml'
+      - run: 'echo -e "    npmRegistryServer: ''https://npm.pkg.github.com''" >> ./.yarnrc.yml'
+
+      - name: Cache node_modules
+        id: cache-node-modules
+        uses: actions/cache@v4
+        with:
+          path: ~/.yarn-cache
+          key: ${{ runner.os }}-cache-node-modules-${{ hashFiles('**/yarn.lock') }}
+
+      - if: ${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+        name: List the state of node modules
+        continue-on-error: true
+        run: yarn list
+
+      - run: yarn install --immutable
+      - run: yarn build

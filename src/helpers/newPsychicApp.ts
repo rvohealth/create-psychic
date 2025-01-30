@@ -15,6 +15,7 @@ import logo from './logo'
 import sleep from './sleep'
 import sspawn from './sspawn'
 import welcomeMessage from './welcomeMessage'
+import InitializePsychicAppBuilder from '../file-builders/InitializePsychicAppBuilder'
 
 function testEnv() {
   return process.env.NODE_ENV === 'test'
@@ -54,14 +55,29 @@ export default async function newPsychicApp(appName: string, args: string[]) {
   fs.writeFileSync(path.join(projectPath, '.env'), EnvBuilder.build({ appName, env: 'development' }))
   fs.writeFileSync(path.join(projectPath, '.env.test'), EnvBuilder.build({ appName, env: 'test' }))
   fs.writeFileSync(path.join(projectPath, 'package.json'), await PackagejsonBuilder.buildAPI(userOptions))
+
   fs.writeFileSync(
     path.join(projectPath, 'src', 'conf', 'app.ts'),
     await AppConfigBuilder.build({ appName, userOptions })
   )
+
   fs.writeFileSync(
     path.join(projectPath, 'src', 'conf', 'dream.ts'),
     await DreamConfigBuilder.build({ appName, userOptions })
   )
+
+  fs.writeFileSync(
+    path.join(projectPath, 'src', 'cli', 'helpers', 'initializePsychicApplication.ts'),
+    await InitializePsychicAppBuilder.build(userOptions)
+  )
+
+  if (!userOptions.backgroundWorkers) {
+    fs.rmSync(path.join(projectPath, 'src', 'conf', 'workers.ts'))
+  }
+
+  if (!userOptions.ws) {
+    fs.rmSync(path.join(projectPath, 'src', 'conf', 'websockets.ts'))
+  }
 
   if (!testEnv()) {
     log.restoreCache()

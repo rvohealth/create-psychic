@@ -1,6 +1,7 @@
 import os from 'os'
 import path from 'path'
-import { PsychicApplication } from '@rvohealth/psychic'<BACKGROUND_IMPORT>
+import { PsychicApplication } from '@rvohealth/psychic'
+import { background } from '@rvohealth/psychic-workers'
 import AppEnv from '../app/helpers/AppEnv'
 import expressWinston from 'express-winston'
 import inflections from './inflections'
@@ -10,8 +11,8 @@ import winston from 'winston'
 export default async (psy: PsychicApplication) => {
   await psy.load('controllers', path.join(__dirname, '..', 'app', 'controllers'))
 
-  psy.set('appName', '<APP_NAME>')
-  psy.set('apiOnly', <API_ONLY>)
+  psy.set('appName', 'howyadoin')
+  psy.set('apiOnly', true)
   psy.set('encryption', {
     cookies: {
       current: {
@@ -108,7 +109,9 @@ export default async (psy: PsychicApplication) => {
   psy.on('after:routes', () => {})
 
   // run a callback after the config is loaded
-  psy.on('load', () => {<BACKGROUND_CONNECT>})
+  psy.on('load', () => {
+    background.connect()
+  })
 
   // run a callback after the config is loaded, but only if NODE_ENV=development
   psy.on('load:dev', () => {})
