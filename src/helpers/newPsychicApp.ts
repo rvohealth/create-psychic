@@ -6,23 +6,51 @@ import AppConfigBuilder from '../file-builders/AppConfigBuilder'
 import DreamConfigBuilder from '../file-builders/DreamConfigBuilder'
 import EnvBuilder from '../file-builders/EnvBuilder'
 import ESLintConfBuilder from '../file-builders/EslintConfBuilder'
+import InitializePsychicAppBuilder from '../file-builders/InitializePsychicAppBuilder'
 import PackagejsonBuilder from '../file-builders/PackagejsonBuilder'
 import ViteConfBuilder from '../file-builders/ViteConfBuilder'
 import copyRecursive from './copyRecursive'
-import gatherUserInput from './gatherUserInput'
 import log from './log'
 import logo from './logo'
+import Select from './select'
 import sleep from './sleep'
 import sspawn from './sspawn'
 import welcomeMessage from './welcomeMessage'
-import InitializePsychicAppBuilder from '../file-builders/InitializePsychicAppBuilder'
+
+export const cliPrimaryKeyTypes = ['bigserial', 'serial', 'uuid'] as const
+export const cliClientAppTypes = ['react', 'vue', 'nuxt', 'api-only'] as const
+
+export interface InitPsychicAppCliOptions {
+  primaryKeyType: (typeof cliPrimaryKeyTypes)[number]
+  client: (typeof cliClientAppTypes)[number]
+  workers: boolean
+  websockets: boolean
+}
 
 function testEnv() {
   return process.env.NODE_ENV === 'test'
 }
 
-export default async function newPsychicApp(appName: string, args: string[]) {
-  const userOptions = await gatherUserInput(args)
+export default async function newPsychicApp(appName: string, options: InitPsychicAppCliOptions) {
+  if (!options.primaryKeyType || !cliPrimaryKeyTypes.includes(options.primaryKeyType)) {
+    const answer = await new Select('what primary key type would you like to use?', cliPrimaryKeyTypes).run()
+    options.primaryKeyType = answer
+  }
+
+  if (!options.client || !cliClientAppTypes.includes(options.client)) {
+    const answer = await new Select('which front end client would you like to use?', cliClientAppTypes).run()
+    options.client = answer
+  }
+
+  if (options.workers === undefined) {
+    const answer = await new Select('background workers?', ['yes', 'no'] as const).run()
+    options.workers = answer === 'yes'
+  }
+
+  if (options.websockets === undefined) {
+    const answer = await new Select('websockets?', ['yes', 'no'] as const).run()
+    options.websockets = answer === 'yes'
+  }
 
   if (!testEnv()) {
     log.clear()
@@ -34,7 +62,7 @@ export default async function newPsychicApp(appName: string, args: string[]) {
   let projectPath: string
   const rootPath = `./${appName}`
 
-  if (userOptions.apiOnly) {
+  if (options.client === 'api-only') {
     projectPath = path.join('.', appName)
     copyRecursive(path.join(__dirname, '..', '..', 'boilerplate', 'api'), path.join('.', appName))
   } else {
@@ -54,28 +82,28 @@ export default async function newPsychicApp(appName: string, args: string[]) {
 
   fs.writeFileSync(path.join(projectPath, '.env'), EnvBuilder.build({ appName, env: 'development' }))
   fs.writeFileSync(path.join(projectPath, '.env.test'), EnvBuilder.build({ appName, env: 'test' }))
-  fs.writeFileSync(path.join(projectPath, 'package.json'), await PackagejsonBuilder.buildAPI(userOptions))
+  fs.writeFileSync(path.join(projectPath, 'package.json'), await PackagejsonBuilder.buildAPI(options))
 
   fs.writeFileSync(
     path.join(projectPath, 'src', 'conf', 'app.ts'),
-    await AppConfigBuilder.build({ appName, userOptions })
+    await AppConfigBuilder.build({ appName, options })
   )
 
   fs.writeFileSync(
     path.join(projectPath, 'src', 'conf', 'dream.ts'),
-    await DreamConfigBuilder.build({ appName, userOptions })
+    await DreamConfigBuilder.build({ appName, options })
   )
 
   fs.writeFileSync(
     path.join(projectPath, 'src', 'cli', 'helpers', 'initializePsychicApplication.ts'),
-    await InitializePsychicAppBuilder.build(userOptions)
+    await InitializePsychicAppBuilder.build(options)
   )
 
-  if (!userOptions.backgroundWorkers) {
+  if (!options.workers) {
     fs.rmSync(path.join(projectPath, 'src', 'conf', 'workers.ts'))
   }
 
-  if (!userOptions.ws) {
+  if (!options.websockets) {
     fs.rmSync(path.join(projectPath, 'src', 'conf', 'websockets.ts'))
   }
 
@@ -114,9 +142,9 @@ export default async function newPsychicApp(appName: string, args: string[]) {
   const errors: string[] = []
 
   if (!testEnv() || process.env.REALLY_BUILD_CLIENT_DURING_SPECS === '1')
-    if (!userOptions.apiOnly) {
+    if (options.client !== 'api-only') {
       const yarnVersion = 'corepack enable && yarn set version stable'
-      switch (userOptions.client) {
+      switch (options.client) {
         case 'react':
           await sspawn(
             `cd ${rootPath} && ${yarnVersion} && yarn create vite client --template react-ts && cd client && touch yarn.lock`
@@ -135,7 +163,7 @@ export default async function newPsychicApp(appName: string, args: string[]) {
 
           fs.writeFileSync(
             path.join(projectPath, '..', 'client', 'vite.config.ts'),
-            ViteConfBuilder.build(userOptions)
+            ViteConfBuilder.build(options)
           )
           fs.writeFileSync(
             path.join(projectPath, '..', 'client', '.eslintrc.cjs'),
@@ -159,7 +187,7 @@ export default async function newPsychicApp(appName: string, args: string[]) {
 
           fs.writeFileSync(
             path.join(projectPath, '..', 'client', 'vite.config.ts'),
-            ViteConfBuilder.build(userOptions)
+            ViteConfBuilder.build(options)
           )
           break
 

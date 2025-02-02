@@ -1,8 +1,8 @@
-import { NewAppCLIOptions } from '../helpers/gatherUserInput'
+import { InitPsychicAppCliOptions } from '../helpers/newPsychicApp'
 
 export default class ViteConfBuilder {
-  public static build(userOptions: NewAppCLIOptions) {
-    const frameworkName = clientFrameworkName(userOptions)
+  public static build(options: InitPsychicAppCliOptions) {
+    const frameworkName = clientFrameworkName(options)
 
     return `
 import { defineConfig } from 'vite'
@@ -19,8 +19,8 @@ export default defineConfig({
   }
 }
 
-function clientFrameworkName(userOptions: NewAppCLIOptions) {
-  switch (userOptions.client) {
+function clientFrameworkName(options: InitPsychicAppCliOptions) {
+  switch (options.client) {
     case 'react':
       return 'react'
 
@@ -29,6 +29,6 @@ function clientFrameworkName(userOptions: NewAppCLIOptions) {
       return 'vue'
 
     default:
-      throw new Error(`unrecognized client type when determining framework name: ${userOptions.client}`)
+      throw new Error(`unrecognized client type when determining framework name: ${options.client}`)
   }
 }

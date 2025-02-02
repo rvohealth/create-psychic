@@ -75,7 +75,7 @@ export default class Select<T extends readonly any[]> {
   }
 
   private init() {
-    console.log(this.question)
+    console.log(`\n${this.question}`)
 
     readline.emitKeypressEvents(input)
     this.start()

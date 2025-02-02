@@ -1,11 +1,10 @@
-import os from 'os'
-import path from 'path'
 import { PsychicApplication } from '@rvohealth/psychic'<BACKGROUND_IMPORT>
-import AppEnv from '../app/helpers/AppEnv'
 import expressWinston from 'express-winston'
+import path from 'path'
+import winston from 'winston'
+import AppEnv from '../app/helpers/AppEnv'
 import inflections from './inflections'
 import routesCb from './routes'
-import winston from 'winston'
 
 export default async (psy: PsychicApplication) => {
   await psy.load('controllers', path.join(__dirname, '..', 'app', 'controllers'))
@@ -95,7 +94,7 @@ export default async (psy: PsychicApplication) => {
           ],
           ignoredRoutes: ['/health_check'],
           bodyBlacklist: SENSITIVE_FIELDS,
-        })
+        }),
       )
     }
   })
@@ -105,7 +104,7 @@ export default async (psy: PsychicApplication) => {
   })
 
   // run a callback after routes are done processing
-  psy.on('after:routes', () => {})
+  psy.on('server:init:after-routes', () => {})
 
   // run a callback after the config is loaded
   psy.on('load', () => {<BACKGROUND_CONNECT>})

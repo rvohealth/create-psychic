@@ -6,7 +6,11 @@
 // https://github.com/tj/commander.js#quick-start
 
 import { Command } from 'commander'
-import newPsychicApp from './helpers/newPsychicApp'
+import newPsychicApp, {
+  cliClientAppTypes,
+  cliPrimaryKeyTypes,
+  InitPsychicAppCliOptions,
+} from './helpers/newPsychicApp'
 
 const program = new Command()
 
@@ -14,26 +18,25 @@ program
   .command('new')
   .description('create a new psychic app')
   .argument('<name>', 'name of the app you want to create')
+  .option('--workers', 'include background workers in your application')
+  .option('--no-workers', 'omit background workers in your application')
+  .option('--websockets', 'include websockets in your application')
+  .option('--no-websockets', 'omit websockets in your application')
+
   .option(
-    '--redis',
-    "allow redis (i.e. --redis, or --redis false). If you don't set this, you will be prompted on whether or not to enable this.",
+    '--primary-key-type <KEY_TYPE>',
+    `One of: ${cliPrimaryKeyTypes.join(
+      ', '
+    )}. The type of primary key to use by default when generating Dream models (can be changed by hand in the migration file)`
   )
+
   .option(
-    '--ws',
-    "allow websockets (i.e. --ws, or --ws false) If you don't set this, you will be prompted on whether or not to enable this. Only enable this if redis is also enabled",
+    '--client <CLIENT_APP_TYPE>',
+    `One of: ${cliClientAppTypes.join(', ')}. The type of client app to create`
   )
-  .option(
-    '--primaryKey',
-    "the type of primary key to use. valid options are: 'bigserial', 'bigint', 'integer', 'uuid' (i.e. --primaryKey uuid)",
-  )
-  .option(
-    '--client',
-    "the type of client to use. valid options are: 'react', 'vue', 'nuxt', 'none' (i.e. --client none)",
-  )
-  .action(async () => {
-    const name = program.args[1]
-    const args = program.args.slice(2)
-    await newPsychicApp(name, args)
+
+  .action(async (name: string, options: InitPsychicAppCliOptions) => {
+    await newPsychicApp(name, options)
   })
 
 program.parse()

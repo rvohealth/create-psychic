@@ -6,16 +6,12 @@ import readFile from '../../helpers/readFile'
 
 describe('newPsychicApp without websockets or background jobs', () => {
   it('builds app without websockets or background configurations', async () => {
-    await newPsychicApp('howyadoin', [
-      '--ws',
-      '--no-workers',
-
-      '--client',
-      'none',
-
-      '--primaryKey',
-      'bigserial',
-    ])
+    await newPsychicApp('howyadoin', {
+      websockets: true,
+      workers: false,
+      client: 'api-only',
+      primaryKeyType: 'bigserial',
+    })
 
     await expectNoFile('howyadoin/src/conf/workers.ts')
     await expectFile('howyadoin/src/conf/websockets.ts')

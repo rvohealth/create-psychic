@@ -1,16 +1,20 @@
 import { describe as context } from '@jest/globals'
 import PackagejsonBuilder from '../../../src/file-builders/PackagejsonBuilder'
-import { NewAppCLIOptions } from '../../../src/helpers/gatherUserInput'
+import { InitPsychicAppCliOptions } from '../../../src/helpers/newPsychicApp'
 
 describe('PackagejsonBuilder', () => {
+  const baseOptions: InitPsychicAppCliOptions = {
+    workers: false,
+    websockets: false,
+    client: 'api-only',
+    primaryKeyType: 'bigserial',
+  }
+
   describe('.buildAPI', () => {
     context('with backgroundWorkers: false and ws: false', () => {
       it('returns the app with the specified options', async () => {
-        const res = await PackagejsonBuilder.buildAPI({
-          backgroundWorkers: false,
-          ws: false,
-          apiOnly: true,
-        } as NewAppCLIOptions)
+        const options: InitPsychicAppCliOptions = { ...baseOptions }
+        const res = await PackagejsonBuilder.buildAPI(options)
 
         expect(Object.keys(JSON.parse(res).dependencies)).toEqual(
           expect.arrayContaining([
@@ -43,11 +47,8 @@ describe('PackagejsonBuilder', () => {
 
     context('backgroundWorkers: true', () => {
       it('adds worker dependencies', async () => {
-        const res = await PackagejsonBuilder.buildAPI({
-          backgroundWorkers: true,
-          ws: false,
-          apiOnly: true,
-        } as NewAppCLIOptions)
+        const options: InitPsychicAppCliOptions = { ...baseOptions, workers: true }
+        const res = await PackagejsonBuilder.buildAPI(options)
 
         expect(Object.keys(JSON.parse(res).dependencies)).toEqual(
           expect.arrayContaining([
@@ -81,11 +82,8 @@ describe('PackagejsonBuilder', () => {
 
     context('ws: true', () => {
       it('adds worker dependencies', async () => {
-        const res = await PackagejsonBuilder.buildAPI({
-          backgroundWorkers: false,
-          ws: true,
-          apiOnly: true,
-        } as NewAppCLIOptions)
+        const options: InitPsychicAppCliOptions = { ...baseOptions, websockets: true }
+        const res = await PackagejsonBuilder.buildAPI(options)
 
         expect(Object.keys(JSON.parse(res).dependencies)).toEqual(
           expect.arrayContaining([
@@ -116,11 +114,8 @@ describe('PackagejsonBuilder', () => {
 
     context('ws: true and bgWorkers: true', () => {
       it('adds worker dependencies', async () => {
-        const res = await PackagejsonBuilder.buildAPI({
-          backgroundWorkers: true,
-          ws: true,
-          apiOnly: true,
-        } as NewAppCLIOptions)
+        const options: InitPsychicAppCliOptions = { ...baseOptions, workers: true, websockets: true }
+        const res = await PackagejsonBuilder.buildAPI(options)
 
         expect(Object.keys(JSON.parse(res).dependencies)).toEqual(
           expect.arrayContaining([
