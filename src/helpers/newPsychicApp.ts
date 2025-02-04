@@ -16,6 +16,7 @@ import Select from './select'
 import sleep from './sleep'
 import sspawn from './sspawn'
 import welcomeMessage from './welcomeMessage'
+import addMissingClientGitignoreStatements from './addMissingClientGitignoreStatements'
 
 export const cliPrimaryKeyTypes = ['bigserial', 'serial', 'uuid'] as const
 export const cliClientAppTypes = ['react', 'vue', 'nuxt', 'api-only'] as const
@@ -141,78 +142,80 @@ export default async function newPsychicApp(appName: string, options: InitPsychi
 
   const errors: string[] = []
 
-  if (!testEnv() || process.env.REALLY_BUILD_CLIENT_DURING_SPECS === '1')
-    if (options.client !== 'api-only') {
-      const yarnVersion = 'corepack enable && yarn set version stable'
-      switch (options.client) {
-        case 'react':
-          await sspawn(
-            `cd ${rootPath} && ${yarnVersion} && yarn create vite client --template react-ts && cd client && touch yarn.lock`
-          )
+  if (options.client !== 'api-only') {
+    const yarnSetVersionCmd = 'corepack enable && yarn set version stable'
 
-          fs.mkdirSync(path.join(appName, 'client', 'src', 'config'))
+    switch (options.client) {
+      case 'react':
+        await sspawn(
+          `cd ${rootPath} && yarn create vite client --template react-ts && cd client && touch yarn.lock && ${yarnSetVersionCmd}`
+        )
 
-          copyRecursive(
-            path.join(__dirname, '..', '..', 'boilerplate', 'client', 'api'),
-            path.join(projectPath, '..', 'client', 'src', 'api')
-          )
-          copyRecursive(
-            path.join(__dirname, '..', '..', 'boilerplate', 'client', 'config', 'routes.ts'),
-            path.join(projectPath, '..', 'client', 'src', 'config', 'routes.ts')
-          )
+        fs.mkdirSync(path.join(appName, 'client', 'src', 'config'))
 
-          fs.writeFileSync(
-            path.join(projectPath, '..', 'client', 'vite.config.ts'),
-            ViteConfBuilder.build(options)
-          )
-          fs.writeFileSync(
-            path.join(projectPath, '..', 'client', '.eslintrc.cjs'),
-            ESLintConfBuilder.buildForViteReact()
-          )
+        copyRecursive(
+          path.join(__dirname, '..', '..', 'boilerplate', 'client', 'api'),
+          path.join(projectPath, '..', 'client', 'src', 'api')
+        )
+        copyRecursive(
+          path.join(__dirname, '..', '..', 'boilerplate', 'client', 'config', 'routes.ts'),
+          path.join(projectPath, '..', 'client', 'src', 'config', 'routes.ts')
+        )
 
-          break
+        fs.writeFileSync(
+          path.join(projectPath, '..', 'client', 'vite.config.ts'),
+          ViteConfBuilder.build(options)
+        )
+        fs.writeFileSync(
+          path.join(projectPath, '..', 'client', '.eslintrc.cjs'),
+          ESLintConfBuilder.buildForViteReact()
+        )
 
-        case 'vue':
-          await sspawn(`cd ${rootPath} && ${yarnVersion} && yarn create vite client --template vue-ts`)
-          fs.mkdirSync(path.join('.', appName, 'client', 'src', 'config'))
+        break
 
-          copyRecursive(
-            path.join(__dirname, '..', '..', 'boilerplate', 'client', 'api'),
-            path.join(projectPath, '..', 'client', 'src', 'api')
-          )
-          copyRecursive(
-            path.join(__dirname, '..', '..', 'boilerplate', 'client', 'config', 'routes.ts'),
-            path.join(projectPath, '..', 'client', 'src', 'config', 'routes.ts')
-          )
+      case 'vue':
+        await sspawn(`cd ${rootPath} && ${yarnSetVersionCmd} && yarn create vite client --template vue-ts`)
+        fs.mkdirSync(path.join('.', appName, 'client', 'src', 'config'))
 
-          fs.writeFileSync(
-            path.join(projectPath, '..', 'client', 'vite.config.ts'),
-            ViteConfBuilder.build(options)
-          )
-          break
+        copyRecursive(
+          path.join(__dirname, '..', '..', 'boilerplate', 'client', 'api'),
+          path.join(projectPath, '..', 'client', 'src', 'api')
+        )
+        copyRecursive(
+          path.join(__dirname, '..', '..', 'boilerplate', 'client', 'config', 'routes.ts'),
+          path.join(projectPath, '..', 'client', 'src', 'config', 'routes.ts')
+        )
 
-        case 'nuxt':
-          await sspawn(`cd ${rootPath} && ${yarnVersion} && yarn create nuxt-app client`)
+        fs.writeFileSync(
+          path.join(projectPath, '..', 'client', 'vite.config.ts'),
+          ViteConfBuilder.build(options)
+        )
+        break
 
-          fs.mkdirSync(path.join('.', appName, 'client', 'config'))
+      case 'nuxt':
+        await sspawn(`cd ${rootPath} && ${yarnSetVersionCmd} && yarn create nuxt-app client`)
 
-          copyRecursive(
-            path.join(__dirname, '..', '..', 'boilerplate', 'client', 'api'),
-            path.join(projectPath, '..', 'client', 'src', 'api')
-          )
-          copyRecursive(
-            path.join(__dirname, '..', '..', 'boilerplate', 'client', 'config', 'routes.ts'),
-            path.join(projectPath, '..', 'client', 'config', 'routes.ts')
-          )
+        fs.mkdirSync(path.join('.', appName, 'client', 'config'))
 
-          break
-      }
+        copyRecursive(
+          path.join(__dirname, '..', '..', 'boilerplate', 'client', 'api'),
+          path.join(projectPath, '..', 'client', 'src', 'api')
+        )
+        copyRecursive(
+          path.join(__dirname, '..', '..', 'boilerplate', 'client', 'config', 'routes.ts'),
+          path.join(projectPath, '..', 'client', 'config', 'routes.ts')
+        )
 
-      if (!testEnv()) {
-        // only bother installing packages if not in test env to save time
-        await sspawn(`cd ${path.join(projectPath, '..', 'client')} && touch yarn.lock && yarn install`)
-      }
+        break
     }
+
+    addMissingClientGitignoreStatements(path.join(projectPath, '..', 'client', '.gitignore'))
+
+    if (!testEnv() || process.env.REALLY_BUILD_CLIENT_DURING_SPECS === '1') {
+      // only bother installing packages if not in test env to save time
+      await sspawn(`cd ${path.join(projectPath, '..', 'client')} && touch yarn.lock && yarn install`)
+    }
+  }
 
   if (!testEnv()) {
     // do not use git during tests, since this will break in CI
