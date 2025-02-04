@@ -1,8 +1,8 @@
 import newPsychicApp from '../../../../src/helpers/newPsychicApp'
 import expectFileToContain from '../../../helpers/expectFileToContain'
 
-describe('newPsychicApp without websockets or background jobs', () => {
-  it('builds app without websockets or background configurations', async () => {
+describe('newPsychicApp with react client', () => {
+  it('correctly provisions a react client', async () => {
     await newPsychicApp('howyadoin', {
       websockets: false,
       workers: false,
