@@ -64,6 +64,25 @@ export default async (psy: PsychicApplication) => {
     },
   })
 
+  psy.set('openapi', 'mobile', {
+    outputFilename: 'mobile.openapi.json',
+    suppressResponseEnums: true,
+    defaults: {
+      components: {
+        schemas: {},
+      },
+    },
+  })
+
+  psy.set('openapi', 'admin', {
+    outputFilename: 'admin.openapi.json',
+    defaults: {
+      components: {
+        schemas: {},
+      },
+    },
+  })
+
   // run a callback when the express server starts. the express app will be passed to each callback as the first argument
   psy.on('server:init', psychicServer => {
     const app = psychicServer.expressApp
