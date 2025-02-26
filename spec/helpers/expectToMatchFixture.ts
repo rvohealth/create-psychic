@@ -14,6 +14,8 @@ const FIXTURE_PATHS = [
   'expected-files/initializePsychicApplication/no-workers-yes-websockets.ts',
   'expected-files/initializePsychicApplication/yes-workers-no-websockets.ts',
   'expected-files/initializePsychicApplication/yes-workers-yes-websockets.ts',
+
+  'expected-files/ws/basic.ts',
 ] as const
 
 type FixturePath = (typeof FIXTURE_PATHS)[number]

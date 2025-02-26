@@ -106,6 +106,7 @@ export default async function newPsychicApp(appName: string, options: InitPsychi
 
   if (!options.websockets) {
     fs.rmSync(path.join(projectPath, 'src', 'conf', 'websockets.ts'))
+    fs.rmSync(path.join(projectPath, 'src', 'app', 'helpers', 'ws.ts'))
   }
 
   if (!testEnv()) {
