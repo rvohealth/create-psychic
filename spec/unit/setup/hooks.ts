@@ -9,9 +9,9 @@ beforeEach(async () => {
 })
 
 afterEach(async () => {
-  try {
-    await fs.rm('howyadoin', { force: true, recursive: true })
-  } catch {
-    //
-  }
+  // try {
+  //   await fs.rm('howyadoin', { force: true, recursive: true })
+  // } catch {
+  //   //
+  // }
 })

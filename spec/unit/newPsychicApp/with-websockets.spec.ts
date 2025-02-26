@@ -4,7 +4,7 @@ import expectNoFile from '../../helpers/expectNoFile'
 import expectToMatchFixture from '../../helpers/expectToMatchFixture'
 import readFile from '../../helpers/readFile'
 
-describe('newPsychicApp without websockets or background jobs', () => {
+describe('newPsychicApp with websockets', () => {
   it('builds app without websockets or background configurations', async () => {
     await newPsychicApp('howyadoin', {
       websockets: true,
@@ -24,6 +24,11 @@ describe('newPsychicApp without websockets or background jobs', () => {
     await expectToMatchFixture(
       'expected-files/app/no-workers.ts',
       await readFile('howyadoin/src/conf/app.ts')
+    )
+
+    await expectToMatchFixture(
+      'expected-files/ws/basic.ts',
+      await readFile('howyadoin/src/app/helpers/ws.ts')
     )
   })
 })

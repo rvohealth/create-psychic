@@ -14,6 +14,7 @@ describe('newPsychicApp without websockets or background jobs', () => {
 
     await expectNoFile('howyadoin/src/conf/workers.ts')
     await expectNoFile('howyadoin/src/conf/websockets.ts')
+    await expectNoFile('howyadoin/src/app/helpers/ws.ts')
 
     await expectToMatchFixture(
       'expected-files/initializePsychicApplication/no-workers-no-websockets.ts',
