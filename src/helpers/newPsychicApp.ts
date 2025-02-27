@@ -96,7 +96,7 @@ export default async function newPsychicApp(appName: string, options: InitPsychi
   )
 
   fs.writeFileSync(
-    path.join(projectPath, 'src', 'cli', 'helpers', 'initializePsychicApplication.ts'),
+    path.join(projectPath, 'src', 'conf', 'initializePsychicApplication.ts'),
     await InitializePsychicAppBuilder.build(options)
   )
 
