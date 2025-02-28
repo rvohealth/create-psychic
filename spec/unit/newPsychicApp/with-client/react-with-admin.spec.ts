@@ -7,7 +7,7 @@ describe('newPsychicApp with react client', () => {
       websockets: false,
       workers: false,
       client: 'react',
-      adminClient: 'none',
+      adminClient: 'react',
       primaryKeyType: 'bigserial',
     })
 
@@ -23,5 +23,18 @@ describe('newPsychicApp with react client', () => {
 !.yarn/sdks
 !.yarn/versions`
     )
-  })
+
+    await expectFileToContain(
+      './howyadoin/admin/.gitignore',
+      `
+# yarn
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions`
+    )
+  }, 20000)
 })

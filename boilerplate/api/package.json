@@ -22,8 +22,8 @@
   },
   "dependencies": {
     "@bull-board/express": "^5.21.4",
-    "@rvohealth/dream": "^0.19.3",
-    "@rvohealth/psychic": "^0.20.0",
+    "@rvohealth/dream": "^0.28.0",
+    "@rvohealth/psychic": "^0.23.3",
     "@rvohealth/psychic-websockets": "^0.0.1",
     "@rvohealth/psychic-workers": "^0.0.1",
     "@socket.io/redis-adapter": "^8.3.0",

@@ -8,13 +8,17 @@ describe('newPsychicApp without websockets or background jobs', () => {
     await newPsychicApp('howyadoin', {
       websockets: false,
       workers: false,
-      client: 'api-only',
+      client: 'none',
+      adminClient: 'none',
       primaryKeyType: 'bigserial',
     })
 
     await expectNoFile('howyadoin/src/conf/workers.ts')
     await expectNoFile('howyadoin/src/conf/websockets.ts')
     await expectNoFile('howyadoin/src/app/helpers/ws.ts')
+    await expectNoFile('howyadoin/src/app/models/ApplicationBackgroundedModel.ts')
+    await expectNoFile('howyadoin/src/app/services/ApplicationBackgroundedService.ts')
+    await expectNoFile('howyadoin/src/app/services/ApplicationScheduledService.ts')
 
     await expectToMatchFixture(
       'expected-files/initializePsychicApplication/no-workers-no-websockets.ts',

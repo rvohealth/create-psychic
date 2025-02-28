@@ -5,10 +5,9 @@ import path from 'path'
 import AppConfigBuilder from '../file-builders/AppConfigBuilder'
 import DreamConfigBuilder from '../file-builders/DreamConfigBuilder'
 import EnvBuilder from '../file-builders/EnvBuilder'
-import ESLintConfBuilder from '../file-builders/EslintConfBuilder'
 import InitializePsychicAppBuilder from '../file-builders/InitializePsychicAppBuilder'
 import PackagejsonBuilder from '../file-builders/PackagejsonBuilder'
-import ViteConfBuilder from '../file-builders/ViteConfBuilder'
+import addClientApp from './addClientApp'
 import copyRecursive from './copyRecursive'
 import log from './log'
 import logo from './logo'
@@ -16,14 +15,14 @@ import Select from './select'
 import sleep from './sleep'
 import sspawn from './sspawn'
 import welcomeMessage from './welcomeMessage'
-import addMissingClientGitignoreStatements from './addMissingClientGitignoreStatements'
 
 export const cliPrimaryKeyTypes = ['bigserial', 'serial', 'uuid'] as const
-export const cliClientAppTypes = ['react', 'vue', 'nuxt', 'api-only'] as const
+export const cliClientAppTypes = ['react', 'vue', 'nuxt', 'none'] as const
 
 export interface InitPsychicAppCliOptions {
   primaryKeyType: (typeof cliPrimaryKeyTypes)[number]
   client: (typeof cliClientAppTypes)[number]
+  adminClient: (typeof cliClientAppTypes)[number]
   workers: boolean
   websockets: boolean
 }
@@ -41,6 +40,14 @@ export default async function newPsychicApp(appName: string, options: InitPsychi
   if (!options.client || !cliClientAppTypes.includes(options.client)) {
     const answer = await new Select('which front end client would you like to use?', cliClientAppTypes).run()
     options.client = answer
+  }
+
+  if (!options.adminClient || !cliClientAppTypes.includes(options.adminClient)) {
+    const answer = await new Select(
+      'which front end client would you like to use for your admin app?',
+      cliClientAppTypes
+    ).run()
+    options.adminClient = answer
   }
 
   if (options.workers === undefined) {
@@ -63,7 +70,7 @@ export default async function newPsychicApp(appName: string, options: InitPsychi
   let projectPath: string
   const rootPath = `./${appName}`
 
-  if (options.client === 'api-only') {
+  if (options.client === 'none') {
     projectPath = path.join('.', appName)
     copyRecursive(path.join(__dirname, '..', '..', 'boilerplate', 'api'), path.join('.', appName))
   } else {
@@ -102,6 +109,9 @@ export default async function newPsychicApp(appName: string, options: InitPsychi
 
   if (!options.workers) {
     fs.rmSync(path.join(projectPath, 'src', 'conf', 'workers.ts'))
+    fs.rmSync(path.join(projectPath, 'src', 'app', 'models', 'ApplicationBackgroundedModel.ts'))
+    fs.rmSync(path.join(projectPath, 'src', 'app', 'services', 'ApplicationBackgroundedService.ts'))
+    fs.rmSync(path.join(projectPath, 'src', 'app', 'services', 'ApplicationScheduledService.ts'))
   }
 
   if (!options.websockets) {
@@ -143,79 +153,26 @@ export default async function newPsychicApp(appName: string, options: InitPsychi
 
   const errors: string[] = []
 
-  if (options.client !== 'api-only') {
-    const yarnSetVersionCmd = 'corepack enable && yarn set version stable'
+  if (options.client !== 'none') {
+    await addClientApp({
+      client: options.client,
+      clientRootFolderName: 'client',
+      appName,
+      projectPath,
+      options,
+      rootPath,
+    })
+  }
 
-    switch (options.client) {
-      case 'react':
-        await sspawn(
-          `cd ${rootPath} && yarn create vite client --template react-ts && cd client && touch yarn.lock && ${yarnSetVersionCmd}`
-        )
-
-        fs.mkdirSync(path.join(appName, 'client', 'src', 'config'))
-
-        copyRecursive(
-          path.join(__dirname, '..', '..', 'boilerplate', 'client', 'api'),
-          path.join(projectPath, '..', 'client', 'src', 'api')
-        )
-        copyRecursive(
-          path.join(__dirname, '..', '..', 'boilerplate', 'client', 'config', 'routes.ts'),
-          path.join(projectPath, '..', 'client', 'src', 'config', 'routes.ts')
-        )
-
-        fs.writeFileSync(
-          path.join(projectPath, '..', 'client', 'vite.config.ts'),
-          ViteConfBuilder.build(options)
-        )
-        fs.writeFileSync(
-          path.join(projectPath, '..', 'client', '.eslintrc.cjs'),
-          ESLintConfBuilder.buildForViteReact()
-        )
-
-        break
-
-      case 'vue':
-        await sspawn(`cd ${rootPath} && ${yarnSetVersionCmd} && yarn create vite client --template vue-ts`)
-        fs.mkdirSync(path.join('.', appName, 'client', 'src', 'config'))
-
-        copyRecursive(
-          path.join(__dirname, '..', '..', 'boilerplate', 'client', 'api'),
-          path.join(projectPath, '..', 'client', 'src', 'api')
-        )
-        copyRecursive(
-          path.join(__dirname, '..', '..', 'boilerplate', 'client', 'config', 'routes.ts'),
-          path.join(projectPath, '..', 'client', 'src', 'config', 'routes.ts')
-        )
-
-        fs.writeFileSync(
-          path.join(projectPath, '..', 'client', 'vite.config.ts'),
-          ViteConfBuilder.build(options)
-        )
-        break
-
-      case 'nuxt':
-        await sspawn(`cd ${rootPath} && ${yarnSetVersionCmd} && yarn create nuxt-app client`)
-
-        fs.mkdirSync(path.join('.', appName, 'client', 'config'))
-
-        copyRecursive(
-          path.join(__dirname, '..', '..', 'boilerplate', 'client', 'api'),
-          path.join(projectPath, '..', 'client', 'src', 'api')
-        )
-        copyRecursive(
-          path.join(__dirname, '..', '..', 'boilerplate', 'client', 'config', 'routes.ts'),
-          path.join(projectPath, '..', 'client', 'config', 'routes.ts')
-        )
-
-        break
-    }
-
-    addMissingClientGitignoreStatements(path.join(projectPath, '..', 'client', '.gitignore'))
-
-    if (!testEnv() || process.env.REALLY_BUILD_CLIENT_DURING_SPECS === '1') {
-      // only bother installing packages if not in test env to save time
-      await sspawn(`cd ${path.join(projectPath, '..', 'client')} && touch yarn.lock && yarn install`)
-    }
+  if (options.adminClient !== 'none') {
+    await addClientApp({
+      client: options.adminClient,
+      clientRootFolderName: 'admin',
+      appName,
+      projectPath,
+      options,
+      rootPath,
+    })
   }
 
   if (!testEnv()) {
