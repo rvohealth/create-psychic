@@ -4,7 +4,7 @@ import '../../../src/conf/global'
 import { DreamApplication } from '@rvohealth/dream'
 import { truncate } from '@rvohealth/dream-spec-helpers'
 import * as dotenv from 'dotenv'
-import initializePsychicApplication from '../../../src/cli/helpers/initializePsychicApplication'
+import initializePsychicApplication from '../../../src/conf/initializePsychicApplication'
 import inflections from '../../../src/conf/inflections'
 
 dotenv.config({ path: '.env.test' })

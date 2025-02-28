@@ -15,6 +15,6 @@ export default class AppConfigBuilder {
         options.workers ? "\nimport { background } from '@rvohealth/psychic-workers'" : ''
       )
       .replace('<APP_NAME>', appName)
-      .replace('<API_ONLY>', (options.client === 'api-only').toString())
+      .replace('<API_ONLY>', (options.client === 'none').toString())
   }
 }

@@ -2,7 +2,7 @@ import './conf/global'
 
 import { closeAllDbConnections } from '@rvohealth/dream'
 import { background, stopBackgroundWorkers } from '@rvohealth/psychic'
-import initializePsychicApplication from './cli/helpers/initializePsychicApplication'
+import initializePsychicApplication from './conf/initializePsychicApplication'
 import increaseNodeStackTraceLimits from './helpers/increaseNodeStackTraceLimits'
 
 increaseNodeStackTraceLimits()

@@ -9,7 +9,8 @@ describe('newPsychicApp with websockets', () => {
     await newPsychicApp('howyadoin', {
       websockets: true,
       workers: false,
-      client: 'api-only',
+      client: 'none',
+      adminClient: 'none',
       primaryKeyType: 'bigserial',
     })
 

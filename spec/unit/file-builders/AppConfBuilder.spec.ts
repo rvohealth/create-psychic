@@ -7,7 +7,8 @@ describe('AppConfBuilder', () => {
   const baseOptions: InitPsychicAppCliOptions = {
     workers: false,
     websockets: false,
-    client: 'api-only',
+    client: 'none',
+    adminClient: 'none',
     primaryKeyType: 'bigserial',
   }
 

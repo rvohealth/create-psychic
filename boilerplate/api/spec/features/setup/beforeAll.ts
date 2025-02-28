@@ -1,6 +1,6 @@
 import '../../../src/conf/global'
 
-import initializePsychicApplication from '../../../src/cli/helpers/initializePsychicApplication'
+import initializePsychicApplication from '../../../src/conf/initializePsychicApplication'
 
 export default async () => {
   await initializePsychicApplication()
