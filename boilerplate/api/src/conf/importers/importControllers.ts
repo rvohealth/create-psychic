@@ -1,4 +1,4 @@
-import PsychicImporter from '@rvohealth/psychic'
+import { PsychicImporter } from '@rvohealth/psychic'
 import srcPath from '../../app/helpers/srcPath'
 
 export default async function importControllers() {

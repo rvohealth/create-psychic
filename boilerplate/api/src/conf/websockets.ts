@@ -16,7 +16,7 @@ export default (wsApp: PsychicApplicationWebsockets) => {
         })
       : new Redis({
           host: AppEnv.string('WS_REDIS_HOST', { optional: true }) || 'localhost',
-          port: AppEnv.integer('WS_REDIS_PORT', { optional: true }) || '6379',
+          port: AppEnv.integer('WS_REDIS_PORT', { optional: true }) || 6379,
           username: AppEnv.string('WS_REDIS_USERNAME', { optional: true }),
           password: AppEnv.string('WS_REDIS_PASSWORD', { optional: true }),
           tls: AppEnv.isProduction ? {} : undefined,

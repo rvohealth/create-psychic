@@ -9,6 +9,8 @@ class AppEnvClass extends Env<{
     | 'BG_JOBS_REDIS_USERNAME'
     | 'BG_JOBS_REDIS_PASSWORD'
     | 'WS_REDIS_HOST'
+    | 'WS_REDIS_USERNAME'
+    | 'WS_REDIS_PASSWORD'
     | 'CORS_HOSTS'
 }> {}
 
