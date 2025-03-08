@@ -1,23 +1,37 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
-    "removeComments": true,
-    "emitDecoratorMetadata": true,
-    "esModuleInterop": true,
-    "experimentalDecorators": true,
-    "allowSyntheticDefaultImports": true,
-    "target": "es2021",
+    // "strictBindCallApply": true,
+    // "useUnknownInCatchVariables": true,
+
+    "module": "ES2022",
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    "declaration": true,
     "sourceMap": true,
-    "incremental": true,
-    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "Node",
     "noImplicitAny": true,
-    "strictBindCallApply": true,
-    "strictNullChecks": true,
-    "useUnknownInCatchVariables": true,
-    "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false,
+    "resolveJsonModule": true,
+    /* rootDir and outDir together help maintain dist/src folder */
+    "rootDir": "./",
     "outDir": "./dist",
-    "rootDir": "./"
+    "declarationDir": "./dist/types",
+    "skipLibCheck": true,
+    "strict": true,
+    "strictNullChecks": true,
+
+    /* do not require all properties to be initialized in constructor */
+    "strictPropertyInitialization": false,
+    /* TRYING TO GET DREAM WORKING with useDefineForClassFields set to true */
+    "useDefineForClassFields": true
   },
-  "include": ["src", "noop"]
+  "include": ["src", "noop"],
+
+  /*  this ts-node block is necessary to get node commands to leverage the ts-node esm loader
+   *  removing this block will lead to ambiguous crashing in node with no stack traces.
+   * */
+  "ts-node": {
+    "transpileOnly": true,
+    "esm": true
+  }
 }

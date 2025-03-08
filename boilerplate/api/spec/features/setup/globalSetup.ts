@@ -1,4 +1,4 @@
-import '../../../src/helpers/loadEnv'
+import '../../../src/conf/loadEnv'
 
 import initializePsychicApplication from '../../../src/conf/initializePsychicApplication'
 import { startDevServer, stopDevServer } from './startDevServer'

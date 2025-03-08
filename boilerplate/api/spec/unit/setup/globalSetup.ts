@@ -1,4 +1,4 @@
-import '../../../src/helpers/loadEnv'
+import '../../../src/conf/loadEnv'
 
 import { PsychicBin } from '@rvohealth/psychic'
 import initializePsychicApplication from '../../../src/conf/initializePsychicApplication'
