@@ -1,4 +1,4 @@
-import { PsychicController, PsychicOpenapiControllerConfig } from '@rvohealth/psychic'
+import { PsychicController, PsychicOpenapiNames } from '@rvohealth/psychic'
 import psychicTypes from '../../types/psychic'
 
 export default class ApplicationController extends PsychicController {
@@ -6,7 +6,7 @@ export default class ApplicationController extends PsychicController {
     return psychicTypes
   }
 
-  public static get openapiConfig(): PsychicOpenapiControllerConfig<ApplicationController> {
-    return { names: ['default', 'mobile'] }
+  public static get openapiNames(): PsychicOpenapiNames<ApplicationController> {
+    return ['default', 'mobile']
   }
 }

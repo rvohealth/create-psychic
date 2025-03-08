@@ -1,9 +1,9 @@
-import { BeforeAction, PsychicOpenapiControllerConfig } from '@rvohealth/psychic'
+import { BeforeAction, PsychicOpenapiNames } from '@rvohealth/psychic'
 import ApplicationController from '../ApplicationController'
 
 export default class AdminAuthedController extends ApplicationController {
-  public static get openapiConfig(): PsychicOpenapiControllerConfig<ApplicationController> {
-    return { names: ['admin'] }
+  public static get openapiNames(): PsychicOpenapiNames<ApplicationController> {
+    return ['admin']
   }
 
   // protected currentAdminUser: User
