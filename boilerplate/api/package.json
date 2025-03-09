@@ -14,7 +14,7 @@
     "prod": "APP_NAME=$npm_package_name APP_VERSION=$npm_package_version NODE_ENV=production node ./dist/src/main.js",
     "worker": "APP_NAME=$npm_package_name APP_VERSION=$npm_package_version NODE_ENV=production node ./dist/src/worker.js",
     "sync": "APP_NAME=$npm_package_name APP_VERSION=$npm_package_version yarn psy sync:all",
-    "uspec": "APP_NAME=$npm_package_name APP_VERSION=$npm_package_version NODE_ENV=test vitest --no-file-parallelism --maxWorkers=1 --minWorkers=1 --maxConcurrency=1 --config ./spec/unit/vite.config.ts",
+    "uspec": "APP_NAME=$npm_package_name APP_VERSION=$npm_package_version NODE_ENV=test vitest --config ./spec/unit/vite.config.ts",
     "fspec": "APP_NAME=$npm_package_name APP_VERSION=$npm_package_version NODE_ENV=test vitest run --config=./spec/features/vite.config.ts",
     "console": "APP_NAME=$npm_package_name APP_VERSION=$npm_package_version node --experimental-specifier-resolution=node --import=./bin/esm.js ./src/conf/repl.ts",
     "format": "yarn run prettier . --write",
