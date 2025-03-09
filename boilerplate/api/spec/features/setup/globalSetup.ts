@@ -1,13 +1,13 @@
 import '../../../src/conf/loadEnv'
 
+import { launchViteServer, stopViteServer } from '@rvohealth/psychic-spec-helpers'
 import initializePsychicApplication from '../../../src/conf/initializePsychicApplication'
-import { startDevServer, stopDevServer } from './startDevServer'
 
 export async function setup() {
   await initializePsychicApplication()
-  await startDevServer()
+  await launchViteServer({ port: 3000, cmd: 'yarn client' })
 }
 
 export function teardown() {
-  stopDevServer()
+  stopViteServer()
 }

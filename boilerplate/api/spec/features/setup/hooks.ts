@@ -1,10 +1,13 @@
-import '@rvohealth/psychic-spec-helpers'
 import '../../../src/conf/global'
 
 import { DreamApplication } from '@rvohealth/dream'
 import { PsychicServer } from '@rvohealth/psychic'
-import { truncate } from '@rvohealth/dream-spec-helpers'
+import { truncate, provideDreamViteMatchers } from '@rvohealth/dream-spec-helpers'
+import { providePuppeteerViteMatchers } from '@rvohealth/psychic-spec-helpers'
 import initializePsychicApplication from '../../../src/conf/initializePsychicApplication'
+
+provideDreamViteMatchers()
+providePuppeteerViteMatchers()
 
 let server: PsychicServer
 
