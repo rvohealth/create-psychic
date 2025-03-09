@@ -1,16 +1,19 @@
 import { PsychicApplication } from '@rvohealth/psychic'
 import expressWinston from 'express-winston'
-import path from 'path'
 import winston from 'winston'
 import AppEnv from '../app/helpers/AppEnv'
+import srcPath from '../app/helpers/srcPath'
 import inflections from './inflections'
 import routesCb from './routes'
+import importControllers from './importers/importControllers'
 
 export default async (psy: PsychicApplication) => {
-  await psy.load('controllers', path.join(__dirname, '..', 'app', 'controllers'))
+  psy.load('controllers', srcPath('app', 'controllers'), await importControllers())
 
   psy.set('appName', 'howyadoin')
   psy.set('apiOnly', true)
+  psy.set('apiRoot', srcPath('..'))
+  psy.set('clientRoot', srcPath('..', '..', 'client'))
   psy.set('encryption', {
     cookies: {
       current: {
@@ -20,8 +23,6 @@ export default async (psy: PsychicApplication) => {
     },
   })
 
-  psy.set('apiRoot', path.join(__dirname, '..', '..'))
-  psy.set('clientRoot', path.join(__dirname, '..', '..', '..', 'client'))
   psy.set('inflections', inflections)
   psy.set('routes', routesCb)
 
