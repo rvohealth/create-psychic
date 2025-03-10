@@ -23,7 +23,7 @@ beforeEach(async () => {
   await server.start(parseInt(process.env.DEV_SERVER_PORT || '7778'))
 
   await truncate(DreamApplication)
-}, 120000)
+}, 50000)
 
 afterEach(async () => {
   await server.stop({ bypassClosingDbConnections: true })
