@@ -1,14 +1,14 @@
 import { PsychicApplication } from '@rvohealth/psychic'<BACKGROUND_IMPORT>
 import expressWinston from 'express-winston'
 import winston from 'winston'
+import importDefault from '../app/helpers/importDefault'
 import AppEnv from '../app/helpers/AppEnv'
 import srcPath from '../app/helpers/srcPath'
 import inflections from './inflections'
 import routesCb from './routes'
-import importControllers from './importers/importControllers'
 
 export default async (psy: PsychicApplication) => {
-  psy.load('controllers', srcPath('app', 'controllers'), await importControllers())
+  await psy.load('controllers', srcPath('app', 'controllers'), path => importDefault(path))
 
   psy.set('appName', '<APP_NAME>')
   psy.set('apiOnly', <API_ONLY>)
