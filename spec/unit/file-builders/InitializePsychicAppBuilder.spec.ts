@@ -1,4 +1,3 @@
-import { describe as context } from '@jest/globals'
 import InitializePsychicAppBuilder from '../../../src/file-builders/InitializePsychicAppBuilder'
 import { InitPsychicAppCliOptions } from '../../../src/helpers/newPsychicApp'
 import expectToMatchFixture from '../../helpers/expectToMatchFixture'

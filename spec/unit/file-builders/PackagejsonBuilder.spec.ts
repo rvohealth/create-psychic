@@ -1,4 +1,3 @@
-import { describe as context } from '@jest/globals'
 import PackagejsonBuilder from '../../../src/file-builders/PackagejsonBuilder'
 import { InitPsychicAppCliOptions } from '../../../src/helpers/newPsychicApp'
 

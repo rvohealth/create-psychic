@@ -1,11 +1,21 @@
 {
-  "name": "@rvohealth/psychic-cli",
-  "version": "0.2.6",
-  "description": "psychic cli",
-  "main": "src/dist/psy.js",
-  "repository": "https://github.com/rvohealth/psychic-cli.git",
-  "author": "avocadojesus",
+  "type": "module",
+  "name": "@rvohealth/create-psychic",
+  "version": "0.2.7",
+  "description": "create psychic",
+  "repository": "https://github.com/rvohealth/create-psychic.git",
+  "author": "RVO Health",
   "license": "Apache-2.0",
+  "main": "./dist/cjs/src/index.js",
+  "module": "./dist/esm/src/index.js",
+  "types": "./dist/types/src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/types/src/index.d.ts",
+      "import": "./dist/esm/src/index.js",
+      "require": "./dist/cjs/src/index.js"
+    }
+  },
   "bin": {
     "psy": "./dist/src/psy.js"
   },
@@ -14,10 +24,10 @@
   ],
   "scripts": {
     "publish": "yarn npm publish",
-    "build": "mkdir -p dist && rm -r dist && tsc -p tsconfig.json && rm -r dist/boilerplate && cp -r boilerplate dist/boilerplate/",
-    "psy": "npx ts-node ./src/psy.ts",
+    "build": "echo \"building cjs...\" && rm -rf dist && npx tsc -p ./tsconfig.cjs.build.json && echo \"building esm...\" && npx tsc -p ./tsconfig.esm.build.json",
+    "psy": "node --experimental-specifier-resolution=node --import=./bin/esm.js ./src/psy.ts",
     "prepack": "yarn build",
-    "spec": "jest --config=./spec/unit/jest.config.js --runInBand --forceExit"
+    "spec": "vitest --config=./spec/unit/vite.config.ts"
   },
   "dependencies": {
     "@types/node": "^22.6.1",
@@ -29,20 +39,20 @@
   },
   "devDependencies": {
     "@eslint/js": "=9.0.0",
-    "@jest-mock/express": "^2.1.0",
-    "@types/jest": "^29.5.12",
+    "@rvohealth/dream-spec-helpers": "=0.1.0",
+    "@types/pg": "^8",
     "@types/supertest": "^6.0.2",
     "eslint": "^9.9.1",
-    "jest": "^29.7.0",
-    "jest-dev-server": "^11.0.0",
+    "luxon-jest-matchers": "^0.1.14",
+    "pg": "^8.13.3",
     "prettier": "^2.8.7",
     "supertest": "^7.0.0",
-    "ts-jest": "^29.2.5",
     "ts-node": "^10.9.2",
     "tslib": "^2.7.0",
     "typedoc": "^0.26.6",
     "typescript": "^5.5.4",
-    "typescript-eslint": "=7.18.0"
+    "typescript-eslint": "=7.18.0",
+    "vitest": "^3.0.8"
   },
   "packageManager": "yarn@4.6.0"
 }

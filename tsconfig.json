@@ -1,19 +1,12 @@
 {
+  "extends": "./tsconfig.esm.build.json",
+  "include": ["src/**/*", "shared/**/*", "test-app/**/*", "spec/**/*"],
+
+  /*  this ts-node block is necessary to get node commands to leverage the ts-node esm loader
+   *  removing this block will lead to ambiguous crashing in node with no stack traces.
+   * */
   "ts-node": {
-    "ignore": [],
-    "include": ["src/**/*"]
-  },
-  "compilerOptions": {
-    "baseUrl": "src",
-    "outDir": "dist",
-    "strict": true,
-    "target": "es2021",
-    "module": "commonjs",
-    "sourceMap": true,
-    "esModuleInterop": true,
-    "moduleResolution": "node",
-    "resolveJsonModule": true
-  },
-  "include": ["src/**/*", "spec/**/*", "test-app/**/*"],
-  "exclude": ["boilerplate", "spec/fixtures/"]
+    "transpileOnly": true,
+    "esm": true
+  }
 }

@@ -1,11 +1,11 @@
-import fs from 'fs/promises'
-import path from 'path'
+import * as fs from 'fs/promises'
 import { InitPsychicAppCliOptions } from '../helpers/newPsychicApp'
+import srcPath from '../helpers/srcPath'
 
 export default class AppConfigBuilder {
   public static async build({ appName, options }: { appName: string; options: InitPsychicAppCliOptions }) {
     const contents = (
-      await fs.readFile(path.join(__dirname, '..', '..', 'boilerplate', 'api', 'src', 'conf', 'app.ts'))
+      await fs.readFile(srcPath('..', 'boilerplate', 'api', 'src', 'conf', 'app.ts'))
     ).toString()
 
     return contents

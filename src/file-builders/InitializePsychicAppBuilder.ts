@@ -1,12 +1,12 @@
-import { InitPsychicAppCliOptions } from '../helpers/newPsychicApp'
+import { InitPsychicAppCliOptions } from '../helpers/newPsychicApp.js'
 
 export default class InitializePsychicAppBuilder {
   public static async build(options: InitPsychicAppCliOptions) {
     if (!options.websockets && !options.workers) {
       return `\
 import { PsychicApplication, PsychicApplicationInitOptions } from '@rvohealth/psychic'
-import psychicConf from '../../conf/app'
-import dreamConf from '../../conf/dream'
+import psychicConf from './app'
+import dreamConf from './dream'
 
 export default async function initializePsychicApplication(opts: PsychicApplicationInitOptions = {}) {
   return await PsychicApplication.init(psychicConf, dreamConf, opts)
@@ -21,8 +21,8 @@ export default async function initializePsychicApplication(opts: PsychicApplicat
       ? "\nimport { PsychicApplicationWebsockets } from '@rvohealth/psychic-websockets'"
       : ''
 
-    const workersConfImport = options.workers ? "\nimport workersConf from '../../conf/workers'" : ''
-    const wsConfImport = options.websockets ? "\nimport wsConf from '../../conf/websockets'" : ''
+    const workersConfImport = options.workers ? "\nimport workersConf from './workers'" : ''
+    const wsConfImport = options.websockets ? "\nimport wsConf from './websockets'" : ''
 
     const workersInit = options.workers
       ? '\n  await PsychicApplicationWorkers.init(psychicApp, workersConf)'
@@ -31,8 +31,8 @@ export default async function initializePsychicApplication(opts: PsychicApplicat
 
     return `\
 import { PsychicApplication, PsychicApplicationInitOptions } from '@rvohealth/psychic'${wsImport}${workersImport}
-import psychicConf from '../../conf/app'
-import dreamConf from '../../conf/dream'${wsConfImport}${workersConfImport}
+import psychicConf from './app'
+import dreamConf from './dream'${wsConfImport}${workersConfImport}
 
 export default async function initializePsychicApplication(opts: PsychicApplicationInitOptions = {}) {
   const psychicApp = await PsychicApplication.init(psychicConf, dreamConf, opts)${wsInit}${workersInit}

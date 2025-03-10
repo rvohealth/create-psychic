@@ -1,16 +1,17 @@
 import { DreamApplication } from '@rvohealth/dream'
-import path from 'path'
-import { productionEnv } from '../helpers/environment'
+import { productionEnv } from '../app/helpers/environment'
 import inflections from './inflections'
+import importAll from '../app/helpers/importAll'
+import importDefault from '../app/helpers/importDefault'
+import srcPath from '../app/helpers/srcPath'
 
 export default async function (app: DreamApplication) {
-  app.set('projectRoot', path.join(__dirname, '..', '..'))
   app.set('primaryKeyType', <PRIMARY_KEY_TYPE>)
   app.set('inflections', inflections)
 
-  await app.load('models', path.join(__dirname, '..', 'app', 'models'))
-  await app.load('serializers', path.join(__dirname, '..', 'app', 'serializers'))
-  await app.load('services', path.join(__dirname, '..', 'app', 'services'))
+  await app.load('models', srcPath('app', 'models'), path => importDefault(path))
+  await app.load('services', srcPath('app', 'services'), path => importDefault(path))
+  await app.load('serializers', srcPath('app', 'serializers'), path => importAll(path))
 
   // provides a list of path overrides for your app. This is optional, and will default
   // to the paths expected for a typical psychic application.

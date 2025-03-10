@@ -1,12 +1,17 @@
 {
   "extends": "./tsconfig.build.json",
+
+  /*  this ts-node block is necessary to get node commands to leverage the ts-node esm loader
+   *  removing this block will lead to ambiguous crashing in node with no stack traces.
+   * */
   "ts-node": {
-    "ignore": [],
-    "include": ["src/**/*"]
+    "transpileOnly": true,
+    "esm": true
   },
+
   "compilerOptions": {
     "baseUrl": "src",
-    "types": ["jest", "@types/jest", "jest-playwright-preset", "expect-playwright", "luxon-jest-matchers"]
+    "types": ["luxon-jest-matchers"]
   },
   "include": ["src", "spec"]
 }
