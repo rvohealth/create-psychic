@@ -126,7 +126,7 @@ export default async function newPsychicApp(appName: string, options: InitPsychi
 
     // only run yarn install if not in test env to save time
     await sspawn(
-      `cd ${projectPath} && touch yarn.lock && corepack enable && yarn set version stable && yarn install && yarn add @rvohealth/dream @rvohealth/psychic`
+      `cd ${projectPath} && touch yarn.lock && corepack enable && yarn set version stable && yarn install && yarn add @rvoh/dream @rvoh/psychic`
     )
   }
 

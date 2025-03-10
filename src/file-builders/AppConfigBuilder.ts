@@ -12,7 +12,7 @@ export default class AppConfigBuilder {
       .replace('<BACKGROUND_CONNECT>', options.workers ? '\n    background.connect()\n  ' : '')
       .replace(
         '<BACKGROUND_IMPORT>',
-        options.workers ? "\nimport { background } from '@rvohealth/psychic-workers'" : ''
+        options.workers ? "\nimport { background } from '@rvoh/psychic-workers'" : ''
       )
       .replace('<APP_NAME>', appName)
       .replace('<API_ONLY>', (options.client === 'none').toString())

@@ -4,7 +4,7 @@ export default class InitializePsychicAppBuilder {
   public static async build(options: InitPsychicAppCliOptions) {
     if (!options.websockets && !options.workers) {
       return `\
-import { PsychicApplication, PsychicApplicationInitOptions } from '@rvohealth/psychic'
+import { PsychicApplication, PsychicApplicationInitOptions } from '@rvoh/psychic'
 import psychicConf from './app'
 import dreamConf from './dream'
 
@@ -15,10 +15,10 @@ export default async function initializePsychicApplication(opts: PsychicApplicat
     }
 
     const workersImport = options.workers
-      ? "\nimport { PsychicApplicationWorkers } from '@rvohealth/psychic-workers'"
+      ? "\nimport { PsychicApplicationWorkers } from '@rvoh/psychic-workers'"
       : ''
     const wsImport = options.websockets
-      ? "\nimport { PsychicApplicationWebsockets } from '@rvohealth/psychic-websockets'"
+      ? "\nimport { PsychicApplicationWebsockets } from '@rvoh/psychic-websockets'"
       : ''
 
     const workersConfImport = options.workers ? "\nimport workersConf from './workers'" : ''
@@ -30,7 +30,7 @@ export default async function initializePsychicApplication(opts: PsychicApplicat
     const wsInit = options.websockets ? '\n  await PsychicApplicationWebsockets.init(psychicApp, wsConf)' : ''
 
     return `\
-import { PsychicApplication, PsychicApplicationInitOptions } from '@rvohealth/psychic'${wsImport}${workersImport}
+import { PsychicApplication, PsychicApplicationInitOptions } from '@rvoh/psychic'${wsImport}${workersImport}
 import psychicConf from './app'
 import dreamConf from './dream'${wsConfImport}${workersConfImport}
 

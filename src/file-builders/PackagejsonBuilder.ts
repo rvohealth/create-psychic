@@ -20,13 +20,13 @@ export default class PackagejsonBuilder {
     }
 
     if (!options.workers) {
-      removeDependency(packagejson, '@rvohealth/psychic-workers')
+      removeDependency(packagejson, '@rvoh/psychic-workers')
       removeDependency(packagejson, 'bullmq')
       removeDependency(packagejson, '@bull-board/express')
     }
 
     if (!options.websockets) {
-      removeDependency(packagejson, '@rvohealth/psychic-websockets')
+      removeDependency(packagejson, '@rvoh/psychic-websockets')
       removeDependency(packagejson, '@socket.io/redis-adapter')
       removeDependency(packagejson, '@socket.io/redis-emitter')
       removeDependency(packagejson, 'socket.io')

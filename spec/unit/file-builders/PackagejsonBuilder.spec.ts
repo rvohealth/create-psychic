@@ -18,8 +18,8 @@ describe('PackagejsonBuilder', () => {
 
         expect(Object.keys(JSON.parse(res).dependencies)).toEqual(
           expect.arrayContaining([
-            '@rvohealth/psychic',
-            '@rvohealth/dream',
+            '@rvoh/psychic',
+            '@rvoh/dream',
             'pg',
             'winston',
             'commander',
@@ -52,9 +52,9 @@ describe('PackagejsonBuilder', () => {
 
         expect(Object.keys(JSON.parse(res).dependencies)).toEqual(
           expect.arrayContaining([
-            '@rvohealth/psychic',
-            '@rvohealth/psychic-workers',
-            '@rvohealth/dream',
+            '@rvoh/psychic',
+            '@rvoh/psychic-workers',
+            '@rvoh/dream',
             'pg',
             'winston',
             'commander',
@@ -87,9 +87,9 @@ describe('PackagejsonBuilder', () => {
 
         expect(Object.keys(JSON.parse(res).dependencies)).toEqual(
           expect.arrayContaining([
-            '@rvohealth/psychic',
-            '@rvohealth/psychic-websockets',
-            '@rvohealth/dream',
+            '@rvoh/psychic',
+            '@rvoh/psychic-websockets',
+            '@rvoh/dream',
             'pg',
             'winston',
             'commander',
@@ -119,10 +119,10 @@ describe('PackagejsonBuilder', () => {
 
         expect(Object.keys(JSON.parse(res).dependencies)).toEqual(
           expect.arrayContaining([
-            '@rvohealth/psychic',
-            '@rvohealth/psychic-websockets',
-            '@rvohealth/psychic-workers',
-            '@rvohealth/dream',
+            '@rvoh/psychic',
+            '@rvoh/psychic-websockets',
+            '@rvoh/psychic-workers',
+            '@rvoh/dream',
             'pg',
             'winston',
             'commander',

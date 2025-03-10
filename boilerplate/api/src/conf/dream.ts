@@ -1,4 +1,4 @@
-import { DreamApplication } from '@rvohealth/dream'
+import { DreamApplication } from '@rvoh/dream'
 import { productionEnv } from '../app/helpers/environment'
 import inflections from './inflections'
 import importAll from '../app/helpers/importAll'
