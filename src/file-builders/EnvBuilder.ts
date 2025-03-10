@@ -1,4 +1,4 @@
-import crypto from 'crypto'
+import * as crypto from 'crypto'
 
 export default class EnvBuilder {
   public static build({ env, appName }: { env: 'test' | 'development' | 'production'; appName: string }) {

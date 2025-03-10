@@ -1,9 +1,8 @@
-import boilerplatePackageJson from '../../boilerplate/api/package.json'
 import { InitPsychicAppCliOptions } from '../helpers/newPsychicApp'
 
 export default class PackagejsonBuilder {
   public static async buildAPI(options: InitPsychicAppCliOptions) {
-    const packagejson = JSON.parse(JSON.stringify(boilerplatePackageJson))
+    const packagejson = JSON.parse(JSON.stringify(await import('../../boilerplate/api/package.json')))
 
     switch (options.client) {
       case 'react':

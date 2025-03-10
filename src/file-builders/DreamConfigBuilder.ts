@@ -1,6 +1,6 @@
-import fs from 'fs/promises'
-import path from 'path'
-import { InitPsychicAppCliOptions } from '../helpers/newPsychicApp'
+import * as fs from 'fs/promises'
+import * as path from 'path'
+import { InitPsychicAppCliOptions } from '../helpers/newPsychicApp.js'
 
 export default class DreamConfigBuilder {
   public static async build({ appName, options }: { appName: string; options: InitPsychicAppCliOptions }) {

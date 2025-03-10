@@ -1,4 +1,4 @@
-import { InitPsychicAppCliOptions } from '../helpers/newPsychicApp'
+import { InitPsychicAppCliOptions } from '../helpers/newPsychicApp.js'
 
 export default class InitializePsychicAppBuilder {
   public static async build(options: InitPsychicAppCliOptions) {
