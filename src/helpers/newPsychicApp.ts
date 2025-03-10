@@ -14,6 +14,7 @@ import Select from './select.js'
 import sleep from './sleep.js'
 import sspawn from './sspawn.js'
 import welcomeMessage from './welcomeMessage.js'
+import srcPath from './srcPath.js'
 
 export const cliPrimaryKeyTypes = ['bigserial', 'serial', 'uuid'] as const
 export const cliClientAppTypes = ['react', 'vue', 'nuxt', 'none'] as const
@@ -71,9 +72,9 @@ export default async function newPsychicApp(appName: string, options: InitPsychi
 
   if (options.client === 'none') {
     projectPath = path.join('.', appName)
-    copyRecursive(path.join(__dirname, '..', '..', 'boilerplate', 'api'), path.join('.', appName))
+    copyRecursive(srcPath('..', 'boilerplate', 'api'), path.join('.', appName))
   } else {
-    projectPath = path.join('.', appName, 'api')
+    projectPath = srcPath('..', appName, 'api')
     fs.mkdirSync(`./${appName}`)
     copyRecursive(path.join(__dirname, '..', '..', 'boilerplate', 'api'), projectPath)
   }
