@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "@rvohealth/create-psychic",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "create psychic",
   "repository": "https://github.com/rvohealth/create-psychic.git",
   "author": "RVO Health",
@@ -39,7 +39,7 @@
   },
   "devDependencies": {
     "@eslint/js": "=9.0.0",
-    "@rvohealth/dream-spec-helpers": "=0.1.0-fgbeta-19",
+    "@rvohealth/dream-spec-helpers": "=0.1.0",
     "@types/pg": "^8",
     "@types/supertest": "^6.0.2",
     "eslint": "^9.9.1",
