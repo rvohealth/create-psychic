@@ -6,6 +6,7 @@ import addMissingClientGitignoreStatements from './addMissingClientGitignoreStat
 import copyRecursive from './copyRecursive.js'
 import { cliClientAppTypes, InitPsychicAppCliOptions } from './newPsychicApp.js'
 import sspawn from './sspawn.js'
+import srcPath from './srcPath.js'
 
 export default async function addClientApp({
   client,
@@ -33,11 +34,11 @@ export default async function addClientApp({
       fs.mkdirSync(path.join(appName, clientRootFolderName, 'src', 'config'))
 
       copyRecursive(
-        path.join(__dirname, '..', '..', 'boilerplate', 'client', 'api'),
+        srcPath('..', 'boilerplate', 'client', 'api'),
         path.join(projectPath, '..', clientRootFolderName, 'src', 'api')
       )
       copyRecursive(
-        path.join(__dirname, '..', '..', 'boilerplate', 'client', 'config', 'routes.ts'),
+        srcPath('..', 'boilerplate', 'client', 'config', 'routes.ts'),
         path.join(projectPath, '..', clientRootFolderName, 'src', 'config', 'routes.ts')
       )
 
@@ -59,11 +60,11 @@ export default async function addClientApp({
       fs.mkdirSync(path.join('.', appName, clientRootFolderName, 'src', 'config'))
 
       copyRecursive(
-        path.join(__dirname, '..', '..', 'boilerplate', 'client', 'api'),
+        srcPath('..', 'boilerplate', 'client', 'api'),
         path.join(projectPath, '..', clientRootFolderName, 'src', 'api')
       )
       copyRecursive(
-        path.join(__dirname, '..', '..', 'boilerplate', 'client', 'config', 'routes.ts'),
+        srcPath('..', 'boilerplate', 'client', 'config', 'routes.ts'),
         path.join(projectPath, '..', clientRootFolderName, 'src', 'config', 'routes.ts')
       )
 
@@ -79,11 +80,11 @@ export default async function addClientApp({
       fs.mkdirSync(path.join('.', appName, clientRootFolderName, 'config'))
 
       copyRecursive(
-        path.join(__dirname, '..', '..', 'boilerplate', 'client', 'api'),
+        srcPath('..', 'boilerplate', 'client', 'api'),
         path.join(projectPath, '..', clientRootFolderName, 'src', 'api')
       )
       copyRecursive(
-        path.join(__dirname, '..', '..', 'boilerplate', 'client', 'config', 'routes.ts'),
+        srcPath('..', 'boilerplate', 'client', 'config', 'routes.ts'),
         path.join(projectPath, '..', clientRootFolderName, 'config', 'routes.ts')
       )
 

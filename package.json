@@ -25,7 +25,7 @@
   "scripts": {
     "publish": "yarn npm publish",
     "build": "echo \"building cjs...\" && rm -rf dist && npx tsc -p ./tsconfig.cjs.build.json && echo \"building esm...\" && npx tsc -p ./tsconfig.esm.build.json",
-    "psy": "node --experimental-specifier-resolution=node --import=./node/esm.js ./src/psy.ts",
+    "psy": "node --experimental-specifier-resolution=node --import=./bin/esm.js ./src/psy.ts",
     "prepack": "yarn build",
     "spec": "vitest --config=./spec/unit/vite.config.ts"
   },

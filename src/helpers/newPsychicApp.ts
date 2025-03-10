@@ -76,7 +76,7 @@ export default async function newPsychicApp(appName: string, options: InitPsychi
   } else {
     projectPath = srcPath('..', appName, 'api')
     fs.mkdirSync(`./${appName}`)
-    copyRecursive(path.join(__dirname, '..', '..', 'boilerplate', 'api'), projectPath)
+    copyRecursive(srcPath('..', 'boilerplate', 'api'), projectPath)
   }
 
   fs.renameSync(`${projectPath}/yarnrc.yml`, `${projectPath}/.yarnrc.yml`)
