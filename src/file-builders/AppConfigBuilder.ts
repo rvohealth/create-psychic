@@ -1,6 +1,6 @@
 import * as fs from 'fs/promises'
-import { InitPsychicAppCliOptions } from '../helpers/newPsychicApp'
-import srcPath from '../helpers/srcPath'
+import { InitPsychicAppCliOptions } from '../helpers/newPsychicApp.js'
+import srcPath from '../helpers/srcPath.js'
 
 export default class AppConfigBuilder {
   public static async build({ appName, options }: { appName: string; options: InitPsychicAppCliOptions }) {

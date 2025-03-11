@@ -3,7 +3,7 @@ import newPsychicApp, {
   cliClientAppTypes,
   cliPrimaryKeyTypes,
   InitPsychicAppCliOptions,
-} from './newPsychicApp'
+} from './newPsychicApp.js'
 
 export default function createPsyCli() {
   const program = new Command()
