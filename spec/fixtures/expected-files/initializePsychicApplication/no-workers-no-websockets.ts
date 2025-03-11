@@ -1,4 +1,4 @@
-import { PsychicApplication, PsychicApplicationInitOptions } from '@rvohealth/psychic'
+import { PsychicApplication, PsychicApplicationInitOptions } from '@rvoh/psychic'
 import psychicConf from './app'
 import dreamConf from './dream'
 

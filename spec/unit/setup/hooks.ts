@@ -1,5 +1,5 @@
 import * as fs from 'fs/promises'
-import { provideDreamViteMatchers } from '@rvohealth/dream-spec-helpers'
+import { provideDreamViteMatchers } from '@rvoh/dream-spec-helpers'
 
 provideDreamViteMatchers()
 

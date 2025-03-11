@@ -1,5 +1,5 @@
-import { PsychicApplication } from '@rvohealth/psychic'
-import { background } from '@rvohealth/psychic-workers'
+import { PsychicApplication } from '@rvoh/psychic'
+import { background } from '@rvoh/psychic-workers'
 import expressWinston from 'express-winston'
 import winston from 'winston'
 import importDefault from '../app/helpers/importDefault'

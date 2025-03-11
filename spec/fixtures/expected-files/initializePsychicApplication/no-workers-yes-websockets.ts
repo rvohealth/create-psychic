@@ -1,5 +1,5 @@
-import { PsychicApplication, PsychicApplicationInitOptions } from '@rvohealth/psychic'
-import { PsychicApplicationWebsockets } from '@rvohealth/psychic-websockets'
+import { PsychicApplication, PsychicApplicationInitOptions } from '@rvoh/psychic'
+import { PsychicApplicationWebsockets } from '@rvoh/psychic-websockets'
 import psychicConf from './app'
 import dreamConf from './dream'
 import wsConf from './websockets'

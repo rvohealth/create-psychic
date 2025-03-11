@@ -1,4 +1,4 @@
-import { PsychicApplication } from '@rvohealth/psychic'
+import { PsychicApplication } from '@rvoh/psychic'
 import expressWinston from 'express-winston'
 import winston from 'winston'
 import importDefault from '../app/helpers/importDefault'
