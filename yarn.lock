@@ -581,7 +581,7 @@ __metadata:
     typescript-eslint: "npm:=7.18.0"
     vitest: "npm:^3.0.8"
   bin:
-    psy: ./dist/esm/src/bin.js
+    create-psychic: ./dist/esm/src/bin.js
   languageName: unknown
   linkType: soft
 
