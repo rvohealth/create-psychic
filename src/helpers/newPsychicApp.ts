@@ -71,10 +71,10 @@ export default async function newPsychicApp(appName: string, options: InitPsychi
   const rootPath = `./${appName}`
 
   if (options.client === 'none') {
-    projectPath = path.join('.', appName)
-    copyRecursive(srcPath('..', 'boilerplate', 'api'), path.join('.', appName))
+    projectPath = path.join(process.cwd(), appName)
+    copyRecursive(srcPath('..', 'boilerplate', 'api'), path.join(process.cwd(), appName))
   } else {
-    projectPath = srcPath('..', appName, 'api')
+    projectPath = path.join(process.cwd(), appName, 'api')
     fs.mkdirSync(`./${appName}`)
     copyRecursive(srcPath('..', 'boilerplate', 'api'), projectPath)
   }
@@ -139,7 +139,7 @@ export default async function newPsychicApp(appName: string, options: InitPsychi
     log.write(c.green(`Step 4. Initializing git repository...`))
 
     // only do this if not test, since using git in CI will fail
-    await sspawn(`cd ${path.join('.', appName)} && git init`)
+    await sspawn(`cd ${path.join(process.cwd(), appName)} && git init`)
   }
 
   if (!testEnv()) {
@@ -177,7 +177,9 @@ export default async function newPsychicApp(appName: string, options: InitPsychi
 
   if (!testEnv()) {
     // do not use git during tests, since this will break in CI
-    await sspawn(`cd ${path.join('.', appName)} && git add --all && git commit -m 'psychic init' --quiet`)
+    await sspawn(
+      `cd ${path.join(process.cwd(), appName)} && git add --all && git commit -m 'psychic init' --quiet`
+    )
 
     log.restoreCache()
     log.write(c.green(`Step 5. Build project: Done!`), { cache: true })
