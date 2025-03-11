@@ -57,7 +57,7 @@ export default async function addClientApp({
       await sspawn(
         `cd ${rootPath} && ${yarnSetVersionCmd} && yarn create vite ${clientRootFolderName} --template vue-ts`
       )
-      fs.mkdirSync(path.join('.', appName, clientRootFolderName, 'src', 'config'))
+      fs.mkdirSync(path.join(process.cwd(), appName, clientRootFolderName, 'src', 'config'))
 
       copyRecursive(
         srcPath('..', 'boilerplate', 'client', 'api'),
@@ -77,7 +77,7 @@ export default async function addClientApp({
     case 'nuxt':
       await sspawn(`cd ${rootPath} && ${yarnSetVersionCmd} && yarn create nuxt-app ${clientRootFolderName}`)
 
-      fs.mkdirSync(path.join('.', appName, clientRootFolderName, 'config'))
+      fs.mkdirSync(path.join(process.cwd(), appName, clientRootFolderName, 'config'))
 
       copyRecursive(
         srcPath('..', 'boilerplate', 'client', 'api'),
