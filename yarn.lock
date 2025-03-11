@@ -561,7 +561,7 @@ __metadata:
   resolution: "@rvoh/create-psychic@workspace:."
   dependencies:
     "@eslint/js": "npm:=9.0.0"
-    "@rvoh/dream-spec-helpers": "npm:=0.1.0"
+    "@rvoh/dream-spec-helpers": "npm:=0.2.0"
     "@types/node": "npm:^22.6.1"
     "@types/pg": "npm:^8"
     "@types/supertest": "npm:^6.0.2"
@@ -585,9 +585,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@rvoh/dream-spec-helpers@npm:=0.1.0":
-  version: 0.1.0
-  resolution: "@rvoh/dream-spec-helpers@npm:0.1.0"
+"@rvoh/dream-spec-helpers@npm:=0.2.0":
+  version: 0.2.0
+  resolution: "@rvoh/dream-spec-helpers@npm:0.2.0"
   dependencies:
     lodash.sortby: "npm:^4.7.0"
   peerDependencies:
@@ -595,7 +595,7 @@ __metadata:
     "@types/pg": "*"
     pg: "*"
     ts-node: "*"
-  checksum: 10c0/9ff3adb1055f5685ee189e4753c57eb879b3b91c9d3d17c8c342a075853fc3309e97ce629a06c42f41553bd9d2f2a6f4aac39e93a1def47395a9bed04fcc7718
+  checksum: 10c0/383d28ca32b2abd399366e996329c04ca10a2e80597fe7e476655fcffd7dca6b2109b79697964179adb2ec04f2591c6a9c41f34f4b11ba639f4429bb02885ea8
   languageName: node
   linkType: hard
 
