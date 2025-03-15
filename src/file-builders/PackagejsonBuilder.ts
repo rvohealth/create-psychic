@@ -1,4 +1,4 @@
-import { InitPsychicAppCliOptions } from '../helpers/newPsychicApp.js.js'
+import { InitPsychicAppCliOptions } from '../helpers/newPsychicApp.js'
 
 export default class PackagejsonBuilder {
   public static async buildAPI(options: InitPsychicAppCliOptions) {

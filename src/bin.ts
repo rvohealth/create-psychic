@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import createPsyCli from './helpers/createPsyCli.js.js'
+import createPsyCli from './helpers/createPsyCli.js'
 
 const program = createPsyCli()
 

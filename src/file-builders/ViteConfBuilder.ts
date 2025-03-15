@@ -1,4 +1,4 @@
-import { InitPsychicAppCliOptions } from '../helpers/newPsychicApp.js.js'
+import { InitPsychicAppCliOptions } from '../helpers/newPsychicApp.js'
 
 export default class ViteConfBuilder {
   public static build(options: InitPsychicAppCliOptions) {
