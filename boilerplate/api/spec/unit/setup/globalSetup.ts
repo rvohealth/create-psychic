@@ -1,4 +1,4 @@
-import '../../../src/conf/loadEnv'
+import '../../../src/conf/loadEnv.js'
 
 import { PsychicBin } from '@rvoh/psychic'
 import initializePsychicApplication from '../../../src/conf/initializePsychicApplication.js'

@@ -1,4 +1,4 @@
-import '../conf/loadEnv'
+import '../conf/loadEnv.js'
 
 import AppEnv from '../conf/AppEnv.js'
 

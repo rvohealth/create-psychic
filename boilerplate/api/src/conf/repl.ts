@@ -2,7 +2,7 @@ import { loadRepl } from '@rvoh/dream'
 import * as repl from 'node:repl'
 import AppEnv from './AppEnv.js'
 import initializePsychicApplication from './initializePsychicApplication.js'
-import './loadEnv'
+import './loadEnv.js'
 
 const replServer = repl.start('> ')
 

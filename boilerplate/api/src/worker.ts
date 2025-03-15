@@ -1,4 +1,4 @@
-import './conf/global'
+import './conf/global.js'
 
 import { closeAllDbConnections } from '@rvoh/dream'
 import { background, stopBackgroundWorkers } from '@rvoh/psychic-workers'

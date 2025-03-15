@@ -1,4 +1,4 @@
-import '../../../src/conf/loadEnv'
+import '../../../src/conf/loadEnv.js'
 
 import { PsychicServer } from '@rvoh/psychic'
 import { launchViteServer, stopViteServer } from '@rvoh/psychic-spec-helpers'
