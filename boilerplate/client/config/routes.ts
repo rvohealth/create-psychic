@@ -1,8 +1,8 @@
-import viteEnvValue from '../helpers/viteEnvValue'
+import viteEnvValue from './viteEnvValue'
 
 const baseUrl = () => {
   if (viteEnvValue('VITE_API_HOST')) return viteEnvValue('VITE_API_HOST')
-  return viteEnvValue('VITE_API_HOST') === 'test' ? 'http://localhost:7779' : 'http://localhost:7777'
+  return viteEnvValue('VITE_PSYCHIC_ENV') === 'test' ? 'http://localhost:7778' : 'http://localhost:7777'
 }
 
 const routes = {

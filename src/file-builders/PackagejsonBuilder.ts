@@ -2,26 +2,25 @@ import { InitPsychicAppCliOptions } from '../helpers/newPsychicApp.js'
 
 export default class PackagejsonBuilder {
   public static async buildAPI(options: InitPsychicAppCliOptions) {
+    // node 20 requires us to user "assert"
+    // node >22 requires us to user "with"
+    // @ts-ignore
+    const imported = (await import('../../boilerplate/api/package.json', {
+      assert: { type: 'json' },
+      with: { type: 'json' },
+    })) as any
+
     // parse and stringify, since node caches this package.json import,
     // which will cause subsequent changes to this import to affect other specs
     const packagejson = {
-      ...JSON.parse(
-        JSON.stringify(
-          (
-            // @ts-ignore
-            (await import('../../boilerplate/api/package.json', {
-              assert: { type: 'json' },
-              with: { type: 'json' },
-            })) as any
-          ).default
-        )
-      ),
+      ...JSON.parse(JSON.stringify(imported.default)),
     }
 
     switch (options.client) {
       case 'react':
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
-        ;(packagejson.scripts as any)['client'] = `PORT=3000 yarn --cwd=../client dev`
+        ;(packagejson.scripts as any)['client'] = `yarn --cwd=../client dev`
+        ;(packagejson.scripts as any)['client:fspec'] = `VITE_PSYCHIC_ENV=test yarn --cwd=../client dev`
     }
 
     if (!options.workers) {
