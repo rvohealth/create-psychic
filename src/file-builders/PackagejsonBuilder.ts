@@ -7,8 +7,8 @@ export default class PackagejsonBuilder {
     const packagejson = {
       ...JSON.parse(
         JSON.stringify(
-          // @ts-ignore
           (
+            // @ts-ignore
             (await import('../../boilerplate/api/package.json', {
               assert: { type: 'json' },
               with: { type: 'json' },
