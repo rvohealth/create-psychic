@@ -4,7 +4,7 @@ import { globalSchema, schema } from '../../types/dream.js'
 import psychicTypes from '../../types/psychic.js'
 
 export default class ApplicationBackgroundedModel extends BaseBackgroundedModel {
-  public DB: DBClass
+  public declare DB: DBClass
 
   public static get backgroundJobConfig(): BackgroundJobConfig<BaseBackgroundedModel> {
     return {}
