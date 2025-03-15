@@ -7,6 +7,8 @@ export default class PackagejsonBuilder {
     const packagejson = {
       ...JSON.parse(
         JSON.stringify(
+          // node 20 requires us to user "assert"
+          // node >22 requires us to user "with"
           (
             // @ts-ignore
             (await import('../../boilerplate/api/package.json', {
