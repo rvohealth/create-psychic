@@ -1,5 +1,5 @@
 import { BeforeAction, PsychicOpenapiNames } from '@rvoh/psychic'
-import ApplicationController from '../ApplicationController'
+import ApplicationController from '../ApplicationController.js'
 
 export default class AdminAuthedController extends ApplicationController {
   public static get openapiNames(): PsychicOpenapiNames<ApplicationController> {

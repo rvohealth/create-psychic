@@ -12,9 +12,9 @@ import log from './log.js'
 import logo from './logo.js'
 import Select from './select.js'
 import sleep from './sleep.js'
+import srcPath from './srcPath.js'
 import sspawn from './sspawn.js'
 import welcomeMessage from './welcomeMessage.js'
-import srcPath from './srcPath.js'
 
 export const cliPrimaryKeyTypes = ['bigserial', 'serial', 'uuid'] as const
 export const cliClientAppTypes = ['react', 'vue', 'nuxt', 'none'] as const

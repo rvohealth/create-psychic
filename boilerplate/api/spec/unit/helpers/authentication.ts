@@ -1,5 +1,5 @@
 import { specRequest } from '@rvoh/psychic-spec-helpers'
-import User from '../../../src/app/models/User'
+import User from '../../../src/app/models/User.js'
 
 export function addEndUserAuthHeader(request: typeof specRequest, user: User, headers: object) {
   // Update this function to either modify headers (e.g. with an Authorization header)

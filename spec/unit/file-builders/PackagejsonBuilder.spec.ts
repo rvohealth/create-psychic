@@ -1,5 +1,5 @@
-import PackagejsonBuilder from '../../../src/file-builders/PackagejsonBuilder'
-import { InitPsychicAppCliOptions } from '../../../src/helpers/newPsychicApp'
+import PackagejsonBuilder from '../../../src/file-builders/PackagejsonBuilder.js'
+import { InitPsychicAppCliOptions } from '../../../src/helpers/newPsychicApp.js'
 
 describe('PackagejsonBuilder', () => {
   const baseOptions: InitPsychicAppCliOptions = {

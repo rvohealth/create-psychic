@@ -5,8 +5,8 @@ import ViteConfBuilder from '../file-builders/ViteConfBuilder.js'
 import addMissingClientGitignoreStatements from './addMissingClientGitignoreStatements.js'
 import copyRecursive from './copyRecursive.js'
 import { cliClientAppTypes, InitPsychicAppCliOptions } from './newPsychicApp.js'
-import sspawn from './sspawn.js'
 import srcPath from './srcPath.js'
+import sspawn from './sspawn.js'
 
 export default async function addClientApp({
   client,

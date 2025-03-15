@@ -1,5 +1,5 @@
 import { ChildProcessWithoutNullStreams, spawn } from 'child_process'
-import sleep from '../../helpers/sleep'
+import sleep from '../../helpers/sleep.js'
 
 let serverProcess: ChildProcessWithoutNullStreams
 

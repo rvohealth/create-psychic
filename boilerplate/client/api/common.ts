@@ -1,7 +1,7 @@
 import axios from 'axios'
-import routes from '../config/routes'
-import apiRoutes from './apiRoutes'
-import { Path, PathValue } from './type-helpers'
+import routes from '../config/routes.js'
+import apiRoutes from './apiRoutes.js'
+import { Path, PathValue } from './type-helpers.js'
 
 export const api = axios.create({
   withCredentials: true,
@@ -51,7 +51,8 @@ export function apiCall<P extends Path<typeof apiRoutes>, Args extends ApiCallAr
   }
 }
 
-export type ApiCallArgs<T extends Path<typeof apiRoutes>> =
-  PathValue<typeof apiRoutes, T> extends (...args: any) => any
-    ? Parameters<PathValue<typeof apiRoutes, T>>[0]
-    : undefined
+export type ApiCallArgs<T extends Path<typeof apiRoutes>> = PathValue<typeof apiRoutes, T> extends (
+  ...args: any
+) => any
+  ? Parameters<PathValue<typeof apiRoutes, T>>[0]
+  : undefined
