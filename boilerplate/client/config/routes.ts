@@ -1,4 +1,4 @@
-import viteEnvValue from './viteEnvValue'
+import viteEnvValue from './viteEnvValue.js'
 
 const baseUrl = () => {
   if (viteEnvValue('VITE_API_HOST')) return viteEnvValue('VITE_API_HOST')

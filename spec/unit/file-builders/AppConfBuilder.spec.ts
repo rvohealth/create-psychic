@@ -1,6 +1,6 @@
-import AppConfigBuilder from '../../../src/file-builders/AppConfigBuilder'
-import { InitPsychicAppCliOptions } from '../../../src/helpers/newPsychicApp'
-import expectToMatchFixture from '../../helpers/expectToMatchFixture'
+import AppConfigBuilder from '../../../src/file-builders/AppConfigBuilder.js'
+import { InitPsychicAppCliOptions } from '../../../src/helpers/newPsychicApp.js'
+import expectToMatchFixture from '../../helpers/expectToMatchFixture.js'
 
 describe('AppConfBuilder', () => {
   const baseOptions: InitPsychicAppCliOptions = {

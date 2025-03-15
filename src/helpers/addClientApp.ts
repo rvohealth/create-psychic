@@ -1,12 +1,12 @@
 import * as fs from 'fs'
 import * as path from 'path'
-import ESLintConfBuilder from '../file-builders/EslintConfBuilder.js'
-import ViteConfBuilder from '../file-builders/ViteConfBuilder.js'
-import addMissingClientGitignoreStatements from './addMissingClientGitignoreStatements.js'
-import copyRecursive from './copyRecursive.js'
-import { cliClientAppTypes, InitPsychicAppCliOptions } from './newPsychicApp.js'
-import sspawn from './sspawn.js'
-import srcPath from './srcPath.js'
+import ESLintConfBuilder from '../file-builders/EslintConfBuilder.js.js'
+import ViteConfBuilder from '../file-builders/ViteConfBuilder.js.js'
+import addMissingClientGitignoreStatements from './addMissingClientGitignoreStatements.js.js'
+import copyRecursive from './copyRecursive.js.js'
+import { cliClientAppTypes, InitPsychicAppCliOptions } from './newPsychicApp.js.js'
+import srcPath from './srcPath.js.js'
+import sspawn from './sspawn.js.js'
 
 export default async function addClientApp({
   client,

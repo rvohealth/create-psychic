@@ -1,6 +1,6 @@
 import { BeforeAction } from '@rvoh/psychic'
-import ApplicationController from './ApplicationController'
-// import User from '../models/User'
+import ApplicationController from './ApplicationController.js'
+// import User from '../models/User.js'
 
 export default class AuthedController extends ApplicationController {
   // protected currentUser: User

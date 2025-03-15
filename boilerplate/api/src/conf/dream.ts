@@ -1,9 +1,9 @@
 import { DreamApplication } from '@rvoh/dream'
-import { productionEnv } from '../app/helpers/environment'
-import inflections from './inflections'
-import importAll from '../app/helpers/importAll'
-import importDefault from '../app/helpers/importDefault'
-import srcPath from '../app/helpers/srcPath'
+import { productionEnv } from '../app/helpers/environment.js'
+import inflections from './inflections.js'
+import importAll from '../app/helpers/importAll.js'
+import importDefault from '../app/helpers/importDefault.js'
+import srcPath from '../app/helpers/srcPath.js'
 
 export default async function (app: DreamApplication) {
   app.set('primaryKeyType', <PRIMARY_KEY_TYPE>)

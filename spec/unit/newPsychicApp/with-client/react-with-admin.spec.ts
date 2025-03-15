@@ -1,5 +1,5 @@
-import newPsychicApp from '../../../../src/helpers/newPsychicApp'
-import expectFileToContain from '../../../helpers/expectFileToContain'
+import newPsychicApp from '../../../../src/helpers/newPsychicApp.js'
+import expectFileToContain from '../../../helpers/expectFileToContain.js'
 
 describe('newPsychicApp with react client', () => {
   it('correctly provisions a react client', async () => {

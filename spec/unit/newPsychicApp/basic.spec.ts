@@ -1,7 +1,7 @@
-import newPsychicApp from '../../../src/helpers/newPsychicApp'
-import expectNoFile from '../../helpers/expectNoFile'
-import expectToMatchFixture from '../../helpers/expectToMatchFixture'
-import readFile from '../../helpers/readFile'
+import newPsychicApp from '../../../src/helpers/newPsychicApp.js'
+import expectNoFile from '../../helpers/expectNoFile.js'
+import expectToMatchFixture from '../../helpers/expectToMatchFixture.js'
+import readFile from '../../helpers/readFile.js'
 
 describe('newPsychicApp without websockets or background jobs', () => {
   it('builds app without websockets or background configurations', async () => {

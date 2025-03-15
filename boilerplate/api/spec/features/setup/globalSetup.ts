@@ -2,7 +2,7 @@ import '../../../src/conf/loadEnv'
 
 import { PsychicServer } from '@rvoh/psychic'
 import { launchViteServer, stopViteServer } from '@rvoh/psychic-spec-helpers'
-import initializePsychicApplication from '../../../src/conf/initializePsychicApplication'
+import initializePsychicApplication from '../../../src/conf/initializePsychicApplication.js'
 
 let server: PsychicServer
 

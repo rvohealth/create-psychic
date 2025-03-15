@@ -1,7 +1,7 @@
 import { PsychicApplicationWebsockets } from '@rvoh/psychic-websockets'
 import Redis from 'ioredis'
-import AppEnv from './AppEnv'
-// import User from '../app/models/User'
+import AppEnv from './AppEnv.js'
+// import User from '../app/models/User.js'
 
 export default (wsApp: PsychicApplicationWebsockets) => {
   wsApp.set('websockets', {
