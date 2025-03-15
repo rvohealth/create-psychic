@@ -1,5 +1,8 @@
+import { visit } from '@rvoh/psychic-spec-helpers'
+
 describe('puppeteer sample test', () => {
   it('my first puppeteer test', async () => {
-    // TODO add specs here for your client app
+    await visit('/')
+    await expect(page).toMatchTextContent('Vite + React')
   })
 })

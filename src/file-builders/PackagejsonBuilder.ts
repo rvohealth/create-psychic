@@ -7,8 +7,8 @@ export default class PackagejsonBuilder {
     const packagejson = {
       ...JSON.parse(
         JSON.stringify(
+          // @ts-ignore
           (
-            // @ts-ignore
             (await import('../../boilerplate/api/package.json', {
               assert: { type: 'json' },
               with: { type: 'json' },
@@ -21,7 +21,8 @@ export default class PackagejsonBuilder {
     switch (options.client) {
       case 'react':
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
-        ;(packagejson.scripts as any)['client'] = `PORT=3000 yarn --cwd=../client dev`
+        ;(packagejson.scripts as any)['client'] = `yarn --cwd=../client dev`
+        ;(packagejson.scripts as any)['client:fspec'] = `VITE_PSYCHIC_ENV=test yarn --cwd=../client dev`
     }
 
     if (!options.workers) {
