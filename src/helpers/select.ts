@@ -1,4 +1,4 @@
-import * as colors from 'colorette'
+import colors from 'yoctocolors'
 import * as readline from 'readline'
 const input = process.stdin
 const output = process.stdout

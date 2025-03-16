@@ -1,14 +1,16 @@
-import * as c from 'colorette'
 import * as fs from 'fs'
 import * as path from 'path'
+import c from 'yoctocolors'
 import AppConfigBuilder from '../file-builders/AppConfigBuilder.js'
 import DreamConfigBuilder from '../file-builders/DreamConfigBuilder.js'
 import EnvBuilder from '../file-builders/EnvBuilder.js'
 import InitializePsychicAppBuilder from '../file-builders/InitializePsychicAppBuilder.js'
 import PackagejsonBuilder from '../file-builders/PackagejsonBuilder.js'
+import DreamCliLogger from '../logger/DreamCliLogger.js'
+import colorize from '../logger/loggable/colorize.js'
+import DreamCliLoggableSpinner from '../logger/loggable/DreamCliLoggableSpinner.js'
 import addClientApp from './addClientApp.js'
 import copyRecursive from './copyRecursive.js'
-import log from './log.js'
 import logo from './logo.js'
 import Select from './select.js'
 import sleep from './sleep.js'
@@ -31,7 +33,31 @@ function testEnv() {
   return process.env.NODE_ENV === 'test'
 }
 
+const logger = new DreamCliLogger()
+
 export default async function newPsychicApp(appName: string, options: InitPsychicAppCliOptions) {
+  if (!testEnv()) {
+    logger.clear()
+    logger.log(c.greenBright(`${appName}`), {
+      logPrefix: '☼',
+      logPrefixColor: 'greenBright',
+      permanent: true,
+    })
+    logger.log(
+      c.greenBright(
+        `${appName
+          .split('')
+          .map(() => '')
+          .join('-')}-`
+      ),
+      {
+        logPrefix: ' ',
+        logPrefixColor: 'greenBright',
+        permanent: true,
+      }
+    )
+  }
+
   if (!options.primaryKeyType || !cliPrimaryKeyTypes.includes(options.primaryKeyType)) {
     const answer = await new Select('what primary key type would you like to use?', cliPrimaryKeyTypes).run()
     options.primaryKeyType = answer
@@ -60,33 +86,26 @@ export default async function newPsychicApp(appName: string, options: InitPsychi
     options.websockets = answer === 'yes'
   }
 
+  let spinner: DreamCliLoggableSpinner | undefined = undefined
+
   if (!testEnv()) {
-    log.clear()
-    log.write(logo() + '\n\n', { cache: true })
-    log.write(c.green(`Installing psychic framework to ./${appName}`), { cache: true })
-    log.write(c.green(`Step 1. writing boilerplate to ${appName}...`))
+    logger.clear()
+    logger.log(`Installing psychic framework to ./${appName}`, { permanent: true })
+    spinner = logger.log(`copying boilerplate...`, { spinner: true })
   }
 
-  let projectPath: string
   const rootPath = `./${appName}`
+  const hasClient = options.client !== 'none' || options.adminClient !== 'none'
+  const projectPath = hasClient ? path.join(process.cwd(), appName, 'api') : path.join(process.cwd(), appName)
 
-  if (options.client === 'none') {
-    projectPath = path.join(process.cwd(), appName)
-    copyRecursive(srcPath('..', 'boilerplate', 'api'), path.join(process.cwd(), appName))
-  } else {
-    projectPath = path.join(process.cwd(), appName, 'api')
+  if (hasClient) {
     fs.mkdirSync(`./${appName}`)
-    copyRecursive(srcPath('..', 'boilerplate', 'api'), projectPath)
   }
+
+  copyRecursive(srcPath('..', 'boilerplate', 'api'), projectPath)
 
   fs.renameSync(`${projectPath}/yarnrc.yml`, `${projectPath}/.yarnrc.yml`)
   fs.renameSync(`${projectPath}/gitignore`, `${projectPath}/.gitignore`)
-
-  if (!testEnv()) {
-    log.restoreCache()
-    log.write(c.green(`Step 1. write boilerplate to ${appName}: Done!`), { cache: true })
-    log.write(c.green(`Step 2. building default config files...`))
-  }
 
   fs.writeFileSync(path.join(projectPath, '.env'), EnvBuilder.build({ appName, env: 'development' }))
   fs.writeFileSync(path.join(projectPath, '.env.test'), EnvBuilder.build({ appName, env: 'test' }))
@@ -120,13 +139,22 @@ export default async function newPsychicApp(appName: string, options: InitPsychi
   }
 
   if (!testEnv()) {
-    log.restoreCache()
-    log.write(c.green(`Step 2. build default config files: Done!`), { cache: true })
-    log.write(c.green(`Step 3. Installing psychic dependencies...`))
+    spinner?.stop()
+    logger.purge()
+    spinner = logger.log(`installing api dependencies...\n`, { spinner: true })
 
     // only run yarn install if not in test env to save time
     await sspawn(
-      `cd ${projectPath} && touch yarn.lock && corepack enable && yarn set version stable && yarn install && yarn add @rvoh/dream @rvoh/psychic`
+      `cd ${projectPath} && touch yarn.lock && corepack enable && yarn set version stable && yarn install && yarn add @rvoh/dream @rvoh/psychic`,
+      {
+        onStdout: message => {
+          logger.log(colorize('[api]', { color: 'cyan' }) + ' ' + message, {
+            permanent: true,
+            logPrefix: '├',
+            logPrefixColor: 'cyan',
+          })
+        },
+      }
     )
   }
 
@@ -134,27 +162,32 @@ export default async function newPsychicApp(appName: string, options: InitPsychi
   if (!testEnv()) await sleep(1000)
 
   if (!testEnv()) {
-    log.restoreCache()
-    log.write(c.green(`Step 3. Install psychic dependencies: Done!`), { cache: true })
-    log.write(c.green(`Step 4. Initializing git repository...`))
+    spinner?.stop()
+    logger.purge()
+    spinner = logger.log(`initializing git repository...`, { spinner: true })
 
     // only do this if not test, since using git in CI will fail
-    await sspawn(`cd ${path.join(process.cwd(), appName)} && git init`)
-  }
+    await sspawn(`cd ${path.join(process.cwd(), appName)} && git init`, {
+      onStdout: message => {
+        logger.log(colorize('[api]', { color: 'cyan' }) + ' ' + message, {
+          permanent: true,
+          logPrefix: '├',
+          logPrefixColor: 'cyan',
+        })
+      },
+    })
 
-  if (!testEnv()) {
-    log.restoreCache()
-    log.write(c.green(`Step 4. Initialize git repository: Done!`), { cache: true })
-    log.write(c.green(`Step 5. Building project...`))
+    spinner.stop()
+    logger.purge()
   }
 
   // don't sync yet, since we need to run migrations first
   // await sspawn(`yarn --cwd=${projectPath} dream sync:existing`)
 
-  const errors: string[] = []
-
   if (options.client !== 'none') {
     await addClientApp({
+      sourceColor: 'magenta',
+      logger,
       client: options.client,
       clientRootFolderName: 'client',
       appName,
@@ -166,6 +199,8 @@ export default async function newPsychicApp(appName: string, options: InitPsychi
 
   if (options.adminClient !== 'none') {
     await addClientApp({
+      sourceColor: 'blue',
+      logger,
       client: options.adminClient,
       clientRootFolderName: 'admin',
       appName,
@@ -176,17 +211,26 @@ export default async function newPsychicApp(appName: string, options: InitPsychi
   }
 
   if (!testEnv()) {
+    logger.purge()
+
     // do not use git during tests, since this will break in CI
     await sspawn(
-      `cd ${path.join(process.cwd(), appName)} && git add --all && git commit -m 'psychic init' --quiet`
+      `cd ${path.join(process.cwd(), appName)} && git add --all && git commit -m 'psychic init' --quiet`,
+      {
+        onStdout: message => {
+          logger.log(colorize('[api]', { color: 'cyan' }) + ' ' + message, {
+            permanent: true,
+            logPrefix: '├',
+            logPrefixColor: 'cyan',
+          })
+        },
+      }
     )
 
-    log.restoreCache()
-    log.write(c.green(`Step 5. Build project: Done!`), { cache: true })
-    console.log(welcomeMessage(appName))
-
-    errors.forEach(err => {
-      console.log(err)
+    logger.log(logo(), { logPrefix: '' })
+    logger.log(welcomeMessage(hasClient ? appName + '/api' : appName), {
+      permanent: true,
+      logPrefix: '',
     })
   }
 }
