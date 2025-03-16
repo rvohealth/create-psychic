@@ -1,9 +1,10 @@
+import * as os from 'os'
 import * as crypto from 'crypto'
 
 export default class EnvBuilder {
   public static build({ env, appName }: { env: 'test' | 'development' | 'production'; appName: string }) {
     return `\
-DB_USER=
+DB_USER=${os.userInfo().username}
 DB_NAME=${snakeify(appName)}_${env}
 DB_PORT=5432
 DB_HOST=localhost
