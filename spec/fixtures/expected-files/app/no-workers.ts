@@ -58,6 +58,7 @@ export default async (psy: PsychicApplication) => {
   })
 
   psy.set('openapi', {
+    outputFilename: 'openapi/openapi.json',
     defaults: {
       components: {
         schemas: {},
@@ -66,7 +67,7 @@ export default async (psy: PsychicApplication) => {
   })
 
   psy.set('openapi', 'mobile', {
-    outputFilename: 'mobile.openapi.json',
+    outputFilename: 'openapi/mobile.openapi.json',
     suppressResponseEnums: true,
     defaults: {
       components: {
@@ -76,7 +77,7 @@ export default async (psy: PsychicApplication) => {
   })
 
   psy.set('openapi', 'admin', {
-    outputFilename: 'admin.openapi.json',
+    outputFilename: 'openapi/admin.openapi.json',
     defaults: {
       components: {
         schemas: {},
