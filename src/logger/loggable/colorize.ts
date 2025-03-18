@@ -1,5 +1,5 @@
 import c from 'yoctocolors'
-import { DreamCliBgColor, DreamCliForegroundColor } from '../DreamCliLogger'
+import { DreamCliBgColor, DreamCliForegroundColor } from '../DreamCliLogger.js'
 
 export default function colorize(
   text: string,
