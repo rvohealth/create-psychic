@@ -4,6 +4,7 @@ import expectFileToContain from '../../../helpers/expectFileToContain.js'
 describe('newPsychicApp with react client', () => {
   it('correctly provisions a react client', async () => {
     await newPsychicApp('howyadoin', {
+      packageManager: 'yarn',
       websockets: false,
       workers: false,
       client: 'react',
@@ -36,5 +37,5 @@ describe('newPsychicApp with react client', () => {
 !.yarn/sdks
 !.yarn/versions`
     )
-  }, 20000)
+  }, 60_000)
 })

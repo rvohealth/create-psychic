@@ -1,4 +1,5 @@
 import { InitPsychicAppCliOptions } from '../helpers/newPsychicApp.js'
+import { replaceYarnInFileContents } from '../helpers/replaceYarnInFile.js'
 
 export default class PackagejsonBuilder {
   public static async buildAPI(options: InitPsychicAppCliOptions) {
@@ -7,6 +8,7 @@ export default class PackagejsonBuilder {
     // @ts-ignore
     const imported = (await import('../../boilerplate/api/package.json', {
       assert: { type: 'json' },
+      // @ts-ignore
       with: { type: 'json' },
     })) as any
 
@@ -17,10 +19,23 @@ export default class PackagejsonBuilder {
     }
 
     switch (options.client) {
-      case 'react':
+      case 'none':
+        break
+
+      default:
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
         ;(packagejson.scripts as any)['client'] = `yarn --cwd=../client dev`
         ;(packagejson.scripts as any)['client:fspec'] = `VITE_PSYCHIC_ENV=test yarn --cwd=../client dev`
+    }
+
+    switch (options.adminClient) {
+      case 'none':
+        break
+
+      default:
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
+        ;(packagejson.scripts as any)['admin'] = `yarn --cwd=../admin dev`
+        ;(packagejson.scripts as any)['admin:fspec'] = `VITE_PSYCHIC_ENV=test yarn --cwd=../admin dev`
     }
 
     if (!options.workers) {
@@ -41,7 +56,7 @@ export default class PackagejsonBuilder {
       removeDependency(packagejson, 'ioredis')
     }
 
-    return JSON.stringify(packagejson, null, 2)
+    return replaceYarnInFileContents(JSON.stringify(packagejson, null, 2), options.packageManager)
   }
 }
 

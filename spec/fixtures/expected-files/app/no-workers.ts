@@ -120,9 +120,9 @@ export default async (psy: PsychicApplication) => {
     }
   })
 
-  psy.on('server:shutdown', () => {
-    // run custom code when server is shutdown
-  })
+  psy.on('server:start', () => {})
+
+  psy.on('server:shutdown', () => {})
 
   // run a callback after routes are done processing
   psy.on('server:init:after-routes', () => {})

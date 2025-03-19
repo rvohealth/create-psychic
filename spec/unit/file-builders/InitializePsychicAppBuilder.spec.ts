@@ -4,6 +4,7 @@ import expectToMatchFixture from '../../helpers/expectToMatchFixture.js'
 
 describe('InitializePsychicAppBuilder', () => {
   const baseOptions: InitPsychicAppCliOptions = {
+    packageManager: 'yarn',
     workers: false,
     websockets: false,
     client: 'none',

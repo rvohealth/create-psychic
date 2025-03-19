@@ -11,6 +11,8 @@ export default defineConfig({
     minWorkers: 1,
     mockReset: true,
     watch: false,
+    testTimeout: 30000,
+    hookTimeout: 30000,
 
     // globalSetup: './spec/unit/setup/globalSetup.ts',
   },

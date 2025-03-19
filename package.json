@@ -1,11 +1,11 @@
 {
   "type": "module",
   "name": "@rvoh/create-psychic",
-  "version": "0.4.7",
+  "version": "0.5.0",
   "description": "creates a new psychic app",
   "repository": "https://github.com/rvohealth/create-psychic.git",
   "author": "RVO Health",
-  "license": "Apache-2.0",
+  "license": "MIT",
   "main": "./dist/cjs/src/index.js",
   "module": "./dist/esm/src/index.js",
   "types": "./dist/types/src/index.d.ts",
@@ -22,11 +22,13 @@
   ],
   "scripts": {
     "build": "echo \"building cjs...\" && rm -rf dist && npx tsc -p ./tsconfig.cjs.build.json && cp -R boilerplate ./dist/cjs && echo \"building esm...\" && npx tsc -p ./tsconfig.esm.build.json && cp -R boilerplate ./dist/esm",
-    "psy": "node --experimental-specifier-resolution=node --import=./bin/esm.js ./src/psy.ts",
+    "psy": "tsx ./src/psy.ts",
     "prepack": "yarn build",
     "spec": "vitest --config=./spec/unit/vite.config.ts"
   },
   "dependencies": {
+    "@rvoh/dream": "^0.30.2",
+    "@rvoh/psychic": "^0.24.5",
     "@types/node": "^22.6.1",
     "commander": "^10.0.1",
     "ora": "^6.3.0",
@@ -44,12 +46,11 @@
     "pg": "^8.13.3",
     "prettier": "^2.8.7",
     "supertest": "^7.0.0",
-    "ts-node": "^10.9.2",
     "tslib": "^2.7.0",
+    "tsx": "^4.19.3",
     "typedoc": "^0.26.6",
     "typescript": "^5.5.4",
     "typescript-eslint": "=7.18.0",
     "vitest": "^3.0.8"
-  },
-  "packageManager": "yarn@4.7.0"
+  }
 }
