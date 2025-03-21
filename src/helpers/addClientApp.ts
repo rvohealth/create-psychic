@@ -6,10 +6,11 @@ import DreamCliLogger, { DreamCliForegroundColor } from '../logger/DreamCliLogge
 import DreamCliLoggableSpinner from '../logger/loggable/DreamCliLoggableSpinner.js'
 import addMissingClientGitignoreStatements from './addMissingClientGitignoreStatements.js'
 import copyRecursive from './copyRecursive.js'
-import { cliClientAppTypes, InitPsychicAppCliOptions } from './newPsychicApp.js'
+import { cliClientAppTypes, InitPsychicAppCliOptions, PsychicPackageManager } from './newPsychicApp.js'
 import srcPath from './srcPath.js'
 import sspawn from './sspawn.js'
 import colorize from '../logger/loggable/colorize.js'
+import getLockfileName from './getLockfileName.js'
 
 export default async function addClientApp({
   client,
@@ -37,77 +38,12 @@ export default async function addClientApp({
     spinner = logger.log(`initializing client app: ${clientRootFolderName}...`, { spinner: true })
   }
 
-  const yarnSetVersionCmd = 'corepack enable && yarn set version stable'
+  const initPackageManager = initilizePackageManagerCmd(options.packageManager)
+  const createCmd = viteCmd(options.packageManager, clientRootFolderName, `${client}-ts`)
 
   switch (client) {
     case 'react':
-      await sspawn(
-        `cd ${rootPath} && yarn create vite ${clientRootFolderName} --template react-ts && cd ${clientRootFolderName} && touch yarn.lock && ${yarnSetVersionCmd}`,
-        {
-          onStdout: message => {
-            logger.log(colorize(`[${clientRootFolderName}]`, { color: sourceColor }) + ' ' + message, {
-              permanent: true,
-              logPrefix: '├',
-              logPrefixColor: sourceColor,
-            })
-          },
-        }
-      )
-      fs.mkdirSync(path.join(appName, clientRootFolderName, 'src', 'config'))
-
-      copyRecursive(
-        srcPath('..', 'boilerplate', 'client', 'api'),
-        path.join(projectPath, '..', clientRootFolderName, 'src', 'api')
-      )
-      copyRecursive(
-        srcPath('..', 'boilerplate', 'client', 'config', 'routes.ts'),
-        path.join(projectPath, '..', clientRootFolderName, 'src', 'config', 'routes.ts')
-      )
-
-      fs.writeFileSync(
-        path.join(projectPath, '..', clientRootFolderName, 'vite.config.ts'),
-        ViteConfBuilder.build(client)
-      )
-      fs.writeFileSync(
-        path.join(projectPath, '..', clientRootFolderName, '.eslintrc.cjs'),
-        ESLintConfBuilder.buildForViteReact()
-      )
-
-      break
-
-    case 'vue':
-      await sspawn(
-        `cd ${rootPath} && ${yarnSetVersionCmd} && yarn create vite ${clientRootFolderName} --template vue-ts`,
-        {
-          onStdout: message => {
-            logger.log(colorize(`[${clientRootFolderName}]`, { color: sourceColor }) + ' ' + message, {
-              permanent: true,
-              logPrefix: '├',
-              logPrefixColor: sourceColor,
-            })
-          },
-        }
-      )
-
-      fs.mkdirSync(path.join(process.cwd(), appName, clientRootFolderName, 'src', 'config'))
-
-      copyRecursive(
-        srcPath('..', 'boilerplate', 'client', 'api'),
-        path.join(projectPath, '..', clientRootFolderName, 'src', 'api')
-      )
-      copyRecursive(
-        srcPath('..', 'boilerplate', 'client', 'config', 'routes.ts'),
-        path.join(projectPath, '..', clientRootFolderName, 'src', 'config', 'routes.ts')
-      )
-
-      fs.writeFileSync(
-        path.join(projectPath, '..', 'client', 'vite.config.ts'),
-        ViteConfBuilder.build(client)
-      )
-      break
-
-    case 'nuxt':
-      await sspawn(`cd ${rootPath} && ${yarnSetVersionCmd} && yarn create nuxt-app ${clientRootFolderName}`, {
+      await sspawn(`cd ${rootPath} && ${createCmd} && cd ${clientRootFolderName} ${initPackageManager}`, {
         onStdout: message => {
           logger.log(colorize(`[${clientRootFolderName}]`, { color: sourceColor }) + ' ' + message, {
             permanent: true,
@@ -117,29 +53,19 @@ export default async function addClientApp({
         },
       })
 
-      fs.mkdirSync(path.join(process.cwd(), appName, clientRootFolderName, 'config'))
-
-      copyRecursive(
-        srcPath('..', 'boilerplate', 'client', 'api'),
-        path.join(projectPath, '..', clientRootFolderName, 'src', 'api')
+      fs.writeFileSync(
+        path.join(projectPath, '..', clientRootFolderName, 'vite.config.ts'),
+        await ViteConfBuilder.build(path.join(projectPath, '..', clientRootFolderName, 'vite.config.ts'))
       )
-      copyRecursive(
-        srcPath('..', 'boilerplate', 'client', 'config', 'routes.ts'),
-        path.join(projectPath, '..', clientRootFolderName, 'config', 'routes.ts')
+      fs.writeFileSync(
+        path.join(projectPath, '..', clientRootFolderName, '.eslintrc.cjs'),
+        ESLintConfBuilder.buildForViteReact()
       )
 
       break
-  }
 
-  addMissingClientGitignoreStatements(path.join(projectPath, '..', clientRootFolderName, '.gitignore'))
-
-  if (!testEnv() || process.env.REALLY_BUILD_CLIENT_DURING_SPECS === '1') {
-    logger.purge()
-
-    // only bother installing packages if not in test env to save time
-    await sspawn(
-      `cd ${path.join(projectPath, '..', clientRootFolderName)} && touch yarn.lock && yarn install`,
-      {
+    case 'vue':
+      await sspawn(`cd ${rootPath} && ${createCmd} && cd ${clientRootFolderName} ${initPackageManager}`, {
         onStdout: message => {
           logger.log(colorize(`[${clientRootFolderName}]`, { color: sourceColor }) + ' ' + message, {
             permanent: true,
@@ -147,14 +73,110 @@ export default async function addClientApp({
             logPrefixColor: sourceColor,
           })
         },
-      }
-    )
+      })
 
-    spinner?.stop()
-    logger.purge()
+      fs.writeFileSync(
+        path.join(projectPath, '..', clientRootFolderName, 'vite.config.ts'),
+        await ViteConfBuilder.build(path.join(projectPath, '..', clientRootFolderName, 'vite.config.ts'))
+      )
+      break
+
+    case 'nextjs':
+      await sspawn(
+        `cd ${rootPath} && npx create-next-app@latest ${clientRootFolderName} --eslint --app --ts --skip-install --use-${options.packageManager} --yes`,
+        {
+          onStdout: message => {
+            logger.log(colorize(`[${clientRootFolderName}]`, { color: sourceColor }) + ' ' + message, {
+              permanent: true,
+              logPrefix: '├',
+              logPrefixColor: sourceColor,
+            })
+          },
+        }
+      )
+      break
+
+    case 'nuxt':
+      logger.log(
+        `cd ${rootPath} && ${options.packageManager} create nuxt-app ${clientRootFolderName} --packageManager ${options.packageManager} --no-install ${initPackageManager}`,
+        { permanent: true }
+      )
+      await sspawn(
+        `cd ${rootPath} && ${options.packageManager} create nuxt-app ${clientRootFolderName} --packageManager ${options.packageManager} --no-install ${initPackageManager}`,
+        {
+          onStdout: message => {
+            logger.log(colorize(`[${clientRootFolderName}]`, { color: sourceColor }) + ' ' + message, {
+              permanent: true,
+              logPrefix: '├',
+              logPrefixColor: sourceColor,
+            })
+          },
+        }
+      )
+      break
   }
+
+  addMissingClientGitignoreStatements(path.join(projectPath, '..', clientRootFolderName, '.gitignore'))
+
+  logger.purge()
+
+  // only bother installing packages if not in test env to save time
+  await sspawn(
+    `cd ${path.join(projectPath, '..', clientRootFolderName)} && ${installCmd(options.packageManager)}`,
+    {
+      onStdout: message => {
+        logger.log(colorize(`[${clientRootFolderName}]`, { color: sourceColor }) + ' ' + message, {
+          permanent: true,
+          logPrefix: '├',
+          logPrefixColor: sourceColor,
+        })
+      },
+    }
+  )
+
+  spinner?.stop()
+  logger.purge()
 }
 
 function testEnv() {
   return process.env.NODE_ENV === 'test'
 }
+
+function initilizePackageManagerCmd(packageManager: PsychicPackageManager) {
+  const lockfile = getLockfileName(packageManager)
+  switch (packageManager) {
+    case 'yarn':
+      return `&& touch ${lockfile} && corepack enable && yarn set version stable`
+    case 'pnpm':
+      return ''
+    // return `corepack enable pnpm`
+    // return `corepack enable pnpm && corepack use pnpm@latest`
+    case 'npm':
+      return ''
+    // return 'corepack enable && corepack enable npm'
+    // return `&& touch ${lockfile} && corepack use npm@latest`
+  }
+}
+
+function installCmd(packageManager: PsychicPackageManager) {
+  const lockfile = getLockfileName(packageManager)
+  switch (packageManager) {
+    case 'yarn':
+      return `touch ${lockfile} && yarn install`
+    default:
+      return `${packageManager} install`
+  }
+}
+
+function viteCmd(packageManager: PsychicPackageManager, clientRootFolderName: string, template: string) {
+  switch (packageManager) {
+    case 'yarn':
+      return `yarn create vite ${clientRootFolderName} --template ${template}`
+    case 'pnpm':
+      return `pnpm create vite ${clientRootFolderName} --template ${template}`
+    case 'npm':
+      return `npm create vite@latest ${clientRootFolderName} -- --template ${template}`
+  }
+}
+
+type ViteTemplate = 'react-ts' | 'vue-ts' | ''

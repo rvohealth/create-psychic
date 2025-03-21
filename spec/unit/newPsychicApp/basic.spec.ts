@@ -6,6 +6,7 @@ import readFile from '../../helpers/readFile.js'
 describe('newPsychicApp without websockets or background jobs', () => {
   it('builds app without websockets or background configurations', async () => {
     await newPsychicApp('howyadoin', {
+      packageManager: 'yarn',
       websockets: false,
       workers: false,
       client: 'none',

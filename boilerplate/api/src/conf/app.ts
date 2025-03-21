@@ -1,4 +1,4 @@
-import { PsychicApplication } from '@rvoh/psychic'<BACKGROUND_IMPORT>
+<DREAM_IMPORT_STATEMENT><PSYCHIC_IMPORT_STATEMENT><BACKGROUND_IMPORT>
 import expressWinston from 'express-winston'
 import winston from 'winston'
 import AppEnv from '../app/helpers/AppEnv.js'
@@ -120,9 +120,9 @@ export default async (psy: PsychicApplication) => {
     }
   })
 
-  psy.on('server:shutdown', () => {
-    // run custom code when server is shutdown
-  })
+<SERVER_START_HOOK>
+
+<SERVER_SHUTDOWN_HOOK>
 
   // run a callback after routes are done processing
   psy.on('server:init:after-routes', () => {})

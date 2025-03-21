@@ -1,5 +1,9 @@
 ## How to contribute to Psychic cli
 
+First, ensure that you have created a database locally in postgres called "howyadoin_test". All tests that run will be provisioning new apps named "howyadoin", and when migrations are run within those apps during spec runs, those apps will all be searching for the "howyadoin_test" db.
+
+In between each test, a hook is run to completely clear all the tables from the howyadoin_test db, which is different from what we normally do for an app. This is because we are testing the blowing away and rebuilding of the same app over and over again.
+
 #### **Did you find a bug?**
 
 - **Do not open up a GitHub issue if the bug is a security vulnerability

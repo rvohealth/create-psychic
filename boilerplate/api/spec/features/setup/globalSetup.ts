@@ -1,11 +1,9 @@
-import '../../../src/conf/loadEnv.js'
-
-import { launchDevServer, stopDevServers } from '@rvoh/psychic-spec-helpers'
+import '../../../src/conf/loadEnv.js'<PSYCHIC_IMPORTS>
 
 export async function setup() {
-  await launchDevServer('admin', { port: 3000, cmd: 'yarn client:fspec' })
+<DEV_TOOLS_SETUP>
 }
 
 export function teardown() {
-  stopDevServers()
+<DEV_TOOLS_TEARDOWN>
 }

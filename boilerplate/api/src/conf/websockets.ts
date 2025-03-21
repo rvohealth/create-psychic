@@ -1,5 +1,5 @@
 import { PsychicApplicationWebsockets } from '@rvoh/psychic-websockets'
-import Redis from 'ioredis'
+import { Redis } from 'ioredis'
 import AppEnv from './AppEnv.js'
 // import User from '../app/models/User.js'
 

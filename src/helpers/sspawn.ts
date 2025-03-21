@@ -33,11 +33,23 @@ export function ssspawn(
     const txt = chunk?.toString()?.trim()
     if (typeof txt !== 'string' || !txt) return
 
-    if (opts?.onStdout) {
-      opts?.onStdout?.(txt)
-    } else {
-      console.log(txt)
+    if (process.env.NODE_ENV !== 'test' || process.env.DEBUG === '1') {
+      if (opts?.onStdout) {
+        opts?.onStdout?.(txt)
+      } else {
+        console.log(txt)
+      }
     }
+  })
+
+  proc.stdout.on('error', err => {
+    console.log('sspawn error!')
+    console.error(err)
+  })
+
+  proc.on('error', err => {
+    console.log('sspawn error!')
+    console.error(err)
   })
 
   return proc

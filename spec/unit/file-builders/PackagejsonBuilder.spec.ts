@@ -3,6 +3,7 @@ import { InitPsychicAppCliOptions } from '../../../src/helpers/newPsychicApp.js'
 
 describe('PackagejsonBuilder', () => {
   const baseOptions: InitPsychicAppCliOptions = {
+    packageManager: 'yarn',
     workers: false,
     websockets: false,
     client: 'none',
@@ -41,6 +42,31 @@ describe('PackagejsonBuilder', () => {
             'socket.io',
             'socket.io-adapter',
           ])
+        )
+
+        expect(JSON.parse(res).scripts['client']).toBeUndefined()
+        expect(JSON.parse(res).scripts['client:fspec']).toBeUndefined()
+      })
+    })
+
+    context('client != none', () => {
+      it('includes client scripts', async () => {
+        const options: InitPsychicAppCliOptions = { ...baseOptions, client: 'react' }
+        const res = await PackagejsonBuilder.buildAPI(options)
+        expect(JSON.parse(res).scripts['client']).toEqual('yarn --cwd=../client dev')
+        expect(JSON.parse(res).scripts['client:fspec']).toEqual(
+          'VITE_PSYCHIC_ENV=test yarn --cwd=../client dev'
+        )
+      })
+    })
+
+    context('adminClient != none', () => {
+      it('includes admin scripts', async () => {
+        const options: InitPsychicAppCliOptions = { ...baseOptions, adminClient: 'react' }
+        const res = await PackagejsonBuilder.buildAPI(options)
+        expect(JSON.parse(res).scripts['admin']).toEqual('yarn --cwd=../admin dev')
+        expect(JSON.parse(res).scripts['admin:fspec']).toEqual(
+          'VITE_PSYCHIC_ENV=test yarn --cwd=../admin dev'
         )
       })
     })
