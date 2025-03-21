@@ -129,7 +129,6 @@ export default async function newPsychicApp(appName: string, options: InitPsychi
 
   const rootPath = `./${appName}`
   const hasClient = options.client !== 'none' || options.adminClient !== 'none'
-  console.log({ options, hasClient })
   const projectPath = hasClient ? path.join(process.cwd(), appName, 'api') : path.join(process.cwd(), appName)
 
   if (hasClient) {
