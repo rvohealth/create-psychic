@@ -177,6 +177,10 @@ export default async function newPsychicApp(appName: string, options: InitPsychi
     fs.rmSync(path.join(projectPath, 'src', 'app', 'helpers', 'ws.ts'))
   }
 
+  if (options.packageManager !== 'yarn') {
+    fs.rmSync(path.join(projectPath, '.yarnrc.yml'))
+  }
+
   if (!testEnv()) {
     spinner?.stop()
     logger.purge()

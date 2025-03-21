@@ -11,6 +11,7 @@ export function replaceYarnInFileContents(fileContents: string, packageManager: 
   return fileContents
     .replace(/<YARN> --cwd/g, `${runCommand(packageManager)} ${cwdOption(packageManager)}`)
     .replace(/<YARN> run/g, `${runCommand(packageManager)} ${cwdOption(packageManager)}`)
+    .replace(/<YARN_RUN>/g, `${runCommand(packageManager)} ${cwdOption(packageManager)}`)
     .replace(/<YARN> /g, `${runCommand(packageManager)} `)
     .replace(/yarn --cwd/g, `${runCommand(packageManager)} ${cwdOption(packageManager)}`)
     .replace(/yarn run/g, runCommand(packageManager))
