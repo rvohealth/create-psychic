@@ -103,6 +103,9 @@ export default async function newPsychicApp(appName: string, options: InitPsychi
       ).run()
       options.adminClient = answer
     }
+  } else {
+    options.client = 'none'
+    options.adminClient = 'none'
   }
 
   if (options.workers === undefined) {
