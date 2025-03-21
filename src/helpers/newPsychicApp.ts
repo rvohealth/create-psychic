@@ -195,7 +195,7 @@ export default async function newPsychicApp(appName: string, options: InitPsychi
   switch (options.packageManager) {
     case 'yarn':
       await sspawn(
-        `cd ${projectPath} && touch ${lockfileName} && yarn install && yarn add @rvoh/dream @rvoh/psychic`,
+        `cd ${projectPath} && touch ${lockfileName} && corepack enable yarn && yarn set version stable && yarn install && yarn add @rvoh/dream @rvoh/psychic`,
         {
           onStdout: message => {
             logger.log(colorize('[api]', { color: 'cyan' }) + ' ' + message, {
