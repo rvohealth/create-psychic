@@ -28,7 +28,6 @@ describe('PackagejsonBuilder', () => {
             'express-openapi-validator',
             'express-winston',
             'kysely',
-            'luxon',
           ])
         )
 
@@ -88,7 +87,6 @@ describe('PackagejsonBuilder', () => {
             'express-openapi-validator',
             'express-winston',
             'kysely',
-            'luxon',
             '@bull-board/express',
             'bullmq',
             'ioredis',
@@ -123,7 +121,6 @@ describe('PackagejsonBuilder', () => {
             'express-openapi-validator',
             'express-winston',
             'kysely',
-            'luxon',
             '@socket.io/redis-adapter',
             '@socket.io/redis-emitter',
             'socket.io',
@@ -156,7 +153,6 @@ describe('PackagejsonBuilder', () => {
             'express-openapi-validator',
             'express-winston',
             'kysely',
-            'luxon',
             '@socket.io/redis-adapter',
             '@socket.io/redis-emitter',
             'socket.io',

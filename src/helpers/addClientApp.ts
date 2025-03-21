@@ -83,7 +83,7 @@ export default async function addClientApp({
 
     case 'nextjs':
       await sspawn(
-        `cd ${rootPath} && npx create-next-app@latest ${clientRootFolderName} --eslint --app --ts --skip-install --use-${options.packageManager} --yes`,
+        `cd ${rootPath} && npx create-next-app@latest ${clientRootFolderName} --eslint --app --ts --skip-install --use-${options.packageManager} --yes && cd ${clientRootFolderName} ${initPackageManager}`,
         {
           onStdout: message => {
             logger.log(colorize(`[${clientRootFolderName}]`, { color: sourceColor }) + ' ' + message, {
@@ -97,10 +97,6 @@ export default async function addClientApp({
       break
 
     case 'nuxt':
-      logger.log(
-        `cd ${rootPath} && ${options.packageManager} create nuxt-app ${clientRootFolderName} --packageManager ${options.packageManager} --no-install ${initPackageManager}`,
-        { permanent: true }
-      )
       await sspawn(
         `cd ${rootPath} && ${options.packageManager} create nuxt-app ${clientRootFolderName} --packageManager ${options.packageManager} --no-install ${initPackageManager}`,
         {
