@@ -13,5 +13,5 @@
     "baseUrl": "src",
     "types": ["luxon-jest-matchers"]
   },
-  "include": ["src", "spec"]
+  "include": ["src", "spec", "spec/global.d.ts"]
 }
