@@ -137,7 +137,14 @@ export default async function newPsychicApp(appName: string, options: InitPsychi
 
   copyRecursive(srcPath('..', 'boilerplate', 'api'), projectPath)
 
-  // fs.renameSync(`${projectPath}/yarnrc.yml`, `${projectPath}/.yarnrc.yml`)
+  // yarnrc.yml included as non-dot-file so that it becomes part of the package
+  // move it to .yarnrc.yml if using yarn; otherwise, delete it
+  if (options.packageManager === 'yarn') {
+    fs.renameSync(`${projectPath}/yarnrc.yml`, `${projectPath}/.yarnrc.yml`)
+  } else {
+    fs.rmSync(path.join(projectPath, 'yarnrc.yml'))
+  }
+
   fs.renameSync(`${projectPath}/gitignore`, `${projectPath}/.gitignore`)
 
   fs.writeFileSync(path.join(projectPath, '.env'), EnvBuilder.build({ appName, env: 'development' }))
@@ -179,10 +186,6 @@ export default async function newPsychicApp(appName: string, options: InitPsychi
   if (!options.websockets) {
     fs.rmSync(path.join(projectPath, 'src', 'conf', 'websockets.ts'))
     fs.rmSync(path.join(projectPath, 'src', 'app', 'helpers', 'ws.ts'))
-  }
-
-  if (options.packageManager !== 'yarn') {
-    fs.rmSync(path.join(projectPath, '.yarnrc.yml'))
   }
 
   if (!testEnv()) {
