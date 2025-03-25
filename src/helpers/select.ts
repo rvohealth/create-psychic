@@ -3,7 +3,6 @@ import * as readline from 'readline'
 const input = process.stdin
 const output = process.stdout
 
-let firstCallComplete = false
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default class Select<T extends readonly any[]> {
   private question: string
@@ -40,11 +39,7 @@ export default class Select<T extends readonly any[]> {
         this.cb?.(this.options[this.selectIndex] as T[number])
         input.removeAllListeners('keypress')
 
-        if (firstCallComplete) {
-          output.write('\n')
-        } else {
-          firstCallComplete = true
-        }
+        output.write('\n')
 
         input.setRawMode(false)
         input.pause()
