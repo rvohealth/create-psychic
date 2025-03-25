@@ -1,10 +1,13 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import NodeFetchAdapter from '@pollyjs/adapter-fetch'
 import NodeHttpAdapter from '@pollyjs/adapter-node-http'
 import { Polly } from '@pollyjs/core'
 import FSPersister from '@pollyjs/persister-fs'
 
-Polly.register(NodeFetchAdapter)
-Polly.register(NodeHttpAdapter)
+Polly.register(NodeFetchAdapter as any)
+Polly.register(NodeHttpAdapter as any)
 
 export default function ({
   ignoreHeaderDiffs = false,
@@ -18,8 +21,8 @@ export default function ({
 
   const polly = new Polly(recordingName, {
     mode: process.env.POLLY_RECORD ? 'record' : 'replay',
-    adapters: [NodeHttpAdapter, NodeFetchAdapter],
-    persister: FSPersister,
+    adapters: [NodeHttpAdapter as any, NodeFetchAdapter as any],
+    persister: FSPersister as any,
     recordIfMissing: false,
     logLevel: process.env.DEBUG ? 'debug' : 'error',
   })
@@ -33,9 +36,7 @@ export default function ({
 
   const excludedRequestHeaders = ['authorization', 'user-agent']
   polly.server.any().on('beforePersist', (req, recording) => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
     recording.request.headers = recording.request.headers.filter(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
       ({ name }: any) => !excludedRequestHeaders.includes(name)
     )
   })
