@@ -33,9 +33,20 @@ export default class PackagejsonBuilder {
         break
 
       default:
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
-        ;(packagejson.scripts as any)['admin'] = `yarn --cwd=../admin dev`
-        ;(packagejson.scripts as any)['admin:fspec'] = `VITE_PSYCHIC_ENV=test yarn --cwd=../admin dev`
+        switch (options.adminClient) {
+          case 'nextjs':
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
+            ;(packagejson.scripts as any)['admin'] = `yarn --cwd=../admin dev --port 3001`
+            ;(packagejson.scripts as any)[
+              'admin:fspec'
+            ] = `VITE_PSYCHIC_ENV=test yarn --cwd=../admin dev --port 3001`
+            break
+
+          default:
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
+            ;(packagejson.scripts as any)['admin'] = `yarn --cwd=../admin dev`
+            ;(packagejson.scripts as any)['admin:fspec'] = `VITE_PSYCHIC_ENV=test yarn --cwd=../admin dev`
+        }
     }
 
     if (!options.workers) {

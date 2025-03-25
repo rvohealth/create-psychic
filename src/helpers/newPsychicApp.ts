@@ -10,7 +10,6 @@ import InitializePsychicAppBuilder from '../file-builders/InitializePsychicAppBu
 import PackagejsonBuilder from '../file-builders/PackagejsonBuilder.js'
 import DreamCliLogger from '../logger/DreamCliLogger.js'
 import colorize from '../logger/loggable/colorize.js'
-import DreamCliLoggableSpinner from '../logger/loggable/DreamCliLoggableSpinner.js'
 import addClientApp from './addClientApp.js'
 import copyRecursive from './copyRecursive.js'
 import getLockfileName from './getLockfileName.js'
@@ -20,6 +19,8 @@ import sleep from './sleep.js'
 import srcPath from './srcPath.js'
 import sspawn from './sspawn.js'
 import welcomeMessage from './welcomeMessage.js'
+import runCmdForPackageManager from './runCmdForPackageManager.js'
+import UuidExtensionMigrationBuilder from '../file-builders/UuidExtensionMigrationBuilder.js'
 
 export const cliPrimaryKeyTypes = ['bigserial', 'serial', 'uuid'] as const
 export const cliClientAppTypes = ['nextjs', 'react', 'vue', 'nuxt', 'none'] as const
@@ -44,11 +45,9 @@ const logger = new DreamCliLogger()
 
 export default async function newPsychicApp(appName: string, options: InitPsychicAppCliOptions) {
   if (!testEnv()) {
-    logger.clear()
     logger.log(c.greenBright(`${appName}`), {
       logPrefix: '☼',
       logPrefixColor: 'greenBright',
-      permanent: true,
     })
     logger.log(
       c.greenBright(
@@ -60,7 +59,6 @@ export default async function newPsychicApp(appName: string, options: InitPsychi
       {
         logPrefix: ' ',
         logPrefixColor: 'greenBright',
-        permanent: true,
       }
     )
   }
@@ -115,16 +113,13 @@ export default async function newPsychicApp(appName: string, options: InitPsychi
   }
 
   if (options.websockets === undefined) {
-    const answer = await new Select('websockets?', ['yes', 'no'] as const).run()
+    const answer = await new Select('websockets?', ['no', 'yes'] as const).run()
     options.websockets = answer === 'yes'
   }
 
-  let spinner: DreamCliLoggableSpinner | undefined = undefined
-
   if (!testEnv()) {
-    logger.clear()
-    logger.log(`Installing psychic framework to ./${appName}`, { permanent: true })
-    spinner = logger.log(`copying boilerplate...`, { spinner: true })
+    logger.log(`Installing psychic framework to ./${appName}`)
+    logger.logStartProgress(`copying boilerplate...`)
   }
 
   const rootPath = `./${appName}`
@@ -189,9 +184,8 @@ export default async function newPsychicApp(appName: string, options: InitPsychi
   }
 
   if (!testEnv()) {
-    spinner?.stop()
-    logger.purge()
-    spinner = logger.log(`installing api dependencies...\n`, { spinner: true })
+    logger.logEndProgress()
+    logger.logStartProgress(`installing api dependencies...`)
   }
 
   const lockfileName = getLockfileName(options.packageManager)
@@ -202,9 +196,7 @@ export default async function newPsychicApp(appName: string, options: InitPsychi
         `cd ${projectPath} && touch ${lockfileName} && corepack enable yarn && yarn set version stable && yarn install && yarn add @rvoh/dream @rvoh/psychic`,
         {
           onStdout: message => {
-            logger.log(colorize('[api]', { color: 'cyan' }) + ' ' + message, {
-              permanent: true,
-              logPrefix: '├',
+            logger.logContinueProgress(colorize('[api]', { color: 'cyan' }) + ' ' + message, {
               logPrefixColor: 'cyan',
             })
           },
@@ -217,9 +209,7 @@ export default async function newPsychicApp(appName: string, options: InitPsychi
         `cd ${projectPath} && corepack enable pnpm && pnpm install && pnpm add @rvoh/dream @rvoh/psychic`,
         {
           onStdout: message => {
-            logger.log(colorize('[api]', { color: 'cyan' }) + ' ' + message, {
-              permanent: true,
-              logPrefix: '├',
+            logger.logContinueProgress(colorize('[api]', { color: 'cyan' }) + ' ' + message, {
               logPrefixColor: 'cyan',
             })
           },
@@ -232,9 +222,7 @@ export default async function newPsychicApp(appName: string, options: InitPsychi
         `cd ${projectPath} && touch ${lockfileName} && npm install && npm install @rvoh/dream @rvoh/psychic`,
         {
           onStdout: message => {
-            logger.log(colorize('[api]', { color: 'cyan' }) + ' ' + message, {
-              permanent: true,
-              logPrefix: '├',
+            logger.logContinueProgress(colorize('[api]', { color: 'cyan' }) + ' ' + message, {
               logPrefixColor: 'cyan',
             })
           },
@@ -247,23 +235,18 @@ export default async function newPsychicApp(appName: string, options: InitPsychi
   if (!testEnv()) await sleep(1000)
 
   if (!testEnv()) {
-    spinner?.stop()
-    logger.purge()
-    spinner = logger.log(`initializing git repository...`, { spinner: true })
+    logger.logStartProgress(`initializing git repository...`)
 
     // only do this if not test, since using git in CI will fail
     await sspawn(`cd ${path.join(process.cwd(), appName)} && git init`, {
       onStdout: message => {
-        logger.log(colorize('[api]', { color: 'cyan' }) + ' ' + message, {
-          permanent: true,
-          logPrefix: '├',
+        logger.logContinueProgress(colorize('[api]', { color: 'cyan' }) + ' ' + message, {
           logPrefixColor: 'cyan',
         })
       },
     })
 
-    spinner.stop()
-    logger.purge()
+    logger.logEndProgress()
   }
 
   // don't sync yet, since we need to run migrations first
@@ -279,6 +262,7 @@ export default async function newPsychicApp(appName: string, options: InitPsychi
       projectPath,
       options,
       rootPath,
+      port: 3000,
     })
   }
 
@@ -292,29 +276,59 @@ export default async function newPsychicApp(appName: string, options: InitPsychi
       projectPath,
       options,
       rootPath,
+      port: 3001,
     })
   }
 
+  if (options.primaryKeyType === 'uuid') {
+    logger.logStartProgress('generating initial uuid migration...')
+    const runCmd = runCmdForPackageManager(options.packageManager)
+
+    // do not use git during tests, since this will break in CI
+    await sspawn(`cd ${projectPath} && ${runCmd} psy g:migration add-uuid-extension`, {
+      onStdout: message => {
+        logger.logContinueProgress(colorize('[api]', { color: 'cyan' }) + ' ' + message, {
+          logPrefixColor: 'cyan',
+        })
+      },
+    })
+
+    const migrations = fs.readdirSync(path.join(projectPath, 'src', 'db', 'migrations'))
+    const migration = migrations.find(filePath => /add-uuid-extension\.ts$/.test(filePath))!
+
+    if (!migration) {
+      throw new Error(
+        `Failed to generate initial uuid migration. Migration not found matching: "add-uuid-extension.ts"`
+      )
+    }
+
+    fs.writeFileSync(
+      path.join(projectPath, 'src', 'db', 'migrations', migration),
+      UuidExtensionMigrationBuilder.build()
+    )
+
+    logger.logEndProgress()
+  }
+
   if (!testEnv()) {
-    logger.purge()
+    logger.logStartProgress('writing initial commit...')
 
     // do not use git during tests, since this will break in CI
     await sspawn(
       `cd ${path.join(process.cwd(), appName)} && git add --all && git commit -m 'psychic init' --quiet`,
       {
         onStdout: message => {
-          logger.log(colorize('[api]', { color: 'cyan' }) + ' ' + message, {
-            permanent: true,
-            logPrefix: '├',
+          logger.logContinueProgress(colorize('[api]', { color: 'cyan' }) + ' ' + message, {
             logPrefixColor: 'cyan',
           })
         },
       }
     )
 
+    logger.logEndProgress()
+
     logger.log(logo(), { logPrefix: '' })
     logger.log(welcomeMessage(hasClient ? appName + '/api' : appName), {
-      permanent: true,
       logPrefix: '',
     })
   }

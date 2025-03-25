@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "@rvoh/create-psychic",
-  "version": "0.5.5",
+  "version": "0.5.6",
   "description": "creates a new psychic app",
   "repository": "https://github.com/rvohealth/create-psychic.git",
   "author": "RVO Health",
@@ -32,7 +32,7 @@
     "ora": "^6.3.0",
     "pino-std-serializers": "^4.0.0",
     "typescript": "^4.9.4",
-    "yocto-spinner": "^0.2.1"
+    "yoctocolors": "^2.1.1"
   },
   "devDependencies": {
     "@eslint/js": "=9.0.0",
