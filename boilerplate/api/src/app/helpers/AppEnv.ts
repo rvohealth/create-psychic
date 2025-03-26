@@ -1,7 +1,7 @@
 import { Env } from '@rvoh/dream'
 
 const EnvInternal = new Env<{
-  boolean: 'CLIENT' | 'DB_NO_SSL' | 'DEBUG' | 'REQUEST_LOGGING'
+  boolean: 'CLIENT' | 'DB_NO_SSL' | 'DEBUG' | 'REQUEST_LOGGING' | 'WEB_SERVICE' | 'WORKER_SERVICE'
 
   integer: 'BG_JOBS_REDIS_PORT' | 'DB_PORT' | 'REPLICA_DB_PORT' | 'WS_REDIS_PORT'
 

@@ -13,6 +13,8 @@ REPLICA_DB_PORT=${creds.port}
 REPLICA_DB_HOST=${creds.host}
 DB_NO_SSL=1
 APP_ENCRYPTION_KEY="${generateKey()}"
+WEB_SERVICE=1
+WORKER_SERVICE=${env === 'test' ? 0 : 1}
 TZ=UTC
 `
   }

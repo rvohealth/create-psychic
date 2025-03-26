@@ -34,7 +34,7 @@ export default (wsApp: PsychicApplicationWebsockets) => {
       // const token = socket.handshake.auth.token as string
       // const userId = Encrypt.decrypt<string>(token, {
       //   algorithm: 'aes-256-gcm',
-      //   key: process.env.APP_ENCRYPTION_KEY!,
+      //   key: AppEnv.string('APP_ENCRYPTION_KEY'),
       // })!
       // const user = await User.find(userId)
       //
