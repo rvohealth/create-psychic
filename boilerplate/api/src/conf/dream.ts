@@ -29,16 +29,17 @@ export default async function (app: DreamApplication) {
       // only connect to primary db insecurely if `DB_NO_SSL` is explicitly set
       useSsl: !AppEnv.boolean('DB_NO_SSL'),
     },
-    replica: AppEnv.isProduction
-      ? {
-          user: AppEnv.string('DB_USER'),
-          password: AppEnv.string('DB_PASSWORD'),
-          host: AppEnv.string('REPLICA_DB_HOST'),
-          name: AppEnv.string('DB_NAME'),
-          port: AppEnv.integer('REPLICA_DB_PORT'),
-          // only connect to replica db insecurely if `DB_NO_SSL` is explicitly set
-          useSsl: !AppEnv.boolean('DB_NO_SSL'),
-        }
-      : undefined,
+    replica:
+      AppEnv.isProduction && AppEnv.string('REPLICA_DB_HOST', { optional: true })
+        ? {
+            user: AppEnv.string('DB_USER'),
+            password: AppEnv.string('DB_PASSWORD'),
+            host: AppEnv.string('REPLICA_DB_HOST'),
+            name: AppEnv.string('DB_NAME'),
+            port: AppEnv.integer('REPLICA_DB_PORT', { optional: true }) || AppEnv.integer('DB_PORT'),
+            // only connect to replica db insecurely if `DB_NO_SSL` is explicitly set
+            useSsl: !AppEnv.boolean('DB_NO_SSL'),
+          }
+        : undefined,
   })
 }
