@@ -1,8 +1,12 @@
 import colors from 'yoctocolors'
+import { DreamCliForegroundColor } from '../logger/DreamCliLogger.js'
 
 export default function logo() {
+  const color1: DreamCliForegroundColor = 'blueBright'
+  const color2: DreamCliForegroundColor = 'magentaBright'
+
   return (
-    colors.redBright(
+    colors[color1](
       `
                                      ,▄█▄                  
        ]█▄▄                         ╓█████▌                 
@@ -13,11 +17,11 @@ export default function logo() {
            ╙▓█▓██████████████████████████                   
            ╚██████▀███████████`
     ) +
-    colors.magenta(`╩█▓▌`) +
-    colors.redBright(`▐▓████▄                  
+    colors[color2](`╩█▓▌`) +
+    colors[color1](`▐▓████▄                  
            '║█████`) +
-    colors.magenta(`\`╣█Γ║`) +
-    colors.redBright(`████████▄▄φ▓█████▌                  
+    colors[color2](`\`╣█Γ║`) +
+    colors[color1](`████████▄▄φ▓█████▌                  
              ║█████████████████████▓█████▌                  
              █████████████▓▓████████████                   
              ║█████████████████████████                    
@@ -29,7 +33,7 @@ export default function logo() {
      ,╔╦║███████████████████████████████████▓╬╬╣           
    ,≥≥⌠░░░╠▓████████████████████████████████████▓▓          
    ,;=-',▄█████████████████████████████████████████▓        `) +
-    colors.magenta(
+    colors[color1](
       `
                                                          
   ██████╗ ███████╗██╗   ██╗ ██████╗██╗  ██╗██╗ ██████╗   
