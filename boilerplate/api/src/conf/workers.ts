@@ -56,7 +56,7 @@ export default (workersApp: PsychicApplicationWorkers) => {
           [
             {
               host: AppEnv.string('BG_JOBS_REDIS_HOST'),
-              port: AppEnv.integer('BG_JOBS_REDIS_PORT') || 6379,
+              port: AppEnv.integer('BG_JOBS_REDIS_PORT', { optional: true }) || 6379,
             },
           ],
           {
@@ -72,9 +72,9 @@ export default (workersApp: PsychicApplicationWorkers) => {
         )
       : new Redis({
           host: AppEnv.string('BG_JOBS_REDIS_HOST', { optional: true }) || 'localhost',
-          port: AppEnv.integer('BG_JOBS_REDIS_PORT') || 6379,
-          username: AppEnv.string('BG_JOBS_REDIS_USERNAME'),
-          password: AppEnv.string('BG_JOBS_REDIS_PASSWORD'),
+          port: AppEnv.integer('BG_JOBS_REDIS_PORT', { optional: true }) || 6379,
+          username: AppEnv.string('BG_JOBS_REDIS_USERNAME', { optional: true }),
+          password: AppEnv.string('BG_JOBS_REDIS_PASSWORD', { optional: true }),
           tls: AppEnv.isProduction ? {} : undefined,
           enableOfflineQueue: false,
         }),
@@ -87,7 +87,7 @@ export default (workersApp: PsychicApplicationWorkers) => {
           [
             {
               host: AppEnv.string('BG_JOBS_REDIS_HOST'),
-              port: AppEnv.integer('BG_JOBS_REDIS_PORT') || 6379,
+              port: AppEnv.integer('BG_JOBS_REDIS_PORT', { optional: true }) || 6379,
             },
           ],
           {
@@ -103,9 +103,9 @@ export default (workersApp: PsychicApplicationWorkers) => {
         )
       : new Redis({
           host: AppEnv.string('BG_JOBS_REDIS_HOST', { optional: true }) || 'localhost',
-          port: AppEnv.integer('BG_JOBS_REDIS_PORT') || 6379,
-          username: AppEnv.string('BG_JOBS_REDIS_USERNAME'),
-          password: AppEnv.string('BG_JOBS_REDIS_PASSWORD'),
+          port: AppEnv.integer('BG_JOBS_REDIS_PORT', { optional: true }) || 6379,
+          username: AppEnv.string('BG_JOBS_REDIS_USERNAME', { optional: true }),
+          password: AppEnv.string('BG_JOBS_REDIS_PASSWORD', { optional: true }),
           tls: AppEnv.isProduction ? {} : undefined,
           maxRetriesPerRequest: null,
         }),

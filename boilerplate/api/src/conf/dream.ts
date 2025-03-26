@@ -17,7 +17,7 @@ export default async function (app: DreamApplication) {
   // to the paths expected for a typical psychic application.
   app.set('paths', {})
 
-  app.set('parallelTests', AppEnv.integer('DREAM_PARALLEL_TESTS') || 1)
+  app.set('parallelTests', AppEnv.integer('DREAM_PARALLEL_TESTS', { optional: true }) || 1)
 
   app.set('db', {
     primary: {
