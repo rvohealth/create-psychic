@@ -8,9 +8,9 @@ export default (wsApp: PsychicApplicationWebsockets) => {
     connection: AppEnv.isProduction
       ? new Redis({
           host: AppEnv.string('WS_REDIS_HOST'),
-          port: AppEnv.integer('WS_REDIS_PORT'),
-          username: AppEnv.string('WS_REDIS_USERNAME', { optional: true }),
-          password: AppEnv.string('WS_REDIS_PASSWORD', { optional: true }),
+          port: AppEnv.integer('WS_REDIS_PORT', { optional: true }) || 6379,
+          username: AppEnv.string('WS_REDIS_USERNAME'),
+          password: AppEnv.string('WS_REDIS_PASSWORD'),
           tls: AppEnv.isProduction ? {} : undefined,
           maxRetriesPerRequest: null,
         })
@@ -34,7 +34,7 @@ export default (wsApp: PsychicApplicationWebsockets) => {
       // const token = socket.handshake.auth.token as string
       // const userId = Encrypt.decrypt<string>(token, {
       //   algorithm: 'aes-256-gcm',
-      //   key: process.env.APP_ENCRYPTION_KEY!,
+      //   key: AppEnv.string('APP_ENCRYPTION_KEY'),
       // })!
       // const user = await User.find(userId)
       //

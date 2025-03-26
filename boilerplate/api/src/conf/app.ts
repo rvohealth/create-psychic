@@ -1,9 +1,9 @@
 <DREAM_IMPORT_STATEMENT><PSYCHIC_IMPORT_STATEMENT><BACKGROUND_IMPORT>
 import expressWinston from 'express-winston'
 import winston from 'winston'
-import AppEnv from '../app/helpers/AppEnv.js'
 import importDefault from '../app/helpers/importDefault.js'
 import srcPath from '../app/helpers/srcPath.js'
+import AppEnv from './AppEnv.js'
 import inflections from './inflections.js'
 import routesCb from './routes.js'
 
@@ -43,7 +43,7 @@ export default async (psy: PsychicApplication) => {
 
   psy.set('cors', {
     credentials: true,
-    origin: [AppEnv.string('CLIENT_HOST', { optional: true }) || 'http://localhost:3000'],
+    origin: JSON.parse(AppEnv.string('CORS_HOSTS', { optional: true }) || '[]') as string[],
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
   })
 
@@ -90,7 +90,7 @@ export default async (psy: PsychicApplication) => {
     const app = psychicServer.expressApp
 
     // Support application/x-www-form-urlencoded request body. This is not usually needed, since JSON is the usual standard,
-    // but some webhooks (e.g. Twilio) post application/x-www-form-urlencoded data. If this is needed, uncomment the 
+    // but some webhooks (e.g. Twilio) post application/x-www-form-urlencoded data. If this is needed, uncomment the
     // next line and add `import { urlencoded } from 'express'` to the imports at the top of this file.
     // app.use(urlencoded({ extended: true }))
 

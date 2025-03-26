@@ -1,9 +1,36 @@
 import { PsychicApplicationWorkers } from '@rvoh/psychic-workers'
 import { Queue, Worker } from 'bullmq'
-import { Redis } from 'ioredis'
+import { Cluster, Redis } from 'ioredis'
+import * as os from 'os'
+import AppEnv from './AppEnv.js'
 
 export default (workersApp: PsychicApplicationWorkers) => {
   workersApp.set('background', {
+    defaultWorkstream: {
+      // https://docs.bullmq.io/guide/parallelism-and-concurrency
+      workerCount: os.cpus().length,
+      concurrency: 100,
+    },
+
+    namedWorkstreams: [
+      {
+        name: 'NamedWorkstream',
+        workerCount: 1,
+      },
+
+      // Rate limited workstream (requires BullMQ Pro)
+      // {
+      //   name: 'RateLimitedWorkstream',
+      //   // https://docs.bullmq.io/guide/parallelism-and-concurrency
+      //   workerCount: 1,
+      //   concurrency: 100,
+      //   rateLimit: {
+      //     max: 100,
+      //     duration: 1000,
+      //   },
+      // },
+    ],
+
     providers: {
       Queue,
       Worker,
@@ -23,95 +50,65 @@ export default (workersApp: PsychicApplicationWorkers) => {
       },
     },
 
-    // Psychic background API
-    defaultWorkstream: {
-      // https://docs.bullmq.io/guide/parallelism-and-concurrency
-      workerCount: parseInt(process.env.WORKER_COUNT || '0'),
-      concurrency: 100,
-    },
+    // Any instance can push onto the queue
+    defaultQueueConnection: AppEnv.isProduction
+      ? new Cluster(
+          [
+            {
+              host: AppEnv.string('BG_JOBS_REDIS_HOST'),
+              port: AppEnv.integer('BG_JOBS_REDIS_PORT', { optional: true }) || 6379,
+            },
+          ],
+          {
+            slotsRefreshTimeout: 5000,
+            dnsLookup: (address, callback) => callback(null, address),
+            redisOptions: {
+              username: AppEnv.string('BG_JOBS_REDIS_USERNAME'),
+              password: AppEnv.string('BG_JOBS_REDIS_PASSWORD'),
+              tls: AppEnv.isProduction ? {} : undefined,
+            },
+            enableOfflineQueue: false,
+          }
+        )
+      : new Redis({
+          host: AppEnv.string('BG_JOBS_REDIS_HOST', { optional: true }) || 'localhost',
+          port: AppEnv.integer('BG_JOBS_REDIS_PORT', { optional: true }) || 6379,
+          username: AppEnv.string('BG_JOBS_REDIS_USERNAME', { optional: true }),
+          password: AppEnv.string('BG_JOBS_REDIS_PASSWORD', { optional: true }),
+          tls: AppEnv.isProduction ? {} : undefined,
+          enableOfflineQueue: false,
+        }),
 
-    namedWorkstreams: [{ workerCount: 1, name: 'snazzy', rateLimit: { max: 1, duration: 1 } }],
-    // end: Psychic background API
-
-    // // native BullMQ background API
-    // nativeBullMQ: {
-    //   // defaultQueueOptions: {connection: }
-    //   namedQueueOptions: {
-    //     snazzy: {},
-    //   },
-    //   namedQueueWorkers: { snazzy: {} },
-    // },
-    // // end: native BullMQ background API
-
-    // transitionalWorkstreams: {
-    //   defaultQueueConnection: new Redis({
-    //     username: process.env.REDIS_USER,
-    //     password: process.env.REDIS_PASSWORD,
-    //     host: process.env.REDIS_HOST,
-    //     port: process.env.REDIS_PORT ? Number(process.env.REDIS_PORT) : undefined,
-    //     tls: process.env.REDIS_USE_SSL === '1' ? {} : undefined,
-    //     enableOfflineQueue: false,
-    //   }),
-    //   defaultWorkerConnection: new Redis({
-    //     username: process.env.REDIS_USER,
-    //     password: process.env.REDIS_PASSWORD,
-    //     host: process.env.REDIS_HOST,
-    //     port: process.env.REDIS_PORT ? Number(process.env.REDIS_PORT) : undefined,
-    //     tls: process.env.REDIS_USE_SSL === '1' ? {} : undefined,
-    //     maxRetriesPerRequest: null,
-    //   }),
-
-    //   namedWorkstreams: [
-    //     {
-    //       workerCount: 1,
-    //       name: 'snazzy',
-    //       rateLimit: { max: 1, duration: 1 },
-    //     },
-    //   ],
-    // },
-
-    defaultQueueConnection: new Redis({
-      username: process.env.REDIS_USER,
-      password: process.env.REDIS_PASSWORD,
-      host: process.env.REDIS_HOST,
-      port: process.env.REDIS_PORT ? Number(process.env.REDIS_PORT) : undefined,
-      tls: process.env.REDIS_USE_SSL === '1' ? {} : undefined,
-      enableOfflineQueue: false,
-    }),
-
-    defaultWorkerConnection: new Redis({
-      username: process.env.REDIS_USER,
-      password: process.env.REDIS_PASSWORD,
-      host: process.env.REDIS_HOST,
-      port: process.env.REDIS_PORT ? Number(process.env.REDIS_PORT) : undefined,
-      tls: process.env.REDIS_USE_SSL === '1' ? {} : undefined,
-      maxRetriesPerRequest: null,
-    }),
-
-    // To set up a simple cluster on a dev machine for testing:
-    //   https://medium.com/@bertrandoubida/setting-up-redis-cluster-on-macos-cf35a21465a
-    // defaultQueueConnection: new Cluster(
-    //   [6380, 6384, 6385, 6381, 6383, 6382].map(port => ({ host: '127.0.0.1', port })),
-    //   {
-    //     redisOptions: {
-    //       username: process.env.REDIS_USER,
-    //       password: process.env.REDIS_PASSWORD,
-    //       tls: process.env.REDIS_USE_SSL === '1' ? {} : undefined,
-    //     },
-    //     enableOfflineQueue: false
-    //   },
-    // ),
-    // defaultWorkerConnection: new Cluster(
-    //   [6380, 6384, 6385, 6381, 6383, 6382].map(port => ({ host: '127.0.0.1', port })),
-    //   {
-    //     redisOptions: {
-    //       username: process.env.REDIS_USER,
-    //       password: process.env.REDIS_PASSWORD,
-    //       tls: process.env.REDIS_USE_SSL === '1' ? {} : undefined,
-    //       maxRetriesPerRequest: null,
-    //     },
-    //   },
-    // ),
+    // Only establish the worker Redis connection if on an instance that does the work
+    defaultWorkerConnection: AppEnv.boolean('WORKER_SERVICE')
+      ? undefined
+      : AppEnv.isProduction
+      ? new Cluster(
+          [
+            {
+              host: AppEnv.string('BG_JOBS_REDIS_HOST'),
+              port: AppEnv.integer('BG_JOBS_REDIS_PORT', { optional: true }) || 6379,
+            },
+          ],
+          {
+            slotsRefreshTimeout: 5000,
+            dnsLookup: (address, callback) => callback(null, address),
+            redisOptions: {
+              username: AppEnv.string('BG_JOBS_REDIS_USERNAME'),
+              password: AppEnv.string('BG_JOBS_REDIS_PASSWORD'),
+              tls: AppEnv.isProduction ? {} : undefined,
+              maxRetriesPerRequest: null,
+            },
+          }
+        )
+      : new Redis({
+          host: AppEnv.string('BG_JOBS_REDIS_HOST', { optional: true }) || 'localhost',
+          port: AppEnv.integer('BG_JOBS_REDIS_PORT', { optional: true }) || 6379,
+          username: AppEnv.string('BG_JOBS_REDIS_USERNAME', { optional: true }),
+          password: AppEnv.string('BG_JOBS_REDIS_PASSWORD', { optional: true }),
+          tls: AppEnv.isProduction ? {} : undefined,
+          maxRetriesPerRequest: null,
+        }),
   })
 
   // ******
@@ -119,6 +116,6 @@ export default (workersApp: PsychicApplicationWorkers) => {
   // ******
 
   workersApp.on('workers:shutdown', () => {
-    // do something before your workers finish shutting down
+    // add worker shutdown sequence here
   })
 }
