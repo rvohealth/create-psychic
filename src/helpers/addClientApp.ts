@@ -1,5 +1,5 @@
-import * as fs from 'fs'
-import * as path from 'path'
+import * as fs from 'node:fs'
+import * as path from 'node:path'
 import ESLintConfBuilder from '../file-builders/EslintConfBuilder.js'
 import ViteConfBuilder from '../file-builders/ViteConfBuilder.js'
 import DreamCliLogger, { DreamCliForegroundColor } from '../logger/DreamCliLogger.js'
@@ -8,13 +8,13 @@ import { cliClientAppTypes, InitPsychicAppCliOptions, PsychicPackageManager } fr
 import sspawn from './sspawn.js'
 import colorize from '../logger/loggable/colorize.js'
 import getLockfileName from './getLockfileName.js'
+import getApiRoot from './getApiRoot.js'
 
 export default async function addClientApp({
   client,
   clientRootFolderName,
   rootPath,
   appName,
-  projectPath,
   options,
   logger,
   sourceColor,
@@ -24,7 +24,6 @@ export default async function addClientApp({
   clientRootFolderName: string
   rootPath: string
   appName: string
-  projectPath: string
   options: InitPsychicAppCliOptions
   logger: DreamCliLogger
   sourceColor: DreamCliForegroundColor
@@ -33,6 +32,8 @@ export default async function addClientApp({
   if (!testEnv()) {
     logger.logStartProgress(`initializing client app: ${clientRootFolderName}...`)
   }
+
+  const apiRoot = getApiRoot(appName, options)
 
   const initPackageManager = initilizePackageManagerCmd(options.packageManager)
   const createCmd = viteCmd(options.packageManager, clientRootFolderName, `${client}-ts`)
@@ -51,13 +52,13 @@ export default async function addClientApp({
       })
 
       fs.writeFileSync(
-        path.join(projectPath, '..', clientRootFolderName, 'vite.config.ts'),
-        await ViteConfBuilder.build(path.join(projectPath, '..', clientRootFolderName, 'vite.config.ts'), {
+        path.join(apiRoot, '..', clientRootFolderName, 'vite.config.ts'),
+        await ViteConfBuilder.build(path.join(apiRoot, '..', clientRootFolderName, 'vite.config.ts'), {
           port,
         })
       )
       fs.writeFileSync(
-        path.join(projectPath, '..', clientRootFolderName, '.eslintrc.cjs'),
+        path.join(apiRoot, '..', clientRootFolderName, '.eslintrc.cjs'),
         ESLintConfBuilder.buildForViteReact()
       )
 
@@ -76,8 +77,8 @@ export default async function addClientApp({
       })
 
       fs.writeFileSync(
-        path.join(projectPath, '..', clientRootFolderName, 'vite.config.ts'),
-        await ViteConfBuilder.build(path.join(projectPath, '..', clientRootFolderName, 'vite.config.ts'), {
+        path.join(apiRoot, '..', clientRootFolderName, 'vite.config.ts'),
+        await ViteConfBuilder.build(path.join(apiRoot, '..', clientRootFolderName, 'vite.config.ts'), {
           port,
         })
       )
@@ -116,11 +117,11 @@ export default async function addClientApp({
       break
   }
 
-  addMissingClientGitignoreStatements(path.join(projectPath, '..', clientRootFolderName, '.gitignore'))
+  addMissingClientGitignoreStatements(path.join(apiRoot, '..', clientRootFolderName, '.gitignore'))
 
   // only bother installing packages if not in test env to save time
   await sspawn(
-    `cd ${path.join(projectPath, '..', clientRootFolderName)} && ${installCmd(options.packageManager)}`,
+    `cd ${path.join(apiRoot, '..', clientRootFolderName)} && ${installCmd(options.packageManager)}`,
     {
       onStdout: message => {
         logger.logContinueProgress(
