@@ -10,7 +10,7 @@ const EnvInternal = new Env<{
     | 'BG_JOBS_REDIS_HOST'
     | 'BG_JOBS_REDIS_PASSWORD'
     | 'BG_JOBS_REDIS_USERNAME'
-    | 'CLIENT_HOST'
+    | 'CORS_HOSTS'
     | 'DB_HOST'
     | 'DB_NAME'
     | 'DB_PASSWORD'

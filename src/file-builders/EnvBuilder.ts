@@ -15,6 +15,7 @@ DB_NO_SSL=1
 APP_ENCRYPTION_KEY="${generateKey()}"
 WEB_SERVICE=1
 WORKER_SERVICE=${env === 'test' ? 0 : 1}
+CORS_HOSTS='["http://localhost:3000"]'
 TZ=UTC
 `
   }
