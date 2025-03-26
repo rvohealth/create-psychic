@@ -20,14 +20,14 @@ export default class DreamCliLogger {
 
   public logContinueProgress(
     text: string,
-    { logPrefix = '✺ ├', logPrefixColor, logPrefixBgColor }: DreamCliLoggerLogOpts = {}
+    { logPrefix = '  ├', logPrefixColor, logPrefixBgColor }: DreamCliLoggerLogOpts = {}
   ) {
     this.log(text, { logPrefix, logPrefixColor, logPrefixBgColor })
   }
 
   public logEndProgress(
     text: string = 'complete',
-    { logPrefix = '✺ └', logPrefixColor, logPrefixBgColor }: DreamCliLoggerLogOpts = {}
+    { logPrefix = '  └', logPrefixColor, logPrefixBgColor }: DreamCliLoggerLogOpts = {}
   ) {
     this.log(text, { logPrefix, logPrefixColor, logPrefixBgColor })
   }
