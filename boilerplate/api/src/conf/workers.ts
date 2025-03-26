@@ -71,7 +71,7 @@ export default (workersApp: PsychicApplicationWorkers) => {
           }
         )
       : new Redis({
-          host: AppEnv.string('BG_JOBS_REDIS_HOST') || 'localhost',
+          host: AppEnv.string('BG_JOBS_REDIS_HOST', { optional: true }) || 'localhost',
           port: AppEnv.integer('BG_JOBS_REDIS_PORT') || 6379,
           username: AppEnv.string('BG_JOBS_REDIS_USERNAME'),
           password: AppEnv.string('BG_JOBS_REDIS_PASSWORD'),
@@ -102,7 +102,7 @@ export default (workersApp: PsychicApplicationWorkers) => {
           }
         )
       : new Redis({
-          host: AppEnv.string('BG_JOBS_REDIS_HOST') || 'localhost',
+          host: AppEnv.string('BG_JOBS_REDIS_HOST', { optional: true }) || 'localhost',
           port: AppEnv.integer('BG_JOBS_REDIS_PORT') || 6379,
           username: AppEnv.string('BG_JOBS_REDIS_USERNAME'),
           password: AppEnv.string('BG_JOBS_REDIS_PASSWORD'),

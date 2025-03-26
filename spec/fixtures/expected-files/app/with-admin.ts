@@ -2,9 +2,9 @@ import { DreamCLI } from '@rvoh/dream'
 import { PsychicApplication, PsychicDevtools } from '@rvoh/psychic'
 import expressWinston from 'express-winston'
 import winston from 'winston'
-import AppEnv from '../app/helpers/AppEnv.js'
 import importDefault from '../app/helpers/importDefault.js'
 import srcPath from '../app/helpers/srcPath.js'
+import AppEnv from './AppEnv.js'
 import inflections from './inflections.js'
 import routesCb from './routes.js'
 
@@ -44,7 +44,7 @@ export default async (psy: PsychicApplication) => {
 
   psy.set('cors', {
     credentials: true,
-    origin: [AppEnv.string('CLIENT_HOST', { optional: true }) || 'http://localhost:3000'],
+    origin: JSON.parse(AppEnv.string('CORS_HOSTS', { optional: true }) || '[]') as string[],,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
   })
 
