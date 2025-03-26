@@ -43,7 +43,7 @@ export default async (psy: PsychicApplication) => {
 
   psy.set('cors', {
     credentials: true,
-    origin: JSON.parse(AppEnv.string('CORS_HOSTS', { optional: true }) || '[]') as string[],,
+    origin: JSON.parse(AppEnv.string('CORS_HOSTS', { optional: true }) || '[]') as string[],
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
   })
 

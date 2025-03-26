@@ -44,7 +44,7 @@ export default async (psy: PsychicApplication) => {
 
   psy.set('cors', {
     credentials: true,
-    origin: JSON.parse(AppEnv.string('CORS_HOSTS', { optional: true }) || '[]') as string[],,
+    origin: JSON.parse(AppEnv.string('CORS_HOSTS', { optional: true }) || '[]') as string[],
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
   })
 
@@ -91,7 +91,7 @@ export default async (psy: PsychicApplication) => {
     const app = psychicServer.expressApp
 
     // Support application/x-www-form-urlencoded request body. This is not usually needed, since JSON is the usual standard,
-    // but some webhooks (e.g. Twilio) post application/x-www-form-urlencoded data. If this is needed, uncomment the 
+    // but some webhooks (e.g. Twilio) post application/x-www-form-urlencoded data. If this is needed, uncomment the
     // next line and add `import { urlencoded } from 'express'` to the imports at the top of this file.
     // app.use(urlencoded({ extended: true }))
 
