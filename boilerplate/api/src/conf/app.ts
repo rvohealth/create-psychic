@@ -1,9 +1,9 @@
 <DREAM_IMPORT_STATEMENT><PSYCHIC_IMPORT_STATEMENT><BACKGROUND_IMPORT>
 import expressWinston from 'express-winston'
 import winston from 'winston'
-import AppEnv from './AppEnv.js'
 import importDefault from '../app/helpers/importDefault.js'
 import srcPath from '../app/helpers/srcPath.js'
+import AppEnv from './AppEnv.js'
 import inflections from './inflections.js'
 import routesCb from './routes.js'
 
