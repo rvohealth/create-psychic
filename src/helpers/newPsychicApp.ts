@@ -202,6 +202,7 @@ export default async function newPsychicApp(appName: string, options: InitPsychi
           },
         }
       )
+      logger.logEndProgress()
       break
 
     case 'pnpm':
@@ -215,6 +216,7 @@ export default async function newPsychicApp(appName: string, options: InitPsychi
           },
         }
       )
+      logger.logEndProgress()
       break
 
     case 'npm':
@@ -228,6 +230,7 @@ export default async function newPsychicApp(appName: string, options: InitPsychi
           },
         }
       )
+      logger.logEndProgress()
       break
   }
 
