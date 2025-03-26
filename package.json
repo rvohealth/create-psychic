@@ -3,8 +3,11 @@
   "name": "@rvoh/create-psychic",
   "version": "0.5.8",
   "description": "creates a new psychic app",
-  "repository": "https://github.com/rvohealth/create-psychic.git",
   "author": "RVO Health",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rvohealth/create-psychic.git"
+  },
   "license": "MIT",
   "main": "./dist/cjs/src/index.js",
   "module": "./dist/esm/src/index.js",
