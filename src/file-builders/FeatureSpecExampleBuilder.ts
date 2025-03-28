@@ -34,5 +34,5 @@ function assertionText(options: InitPsychicAppCliOptions) {
 }
 
 function capitaize(str: string) {
-  return str[0].toUpperCase() + str.slice(1)
+  return (str[0] ?? '').toUpperCase() + str.slice(1)
 }
