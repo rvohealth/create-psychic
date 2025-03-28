@@ -1,7 +1,7 @@
 import { DreamApplication } from '@rvoh/dream'
-import importAll from '../app/helpers/importAll.js'
-import importDefault from '../app/helpers/importDefault.js'
-import srcPath from '../app/helpers/srcPath.js'
+import importAll from './system/importAll.js'
+import importDefault from './system/importDefault.js'
+import srcPath from './system/srcPath.js'
 import AppEnv from './AppEnv.js'
 import inflections from './inflections.js'
 

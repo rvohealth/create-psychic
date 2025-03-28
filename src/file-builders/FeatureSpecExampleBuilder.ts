@@ -1,12 +1,12 @@
 import * as fs from 'fs/promises'
+import internalSrcPath from '../helpers/internalSrcPath.js'
 import { InitPsychicAppCliOptions } from '../helpers/newPsychicApp.js'
-import srcPath from '../helpers/srcPath.js'
 
 export default class FeatureSpecExampleBuilder {
   public static async build(options: InitPsychicAppCliOptions) {
     const contents = (
       await fs.readFile(
-        srcPath('..', 'boilerplate', 'api', 'spec', 'features', 'example-feature-spec.spec.ts')
+        internalSrcPath('..', 'boilerplate', 'api', 'spec', 'features', 'example-feature-spec.spec.ts')
       )
     ).toString()
 
@@ -34,5 +34,5 @@ function assertionText(options: InitPsychicAppCliOptions) {
 }
 
 function capitaize(str: string) {
-  return str[0].toUpperCase() + str.slice(1)
+  return (str[0] ?? '').toUpperCase() + str.slice(1)
 }

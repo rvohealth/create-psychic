@@ -8,9 +8,9 @@ import FeatureSpecGlobalBuilder from '../file-builders/FeatureSpecGlobalBuilder.
 import InitializePsychicAppBuilder from '../file-builders/InitializePsychicAppBuilder.js'
 import PackagejsonBuilder from '../file-builders/PackagejsonBuilder.js'
 import copyRecursive from './copyRecursive.js'
-import { InitPsychicAppCliOptions } from './newPsychicApp.js'
-import srcPath from './srcPath.js'
 import getApiRoot from './getApiRoot.js'
+import internalSrcPath from './internalSrcPath.js'
+import { InitPsychicAppCliOptions } from './newPsychicApp.js'
 
 export default async function copyApiBoilerplate(appName: string, options: InitPsychicAppCliOptions) {
   const hasClient = options.client !== 'none' || options.adminClient !== 'none'
@@ -20,7 +20,7 @@ export default async function copyApiBoilerplate(appName: string, options: InitP
     fs.mkdirSync(`./${appName}`)
   }
 
-  copyRecursive(srcPath('..', 'boilerplate', 'api'), apiRoot)
+  copyRecursive(internalSrcPath('..', 'boilerplate', 'api'), apiRoot)
 
   // yarnrc.yml included as non-dot-file so that it becomes part of the package
   // move it to .yarnrc.yml if using yarn; otherwise, delete it
@@ -62,6 +62,7 @@ export default async function copyApiBoilerplate(appName: string, options: InitP
   )
 
   if (!options.workers) {
+    fs.rmSync(path.join(apiRoot, 'src', 'worker.ts'))
     fs.rmSync(path.join(apiRoot, 'src', 'conf', 'workers.ts'))
     fs.rmSync(path.join(apiRoot, 'src', 'app', 'models', 'ApplicationBackgroundedModel.ts'))
     fs.rmSync(path.join(apiRoot, 'src', 'app', 'services', 'ApplicationBackgroundedService.ts'))
@@ -70,6 +71,6 @@ export default async function copyApiBoilerplate(appName: string, options: InitP
 
   if (!options.websockets) {
     fs.rmSync(path.join(apiRoot, 'src', 'conf', 'websockets.ts'))
-    fs.rmSync(path.join(apiRoot, 'src', 'app', 'helpers', 'ws.ts'))
+    fs.rmSync(path.join(apiRoot, 'src', 'utils', 'ws.ts'))
   }
 }

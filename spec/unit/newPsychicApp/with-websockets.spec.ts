@@ -1,4 +1,5 @@
 import newPsychicApp from '../../../src/helpers/newPsychicApp.js'
+import sspawn from '../../../src/helpers/sspawn.js'
 import expectFile from '../../helpers/expectFile.js'
 import expectNoFile from '../../helpers/expectNoFile.js'
 import expectToMatchFixture from '../../helpers/expectToMatchFixture.js'
@@ -15,6 +16,7 @@ describe('newPsychicApp with websockets', () => {
       primaryKeyType: 'bigserial',
     })
 
+    await expectNoFile('howyadoin/src/worker.ts')
     await expectNoFile('howyadoin/src/conf/workers.ts')
     await expectFile('howyadoin/src/conf/websockets.ts')
 
@@ -28,9 +30,14 @@ describe('newPsychicApp with websockets', () => {
       await readFile('howyadoin/src/conf/app.ts')
     )
 
-    await expectToMatchFixture(
-      'expected-files/ws/basic.ts',
-      await readFile('howyadoin/src/app/helpers/ws.ts')
+    await expectToMatchFixture('expected-files/ws/basic.ts', await readFile('howyadoin/src/utils/ws.ts'))
+
+    await sspawn(
+      `\
+        cd howyadoin &&
+        yarn psy g:model WithWebsocketsUser email:string &&
+        NODE_ENV=test yarn psy db:migrate &&
+        yarn build`
     )
-  })
+  }, 120_000)
 })
