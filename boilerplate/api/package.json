@@ -22,10 +22,10 @@
   },
   "dependencies": {
     "@bull-board/express": "^5.21.4",
-    "@rvoh/dream": "^0.31.5",
+    "@rvoh/dream": "^0.32.0",
     "@rvoh/psychic": "^0.26.2",
     "@rvoh/psychic-websockets": "^0.2.3",
-    "@rvoh/psychic-workers": "^0.2.4",
+    "@rvoh/psychic-workers": "^0.2.6",
     "@socket.io/redis-adapter": "^8.3.0",
     "@socket.io/redis-emitter": "^5.1.0",
     "bullmq": "^5.12.12",

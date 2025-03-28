@@ -2,6 +2,7 @@ import './conf/global.js'
 
 import { closeAllDbConnections } from '@rvoh/dream'
 import { background, stopBackgroundWorkers } from '@rvoh/psychic-workers'
+import { Job } from 'bullmq'
 import increaseNodeStackTraceLimits from './app/helpers/increaseNodeStackTraceLimits.js'
 import initializePsychicApplication from './conf/initializePsychicApplication.js'
 
@@ -13,7 +14,7 @@ async function startBackgroundWorkers() {
   background.work()
 
   background.workers.forEach(worker => {
-    worker.on('failed', (job, error) => {
+    worker.on('failed', (job: Job, error: Error) => {
       handleBullJobFailed(job!.id!, error.message)
         .then(() => {})
         .catch(() => {})
