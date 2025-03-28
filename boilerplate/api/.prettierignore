@@ -1,6 +1,5 @@
 # Ignore generated files
-openapi/openapi.json
-openapi.json
+openapi/*
 src/types/*
 src/conf/routeTypes.ts
 
