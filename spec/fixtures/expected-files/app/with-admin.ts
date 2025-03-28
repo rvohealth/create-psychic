@@ -128,17 +128,17 @@ export default async (psy: PsychicApplication) => {
 
   psy.on('server:start', async () => {
     if (AppEnv.isDevelopment && AppEnv.boolean('CLIENT')) {
-      const spinner = DreamCLI.logger.log('starting dev server...', { spinner: true })
+      DreamCLI.logger.logStartProgress('starting dev server...')
       await PsychicDevtools.launchDevServer('adminApp', { port: 3001, cmd: 'yarn admin' })
-      spinner.stop()
+      DreamCLI.logger.logEndProgress()
     }
   })
 
   psy.on('server:shutdown', () => {
     if (AppEnv.isDevelopment && AppEnv.boolean('CLIENT')) {
-      const spinner = DreamCLI.logger.log('stopping dev server...', { spinner: true })
+      DreamCLI.logger.logStartProgress('stopping dev server...')
       PsychicDevtools.stopDevServer('adminApp')
-      spinner.stop()
+      DreamCLI.logger.logEndProgress()
     }
   })
 

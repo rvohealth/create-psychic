@@ -38,7 +38,7 @@ function startHookContent(options: InitPsychicAppCliOptions) {
     return `\
   psy.on('server:start', async () => {
     if (AppEnv.isDevelopment && AppEnv.boolean('CLIENT')) {
-      DreamCLI.logger.logStartProgress('starting dev servers...')
+      DreamCLI.logger.logStartProgress('starting dev server...')
       await PsychicDevtools.launchDevServer('clientApp', { port: 3000, cmd: 'yarn client' })
       DreamCLI.logger.logEndProgress()
     }
@@ -47,7 +47,7 @@ function startHookContent(options: InitPsychicAppCliOptions) {
     return `\
   psy.on('server:start', async () => {
     if (AppEnv.isDevelopment && AppEnv.boolean('CLIENT')) {
-      DreamCLI.logger.logStartProgress('starting dev servers...')
+      DreamCLI.logger.logStartProgress('starting dev server...')
       await PsychicDevtools.launchDevServer('adminApp', { port: 3001, cmd: 'yarn admin' })
       DreamCLI.logger.logEndProgress()
     }
@@ -72,7 +72,7 @@ function shutdownHookContent(options: InitPsychicAppCliOptions) {
     return `\
   psy.on('server:shutdown', () => {
     if (AppEnv.isDevelopment && AppEnv.boolean('CLIENT')) {
-      DreamCLI.logger.logStartProgress('stopping dev servers...')
+      DreamCLI.logger.logStartProgress('stopping dev server...')
       PsychicDevtools.stopDevServer('clientApp')
       DreamCLI.logger.logEndProgress()
     }
@@ -81,7 +81,7 @@ function shutdownHookContent(options: InitPsychicAppCliOptions) {
     return `\
   psy.on('server:shutdown', () => {
     if (AppEnv.isDevelopment && AppEnv.boolean('CLIENT')) {
-      DreamCLI.logger.logStartProgress('stopping dev servers...')
+      DreamCLI.logger.logStartProgress('stopping dev server...')
       PsychicDevtools.stopDevServer('adminApp')
       DreamCLI.logger.logEndProgress()
     }
