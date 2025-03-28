@@ -36,7 +36,7 @@ describe('newPsychicApp without websockets or background jobs', () => {
     await sspawn(
       `\
         cd howyadoin &&
-        yarn psy g:model PackageManagerYarnReactUser email:string &&
+        yarn psy g:model BasicUser email:string &&
         NODE_ENV=test yarn psy db:migrate &&
         yarn build`
     )
