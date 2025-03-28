@@ -6,19 +6,19 @@ import psychicTypes from '../../types/psychic.js'
 export default class ApplicationBackgroundedModel extends BaseBackgroundedModel {
   public declare DB: DBClass
 
-  public static get backgroundJobConfig(): BackgroundJobConfig<BaseBackgroundedModel> {
+  public static override get backgroundJobConfig(): BackgroundJobConfig<BaseBackgroundedModel> {
     return {}
   }
 
-  public get schema() {
+  public override get schema() {
     return schema
   }
 
-  public get globalSchema() {
+  public override get globalSchema() {
     return globalSchema
   }
 
-  public get psychicTypes() {
+  public override get psychicTypes() {
     return psychicTypes
   }
 }
