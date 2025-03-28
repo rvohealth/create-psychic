@@ -9,8 +9,8 @@ import InitializePsychicAppBuilder from '../file-builders/InitializePsychicAppBu
 import PackagejsonBuilder from '../file-builders/PackagejsonBuilder.js'
 import copyRecursive from './copyRecursive.js'
 import getApiRoot from './getApiRoot.js'
+import internalSrcPath from './internalSrcPath.js'
 import { InitPsychicAppCliOptions } from './newPsychicApp.js'
-import srcPath from './srcPath.js'
 
 export default async function copyApiBoilerplate(appName: string, options: InitPsychicAppCliOptions) {
   const hasClient = options.client !== 'none' || options.adminClient !== 'none'
@@ -20,7 +20,7 @@ export default async function copyApiBoilerplate(appName: string, options: InitP
     fs.mkdirSync(`./${appName}`)
   }
 
-  copyRecursive(srcPath('..', 'boilerplate', 'api'), apiRoot)
+  copyRecursive(internalSrcPath('..', 'boilerplate', 'api'), apiRoot)
 
   // yarnrc.yml included as non-dot-file so that it becomes part of the package
   // move it to .yarnrc.yml if using yarn; otherwise, delete it

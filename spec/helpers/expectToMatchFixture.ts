@@ -1,8 +1,8 @@
-import srcPath from '../../src/conf/system/srcPath.js'
+import internalSrcPath from '../../src/helpers/internalSrcPath.js'
 import readFile from './readFile.js'
 
 export default async function expectToMatchFixture(fixturePath: FixturePath, expectedContent: string) {
-  const fixture = await readFile(srcPath(`../spec/fixtures/${fixturePath}`))
+  const fixture = await readFile(internalSrcPath(`../spec/fixtures/${fixturePath}`))
   expect(fixture).toEqual(expectedContent)
 }
 

@@ -1,12 +1,14 @@
 import * as fs from 'fs/promises'
+import internalSrcPath from '../helpers/internalSrcPath.js'
 import { InitPsychicAppCliOptions } from '../helpers/newPsychicApp.js'
 import { replaceYarnInFileContents } from '../helpers/replaceYarnInFile.js'
-import srcPath from '../helpers/srcPath.js'
 
 export default class FeatureSpecGlobalBuilder {
   public static async build({ appName, options }: { appName: string; options: InitPsychicAppCliOptions }) {
     const contents = (
-      await fs.readFile(srcPath('..', 'boilerplate', 'api', 'spec', 'features', 'setup', 'globalSetup.ts'))
+      await fs.readFile(
+        internalSrcPath('..', 'boilerplate', 'api', 'spec', 'features', 'setup', 'globalSetup.ts')
+      )
     ).toString()
 
     return replaceYarnInFileContents(

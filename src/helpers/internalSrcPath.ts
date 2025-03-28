@@ -22,7 +22,7 @@ if (typeof importMeta !== 'undefined') {
   }
 }
 
-export default function srcPath(...paths: string[]) {
+export default function internalSrcPath(...paths: string[]) {
   const pathToSrc = join(finalDirname, '..')
   return join(pathToSrc, ...paths)
 }
