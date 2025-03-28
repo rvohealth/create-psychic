@@ -7,7 +7,9 @@ export default class AdminAuthedController extends ApplicationController {
   }
 
   // protected currentAdminUser: User
+
   @BeforeAction()
+  // eslint-disable-next-line @typescript-eslint/require-await
   protected async authenticate() {
     throw new Error(`TODO: Implement admin authentication scheme!`)
     // implement an authentication pattern that ends with you setting

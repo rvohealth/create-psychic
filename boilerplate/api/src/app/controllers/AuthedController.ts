@@ -4,7 +4,9 @@ import ApplicationController from './ApplicationController.js'
 
 export default class AuthedController extends ApplicationController {
   // protected currentUser: User
+
   @BeforeAction()
+  // eslint-disable-next-line @typescript-eslint/require-await
   protected async authenticate() {
     throw new Error(`TODO: Implement authentication scheme!`)
     // implement an authentication pattern that ends with you setting
