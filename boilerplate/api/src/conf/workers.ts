@@ -65,7 +65,7 @@ export default (workersApp: PsychicApplicationWorkers) => {
             redisOptions: {
               username: AppEnv.string('BG_JOBS_REDIS_USERNAME'),
               password: AppEnv.string('BG_JOBS_REDIS_PASSWORD'),
-              tls: AppEnv.isProduction ? {} : undefined,
+              tls: {},
             },
             enableOfflineQueue: false,
           }
@@ -75,7 +75,7 @@ export default (workersApp: PsychicApplicationWorkers) => {
           port: AppEnv.integer('BG_JOBS_REDIS_PORT', { optional: true }) || 6379,
           username: AppEnv.string('BG_JOBS_REDIS_USERNAME', { optional: true }),
           password: AppEnv.string('BG_JOBS_REDIS_PASSWORD', { optional: true }),
-          tls: AppEnv.isProduction ? {} : undefined,
+          // tls:  {},
           enableOfflineQueue: false,
         }),
 
@@ -96,7 +96,7 @@ export default (workersApp: PsychicApplicationWorkers) => {
             redisOptions: {
               username: AppEnv.string('BG_JOBS_REDIS_USERNAME'),
               password: AppEnv.string('BG_JOBS_REDIS_PASSWORD'),
-              tls: AppEnv.isProduction ? {} : undefined,
+              tls: {},
               maxRetriesPerRequest: null,
             },
           }
@@ -106,7 +106,7 @@ export default (workersApp: PsychicApplicationWorkers) => {
           port: AppEnv.integer('BG_JOBS_REDIS_PORT', { optional: true }) || 6379,
           username: AppEnv.string('BG_JOBS_REDIS_USERNAME', { optional: true }),
           password: AppEnv.string('BG_JOBS_REDIS_PASSWORD', { optional: true }),
-          tls: AppEnv.isProduction ? {} : undefined,
+          // tls:  {},
           maxRetriesPerRequest: null,
         }),
   })

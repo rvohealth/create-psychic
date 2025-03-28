@@ -28,28 +28,28 @@ function startHookContent(options: InitPsychicAppCliOptions) {
     return `\
   psy.on('server:start', async () => {
     if (AppEnv.isDevelopment && AppEnv.boolean('CLIENT')) {
-      const spinner = DreamCLI.logger.log('starting dev servers...', { spinner: true })
+      DreamCLI.logger.logStartProgress('starting dev servers...')
       await PsychicDevtools.launchDevServer('clientApp', { port: 3000, cmd: 'yarn client' })
       await PsychicDevtools.launchDevServer('adminApp', { port: 3001, cmd: 'yarn admin' })
-      spinner.stop()
+      DreamCLI.logger.logEndProgress()
     }
   })`
   } else if (options.client !== 'none') {
     return `\
   psy.on('server:start', async () => {
     if (AppEnv.isDevelopment && AppEnv.boolean('CLIENT')) {
-      const spinner = DreamCLI.logger.log('starting dev server...', { spinner: true })
+      DreamCLI.logger.logStartProgress('starting dev servers...')
       await PsychicDevtools.launchDevServer('clientApp', { port: 3000, cmd: 'yarn client' })
-      spinner.stop()
+      DreamCLI.logger.logEndProgress()
     }
   })`
   } else if (options.adminClient !== 'none') {
     return `\
   psy.on('server:start', async () => {
     if (AppEnv.isDevelopment && AppEnv.boolean('CLIENT')) {
-      const spinner = DreamCLI.logger.log('starting dev server...', { spinner: true })
+      DreamCLI.logger.logStartProgress('starting dev servers...')
       await PsychicDevtools.launchDevServer('adminApp', { port: 3001, cmd: 'yarn admin' })
-      spinner.stop()
+      DreamCLI.logger.logEndProgress()
     }
   })`
   } else {
@@ -62,28 +62,28 @@ function shutdownHookContent(options: InitPsychicAppCliOptions) {
     return `\
   psy.on('server:shutdown', () => {
     if (AppEnv.isDevelopment && AppEnv.boolean('CLIENT')) {
-      const spinner = DreamCLI.logger.log('stopping dev servers...', { spinner: true })
+      DreamCLI.logger.logStartProgress('stopping dev servers...')
       PsychicDevtools.stopDevServer('clientApp')
       PsychicDevtools.stopDevServer('adminApp')
-      spinner.stop()
+      DreamCLI.logger.logEndProgress()
     }
   })`
   } else if (options.client !== 'none') {
     return `\
   psy.on('server:shutdown', () => {
     if (AppEnv.isDevelopment && AppEnv.boolean('CLIENT')) {
-      const spinner = DreamCLI.logger.log('stopping dev server...', { spinner: true })
+      DreamCLI.logger.logStartProgress('stopping dev servers...')
       PsychicDevtools.stopDevServer('clientApp')
-      spinner.stop()
+      DreamCLI.logger.logEndProgress()
     }
   })`
   } else if (options.adminClient !== 'none') {
     return `\
   psy.on('server:shutdown', () => {
     if (AppEnv.isDevelopment && AppEnv.boolean('CLIENT')) {
-      const spinner = DreamCLI.logger.log('stopping dev server...', { spinner: true })
+      DreamCLI.logger.logStartProgress('stopping dev servers...')
       PsychicDevtools.stopDevServer('adminApp')
-      spinner.stop()
+      DreamCLI.logger.logEndProgress()
     }
   })`
   } else {

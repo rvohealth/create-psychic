@@ -1,4 +1,4 @@
-import srcPath from '../../src/helpers/srcPath.js'
+import srcPath from '../../src/conf/system/srcPath.js'
 import readFile from './readFile.js'
 
 export default async function expectToMatchFixture(fixturePath: FixturePath, expectedContent: string) {

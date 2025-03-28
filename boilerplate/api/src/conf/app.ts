@@ -1,8 +1,8 @@
 <DREAM_IMPORT_STATEMENT><PSYCHIC_IMPORT_STATEMENT><BACKGROUND_IMPORT>
 import expressWinston from 'express-winston'
 import winston from 'winston'
-import importDefault from '../app/helpers/importDefault.js'
-import srcPath from '../app/helpers/srcPath.js'
+import importDefault from './system/importDefault.js'
+import srcPath from './system/srcPath.js'
 import AppEnv from './AppEnv.js'
 import inflections from './inflections.js'
 import routesCb from './routes.js'
@@ -151,3 +151,4 @@ export default async (psy: PsychicApplication) => {
     else if (AppEnv.isDevelopmentOrTest) throw err
   })
 }
+

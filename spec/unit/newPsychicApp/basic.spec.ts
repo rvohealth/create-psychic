@@ -18,7 +18,7 @@ describe('newPsychicApp without websockets or background jobs', () => {
     await expectNoFile('howyadoin/src/worker.ts')
     await expectNoFile('howyadoin/src/conf/workers.ts')
     await expectNoFile('howyadoin/src/conf/websockets.ts')
-    await expectNoFile('howyadoin/src/app/helpers/ws.ts')
+    await expectNoFile('howyadoin/src/utils/ws.ts')
     await expectNoFile('howyadoin/src/app/models/ApplicationBackgroundedModel.ts')
     await expectNoFile('howyadoin/src/app/services/ApplicationBackgroundedService.ts')
     await expectNoFile('howyadoin/src/app/services/ApplicationScheduledService.ts')

@@ -11,7 +11,7 @@ export default (wsApp: PsychicApplicationWebsockets) => {
           port: AppEnv.integer('WS_REDIS_PORT', { optional: true }) || 6379,
           username: AppEnv.string('WS_REDIS_USERNAME'),
           password: AppEnv.string('WS_REDIS_PASSWORD'),
-          tls: AppEnv.isProduction ? {} : undefined,
+          tls: {},
           maxRetriesPerRequest: null,
         })
       : new Redis({
@@ -19,7 +19,7 @@ export default (wsApp: PsychicApplicationWebsockets) => {
           port: AppEnv.integer('WS_REDIS_PORT', { optional: true }) || 6379,
           username: AppEnv.string('WS_REDIS_USERNAME', { optional: true }),
           password: AppEnv.string('WS_REDIS_PASSWORD', { optional: true }),
-          tls: AppEnv.isProduction ? {} : undefined,
+          // tls:  {},
           maxRetriesPerRequest: null,
         }),
   })
@@ -29,6 +29,7 @@ export default (wsApp: PsychicApplicationWebsockets) => {
   // ******
 
   wsApp.on('ws:start', io => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     io.of('/').on('connection', async socket => {
       // below is an example of how you might connect to websockets
       // const token = socket.handshake.auth.token as string
