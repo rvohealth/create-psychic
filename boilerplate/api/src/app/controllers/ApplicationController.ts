@@ -6,7 +6,7 @@ export default class ApplicationController extends PsychicController {
     return psychicTypes
   }
 
-  public static get openapiNames(): PsychicOpenapiNames<ApplicationController> {
+  public static override get openapiNames(): PsychicOpenapiNames<ApplicationController> {
     return ['default', 'mobile']
   }
 }
