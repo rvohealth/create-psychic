@@ -5,7 +5,6 @@ import DreamConfigBuilder from '../file-builders/DreamConfigBuilder.js'
 import EnvBuilder from '../file-builders/EnvBuilder.js'
 import FeatureSpecExampleBuilder from '../file-builders/FeatureSpecExampleBuilder.js'
 import FeatureSpecGlobalBuilder from '../file-builders/FeatureSpecGlobalBuilder.js'
-import InitializePsychicAppBuilder from '../file-builders/InitializePsychicAppBuilder.js'
 import PackagejsonBuilder from '../file-builders/PackagejsonBuilder.js'
 import copyRecursive from './copyRecursive.js'
 import getApiRoot from './getApiRoot.js'
@@ -34,7 +33,7 @@ export default async function copyApiBoilerplate(appName: string, options: InitP
 
   fs.writeFileSync(path.join(apiRoot, '.env'), EnvBuilder.build({ appName, env: 'development' }))
   fs.writeFileSync(path.join(apiRoot, '.env.test'), EnvBuilder.build({ appName, env: 'test' }))
-  fs.writeFileSync(path.join(apiRoot, 'package.json'), await PackagejsonBuilder.buildAPI(options))
+  fs.writeFileSync(path.join(apiRoot, 'package.json'), await PackagejsonBuilder.buildAPI(appName, options))
 
   fs.writeFileSync(
     path.join(apiRoot, 'src', 'conf', 'app.ts'),
@@ -44,11 +43,6 @@ export default async function copyApiBoilerplate(appName: string, options: InitP
   fs.writeFileSync(
     path.join(apiRoot, 'src', 'conf', 'dream.ts'),
     await DreamConfigBuilder.build({ appName, options })
-  )
-
-  fs.writeFileSync(
-    path.join(apiRoot, 'src', 'conf', 'initializePsychicApplication.ts'),
-    await InitializePsychicAppBuilder.build(options)
   )
 
   fs.writeFileSync(

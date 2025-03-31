@@ -18,7 +18,7 @@ describe('AppConfBuilder', () => {
         const options: InitPsychicAppCliOptions = { ...baseOptions }
         const res = await AppConfigBuilder.build({ appName: 'howyadoin', options })
 
-        await expectToMatchFixture('expected-files/app/no-workers.ts', res)
+        await expectToMatchFixture('expected-files/app/basic.ts', res)
       })
     })
 
@@ -27,7 +27,25 @@ describe('AppConfBuilder', () => {
         const options: InitPsychicAppCliOptions = { ...baseOptions, workers: true }
         const res = await AppConfigBuilder.build({ appName: 'howyadoin', options })
 
-        await expectToMatchFixture('expected-files/app/yes-workers.ts', res)
+        await expectToMatchFixture('expected-files/app/with-workers.ts', res)
+      })
+    })
+
+    context('with websockets: true', () => {
+      it('returns the app with the specified options', async () => {
+        const options: InitPsychicAppCliOptions = { ...baseOptions, websockets: true }
+        const res = await AppConfigBuilder.build({ appName: 'howyadoin', options })
+
+        await expectToMatchFixture('expected-files/app/with-websockets.ts', res)
+      })
+    })
+
+    context('with backgroundWorkers: true and websockets: true', () => {
+      it('returns the app with the specified options', async () => {
+        const options: InitPsychicAppCliOptions = { ...baseOptions, workers: true, websockets: true }
+        const res = await AppConfigBuilder.build({ appName: 'howyadoin', options })
+
+        await expectToMatchFixture('expected-files/app/with-workers-and-websockets.ts', res)
       })
     })
 

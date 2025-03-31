@@ -2,7 +2,7 @@ import { InitPsychicAppCliOptions } from '../helpers/newPsychicApp.js'
 import { replaceYarnInFileContents } from '../helpers/replaceYarnInFile.js'
 
 export default class PackagejsonBuilder {
-  public static async buildAPI(options: InitPsychicAppCliOptions) {
+  public static async buildAPI(appName: string, options: InitPsychicAppCliOptions) {
     // node 20 requires us to user "assert"
     // node >22 requires us to user "with"
     // @ts-ignore
@@ -17,6 +17,8 @@ export default class PackagejsonBuilder {
     const packagejson = {
       ...JSON.parse(JSON.stringify(imported.default)),
     }
+
+    packagejson.name = appName
 
     switch (options.client) {
       case 'none':

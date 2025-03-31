@@ -24,7 +24,6 @@ export default async function installApiDependencies(
           },
         }
       )
-      logger.logEndProgress()
       break
 
     case 'pnpm':
@@ -38,7 +37,6 @@ export default async function installApiDependencies(
           },
         }
       )
-      logger.logEndProgress()
       break
 
     case 'npm':
@@ -52,7 +50,18 @@ export default async function installApiDependencies(
           },
         }
       )
-      logger.logEndProgress()
       break
   }
+  logger.logEndProgress()
+
+  const cmd = 'npx puppeteer browsers install firefox'
+  logger.logStartProgress(`installing firefox using: "${cmd}"...`)
+  await sspawn(`cd ${apiRoot} && ${cmd}`, {
+    onStdout: message => {
+      logger.logContinueProgress(colorize('[api]', { color: 'cyan' }) + ' ' + message, {
+        logPrefixColor: 'cyan',
+      })
+    },
+  })
+  logger.logEndProgress()
 }
