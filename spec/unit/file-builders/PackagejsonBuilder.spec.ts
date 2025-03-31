@@ -12,10 +12,15 @@ describe('PackagejsonBuilder', () => {
   }
 
   describe('.buildAPI', () => {
+    it('captures appName', async () => {
+      const res = await PackagejsonBuilder.buildAPI('howyadoin', baseOptions)
+      expect(JSON.parse(res).name).toEqual('howyadoin')
+    })
+
     context('with backgroundWorkers: false and ws: false', () => {
       it('returns the app with the specified options', async () => {
         const options: InitPsychicAppCliOptions = { ...baseOptions }
-        const res = await PackagejsonBuilder.buildAPI(options)
+        const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
 
         expect(Object.keys(JSON.parse(res).dependencies)).toEqual(
           expect.arrayContaining([
@@ -51,7 +56,7 @@ describe('PackagejsonBuilder', () => {
     context('client != none', () => {
       it('includes client scripts', async () => {
         const options: InitPsychicAppCliOptions = { ...baseOptions, client: 'react' }
-        const res = await PackagejsonBuilder.buildAPI(options)
+        const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
         expect(JSON.parse(res).scripts['client']).toEqual('yarn --cwd=../client dev')
         expect(JSON.parse(res).scripts['client:fspec']).toEqual(
           'VITE_PSYCHIC_ENV=test yarn --cwd=../client dev'
@@ -62,7 +67,7 @@ describe('PackagejsonBuilder', () => {
     context('adminClient != none', () => {
       it('includes admin scripts', async () => {
         const options: InitPsychicAppCliOptions = { ...baseOptions, adminClient: 'react' }
-        const res = await PackagejsonBuilder.buildAPI(options)
+        const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
         expect(JSON.parse(res).scripts['admin']).toEqual('yarn --cwd=../admin dev')
         expect(JSON.parse(res).scripts['admin:fspec']).toEqual(
           'VITE_PSYCHIC_ENV=test yarn --cwd=../admin dev'
@@ -73,7 +78,7 @@ describe('PackagejsonBuilder', () => {
     context('backgroundWorkers: true', () => {
       it('adds worker dependencies', async () => {
         const options: InitPsychicAppCliOptions = { ...baseOptions, workers: true }
-        const res = await PackagejsonBuilder.buildAPI(options)
+        const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
 
         expect(Object.keys(JSON.parse(res).dependencies)).toEqual(
           expect.arrayContaining([
@@ -107,7 +112,7 @@ describe('PackagejsonBuilder', () => {
     context('ws: true', () => {
       it('adds worker dependencies', async () => {
         const options: InitPsychicAppCliOptions = { ...baseOptions, websockets: true }
-        const res = await PackagejsonBuilder.buildAPI(options)
+        const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
 
         expect(Object.keys(JSON.parse(res).dependencies)).toEqual(
           expect.arrayContaining([
@@ -138,7 +143,7 @@ describe('PackagejsonBuilder', () => {
     context('ws: true and bgWorkers: true', () => {
       it('adds worker dependencies', async () => {
         const options: InitPsychicAppCliOptions = { ...baseOptions, workers: true, websockets: true }
-        const res = await PackagejsonBuilder.buildAPI(options)
+        const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
 
         expect(Object.keys(JSON.parse(res).dependencies)).toEqual(
           expect.arrayContaining([

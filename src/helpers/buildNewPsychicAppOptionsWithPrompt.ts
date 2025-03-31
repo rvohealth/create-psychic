@@ -57,7 +57,7 @@ export default async function buildNewPsychicAppOptionsWithPrompt(options: InitP
   }
 
   if (options.websockets === undefined) {
-    const answer = await new Select('websockets?', ['no', 'yes'] as const).run()
+    const answer = await new Select('websockets? (beta)', ['no', 'yes'] as const).run()
     options.websockets = answer === 'yes'
   }
 }

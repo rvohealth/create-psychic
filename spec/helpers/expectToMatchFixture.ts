@@ -7,16 +7,13 @@ export default async function expectToMatchFixture(fixturePath: FixturePath, act
 }
 
 const FIXTURE_PATHS = [
-  'expected-files/app/no-workers.ts',
-  'expected-files/app/yes-workers.ts',
+  'expected-files/app/basic.ts',
   'expected-files/app/with-client.ts',
   'expected-files/app/with-admin.ts',
   'expected-files/app/with-client-and-admin.ts',
-
-  'expected-files/initializePsychicApplication/no-workers-no-websockets.ts',
-  'expected-files/initializePsychicApplication/no-workers-yes-websockets.ts',
-  'expected-files/initializePsychicApplication/yes-workers-no-websockets.ts',
-  'expected-files/initializePsychicApplication/yes-workers-yes-websockets.ts',
+  'expected-files/app/with-workers.ts',
+  'expected-files/app/with-workers-and-websockets.ts',
+  'expected-files/app/with-websockets.ts',
 
   'expected-files/ws/basic.ts',
 

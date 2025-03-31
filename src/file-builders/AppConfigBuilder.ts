@@ -12,14 +12,27 @@ export default class AppConfigBuilder {
       .replace('<BACKGROUND_CONNECT>', options.workers ? '\n    background.connect()\n  ' : '')
       .replace(
         '<BACKGROUND_IMPORT>',
-        options.workers ? "\nimport { background } from '@rvoh/psychic-workers'" : ''
+        options.workers
+          ? "\nimport { background, PsychicApplicationWorkers } from '@rvoh/psychic-workers'"
+          : ''
+      )
+      .replace(
+        '<WS_IMPORT>',
+        options.websockets ? "\nimport { PsychicApplicationWebsockets } from '@rvoh/psychic-websockets'" : ''
       )
       .replace('<DREAM_IMPORT_STATEMENT>', dreamImportStatement(options))
+      .replace('<PACKAGE_MANAGER>', options.packageManager)
       .replace('<PSYCHIC_IMPORT_STATEMENT>', psychicImportStatement(options))
       .replace('<SERVER_START_HOOK>', startHookContent(options))
       .replace('<SERVER_SHUTDOWN_HOOK>', shutdownHookContent(options))
       .replace('<APP_NAME>', appName)
       .replace('<API_ONLY>', (options.client === 'none' && options.adminClient === 'none').toString())
+      .replace('<PSYCHIC_PLUGINS>', psychicPluginsContent(options))
+      .replace(
+        '<WS_CALLBACK_IMPORT>',
+        options.websockets ? "\nimport websocketsCb from './websockets.js'" : ''
+      )
+      .replace('<WORKERS_CALLBACK_IMPORT>', options.workers ? "\nimport workersCb from './workers.js'" : '')
   }
 }
 
@@ -88,6 +101,33 @@ function shutdownHookContent(options: InitPsychicAppCliOptions) {
   })`
   } else {
     return "  psy.on('server:shutdown', () => {})"
+  }
+}
+
+function psychicPluginsContent(options: InitPsychicAppCliOptions) {
+  if (options.workers && options.websockets) {
+    return `
+
+  psy.plugin(async () => {
+    await PsychicApplicationWebsockets.init(psy, websocketsCb)
+  })
+  psy.plugin(async () => {
+    await PsychicApplicationWorkers.init(psy, workersCb)
+  })`
+  } else if (options.workers) {
+    return `
+
+  psy.plugin(async () => {
+    await PsychicApplicationWorkers.init(psy, workersCb)
+  })`
+  } else if (options.websockets) {
+    return `
+
+  psy.plugin(async () => {
+    await PsychicApplicationWebsockets.init(psy, websocketsCb)
+  })`
+  } else {
+    return ''
   }
 }
 

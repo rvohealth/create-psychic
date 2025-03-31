@@ -1,5 +1,4 @@
 import { PsychicApplication } from '@rvoh/psychic'
-import { background } from '@rvoh/psychic-workers'
 import expressWinston from 'express-winston'
 import winston from 'winston'
 import AppEnv from './AppEnv.js'
@@ -12,6 +11,7 @@ export default async (psy: PsychicApplication) => {
   await psy.load('controllers', srcPath('app', 'controllers'), path => importDefault(path))
 
   psy.set('appName', 'howyadoin')
+  psy.set('packageManager', 'yarn')
   psy.set('apiOnly', true)
   psy.set('apiRoot', srcPath('..'))
   psy.set('clientRoot', srcPath('..', '..', 'client'))
@@ -134,9 +134,7 @@ export default async (psy: PsychicApplication) => {
   psy.on('server:init:after-routes', () => {})
 
   // run a callback after the config is loaded
-  psy.on('load', () => {
-    background.connect()
-  })
+  psy.on('load', () => {})
 
   // run a callback after the config is loaded, but only if NODE_ENV=development
   psy.on('load:dev', () => {})

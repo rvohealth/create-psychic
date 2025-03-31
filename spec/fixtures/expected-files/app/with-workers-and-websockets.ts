@@ -1,4 +1,6 @@
 import { PsychicApplication } from '@rvoh/psychic'
+import { PsychicApplicationWebsockets } from '@rvoh/psychic-websockets'
+import { background, PsychicApplicationWorkers } from '@rvoh/psychic-workers'
 import expressWinston from 'express-winston'
 import winston from 'winston'
 import AppEnv from './AppEnv.js'
@@ -6,6 +8,8 @@ import inflections from './inflections.js'
 import routesCb from './routes.js'
 import importDefault from './system/importDefault.js'
 import srcPath from './system/srcPath.js'
+import websocketsCb from './websockets.js'
+import workersCb from './workers.js'
 
 export default async (psy: PsychicApplication) => {
   await psy.load('controllers', srcPath('app', 'controllers'), path => importDefault(path))
@@ -22,6 +26,13 @@ export default async (psy: PsychicApplication) => {
         key: AppEnv.string('APP_ENCRYPTION_KEY'),
       },
     },
+  })
+
+  psy.plugin(async () => {
+    await PsychicApplicationWebsockets.init(psy, websocketsCb)
+  })
+  psy.plugin(async () => {
+    await PsychicApplicationWorkers.init(psy, workersCb)
   })
 
   psy.set('inflections', inflections)
@@ -134,7 +145,9 @@ export default async (psy: PsychicApplication) => {
   psy.on('server:init:after-routes', () => {})
 
   // run a callback after the config is loaded
-  psy.on('load', () => {})
+  psy.on('load', () => {
+    background.connect()
+  })
 
   // run a callback after the config is loaded, but only if NODE_ENV=development
   psy.on('load:dev', () => {})

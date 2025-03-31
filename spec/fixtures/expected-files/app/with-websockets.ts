@@ -1,4 +1,5 @@
 import { PsychicApplication } from '@rvoh/psychic'
+import { PsychicApplicationWebsockets } from '@rvoh/psychic-websockets'
 import expressWinston from 'express-winston'
 import winston from 'winston'
 import AppEnv from './AppEnv.js'
@@ -6,6 +7,7 @@ import inflections from './inflections.js'
 import routesCb from './routes.js'
 import importDefault from './system/importDefault.js'
 import srcPath from './system/srcPath.js'
+import websocketsCb from './websockets.js'
 
 export default async (psy: PsychicApplication) => {
   await psy.load('controllers', srcPath('app', 'controllers'), path => importDefault(path))
@@ -22,6 +24,10 @@ export default async (psy: PsychicApplication) => {
         key: AppEnv.string('APP_ENCRYPTION_KEY'),
       },
     },
+  })
+
+  psy.plugin(async () => {
+    await PsychicApplicationWebsockets.init(psy, websocketsCb)
   })
 
   psy.set('inflections', inflections)
