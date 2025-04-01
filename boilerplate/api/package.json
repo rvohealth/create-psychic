@@ -7,6 +7,7 @@
   "private": true,
   "scripts": {
     "psy": "NODE_ENV=${NODE_ENV:-test} tsx src/cli/index.ts",
+    "psyjs": "node ./dist/src/cli/index.js",
     "build": "APP_NAME=$npm_package_name APP_VERSION=$npm_package_version echo \"building $npm_package_name...\" && rm -rf dist && echo \"node --version\" && node --version && echo \"npx tsc --version\" && npx tsc --version && npx tsc -p ./tsconfig.build.json",
     "dev": "APP_NAME=$npm_package_name APP_VERSION=$npm_package_version NODE_ENV=development WORKER_COUNT=0 tsx ./src/main.ts",
     "dev-worker": "APP_NAME=$npm_package_name APP_VERSION=$npm_package_version NODE_ENV=development WORKER_COUNT=1 tsx ./src/worker.ts",
