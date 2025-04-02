@@ -18,13 +18,14 @@
     "fspec": "APP_NAME=$npm_package_name APP_VERSION=$npm_package_version vitest run --config=./spec/features/vite.config.ts",
     "fspec:visible": "HEADLESS=0 vitest run --config=./spec/features/vite.config.ts",
     "console": "APP_NAME=$npm_package_name APP_VERSION=$npm_package_version tsx ./src/conf/repl.ts",
+    "consolejs": "APP_NAME=$npm_package_name APP_VERSION=$npm_package_version node ./dist/src/conf/repl.js",
     "format": "<YARN_RUN> prettier . --write",
     "lint": "<YARN_RUN> eslint --no-warn-ignored \"src/**/*.ts\" \"spec/**/*.ts\" && <YARN_RUN> prettier . --check"
   },
   "dependencies": {
     "@bull-board/express": "^5.21.4",
-    "@rvoh/dream": "^0.32.3",
-    "@rvoh/psychic": "^0.27.2",
+    "@rvoh/dream": "^0.33.0",
+    "@rvoh/psychic": "^0.28.0",
     "@rvoh/psychic-websockets": "^0.2.3",
     "@rvoh/psychic-workers": "^0.2.6",
     "@socket.io/redis-adapter": "^8.3.0",

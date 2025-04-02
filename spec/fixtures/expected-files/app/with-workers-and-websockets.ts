@@ -13,6 +13,7 @@ import workersCb from './workers.js'
 
 export default async (psy: PsychicApplication) => {
   await psy.load('controllers', srcPath('app', 'controllers'), path => importDefault(path))
+  await psy.load('services', srcPath('app', 'services'), path => importDefault(path))
 
   psy.set('appName', 'howyadoin')
   psy.set('packageManager', 'yarn')

@@ -10,7 +10,6 @@ export default async function (app: DreamApplication) {
   app.set('inflections', inflections)
 
   await app.load('models', srcPath('app', 'models'), path => importDefault(path))
-  await app.load('services', srcPath('app', 'services'), path => importDefault(path))
   await app.load('serializers', srcPath('app', 'serializers'), path => importAll(path))
 
   // provides a list of path overrides for your app. This is optional, and will default
