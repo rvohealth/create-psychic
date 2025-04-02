@@ -9,6 +9,7 @@ import srcPath from './system/srcPath.js'<WS_CALLBACK_IMPORT><WORKERS_CALLBACK_I
 
 export default async (psy: PsychicApplication) => {
   await psy.load('controllers', srcPath('app', 'controllers'), path => importDefault(path))
+  await psy.load('services', srcPath('app', 'services'), path => importDefault(path))
 
   psy.set('appName', '<APP_NAME>')
   psy.set('packageManager', '<PACKAGE_MANAGER>')
