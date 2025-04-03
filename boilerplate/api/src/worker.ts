@@ -2,7 +2,7 @@ import './conf/global.js'
 
 import { closeAllDbConnections } from '@rvoh/dream'
 import { background, stopBackgroundWorkers } from '@rvoh/psychic-workers'
-import initializePsychicApplication from './conf/initializePsychicApplication.js'
+import initializePsychicApplication from './conf/system/initializePsychicApplication.js'
 import increaseNodeStackTraceLimits from './conf/system/increaseNodeStackTraceLimits.js'
 
 increaseNodeStackTraceLimits()

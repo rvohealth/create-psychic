@@ -1,7 +1,7 @@
 import './conf/global.js'
 
 import { PsychicServer } from '@rvoh/psychic'
-import initializePsychicApplication from './conf/initializePsychicApplication.js'
+import initializePsychicApplication from './conf/system/initializePsychicApplication.js'
 
 async function start() {
   await initializePsychicApplication()
