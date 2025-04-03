@@ -1,7 +1,7 @@
 import '../../../src/conf/loadEnv.js'
 
 import { PsychicBin } from '@rvoh/psychic'
-import initializePsychicApplication from '../../../src/conf/initializePsychicApplication.js'
+import initializePsychicApplication from '../../../src/conf/system/initializePsychicApplication.js'
 
 export async function setup() {
   await initializePsychicApplication()

@@ -2,7 +2,7 @@ import '../../../src/conf/global.js'
 
 import { DreamApplication } from '@rvoh/dream'
 import { provideDreamViteMatchers, truncate } from '@rvoh/dream-spec-helpers'
-import initializePsychicApplication from '../../../src/conf/initializePsychicApplication.js'
+import initializePsychicApplication from '../../../src/conf/system/initializePsychicApplication.js'
 
 provideDreamViteMatchers()
 

@@ -9,7 +9,7 @@ import '../conf/loadEnv.js'
 
 import { PsychicCLI } from '@rvoh/psychic'
 import { Command } from 'commander'
-import initializePsychicApplication from '../conf/initializePsychicApplication.js'
+import initializePsychicApplication from '../conf/system/initializePsychicApplication.js'
 import seedDb from '../db/seed.js'
 
 const program = new Command()
