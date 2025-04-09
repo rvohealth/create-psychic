@@ -1,4 +1,4 @@
-import '../../../src/conf/loadEnv.js'
+import '../../../src/conf/global.js'
 
 import { PsychicDevtools } from '@rvoh/psychic'
 
