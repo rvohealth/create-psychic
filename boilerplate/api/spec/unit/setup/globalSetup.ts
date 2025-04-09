@@ -1,11 +1,7 @@
-import '../../../src/conf/loadEnv.js'
-
-import { PsychicBin } from '@rvoh/psychic'
-import initializePsychicApplication from '../../../src/conf/system/initializePsychicApplication.js'
+import '../../../src/conf/global.js'
 
 export async function setup() {
-  await initializePsychicApplication()
-  await PsychicBin.syncOpenapiJson()
+  // your custom setup here...
 }
 
 export async function teardown() {
