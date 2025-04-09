@@ -4,6 +4,7 @@ import winston from 'winston'
 import AppEnv from './AppEnv.js'
 import inflections from './inflections.js'
 import routesCb from './routes.js'
+import openapiRequestValidation from './openapi/openapiRequestValidation.js'
 import importDefault from './system/importDefault.js'
 import srcPath from './system/srcPath.js'<WS_CALLBACK_IMPORT><WORKERS_CALLBACK_IMPORT>
 
@@ -61,6 +62,7 @@ export default async (psy: PsychicApplication) => {
 
   psy.set('openapi', {
     outputFilename: 'openapi/openapi.json',
+    validation: openapiRequestValidation(),
     defaults: {
       components: {
         schemas: {},
