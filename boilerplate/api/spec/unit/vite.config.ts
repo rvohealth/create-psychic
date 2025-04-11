@@ -1,3 +1,4 @@
+import '../../src/conf/global.js'
 import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
