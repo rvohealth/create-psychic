@@ -4,7 +4,7 @@ import newSpecPsychicApp from '../../../../helpers/newSpecPsychicApp.js'
 
 describe('newPsychicApp with react client', () => {
   it('correctly provisions a react client', async () => {
-    await newSpecPsychicApp('yarn', 'howyadoin', {
+    await newSpecPsychicApp('howyadoin', {
       packageManager: 'yarn',
       websockets: false,
       workers: false,

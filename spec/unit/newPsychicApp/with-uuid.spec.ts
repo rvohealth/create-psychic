@@ -1,9 +1,9 @@
-import newPsychicApp from '../../../src/helpers/newPsychicApp.js'
 import sspawn from '../../../src/helpers/sspawn.js'
+import newSpecPsychicApp from '../../helpers/newSpecPsychicApp.js'
 
 describe('newPsychicApp with uuid', () => {
   it('builds app with default uuid migration, so that subsequent uses of uuid will behave', async () => {
-    await newPsychicApp('howyadoin', {
+    await newSpecPsychicApp('howyadoin', {
       packageManager: 'yarn',
       websockets: false,
       workers: false,
@@ -15,8 +15,6 @@ describe('newPsychicApp with uuid', () => {
     await sspawn(
       `\
         cd howyadoin &&
-        yarn psy g:model PackageManagerPnpmUuidUser email:string &&
-        NODE_ENV=test yarn psy db:migrate &&
         yarn uspec`
     )
   }, 120_000)

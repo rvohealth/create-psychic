@@ -1,6 +1,7 @@
 import c from 'yoctocolors'
 import DreamCliLogger from '../logger/DreamCliLogger.js'
 import addClientApp from './addClientApp.js'
+import apiOnlyOptions from './apiOnlyOptions.js'
 import buildNewPsychicAppOptionsWithPrompt from './buildNewPsychicAppOptionsWithPrompt.js'
 import copyApiBoilerplate from './copyApiBoilerplate.js'
 import generateUuidMigration from './generateUuidMigration.js'
@@ -113,8 +114,7 @@ export default async function newPsychicApp(appName: string, options: InitPsychi
     await initialGitCommit(appName, logger)
 
     logger.log(logo(), { logPrefix: '' })
-    const hasClient = options.client !== 'none' || options.adminClient !== 'none'
-    logger.log(welcomeMessage(hasClient ? appName + '/api' : appName, options.packageManager), {
+    logger.log(welcomeMessage(apiOnlyOptions(options) ? appName : appName + '/api', options.packageManager), {
       logPrefix: '',
     })
   }

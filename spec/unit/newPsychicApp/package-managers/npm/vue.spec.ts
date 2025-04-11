@@ -1,10 +1,10 @@
-import newPsychicApp from '../../../../../src/helpers/newPsychicApp.js'
 import sspawn from '../../../../../src/helpers/sspawn.js'
 import expectFile from '../../../../helpers/expectFile.js'
+import newSpecPsychicApp from '../../../../helpers/newSpecPsychicApp.js'
 
 describe('newPsychicApp with vue client', () => {
   it('correctly provisions a vue client', async () => {
-    await newPsychicApp('howyadoin', {
+    await newSpecPsychicApp('howyadoin', {
       packageManager: 'npm',
       websockets: false,
       workers: false,
@@ -17,10 +17,10 @@ describe('newPsychicApp with vue client', () => {
     await sspawn(
       `\
         cd howyadoin/api &&
-        npm run psy g:model PackageManagerNpmVueUser email:string &&
-        NODE_ENV=test npm run psy db:migrate &&
         npm run uspec &&
-        npm run fspec`
+        npm run uspec:js &&
+        npm run fspec &&
+        npm run fspec:js`
     )
   }, 120_000)
 })

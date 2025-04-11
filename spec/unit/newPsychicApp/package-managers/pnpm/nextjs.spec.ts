@@ -1,11 +1,11 @@
-import newPsychicApp from '../../../../../src/helpers/newPsychicApp.js'
 import sspawn from '../../../../../src/helpers/sspawn.js'
 import expectFile from '../../../../helpers/expectFile.js'
+import newSpecPsychicApp from '../../../../helpers/newSpecPsychicApp.js'
 
 describe('newPsychicApp with nextjs client', () => {
   // TODO: works locally, not passing in CI
   it.skip('correctly provisions a nextjs client', async () => {
-    await newPsychicApp('howyadoin', {
+    await newSpecPsychicApp('howyadoin', {
       packageManager: 'pnpm',
       websockets: false,
       workers: false,
@@ -18,10 +18,10 @@ describe('newPsychicApp with nextjs client', () => {
     await sspawn(
       `\
         cd howyadoin/api &&
-        pnpm psy g:model PackageManagerPnpmNextjsUser email:string &&
-        NODE_ENV=test pnpm psy db:migrate &&
         pnpm uspec &&
-        pnpm fspec`
+        pnpm uspec:js &&
+        pnpm fspec &&
+        pnpm fspec:js`
     )
   }, 120_000)
 })

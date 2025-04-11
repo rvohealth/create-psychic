@@ -5,7 +5,7 @@ import newSpecPsychicApp from '../../../../helpers/newSpecPsychicApp.js'
 describe('newPsychicApp with nextjs client', () => {
   // TODO: works locally, not passing in CI
   it.skip('correctly provisions a nextjs client', async () => {
-    await newSpecPsychicApp('yarn', 'howyadoin', {
+    await newSpecPsychicApp('howyadoin', {
       packageManager: 'yarn',
       websockets: false,
       workers: false,

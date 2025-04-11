@@ -1,10 +1,10 @@
-import newPsychicApp from '../../../../../src/helpers/newPsychicApp.js'
 import sspawn from '../../../../../src/helpers/sspawn.js'
 import expectFile from '../../../../helpers/expectFile.js'
+import newSpecPsychicApp from '../../../../helpers/newSpecPsychicApp.js'
 
 describe('newPsychicApp with react client', () => {
   it('correctly provisions an api-only app', async () => {
-    await newPsychicApp('howyadoin', {
+    await newSpecPsychicApp('howyadoin', {
       packageManager: 'npm',
       websockets: false,
       workers: false,
@@ -17,9 +17,8 @@ describe('newPsychicApp with react client', () => {
     await sspawn(
       `\
         cd howyadoin &&
-        npm run psy g:model PackageManagerNpmNoClientUser email:string &&
-        NODE_ENV=test npm run psy db:migrate &&
-        npm run uspec`
+        npm run uspec &&
+        npm run uspec:js`
     )
   }, 120_000)
 })
