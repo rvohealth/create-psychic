@@ -27,7 +27,9 @@ export default class PackagejsonBuilder {
       default:
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
         ;(packagejson.scripts as any)['client'] = `yarn --cwd=../client dev`
-        ;(packagejson.scripts as any)['client:fspec'] = `VITE_PSYCHIC_ENV=test yarn --cwd=../client dev`
+        ;(packagejson.scripts as any)[
+          'client:fspec'
+        ] = `BROWSER=none VITE_PSYCHIC_ENV=test yarn --cwd=../client dev`
     }
 
     switch (options.adminClient) {
@@ -41,13 +43,15 @@ export default class PackagejsonBuilder {
             ;(packagejson.scripts as any)['admin'] = `yarn --cwd=../admin dev --port 3001`
             ;(packagejson.scripts as any)[
               'admin:fspec'
-            ] = `VITE_PSYCHIC_ENV=test yarn --cwd=../admin dev --port 3001`
+            ] = `BROWSER=none VITE_PSYCHIC_ENV=test yarn --cwd=../admin dev --port 3001`
             break
 
           default:
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
             ;(packagejson.scripts as any)['admin'] = `yarn --cwd=../admin dev`
-            ;(packagejson.scripts as any)['admin:fspec'] = `VITE_PSYCHIC_ENV=test yarn --cwd=../admin dev`
+            ;(packagejson.scripts as any)[
+              'admin:fspec'
+            ] = `BROWSER=none VITE_PSYCHIC_ENV=test yarn --cwd=../admin dev`
         }
     }
 
