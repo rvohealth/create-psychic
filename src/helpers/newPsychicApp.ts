@@ -114,7 +114,7 @@ export default async function newPsychicApp(appName: string, options: InitPsychi
 
     logger.log(logo(), { logPrefix: '' })
     const hasClient = options.client !== 'none' || options.adminClient !== 'none'
-    logger.log(welcomeMessage(hasClient ? appName + '/api' : appName), {
+    logger.log(welcomeMessage(hasClient ? appName + '/api' : appName, options.packageManager), {
       logPrefix: '',
     })
   }
