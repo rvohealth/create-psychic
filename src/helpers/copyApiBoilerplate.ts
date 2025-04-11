@@ -6,30 +6,31 @@ import EnvBuilder from '../file-builders/EnvBuilder.js'
 import FeatureSpecExampleBuilder from '../file-builders/FeatureSpecExampleBuilder.js'
 import FeatureSpecGlobalBuilder from '../file-builders/FeatureSpecGlobalBuilder.js'
 import PackagejsonBuilder from '../file-builders/PackagejsonBuilder.js'
+import apiOnlyOptions from './apiOnlyOptions.js'
 import copyRecursive from './copyRecursive.js'
 import getApiRoot from './getApiRoot.js'
 import internalSrcPath from './internalSrcPath.js'
 import { InitPsychicAppCliOptions } from './newPsychicApp.js'
 
 export default async function copyApiBoilerplate(appName: string, options: InitPsychicAppCliOptions) {
-  const hasClient = options.client !== 'none' || options.adminClient !== 'none'
+  const appRoot = path.join('.', appName)
   const apiRoot = getApiRoot(appName, options)
 
-  if (hasClient) {
-    fs.mkdirSync(`./${appName}`)
-  }
+  if (!apiOnlyOptions(options)) fs.mkdirSync(appRoot)
 
   copyRecursive(internalSrcPath('..', 'boilerplate', 'api'), apiRoot)
+
+  fs.cpSync(internalSrcPath('..', 'boilerplate', 'README.md'), path.join(appRoot, 'README.md'))
 
   // yarnrc.yml included as non-dot-file so that it becomes part of the package
   // move it to .yarnrc.yml if using yarn; otherwise, delete it
   if (options.packageManager === 'yarn') {
-    fs.renameSync(`${apiRoot}/yarnrc.yml`, `${apiRoot}/.yarnrc.yml`)
+    fs.renameSync(path.join(apiRoot, 'yarnrc.yml'), path.join(apiRoot, '.yarnrc.yml'))
   } else {
     fs.rmSync(path.join(apiRoot, 'yarnrc.yml'))
   }
 
-  fs.renameSync(`${apiRoot}/gitignore`, `${apiRoot}/.gitignore`)
+  fs.renameSync(path.join(apiRoot, 'gitignore'), path.join(apiRoot, '.gitignore'))
 
   fs.writeFileSync(path.join(apiRoot, '.env'), EnvBuilder.build({ appName, env: 'development' }))
   fs.writeFileSync(path.join(apiRoot, '.env.test'), EnvBuilder.build({ appName, env: 'test' }))

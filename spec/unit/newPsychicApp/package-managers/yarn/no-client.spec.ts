@@ -4,7 +4,7 @@ import newSpecPsychicApp from '../../../../helpers/newSpecPsychicApp.js'
 
 describe('newPsychicApp with no client', () => {
   it('correctly provisions an api-only app', async () => {
-    await newSpecPsychicApp('yarn', 'howyadoin', {
+    await newSpecPsychicApp('howyadoin', {
       packageManager: 'yarn',
       websockets: false,
       workers: false,

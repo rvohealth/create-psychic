@@ -4,7 +4,7 @@ import newSpecPsychicApp from '../../../../helpers/newSpecPsychicApp.js'
 
 describe('newPsychicApp with vue client', () => {
   it('correctly provisions a vue client', async () => {
-    await newSpecPsychicApp('yarn', 'howyadoin', {
+    await newSpecPsychicApp('howyadoin', {
       packageManager: 'yarn',
       websockets: false,
       workers: false,

@@ -1,12 +1,12 @@
-import newPsychicApp from '../../../src/helpers/newPsychicApp.js'
 import sspawn from '../../../src/helpers/sspawn.js'
 import expectNoFile from '../../helpers/expectNoFile.js'
 import expectToMatchFixture from '../../helpers/expectToMatchFixture.js'
+import newSpecPsychicApp from '../../helpers/newSpecPsychicApp.js'
 import readFile from '../../helpers/readFile.js'
 
 describe('newPsychicApp without websockets or background jobs', () => {
   it('builds app without websockets or background configurations', async () => {
-    await newPsychicApp('howyadoin', {
+    await newSpecPsychicApp('howyadoin', {
       packageManager: 'yarn',
       websockets: false,
       workers: false,
@@ -28,8 +28,6 @@ describe('newPsychicApp without websockets or background jobs', () => {
     await sspawn(
       `\
         cd howyadoin &&
-        yarn psy g:model BasicUser email:string &&
-        NODE_ENV=test yarn psy db:migrate &&
         yarn build`
     )
   }, 120_000)
