@@ -9,8 +9,34 @@ import FSPersister from '@pollyjs/persister-fs'
 Polly.register(NodeFetchAdapter as any)
 Polly.register(NodeHttpAdapter as any)
 
-export default function ({
-  ignoreHeaderDiffs = false,
+/**
+ * Activates Polly in the current spec context for HTTP recording and replay in tests.
+ * Typically placed in a `beforeEach` block in your test files.
+ *
+ * @param options - Configuration options for the Polly instance
+ * @param options.ignoreHeaderDiffs - When true, HTTP header differences are ignored during request matching.
+ *                                   Default: true
+ * @param options.recordFailedRequests - When true, failed HTTP requests (non-2xx responses) will be recorded.
+ *                                      Default: false
+ *
+ * @example
+ * beforeEach(() => {
+ *   setupPolly();
+ * });
+ *
+ * @example
+ * // With custom options
+ * beforeEach(() => {
+ *   setupPolly({
+ *     ignoreHeaderDiffs: false,
+ *     recordFailedRequests: true
+ *   });
+ * });
+ *
+ * @returns The configured Polly instance that can be used for additional customization (e.g., for setting Polly to record/replay traffic to/from additional domains, as in `polly.server.any('https://new-domain-to-record/*').passthrough(false)`). Domains that should always be recorded should be added to `setupPolly`.
+ */
+export default function setupPolly({
+  ignoreHeaderDiffs = true,
   recordFailedRequests = false,
 }: { ignoreHeaderDiffs?: boolean; recordFailedRequests?: boolean } = {}) {
   const recordingName =
