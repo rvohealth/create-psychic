@@ -1,4 +1,4 @@
-import * as fs from 'fs/promises'
+import * as fs from 'node:fs/promises'
 
 export default class ViteConfBuilder {
   public static async build(pathToExistingViteConf: string, { port = 3000 }: { port: number }) {

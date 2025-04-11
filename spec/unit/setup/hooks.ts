@@ -1,8 +1,8 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import pg from 'pg'
-import * as fs from 'fs/promises'
 import { provideDreamViteMatchers } from '@rvoh/dream-spec-helpers'
+import * as fs from 'node:fs/promises'
+import pg from 'pg'
 import defaultDbCredentials from '../../../src/helpers/defaultDbCredentials.js'
 
 provideDreamViteMatchers()

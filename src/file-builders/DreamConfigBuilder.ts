@@ -1,4 +1,4 @@
-import * as fs from 'fs/promises'
+import * as fs from 'node:fs/promises'
 import internalSrcPath from '../helpers/internalSrcPath.js'
 import { InitPsychicAppCliOptions } from '../helpers/newPsychicApp.js'
 

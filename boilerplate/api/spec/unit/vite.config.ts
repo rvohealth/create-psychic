@@ -4,7 +4,7 @@ export default defineConfig({
   test: {
     dir: './spec/unit',
     globals: true,
-    setupFiles: ['luxon-jest-matchers', './spec/unit/setup/hooks.ts'],
+    setupFiles: ['luxon-jest-matchers', './spec/unit/setup/hooks.js'],
     fileParallelism: false,
     maxConcurrency: 1,
     maxWorkers: 1,
@@ -17,6 +17,6 @@ export default defineConfig({
     hookTimeout: 20000,
     testTimeout: 20000,
 
-    globalSetup: './spec/unit/setup/globalSetup.ts',
+    globalSetup: './spec/unit/setup/globalSetup.js',
   },
 })

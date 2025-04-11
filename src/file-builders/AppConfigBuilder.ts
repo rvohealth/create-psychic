@@ -1,4 +1,5 @@
-import * as fs from 'fs/promises'
+import * as fs from 'node:fs/promises'
+import apiOnlyOptions from '../helpers/apiOnlyOptions.js'
 import internalSrcPath from '../helpers/internalSrcPath.js'
 import { InitPsychicAppCliOptions } from '../helpers/newPsychicApp.js'
 
@@ -26,7 +27,7 @@ export default class AppConfigBuilder {
       .replace('<SERVER_START_HOOK>', startHookContent(options))
       .replace('<SERVER_SHUTDOWN_HOOK>', shutdownHookContent(options))
       .replace('<APP_NAME>', appName)
-      .replace('<API_ONLY>', (options.client === 'none' && options.adminClient === 'none').toString())
+      .replace('<API_ONLY>', apiOnlyOptions(options).toString())
       .replace('<PSYCHIC_PLUGINS>', psychicPluginsContent(options))
       .replace(
         '<WS_CALLBACK_IMPORT>',
@@ -132,14 +133,14 @@ function psychicPluginsContent(options: InitPsychicAppCliOptions) {
 }
 
 function dreamImportStatement(options: InitPsychicAppCliOptions) {
-  if (options.client === 'none' && options.adminClient === 'none') {
+  if (apiOnlyOptions(options)) {
     return ''
   }
   return "import { DreamCLI } from '@rvoh/dream'\n"
 }
 
 function psychicImportStatement(options: InitPsychicAppCliOptions) {
-  if (options.client === 'none' && options.adminClient === 'none') {
+  if (apiOnlyOptions(options)) {
     return "import { PsychicApplication } from '@rvoh/psychic'"
   }
   return "import { PsychicApplication, PsychicDevtools } from '@rvoh/psychic'"

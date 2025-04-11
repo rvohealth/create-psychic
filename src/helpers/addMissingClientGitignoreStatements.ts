@@ -1,4 +1,4 @@
-import * as fs from 'fs'
+import * as fs from 'node:fs'
 
 export default function addMissingClientGitignoreStatements(gitignorePath: string) {
   const gitignoreContents = fs.readFileSync(gitignorePath)
