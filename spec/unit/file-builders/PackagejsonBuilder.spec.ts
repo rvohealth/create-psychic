@@ -59,7 +59,7 @@ describe('PackagejsonBuilder', () => {
         const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
         expect(JSON.parse(res).scripts['client']).toEqual('yarn --cwd=../client dev')
         expect(JSON.parse(res).scripts['client:fspec']).toEqual(
-          'VITE_PSYCHIC_ENV=test yarn --cwd=../client dev'
+          'BROWSER=none VITE_PSYCHIC_ENV=test yarn --cwd=../client dev'
         )
       })
     })
@@ -70,7 +70,7 @@ describe('PackagejsonBuilder', () => {
         const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
         expect(JSON.parse(res).scripts['admin']).toEqual('yarn --cwd=../admin dev')
         expect(JSON.parse(res).scripts['admin:fspec']).toEqual(
-          'VITE_PSYCHIC_ENV=test yarn --cwd=../admin dev'
+          'BROWSER=none VITE_PSYCHIC_ENV=test yarn --cwd=../admin dev'
         )
       })
     })
