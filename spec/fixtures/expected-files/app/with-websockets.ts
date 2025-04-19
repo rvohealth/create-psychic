@@ -4,13 +4,16 @@ import expressWinston from 'express-winston'
 import winston from 'winston'
 import AppEnv from './AppEnv.js'
 import inflections from './inflections.js'
-import routesCb from './routes.js'
 import openapiRequestValidation from './openapi/openapiRequestValidation.js'
+import routesCb from './routes.js'
 import importDefault from './system/importDefault.js'
 import srcPath from './system/srcPath.js'
 import websocketsCb from './websockets.js'
+import winstonLogger from './winstonLogger.js'
 
 export default async (psy: PsychicApplication) => {
+  psy.set('logger', winstonLogger())
+
   await psy.load('controllers', srcPath('app', 'controllers'), path => importDefault(path))
   await psy.load('services', srcPath('app', 'services'), path => importDefault(path))
 
