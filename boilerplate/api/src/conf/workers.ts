@@ -1,11 +1,11 @@
-import { PsychicApplication } from '@rvoh/psychic'
-import { PsychicApplicationWorkers } from '@rvoh/psychic-workers'
+import { PsychicApp } from '@rvoh/psychic'
+import { PsychicAppWorkers } from '@rvoh/psychic-workers'
 import { Queue, Worker } from 'bullmq'
 import { Cluster, Redis } from 'ioredis'
 import * as os from 'os'
 import AppEnv from './AppEnv.js'
 
-export default (workersApp: PsychicApplicationWorkers) => {
+export default (workersApp: PsychicAppWorkers) => {
   workersApp.set('background', {
     defaultWorkstream: {
       // https://docs.bullmq.io/guide/parallelism-and-concurrency
@@ -117,6 +117,6 @@ export default (workersApp: PsychicApplicationWorkers) => {
   // ******
 
   workersApp.on('workers:shutdown', () => {
-    PsychicApplication.log('SHUTDOWN WORKERS')
+    PsychicApp.log('SHUTDOWN WORKERS')
   })
 }

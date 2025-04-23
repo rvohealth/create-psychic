@@ -1,16 +1,16 @@
 import './conf/global.js'
 
-import { PsychicApplication } from '@rvoh/psychic'
+import { PsychicApp } from '@rvoh/psychic'
 import { background } from '@rvoh/psychic-workers'
 import increaseNodeStackTraceLimits from './conf/system/increaseNodeStackTraceLimits.js'
-import initializePsychicApplication from './conf/system/initializePsychicApplication.js'
+import initializePsychicApp from './conf/system/initializePsychicApp.js'
 
 increaseNodeStackTraceLimits()
 
 async function startBackgroundWorkers() {
-  await initializePsychicApplication()
+  await initializePsychicApp()
 
-  PsychicApplication.log('STARTING WORKERS...')
+  PsychicApp.log('STARTING WORKERS...')
 
   background.work()
 
@@ -22,7 +22,7 @@ async function startBackgroundWorkers() {
     })
   })
 
-  PsychicApplication.log('FINISHED STARTING WORKERS')
+  PsychicApp.log('FINISHED STARTING WORKERS')
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

@@ -9,13 +9,13 @@ import '../conf/loadEnv.js'
 
 import { PsychicCLI } from '@rvoh/psychic'
 import { Command } from 'commander'
-import initializePsychicApplication from '../conf/system/initializePsychicApplication.js'
+import initializePsychicApp from '../conf/system/initializePsychicApp.js'
 import seedDb from '../db/seed.js'
 
 const program = new Command()
 
 PsychicCLI.provide(program, {
-  initializePsychicApplication,
+  initializePsychicApp,
   seedDb,
 })
 

@@ -13,13 +13,11 @@ export default class AppConfigBuilder {
       .replace('<BACKGROUND_CONNECT>', options.workers ? '\n    background.connect()\n  ' : '')
       .replace(
         '<BACKGROUND_IMPORT>',
-        options.workers
-          ? "\nimport { background, PsychicApplicationWorkers } from '@rvoh/psychic-workers'"
-          : ''
+        options.workers ? "\nimport { background, PsychicAppWorkers } from '@rvoh/psychic-workers'" : ''
       )
       .replace(
         '<WS_IMPORT>',
-        options.websockets ? "\nimport { PsychicApplicationWebsockets } from '@rvoh/psychic-websockets'" : ''
+        options.websockets ? "\nimport { PsychicAppWebsockets } from '@rvoh/psychic-websockets'" : ''
       )
       .replace('<DREAM_IMPORT_STATEMENT>', dreamImportStatement(options))
       .replace('<PACKAGE_MANAGER>', options.packageManager)
@@ -110,22 +108,22 @@ function psychicPluginsContent(options: InitPsychicAppCliOptions) {
     return `
 
   psy.plugin(async () => {
-    await PsychicApplicationWebsockets.init(psy, websocketsCb)
+    await PsychicAppWebsockets.init(psy, websocketsCb)
   })
   psy.plugin(async () => {
-    await PsychicApplicationWorkers.init(psy, workersCb)
+    await PsychicAppWorkers.init(psy, workersCb)
   })`
   } else if (options.workers) {
     return `
 
   psy.plugin(async () => {
-    await PsychicApplicationWorkers.init(psy, workersCb)
+    await PsychicAppWorkers.init(psy, workersCb)
   })`
   } else if (options.websockets) {
     return `
 
   psy.plugin(async () => {
-    await PsychicApplicationWebsockets.init(psy, websocketsCb)
+    await PsychicAppWebsockets.init(psy, websocketsCb)
   })`
   } else {
     return ''
@@ -141,7 +139,7 @@ function dreamImportStatement(options: InitPsychicAppCliOptions) {
 
 function psychicImportStatement(options: InitPsychicAppCliOptions) {
   if (apiOnlyOptions(options)) {
-    return "import { PsychicApplication } from '@rvoh/psychic'"
+    return "import { PsychicApp } from '@rvoh/psychic'"
   }
-  return "import { PsychicApplication, PsychicDevtools } from '@rvoh/psychic'"
+  return "import { PsychicApp, PsychicDevtools } from '@rvoh/psychic'"
 }

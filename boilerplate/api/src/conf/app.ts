@@ -9,7 +9,7 @@ import importDefault from './system/importDefault.js'
 import srcPath from './system/srcPath.js'<WS_CALLBACK_IMPORT>
 import winstonLogger from './winstonLogger.js'<WORKERS_CALLBACK_IMPORT>
 
-export default async (psy: PsychicApplication) => {
+export default async (psy: PsychicApp) => {
   const apiRoot = srcPath('..')
   psy.set('logger', winstonLogger(apiRoot))
 

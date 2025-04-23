@@ -1,11 +1,11 @@
-import { DreamApplication } from '@rvoh/dream'
+import { DreamApp } from '@rvoh/dream'
 import importAll from './system/importAll.js'
 import importDefault from './system/importDefault.js'
 import srcPath from './system/srcPath.js'
 import AppEnv from './AppEnv.js'
 import inflections from './inflections.js'
 
-export default async function (app: DreamApplication) {
+export default async function (app: DreamApp) {
   app.set('primaryKeyType', <PRIMARY_KEY_TYPE>)
   app.set('inflections', inflections)
 

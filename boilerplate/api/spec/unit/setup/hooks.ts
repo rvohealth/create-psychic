@@ -1,8 +1,8 @@
 import '../../../src/conf/global.js'
 
-import { DreamApplication } from '@rvoh/dream'
+import { DreamApp } from '@rvoh/dream'
 import { provideDreamViteMatchers, truncate } from '@rvoh/dream-spec-helpers'
-import initializePsychicApplication from '../../../src/conf/system/initializePsychicApplication.js'
+import initializePsychicApp from '../../../src/conf/system/initializePsychicApp.js'
 
 provideDreamViteMatchers()
 
@@ -11,9 +11,9 @@ provideDreamViteMatchers()
 ;(global as any).context = describe
 
 beforeAll(async () => {
-  await initializePsychicApplication()
+  await initializePsychicApp()
 })
 
 beforeEach(async () => {
-  await truncate(DreamApplication)
+  await truncate(DreamApp)
 })

@@ -1,4 +1,4 @@
-import { PsychicApplication } from '@rvoh/psychic'
+import { PsychicApp } from '@rvoh/psychic'
 import expressWinston from 'express-winston'
 import winston from 'winston'
 import AppEnv from './AppEnv.js'
@@ -9,8 +9,9 @@ import importDefault from './system/importDefault.js'
 import srcPath from './system/srcPath.js'
 import winstonLogger from './winstonLogger.js'
 
-export default async (psy: PsychicApplication) => {
-  psy.set('logger', winstonLogger())
+export default async (psy: PsychicApp) => {
+  const apiRoot = srcPath('..')
+  psy.set('logger', winstonLogger(apiRoot))
 
   await psy.load('controllers', srcPath('app', 'controllers'), path => importDefault(path))
   await psy.load('services', srcPath('app', 'services'), path => importDefault(path))
@@ -18,7 +19,7 @@ export default async (psy: PsychicApplication) => {
   psy.set('appName', 'howyadoin')
   psy.set('packageManager', 'yarn')
   psy.set('apiOnly', true)
-  psy.set('apiRoot', srcPath('..'))
+  psy.set('apiRoot', apiRoot)
   psy.set('clientRoot', srcPath('..', '..', 'client'))
   psy.set('encryption', {
     cookies: {

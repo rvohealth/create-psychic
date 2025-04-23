@@ -1,10 +1,10 @@
 import '../../../src/conf/global.js'
 
-import { PsychicServer } from '@rvoh/psychic'
-import { DreamApplication } from '@rvoh/dream'
+import { DreamApp } from '@rvoh/dream'
 import { provideDreamViteMatchers, truncate } from '@rvoh/dream-spec-helpers'
+import { PsychicServer } from '@rvoh/psychic'
 import { providePuppeteerViteMatchers } from '@rvoh/psychic-spec-helpers'
-import initializePsychicApplication from '../../../src/conf/system/initializePsychicApplication.js'
+import initializePsychicApp from '../../../src/conf/system/initializePsychicApp.js'
 import getPage from './getPage.js'
 
 provideDreamViteMatchers()
@@ -22,7 +22,7 @@ beforeAll(async () => {
    * provide your application code to psychic for initialization,
    * prior to launching your server.
    */
-  await initializePsychicApplication()
+  await initializePsychicApp()
 
   /*
    * start api server
@@ -47,7 +47,7 @@ beforeAll(async () => {
 })
 
 beforeEach(async () => {
-  await truncate(DreamApplication)
+  await truncate(DreamApp)
 })
 
 afterAll(async () => {
