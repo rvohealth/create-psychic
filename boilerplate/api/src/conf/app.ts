@@ -10,7 +10,8 @@ import srcPath from './system/srcPath.js'<WS_CALLBACK_IMPORT>
 import winstonLogger from './winstonLogger.js'<WORKERS_CALLBACK_IMPORT>
 
 export default async (psy: PsychicApplication) => {
-  psy.set('logger', winstonLogger())
+  const apiRoot = srcPath('..')
+  psy.set('logger', winstonLogger(apiRoot))
 
   await psy.load('controllers', srcPath('app', 'controllers'), path => importDefault(path))
   await psy.load('services', srcPath('app', 'services'), path => importDefault(path))
@@ -18,7 +19,7 @@ export default async (psy: PsychicApplication) => {
   psy.set('appName', '<APP_NAME>')
   psy.set('packageManager', '<PACKAGE_MANAGER>')
   psy.set('apiOnly', <API_ONLY>)
-  psy.set('apiRoot', srcPath('..'))
+  psy.set('apiRoot', apiRoot)
   psy.set('clientRoot', srcPath('..', '..', 'client'))
   psy.set('encryption', {
     cookies: {

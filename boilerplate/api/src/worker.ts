@@ -1,14 +1,16 @@
 import './conf/global.js'
 
-import { closeAllDbConnections } from '@rvoh/dream'
-import { background, stopBackgroundWorkers } from '@rvoh/psychic-workers'
-import initializePsychicApplication from './conf/system/initializePsychicApplication.js'
+import { PsychicApplication } from '@rvoh/psychic'
+import { background } from '@rvoh/psychic-workers'
 import increaseNodeStackTraceLimits from './conf/system/increaseNodeStackTraceLimits.js'
+import initializePsychicApplication from './conf/system/initializePsychicApplication.js'
 
 increaseNodeStackTraceLimits()
 
 async function startBackgroundWorkers() {
   await initializePsychicApplication()
+
+  PsychicApplication.log('STARTING WORKERS...')
 
   background.work()
 
@@ -20,21 +22,7 @@ async function startBackgroundWorkers() {
     })
   })
 
-  process.on('SIGINT', () => {
-    stopBackgroundWorkers()
-      .then(() => {
-        closeAllDbConnections()
-          .then(() => {
-            process.exit()
-          })
-          .catch(() => {
-            process.exit()
-          })
-      })
-      .catch(() => {
-        process.exit()
-      })
-  })
+  PsychicApplication.log('FINISHED STARTING WORKERS')
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

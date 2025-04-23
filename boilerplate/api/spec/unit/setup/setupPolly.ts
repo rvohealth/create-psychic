@@ -53,12 +53,7 @@ export default function setupPolly({
     logLevel: process.env.DEBUG ? 'debug' : 'error',
   })
 
-  polly.configure({
-    matchRequestsBy: {
-      headers: !ignoreHeaderDiffs,
-    },
-    recordFailedRequests: !!recordFailedRequests,
-  })
+  polly.configure({ matchRequestsBy: { headers: !ignoreHeaderDiffs }, recordFailedRequests })
 
   const excludedRequestHeaders = ['authorization', 'user-agent']
   polly.server.any().on('beforePersist', (req, recording) => {

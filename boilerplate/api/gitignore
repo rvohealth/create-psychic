@@ -1,6 +1,6 @@
 dist
 node_modules
-logs/!.gitkeep
+*.log
 .env*
 src/.psy/*
 

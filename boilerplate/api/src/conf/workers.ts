@@ -1,3 +1,4 @@
+import { PsychicApplication } from '@rvoh/psychic'
 import { PsychicApplicationWorkers } from '@rvoh/psychic-workers'
 import { Queue, Worker } from 'bullmq'
 import { Cluster, Redis } from 'ioredis'
@@ -116,6 +117,6 @@ export default (workersApp: PsychicApplicationWorkers) => {
   // ******
 
   workersApp.on('workers:shutdown', () => {
-    // add worker shutdown sequence here
+    PsychicApplication.log('SHUTDOWN WORKERS')
   })
 }
