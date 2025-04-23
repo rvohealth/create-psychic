@@ -67,7 +67,6 @@ export default async (psy: PsychicApp) => {
 
   psy.set('openapi', {
     outputFilename: 'openapi/openapi.json',
-    validation: openapiRequestValidation(),
     defaults: {
       components: {
         schemas: {},
@@ -87,6 +86,16 @@ export default async (psy: PsychicApp) => {
 
   psy.set('openapi', 'admin', {
     outputFilename: 'openapi/admin.openapi.json',
+    defaults: {
+      components: {
+        schemas: {},
+      },
+    },
+  })
+
+  psy.set('openapi', 'validation', {
+    validation: openapiRequestValidation(),
+    outputFilename: 'openapi/validation.openapi.json',
     defaults: {
       components: {
         schemas: {},

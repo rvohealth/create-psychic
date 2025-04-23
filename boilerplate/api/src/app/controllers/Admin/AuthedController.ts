@@ -3,7 +3,7 @@ import ApplicationController from '../ApplicationController.js'
 
 export default class AdminAuthedController extends ApplicationController {
   public static override get openapiNames(): PsychicOpenapiNames<ApplicationController> {
-    return ['admin']
+    return ['admin', 'validation']
   }
 
   // protected currentAdminUser: User
