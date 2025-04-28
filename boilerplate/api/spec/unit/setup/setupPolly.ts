@@ -5,6 +5,10 @@ import NodeFetchAdapter from '@pollyjs/adapter-fetch'
 import NodeHttpAdapter from '@pollyjs/adapter-node-http'
 import { Polly } from '@pollyjs/core'
 import FSPersister from '@pollyjs/persister-fs'
+import { debuglog } from 'node:util'
+
+// Enable debug logging with NODE_DEBUG=polly
+const debugPolly = debuglog('polly').enabled
 
 Polly.register(NodeFetchAdapter as any)
 Polly.register(NodeHttpAdapter as any)
@@ -50,13 +54,14 @@ export default function setupPolly({
     adapters: [NodeHttpAdapter as any, NodeFetchAdapter as any],
     persister: FSPersister as any,
     recordIfMissing: false,
-    logLevel: process.env.DEBUG ? 'debug' : 'error',
+    logLevel: debugPolly ? 'debug' : 'error',
   })
 
   polly.configure({ matchRequestsBy: { headers: !ignoreHeaderDiffs }, recordFailedRequests })
 
   const excludedRequestHeaders = ['authorization', 'user-agent']
   polly.server.any().on('beforePersist', (req, recording) => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
     recording.request.headers = recording.request.headers.filter(
       ({ name }: any) => !excludedRequestHeaders.includes(name)
     )
