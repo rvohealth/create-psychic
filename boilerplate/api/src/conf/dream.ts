@@ -1,9 +1,14 @@
 import { DreamApp } from '@rvoh/dream'
+import { PsychicApp } from '@rvoh/psychic'
+import { debuglog } from 'node:util'
+import AppEnv from './AppEnv.js'
+import inflections from './inflections.js'
 import importAll from './system/importAll.js'
 import importDefault from './system/importDefault.js'
 import srcPath from './system/srcPath.js'
-import AppEnv from './AppEnv.js'
-import inflections from './inflections.js'
+
+// Enable debug logging with NODE_DEBUG=sql
+const debugSql = debuglog('sql').enabled
 
 export default async function (app: DreamApp) {
   app.set('primaryKeyType', <PRIMARY_KEY_TYPE>)
@@ -40,4 +45,27 @@ export default async function (app: DreamApp) {
         }
       : undefined,
   })
+
+  app.on('db:log', event => {
+    if (!debugSql) return
+
+    if (event.level === 'error') {
+      PsychicApp.logWithLevel('error', 'the following db query encountered an unexpected error: ', {
+        durationMs: event.queryDurationMillis,
+        error: event.error,
+        sql: event.query.sql,
+        params: event.query.parameters.map(maskPII),
+      })
+    } else {
+      PsychicApp.log('db query completed:', {
+        durationMs: event.queryDurationMillis,
+        sql: event.query.sql,
+        params: event.query.parameters.map(maskPII),
+      })
+    }
+  })
+}
+
+function maskPII(data: unknown) {
+  return data
 }
