@@ -16,19 +16,45 @@ async function startBackgroundWorkers() {
 
   background.workers.forEach(worker => {
     worker.on('failed', (job, error) => {
-      handleBullJobFailed(job?.id, error.message)
-        .then(() => {})
-        .catch(() => {})
+      // This event is triggered when an error is thrown by your code.
+      // This is more common than the 'error' or 'stalled' events.
+      // Usually handle this by sending error to your error handling service.
+
+      if (job) {
+        PsychicApp.logWithLevel(
+          'error',
+          `Background job failed:
+job.name: ${job.name}
+job.id: ${job.id || 'unknown'}
+${error.message}`
+        )
+      } else {
+        PsychicApp.logWithLevel('error', error)
+      }
+    })
+
+    worker.on('error', error => {
+      // According to https://docs.bullmq.io/guide/workers:
+      //   If the error handler is missing, your worker may stop processing jobs when an error is emitted
+      // Handle this by sending error to your error handling service.
+      PsychicApp.logWithLevel(
+        'error',
+        `Worker error:
+${error.message}`
+      )
+    })
+
+    worker.on('stalled', error => {
+      // Handle this by sending error to your error handling service.
+      PsychicApp.logWithLevel(
+        'error',
+        `Worker stalled:
+${error}`
+      )
     })
   })
 
   PsychicApp.log('FINISHED STARTING WORKERS')
-}
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-async function handleBullJobFailed(jobId: string | undefined, failedReason: string) {
-  // handle your job error here
-  // const job = (await background.queue!.getJob(jobId)) || 'Job not found'
 }
 
 void startBackgroundWorkers()
