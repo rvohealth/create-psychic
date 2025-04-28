@@ -61,13 +61,16 @@ export default (workersApp: PsychicAppWorkers) => {
             },
           ],
           {
-            slotsRefreshTimeout: 5000,
+            slotsRefreshTimeout: 10000,
             dnsLookup: (address, callback) => callback(null, address),
             redisOptions: {
               username: AppEnv.string('BG_JOBS_REDIS_USERNAME'),
               password: AppEnv.string('BG_JOBS_REDIS_PASSWORD'),
               tls: {},
+              connectTimeout: 10000,
+              commandTimeout: 5000,
             },
+            clusterRetryStrategy: (times: number) => Math.max(Math.min(Math.exp(times), 20000), 1000),
             enableOfflineQueue: false,
           }
         )
@@ -77,11 +80,14 @@ export default (workersApp: PsychicAppWorkers) => {
           username: AppEnv.string('BG_JOBS_REDIS_USERNAME', { optional: true }),
           password: AppEnv.string('BG_JOBS_REDIS_PASSWORD', { optional: true }),
           // tls:  {},
+          connectTimeout: 10000,
+          commandTimeout: 5000,
+          retryStrategy: (times: number) => Math.max(Math.min(Math.exp(times), 20000), 1000),
           enableOfflineQueue: false,
         }),
 
     // Only establish the worker Redis connection if on an instance that does the work
-    defaultWorkerConnection: AppEnv.boolean('WORKER_SERVICE')
+    defaultWorkerConnection: !AppEnv.boolean('WORKER_SERVICE')
       ? undefined
       : AppEnv.isProduction
       ? new Cluster(
@@ -92,14 +98,17 @@ export default (workersApp: PsychicAppWorkers) => {
             },
           ],
           {
-            slotsRefreshTimeout: 5000,
+            slotsRefreshTimeout: 15000,
             dnsLookup: (address, callback) => callback(null, address),
             redisOptions: {
               username: AppEnv.string('BG_JOBS_REDIS_USERNAME'),
               password: AppEnv.string('BG_JOBS_REDIS_PASSWORD'),
               tls: {},
               maxRetriesPerRequest: null,
+              connectTimeout: 15000,
+              commandTimeout: 10000,
             },
+            clusterRetryStrategy: (times: number) => Math.max(Math.min(Math.exp(times), 20000), 1000),
           }
         )
       : new Redis({
@@ -109,6 +118,9 @@ export default (workersApp: PsychicAppWorkers) => {
           password: AppEnv.string('BG_JOBS_REDIS_PASSWORD', { optional: true }),
           // tls:  {},
           maxRetriesPerRequest: null,
+          connectTimeout: 15000,
+          commandTimeout: 10000,
+          retryStrategy: (times: number) => Math.max(Math.min(Math.exp(times), 20000), 1000),
         }),
   })
 
