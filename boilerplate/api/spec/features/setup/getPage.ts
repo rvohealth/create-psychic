@@ -1,5 +1,9 @@
 import { launchPage } from '@rvoh/psychic-spec-helpers'
+import { debuglog } from 'node:util'
 import { LaunchOptions, Page } from 'puppeteer'
+
+// Enable debug logging with NODE_DEBUG=fspec
+const debugFspec = debuglog('fspec').enabled
 
 let page: Page
 
@@ -7,9 +11,9 @@ export default async function getPage(opts?: LaunchOptions) {
   if (!page) {
     page = await launchPage({
       headless: process.env.HEADLESS !== '0',
-      timeout: process.env.DEBUG === '1' ? 40000 : 20000,
-      dumpio: process.env.DEBUG === '1',
-      devtools: process.env.DEBUG === '1',
+      timeout: debugFspec ? 40000 : 20000,
+      dumpio: debugFspec,
+      devtools: debugFspec,
       ...opts,
     })
 
