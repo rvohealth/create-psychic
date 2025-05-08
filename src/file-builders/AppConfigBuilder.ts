@@ -13,11 +13,7 @@ export default class AppConfigBuilder {
       .replace('<BACKGROUND_CONNECT>', options.workers ? '\n    background.connect()\n  ' : '')
       .replace(
         '<BACKGROUND_IMPORT>',
-        options.workers ? "\nimport { background, PsychicAppWorkers } from '@rvoh/psychic-workers'" : ''
-      )
-      .replace(
-        '<WS_IMPORT>',
-        options.websockets ? "\nimport { PsychicAppWebsockets } from '@rvoh/psychic-websockets'" : ''
+        options.workers ? "\nimport { background } from '@rvoh/psychic-workers'" : ''
       )
       .replace('<DREAM_IMPORT_STATEMENT>', dreamImportStatement(options))
       .replace('<PACKAGE_MANAGER>', options.packageManager)
@@ -26,12 +22,6 @@ export default class AppConfigBuilder {
       .replace('<SERVER_SHUTDOWN_HOOK>', shutdownHookContent(options))
       .replace('<APP_NAME>', appName)
       .replace('<API_ONLY>', apiOnlyOptions(options).toString())
-      .replace('<PSYCHIC_PLUGINS>', psychicPluginsContent(options))
-      .replace(
-        '<WS_CALLBACK_IMPORT>',
-        options.websockets ? "\nimport websocketsCb from './websockets.js'" : ''
-      )
-      .replace('<WORKERS_CALLBACK_IMPORT>', options.workers ? "\nimport workersCb from './workers.js'" : '')
   }
 }
 
@@ -100,33 +90,6 @@ function shutdownHookContent(options: InitPsychicAppCliOptions) {
   })`
   } else {
     return "  psy.on('server:shutdown', () => {})"
-  }
-}
-
-function psychicPluginsContent(options: InitPsychicAppCliOptions) {
-  if (options.workers && options.websockets) {
-    return `
-
-  psy.plugin(async () => {
-    await PsychicAppWebsockets.init(psy, websocketsCb)
-  })
-  psy.plugin(async () => {
-    await PsychicAppWorkers.init(psy, workersCb)
-  })`
-  } else if (options.workers) {
-    return `
-
-  psy.plugin(async () => {
-    await PsychicAppWorkers.init(psy, workersCb)
-  })`
-  } else if (options.websockets) {
-    return `
-
-  psy.plugin(async () => {
-    await PsychicAppWebsockets.init(psy, websocketsCb)
-  })`
-  } else {
-    return ''
   }
 }
 

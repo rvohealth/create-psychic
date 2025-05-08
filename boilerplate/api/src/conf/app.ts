@@ -1,4 +1,4 @@
-<DREAM_IMPORT_STATEMENT><PSYCHIC_IMPORT_STATEMENT><WS_IMPORT><BACKGROUND_IMPORT>
+<DREAM_IMPORT_STATEMENT><PSYCHIC_IMPORT_STATEMENT><BACKGROUND_IMPORT>
 import expressWinston from 'express-winston'
 import winston from 'winston'
 import AppEnv from './AppEnv.js'
@@ -6,8 +6,8 @@ import inflections from './inflections.js'
 import openapiRequestValidation from './openapi/openapiRequestValidation.js'
 import routesCb from './routes.js'
 import importDefault from './system/importDefault.js'
-import srcPath from './system/srcPath.js'<WS_CALLBACK_IMPORT>
-import winstonLogger from './winstonLogger.js'<WORKERS_CALLBACK_IMPORT>
+import srcPath from './system/srcPath.js'
+import winstonLogger from './winstonLogger.js'
 
 export default async (psy: PsychicApp) => {
   const apiRoot = srcPath('..')
@@ -15,6 +15,7 @@ export default async (psy: PsychicApp) => {
 
   await psy.load('controllers', srcPath('app', 'controllers'), path => importDefault(path))
   await psy.load('services', srcPath('app', 'services'), path => importDefault(path))
+  await psy.load('initializers', srcPath('conf', 'initializers'), path => importDefault(path))
 
   psy.set('appName', '<APP_NAME>')
   psy.set('packageManager', '<PACKAGE_MANAGER>')
@@ -28,7 +29,7 @@ export default async (psy: PsychicApp) => {
         key: AppEnv.string('APP_ENCRYPTION_KEY'),
       },
     },
-  })<PSYCHIC_PLUGINS>
+  })
 
   psy.set('inflections', inflections)
   psy.set('routes', routesCb)

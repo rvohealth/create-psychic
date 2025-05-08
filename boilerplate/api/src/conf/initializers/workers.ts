@@ -3,9 +3,15 @@ import { PsychicAppWorkers } from '@rvoh/psychic-workers'
 import { Queue, Worker } from 'bullmq'
 import { Cluster, Redis } from 'ioredis'
 import * as os from 'os'
-import AppEnv from './AppEnv.js'
+import AppEnv from '../AppEnv.js'
 
-export default (workersApp: PsychicAppWorkers) => {
+export default (psy: PsychicApp) => {
+  psy.plugin(async () => {
+    await PsychicAppWorkers.init(psy, initializeWorkers)
+  })
+}
+
+function initializeWorkers(workersApp: PsychicAppWorkers) {
   workersApp.set('background', {
     defaultWorkstream: {
       // https://docs.bullmq.io/guide/parallelism-and-concurrency
