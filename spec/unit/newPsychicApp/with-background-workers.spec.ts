@@ -16,9 +16,9 @@ describe('newPsychicApp without websockets or background jobs', () => {
       primaryKeyType: 'bigserial',
     })
 
-    await expectNoFile('howyadoin/src/conf/websockets.ts')
+    await expectNoFile('howyadoin/src/conf/initializers/websockets.ts')
     await expectFile('howyadoin/src/worker.ts')
-    await expectFile('howyadoin/src/conf/workers.ts')
+    await expectFile('howyadoin/src/conf/initializers/workers.ts')
     await expectFile('howyadoin/src/app/models/ApplicationBackgroundedModel.ts')
     await expectFile('howyadoin/src/app/services/ApplicationBackgroundedService.ts')
     await expectFile('howyadoin/src/app/services/ApplicationScheduledService.ts')

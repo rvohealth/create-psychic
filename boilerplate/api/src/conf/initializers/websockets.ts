@@ -1,9 +1,16 @@
+import { PsychicApp } from '@rvoh/psychic'
 import { PsychicAppWebsockets } from '@rvoh/psychic-websockets'
 import { Redis } from 'ioredis'
-import AppEnv from './AppEnv.js'
+import AppEnv from '../AppEnv.js'
 // import User from '../app/models/User.js'
 
-export default (wsApp: PsychicAppWebsockets) => {
+export default (psy: PsychicApp) => {
+  psy.plugin(async () => {
+    await PsychicAppWebsockets.init(psy, initializeWebsockets)
+  })
+}
+
+function initializeWebsockets(wsApp: PsychicAppWebsockets) {
   wsApp.set('websockets', {
     connection: AppEnv.isProduction
       ? new Redis({
