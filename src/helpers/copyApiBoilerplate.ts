@@ -58,14 +58,14 @@ export default async function copyApiBoilerplate(appName: string, options: InitP
 
   if (!options.workers) {
     fs.rmSync(path.join(apiRoot, 'src', 'worker.ts'))
-    fs.rmSync(path.join(apiRoot, 'src', 'conf', 'workers.ts'))
+    fs.rmSync(path.join(apiRoot, 'src', 'conf', 'initializers', 'workers.ts'))
     fs.rmSync(path.join(apiRoot, 'src', 'app', 'models', 'ApplicationBackgroundedModel.ts'))
     fs.rmSync(path.join(apiRoot, 'src', 'app', 'services', 'ApplicationBackgroundedService.ts'))
     fs.rmSync(path.join(apiRoot, 'src', 'app', 'services', 'ApplicationScheduledService.ts'))
   }
 
   if (!options.websockets) {
-    fs.rmSync(path.join(apiRoot, 'src', 'conf', 'websockets.ts'))
+    fs.rmSync(path.join(apiRoot, 'src', 'conf', 'initializers', 'websockets.ts'))
     fs.rmSync(path.join(apiRoot, 'src', 'utils', 'ws.ts'))
   }
 }

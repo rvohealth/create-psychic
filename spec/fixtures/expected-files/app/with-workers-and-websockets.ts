@@ -1,6 +1,5 @@
 import { PsychicApp } from '@rvoh/psychic'
-import { PsychicAppWebsockets } from '@rvoh/psychic-websockets'
-import { background, PsychicAppWorkers } from '@rvoh/psychic-workers'
+import { background } from '@rvoh/psychic-workers'
 import expressWinston from 'express-winston'
 import winston from 'winston'
 import AppEnv from './AppEnv.js'
@@ -9,9 +8,7 @@ import openapiRequestValidation from './openapi/openapiRequestValidation.js'
 import routesCb from './routes.js'
 import importDefault from './system/importDefault.js'
 import srcPath from './system/srcPath.js'
-import websocketsCb from './websockets.js'
 import winstonLogger from './winstonLogger.js'
-import workersCb from './workers.js'
 
 export default async (psy: PsychicApp) => {
   const apiRoot = srcPath('..')
@@ -19,6 +16,7 @@ export default async (psy: PsychicApp) => {
 
   await psy.load('controllers', srcPath('app', 'controllers'), path => importDefault(path))
   await psy.load('services', srcPath('app', 'services'), path => importDefault(path))
+  await psy.load('initializers', srcPath('conf', 'initializers'), path => importDefault(path))
 
   psy.set('appName', 'howyadoin')
   psy.set('packageManager', 'yarn')
@@ -32,13 +30,6 @@ export default async (psy: PsychicApp) => {
         key: AppEnv.string('APP_ENCRYPTION_KEY'),
       },
     },
-  })
-
-  psy.plugin(async () => {
-    await PsychicAppWebsockets.init(psy, websocketsCb)
-  })
-  psy.plugin(async () => {
-    await PsychicAppWorkers.init(psy, workersCb)
   })
 
   psy.set('inflections', inflections)
