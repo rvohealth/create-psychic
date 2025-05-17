@@ -1,5 +1,4 @@
 import { PsychicApp } from '@rvoh/psychic'
-import { background } from '@rvoh/psychic-workers'
 import expressWinston from 'express-winston'
 import winston from 'winston'
 import AppEnv from './AppEnv.js'
@@ -105,7 +104,7 @@ export default async (psy: PsychicApp) => {
   })
 
   // run a callback when the express server starts. the express app will be passed to each callback as the first argument
-  psy.on('server:init', psychicServer => {
+  psy.on('server:init:after-middleware', psychicServer => {
     const app = psychicServer.expressApp
 
     // Support application/x-www-form-urlencoded request body. This is not usually needed, since JSON is the usual standard,
@@ -150,20 +149,6 @@ export default async (psy: PsychicApp) => {
 
   // run a callback after routes are done processing
   psy.on('server:init:after-routes', () => {})
-
-  // run a callback after the config is loaded
-  psy.on('load', () => {
-    background.connect()
-  })
-
-  // run a callback after the config is loaded, but only if NODE_ENV=development
-  psy.on('load:dev', () => {})
-
-  // run a callback after the config is loaded, but only if NODE_ENV=test
-  psy.on('load:test', () => {})
-
-  // run a callback after the config is loaded, but only if NODE_ENV=production
-  psy.on('load:prod', () => {})
 
   // this function will be run any time a server error is encountered
   // that psychic isn't sure how to respond to (i.e. 500 internal server errors)
