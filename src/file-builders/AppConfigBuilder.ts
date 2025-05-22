@@ -10,11 +10,6 @@ export default class AppConfigBuilder {
     ).toString()
 
     return contents
-      .replace('<BACKGROUND_CONNECT>', options.workers ? '\n    background.connect()\n  ' : '')
-      .replace(
-        '<BACKGROUND_IMPORT>',
-        options.workers ? "\nimport { background } from '@rvoh/psychic-workers'" : ''
-      )
       .replace('<DREAM_IMPORT_STATEMENT>', dreamImportStatement(options))
       .replace('<PACKAGE_MANAGER>', options.packageManager)
       .replace('<PSYCHIC_IMPORT_STATEMENT>', psychicImportStatement(options))
