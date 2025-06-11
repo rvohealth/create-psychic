@@ -95,7 +95,6 @@ export default async (psy: PsychicApp) => {
   })
 
   psy.set('openapi', 'validation', {
-    validation: openapiRequestValidation(),
     outputFilename: 'openapi/validation.openapi.json',
     defaults: {
       components: {
@@ -107,6 +106,8 @@ export default async (psy: PsychicApp) => {
   // run a callback when the express server starts. the express app will be passed to each callback as the first argument
   psy.on('server:init:after-middleware', psychicServer => {
     const app = psychicServer.expressApp
+
+    openapiRequestValidation(app)
 
     // Support application/x-www-form-urlencoded request body. This is not usually needed, since JSON is the usual standard,
     // but some webhooks (e.g. Twilio) post application/x-www-form-urlencoded data. If this is needed, uncomment the

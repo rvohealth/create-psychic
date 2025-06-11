@@ -1,10 +1,11 @@
 import { DateTime } from '@rvoh/dream'
-import { DefaultPsychicOpenapiOptions } from '@rvoh/psychic'
+import { Express } from 'express'
+import * as OpenApiValidator from 'express-openapi-validator'
 import AppEnv from '../AppEnv.js'
 
 // see https://www.npmjs.com/package/express-openapi-validator for more info
 
-export default function openapiRequestValidation(): NonNullable<DefaultPsychicOpenapiOptions['validation']> {
+export default function openapiRequestValidation(app: Express) {
   const ignorePaths: string[] = [
     /*
      * add paths here that you wish to be ignored by openapi validation. i.e.
@@ -20,8 +21,8 @@ export default function openapiRequestValidation(): NonNullable<DefaultPsychicOp
     },
   } as const
 
-  const validationOpts: DefaultPsychicOpenapiOptions['validation'] = {
-    apiSpec: './openapi.json',
+  const validationOpts: Parameters<(typeof OpenApiValidator)['middleware']>[0] = {
+    apiSpec: './openapi/validation.openapi.json',
     validateRequests: true,
     validateResponses: AppEnv.isTest,
     ignoreUndocumented: true,
@@ -52,5 +53,5 @@ export default function openapiRequestValidation(): NonNullable<DefaultPsychicOp
     validationOpts.ignorePaths = new RegExp(ignorePaths.join('|'))
   }
 
-  return validationOpts
+  app.use(OpenApiValidator.middleware(validationOpts))
 }

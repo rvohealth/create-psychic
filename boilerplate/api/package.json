@@ -37,7 +37,7 @@
     "commander": "^12.1.0",
     "dotenv": "^16.4.7",
     "express": "^5.1.0",
-    "express-openapi-validator": "^5.3.7",
+    "express-openapi-validator": "^5.5.7",
     "express-winston": "^4.2.0",
     "ioredis": "^5.4.1",
     "kysely": "^0.27.4",
