@@ -14,22 +14,33 @@ export default class PackagejsonBuilder {
 
     // parse and stringify, since node caches this package.json import,
     // which will cause subsequent changes to this import to affect other specs
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const packagejson = {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       ...JSON.parse(JSON.stringify(imported.default)),
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     packagejson.name = appName
 
     switch (options.client) {
       case 'none':
         break
 
-      default:
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
-        ;(packagejson.scripts as any)['client'] = `yarn --cwd=../client dev`
-        ;(packagejson.scripts as any)[
+      case 'nextjs':
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        packagejson.scripts['client'] = `yarn --cwd=../client next dev`
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        packagejson.scripts[
           'client:fspec'
-        ] = `BROWSER=none VITE_PSYCHIC_ENV=test yarn --cwd=../client dev`
+        ] = `BROWSER=none NEXT_PUBLIC_PSYCHIC_ENV=test yarn --cwd=../client next dev`
+        break
+
+      default:
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        packagejson.scripts['client'] = `yarn --cwd=../client dev`
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        packagejson.scripts['client:fspec'] = `BROWSER=none VITE_PSYCHIC_ENV=test yarn --cwd=../client dev`
     }
 
     switch (options.adminClient) {
@@ -39,19 +50,21 @@ export default class PackagejsonBuilder {
       default:
         switch (options.adminClient) {
           case 'nextjs':
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
-            ;(packagejson.scripts as any)['admin'] = `yarn --cwd=../admin dev --port 3001`
-            ;(packagejson.scripts as any)[
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+            packagejson.scripts['admin'] = `yarn --cwd=../admin next dev`
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+            packagejson.scripts[
               'admin:fspec'
-            ] = `BROWSER=none VITE_PSYCHIC_ENV=test yarn --cwd=../admin dev --port 3001`
+            ] = `BROWSER=none NEXT_PUBLIC_PSYCHIC_ENV=test yarn --cwd=../admin next dev --port 3001`
             break
 
           default:
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
-            ;(packagejson.scripts as any)['admin'] = `yarn --cwd=../admin dev`
-            ;(packagejson.scripts as any)[
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+            packagejson.scripts['admin'] = `yarn --cwd=../admin dev`
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+            packagejson.scripts[
               'admin:fspec'
-            ] = `BROWSER=none VITE_PSYCHIC_ENV=test yarn --cwd=../admin dev`
+            ] = `BROWSER=none VITE_PSYCHIC_ENV=test yarn --cwd=../admin dev --port 3001`
         }
     }
 
@@ -77,6 +90,8 @@ export default class PackagejsonBuilder {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function removeDependency(packageJson: any, key: string) {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
   delete packageJson.dependencies[key]
 }

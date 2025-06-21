@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import PackagejsonBuilder from '../../../src/file-builders/PackagejsonBuilder.js'
 import { InitPsychicAppCliOptions } from '../../../src/helpers/newPsychicApp.js'
 
@@ -53,7 +55,18 @@ describe('PackagejsonBuilder', () => {
       })
     })
 
-    context('client != none', () => {
+    context('nextjs client', () => {
+      it('includes client scripts', async () => {
+        const options: InitPsychicAppCliOptions = { ...baseOptions, client: 'nextjs' }
+        const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
+        expect(JSON.parse(res).scripts['client']).toEqual('yarn --cwd=../client next dev')
+        expect(JSON.parse(res).scripts['client:fspec']).toEqual(
+          'BROWSER=none NEXT_PUBLIC_PSYCHIC_ENV=test yarn --cwd=../client next dev'
+        )
+      })
+    })
+
+    context('react client', () => {
       it('includes client scripts', async () => {
         const options: InitPsychicAppCliOptions = { ...baseOptions, client: 'react' }
         const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
@@ -64,13 +77,24 @@ describe('PackagejsonBuilder', () => {
       })
     })
 
-    context('adminClient != none', () => {
+    context('nextjs adminClient', () => {
+      it('includes admin scripts', async () => {
+        const options: InitPsychicAppCliOptions = { ...baseOptions, adminClient: 'nextjs' }
+        const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
+        expect(JSON.parse(res).scripts['admin']).toEqual('yarn --cwd=../admin next dev')
+        expect(JSON.parse(res).scripts['admin:fspec']).toEqual(
+          'BROWSER=none NEXT_PUBLIC_PSYCHIC_ENV=test yarn --cwd=../admin next dev --port 3001'
+        )
+      })
+    })
+
+    context('react adminClient', () => {
       it('includes admin scripts', async () => {
         const options: InitPsychicAppCliOptions = { ...baseOptions, adminClient: 'react' }
         const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
         expect(JSON.parse(res).scripts['admin']).toEqual('yarn --cwd=../admin dev')
         expect(JSON.parse(res).scripts['admin:fspec']).toEqual(
-          'BROWSER=none VITE_PSYCHIC_ENV=test yarn --cwd=../admin dev'
+          'BROWSER=none VITE_PSYCHIC_ENV=test yarn --cwd=../admin dev --port 3001'
         )
       })
     })
