@@ -5,6 +5,12 @@ import { background } from '@rvoh/psychic-workers'
 import increaseNodeStackTraceLimits from './conf/system/increaseNodeStackTraceLimits.js'
 import initializePsychicApp from './conf/system/initializePsychicApp.js'
 
+/**
+ * Provides an exception class which can be thrown when
+ * we do not want the error to trigger an exception log
+ */
+export class ExpectedBackgroundJobException extends Error {}
+
 increaseNodeStackTraceLimits()
 
 async function startBackgroundWorkers() {
@@ -20,16 +26,27 @@ async function startBackgroundWorkers() {
       // This is more common than the 'error' or 'stalled' events.
       // Usually handle this by sending error to your error handling service.
 
+      if (error instanceof ExpectedBackgroundJobException) return
+
       if (job) {
         PsychicApp.logWithLevel(
           'error',
           `Background job failed:
+worker.name: ${worker.name}
+worker.id: ${worker.id}
 job.name: ${job.name}
-job.id: ${job.id || 'unknown'}
-${error.message}`
+job.id: ${job.id}`,
+          error
         )
+        //
       } else {
-        PsychicApp.logWithLevel('error', error)
+        PsychicApp.logWithLevel(
+          'error',
+          `Background job failed:
+worker ${worker.name}
+worker.id: ${worker.id}`,
+          error
+        )
       }
     })
 
@@ -37,20 +54,51 @@ ${error.message}`
       // According to https://docs.bullmq.io/guide/workers:
       //   If the error handler is missing, your worker may stop processing jobs when an error is emitted
       // Handle this by sending error to your error handling service.
-      PsychicApp.logWithLevel(
-        'error',
-        `Worker error:
-${error.message}`
-      )
+      PsychicApp.logWithLevel('error', `worker ${worker.name} ${worker.id} error:`, error)
     })
 
     worker.on('stalled', error => {
       // Handle this by sending error to your error handling service.
-      PsychicApp.logWithLevel(
-        'error',
-        `Worker stalled:
-${error}`
-      )
+      PsychicApp.logWithLevel('error', `worker ${worker.name} ${worker.id} stalled:`, error)
+    })
+
+    worker.on('ioredis:close', () => {
+      PsychicApp.log(`worker ${worker.name} ${worker.id} ioredis:close`)
+    })
+
+    worker.on('drained', () => {
+      PsychicApp.log(`worker ${worker.name} ${worker.id} drained`)
+    })
+
+    worker.on('paused', () => {
+      PsychicApp.log(`worker ${worker.name} ${worker.id} paused`)
+    })
+
+    worker.on('closed', () => {
+      PsychicApp.log(`worker ${worker.name} ${worker.id} closed`)
+    })
+
+    worker.on('closing', () => {
+      PsychicApp.log(`worker ${worker.name} ${worker.id} closing`)
+    })
+  })
+
+  background.queues.forEach(queue => {
+    queue.on('error', error => {
+      // Handle this by sending error to your error handling service.
+      PsychicApp.logWithLevel('error', `queue ${queue.name} error:`, error)
+    })
+
+    queue.on('ioredis:close', () => {
+      PsychicApp.log(`queue ${queue.name} ioredis:close`)
+    })
+
+    queue.on('paused', () => {
+      PsychicApp.log(`queue ${queue.name} paused`)
+    })
+
+    queue.on('cleaned', () => {
+      PsychicApp.log(`queue ${queue.name} cleaned`)
     })
   })
 
