@@ -95,6 +95,7 @@ export default async (psy: PsychicApp) => {
 
   psy.set('openapi', 'validation', {
     outputFilename: 'openapi/validation.openapi.json',
+    syncTypes: true,
     defaults: {
       components: {
         schemas: {},
