@@ -3,7 +3,6 @@ import expressWinston from 'express-winston'
 import winston from 'winston'
 import AppEnv from './AppEnv.js'
 import inflections from './inflections.js'
-import openapiRequestValidation from './openapi/openapiRequestValidation.js'
 import routesCb from './routes.js'
 import importDefault from './system/importDefault.js'
 import srcPath from './system/srcPath.js'
@@ -106,8 +105,6 @@ export default async (psy: PsychicApp) => {
   // run a callback when the express server starts. the express app will be passed to each callback as the first argument
   psy.on('server:init:after-middleware', psychicServer => {
     const app = psychicServer.expressApp
-
-    openapiRequestValidation(app)
 
     // Support application/x-www-form-urlencoded request body. This is not usually needed, since JSON is the usual standard,
     // but some webhooks (e.g. Twilio) post application/x-www-form-urlencoded data. If this is needed, uncomment the
