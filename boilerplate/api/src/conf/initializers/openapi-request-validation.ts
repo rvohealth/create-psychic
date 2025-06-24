@@ -24,7 +24,7 @@ function openapiRequestValidation(app: Express) {
   } as const
 
   const validationOpts: Parameters<(typeof OpenApiValidator)['middleware']>[0] = {
-    apiSpec: './openapi/validation.openapi.json',
+    apiSpec: './src/openapi/validation.openapi.json',
     validateRequests: true,
     validateResponses: AppEnv.isTest,
     ignoreUndocumented: true,
