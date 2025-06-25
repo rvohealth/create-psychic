@@ -1,6 +1,7 @@
 import { DreamCLI } from '@rvoh/dream'
 import { PsychicApp, PsychicDevtools } from '@rvoh/psychic'
 import expressWinston from 'express-winston'
+import * as path from 'node:path'
 import winston from 'winston'
 import AppEnv from './AppEnv.js'
 import inflections from './inflections.js'
@@ -66,7 +67,7 @@ export default async (psy: PsychicApp) => {
   })
 
   psy.set('openapi', {
-    outputFilename: 'src/openapi/openapi.json',
+    outputFilepath: path.join('src', 'openapi', 'openapi.json'),
     defaults: {
       components: {
         schemas: {},
@@ -75,7 +76,7 @@ export default async (psy: PsychicApp) => {
   })
 
   psy.set('openapi', 'mobile', {
-    outputFilename: 'src/openapi/mobile.openapi.json',
+    outputFilepath: path.join('src', 'openapi', 'mobile.openapi.json'),
     suppressResponseEnums: true,
     defaults: {
       components: {
@@ -85,7 +86,7 @@ export default async (psy: PsychicApp) => {
   })
 
   psy.set('openapi', 'admin', {
-    outputFilename: 'src/openapi/admin.openapi.json',
+    outputFilepath: path.join('src', 'openapi', 'admin.openapi.json'),
     defaults: {
       components: {
         schemas: {},
@@ -94,7 +95,7 @@ export default async (psy: PsychicApp) => {
   })
 
   psy.set('openapi', 'validation', {
-    outputFilename: 'src/openapi/validation.openapi.json',
+    outputFilepath: path.join('src', 'openapi', 'validation.openapi.json'),
     syncTypes: true,
     defaults: {
       components: {
