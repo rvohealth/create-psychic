@@ -2,23 +2,25 @@ import c from 'yoctocolors'
 import DreamCliLogger from '../logger/DreamCliLogger.js'
 import addClientApp from './addClientApp.js'
 import apiOnlyOptions from './apiOnlyOptions.js'
-import buildNewPsychicAppOptionsWithPrompt from './buildNewPsychicAppOptionsWithPrompt.js'
-import copyApiBoilerplate from './copyApiBoilerplate.js'
 import generateUuidMigration from './generateUuidMigration.js'
 import gitInit from './gitInit.js'
-import initialGitCommit from './initialGitCommit.js'
-import installApiDependencies from './installApiDependencies.js'
+import installApiDependencies from './new/installApiDependencies.js'
 import logo from './logo.js'
+import buildNewPsychicAppOptionsWithPrompt from './new/buildNewPsychicAppOptionsWithPrompt.js'
+import copyApiBoilerplate from './new/copyApiBoilerplate.js'
+import initialGitCommit from './new/initialGitCommit.js'
+import welcomeMessage from './new/welcomeMessage.js'
 import sleep from './sleep.js'
-import welcomeMessage from './welcomeMessage.js'
 
 export const cliPrimaryKeyTypes = ['bigserial', 'serial', 'uuid'] as const
 export const cliClientAppTypes = ['nextjs', 'react', 'vue', 'nuxt', 'none'] as const
 
 export const psychicPackageManagers = ['yarn', 'pnpm', 'npm'] as const
+export const initTemplates = ['none', 'nextjs'] as const
+export const importExtensions = ['.js', '.ts', 'none'] as const
 export type PsychicPackageManager = (typeof psychicPackageManagers)[number]
 
-export interface InitPsychicAppCliOptions {
+export interface NewPsychicAppCliOptions {
   packageManager: PsychicPackageManager
   primaryKeyType: (typeof cliPrimaryKeyTypes)[number]
   client: (typeof cliClientAppTypes)[number]
@@ -27,13 +29,38 @@ export interface InitPsychicAppCliOptions {
   websockets: boolean
 }
 
+export interface InitPsychicAppCliOptions {
+  dreamOnly: boolean
+  template: (typeof initTemplates)[number]
+  importExtension: (typeof importExtensions)[number]
+  packageManager: PsychicPackageManager
+  primaryKeyType: (typeof cliPrimaryKeyTypes)[number]
+  client: (typeof cliClientAppTypes)[number]
+  adminClient: (typeof cliClientAppTypes)[number]
+  workers: boolean
+  websockets: boolean
+  serializersPath: string
+  typesPath: string
+  modelsPath: string
+  servicesPath: string
+  controllersPath: string
+  confPath: string
+  factoriesPath: string
+  modelSpecsPath: string
+  controllerSpecsPath: string
+  dbPath: string
+  openapiPath: string
+  utilsPath: string
+  executablesPath: string
+}
+
 function testEnv() {
   return process.env.NODE_ENV === 'test'
 }
 
 const logger = new DreamCliLogger()
 
-export default async function newPsychicApp(appName: string, options: InitPsychicAppCliOptions) {
+export default async function newPsychicApp(appName: string, options: NewPsychicAppCliOptions) {
   if (!testEnv()) {
     logger.log(c.greenBright(`${appName}`), {
       logPrefix: '☼',

@@ -8,6 +8,6 @@ export default function runCmdForPackageManager(packageManager: PsychicPackageMa
     case 'npm':
       return `${packageManager} run`
     default:
-      throw new Error(`unexpected package manager: ${packageManager}`)
+      throw new Error(`unexpected package manager: ${packageManager as string}`)
   }
 }

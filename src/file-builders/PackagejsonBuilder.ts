@@ -1,22 +1,15 @@
-import { InitPsychicAppCliOptions } from '../helpers/newPsychicApp.js'
+import { NewPsychicAppCliOptions } from '../helpers/newPsychicApp.js'
 import { replaceYarnInFileContents } from '../helpers/replaceYarnInFile.js'
+import safelyImportJsonFile from '../helpers/safelyImportJsonFile.js'
 
 export default class PackagejsonBuilder {
-  public static async buildAPI(appName: string, options: InitPsychicAppCliOptions) {
-    // node 20 requires us to user "assert"
-    // node >22 requires us to user "with"
-    // @ts-ignore
-    const imported = (await import('../../boilerplate/api/package.json', {
-      assert: { type: 'json' },
-      // @ts-ignore
-      with: { type: 'json' },
-    })) as any
+  public static async buildAPI(appName: string, options: NewPsychicAppCliOptions) {
+    const imported = (await safelyImportJsonFile('../../boilerplate/api/package.json')) as { default: object }
 
     // parse and stringify, since node caches this package.json import,
     // which will cause subsequent changes to this import to affect other specs
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const packagejson = {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       ...JSON.parse(JSON.stringify(imported.default)),
     }
 

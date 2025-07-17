@@ -1,9 +1,9 @@
 import FeatureSpecExampleBuilder from '../../../src/file-builders/FeatureSpecExampleBuilder.js'
-import { InitPsychicAppCliOptions } from '../../../src/helpers/newPsychicApp.js'
+import { NewPsychicAppCliOptions } from '../../../src/helpers/newPsychicApp.js'
 import expectToMatchFixture from '../../helpers/expectToMatchFixture.js'
 
 describe('FeatureSpecExampleBuilder', () => {
-  const baseOptions: InitPsychicAppCliOptions = {
+  const baseOptions: NewPsychicAppCliOptions = {
     packageManager: 'yarn',
     workers: false,
     websockets: false,
@@ -15,7 +15,7 @@ describe('FeatureSpecExampleBuilder', () => {
   describe('.build', () => {
     context('none', () => {
       it('adds client fspec devserver to boilerplate', async () => {
-        const options: InitPsychicAppCliOptions = { ...baseOptions }
+        const options: NewPsychicAppCliOptions = { ...baseOptions }
         const res = await FeatureSpecExampleBuilder.build(options)
 
         await expectToMatchFixture('expected-files/spec/features/example-feature-spec/with-none.spec.ts', res)
@@ -24,7 +24,7 @@ describe('FeatureSpecExampleBuilder', () => {
 
     context('react', () => {
       it('adds client fspec devserver to boilerplate', async () => {
-        const options: InitPsychicAppCliOptions = { ...baseOptions, client: 'react' }
+        const options: NewPsychicAppCliOptions = { ...baseOptions, client: 'react' }
         const res = await FeatureSpecExampleBuilder.build(options)
 
         await expectToMatchFixture(

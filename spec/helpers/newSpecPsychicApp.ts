@@ -1,10 +1,10 @@
 import apiOnlyOptions from '../../src/helpers/apiOnlyOptions.js'
-import newPsychicApp, { InitPsychicAppCliOptions } from '../../src/helpers/newPsychicApp.js'
+import newPsychicApp, { NewPsychicAppCliOptions } from '../../src/helpers/newPsychicApp.js'
 import runCmdForPackageManager from '../../src/helpers/runCmdForPackageManager.js'
 import sspawn from '../../src/helpers/sspawn.js'
 import expectFile from './expectFile.js'
 
-export default async function newSpecPsychicApp(appName: string, options: InitPsychicAppCliOptions) {
+export default async function newSpecPsychicApp(appName: string, options: NewPsychicAppCliOptions) {
   await newPsychicApp(appName, options)
   await expectFile('./howyadoin/README.md')
 

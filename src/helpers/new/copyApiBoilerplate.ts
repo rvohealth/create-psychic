@@ -1,18 +1,19 @@
 import * as fs from 'node:fs'
 import * as path from 'node:path'
-import AppConfigBuilder from '../file-builders/AppConfigBuilder.js'
-import DreamConfigBuilder from '../file-builders/DreamConfigBuilder.js'
-import EnvBuilder from '../file-builders/EnvBuilder.js'
-import FeatureSpecExampleBuilder from '../file-builders/FeatureSpecExampleBuilder.js'
-import FeatureSpecGlobalBuilder from '../file-builders/FeatureSpecGlobalBuilder.js'
-import PackagejsonBuilder from '../file-builders/PackagejsonBuilder.js'
-import apiOnlyOptions from './apiOnlyOptions.js'
-import copyRecursive from './copyRecursive.js'
-import getApiRoot from './getApiRoot.js'
-import internalSrcPath from './internalSrcPath.js'
-import { InitPsychicAppCliOptions } from './newPsychicApp.js'
+import AppConfigBuilder from '../../file-builders/AppConfigBuilder.js'
+import DreamConfigBuilder from '../../file-builders/DreamConfigBuilder.js'
+import EnvBuilder from '../../file-builders/EnvBuilder.js'
+import FeatureSpecExampleBuilder from '../../file-builders/FeatureSpecExampleBuilder.js'
+import FeatureSpecGlobalBuilder from '../../file-builders/FeatureSpecGlobalBuilder.js'
+import PackagejsonBuilder from '../../file-builders/PackagejsonBuilder.js'
+import SrcPathHelperBuilder from '../../file-builders/SrcPathHelperBuilder.js'
+import apiOnlyOptions from '../apiOnlyOptions.js'
+import copyRecursive from '../copyRecursive.js'
+import getApiRoot from '../getApiRoot.js'
+import internalSrcPath from '../internalSrcPath.js'
+import { NewPsychicAppCliOptions } from '../newPsychicApp.js'
 
-export default async function copyApiBoilerplate(appName: string, options: InitPsychicAppCliOptions) {
+export default async function copyApiBoilerplate(appName: string, options: NewPsychicAppCliOptions) {
   const appRoot = path.join('.', appName)
   const apiRoot = getApiRoot(appName, options)
 
@@ -31,6 +32,10 @@ export default async function copyApiBoilerplate(appName: string, options: InitP
   }
 
   fs.renameSync(path.join(apiRoot, 'gitignore'), path.join(apiRoot, '.gitignore'))
+  fs.writeFileSync(
+    path.join(apiRoot, 'src', 'conf', 'system', 'srcPath.ts'),
+    await SrcPathHelperBuilder.build(options)
+  )
 
   fs.writeFileSync(path.join(apiRoot, '.env'), EnvBuilder.build({ appName, env: 'development' }))
   fs.writeFileSync(path.join(apiRoot, '.env.test'), EnvBuilder.build({ appName, env: 'test' }))

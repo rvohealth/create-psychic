@@ -3,14 +3,14 @@ import * as path from 'node:path'
 import DreamCliLogger from '../logger/DreamCliLogger.js'
 import colorize from '../logger/loggable/colorize.js'
 import getApiRoot from './getApiRoot.js'
-import { InitPsychicAppCliOptions } from './newPsychicApp.js'
+import { NewPsychicAppCliOptions } from './newPsychicApp.js'
 import runCmdForPackageManager from './runCmdForPackageManager.js'
 import sspawn from './sspawn.js'
 import UuidExtensionMigrationBuilder from '../file-builders/UuidExtensionMigrationBuilder.js'
 
 export default async function generateUuidMigration(
   appName: string,
-  { logger, options }: { logger: DreamCliLogger; options: InitPsychicAppCliOptions }
+  { logger, options }: { logger: DreamCliLogger; options: NewPsychicAppCliOptions }
 ) {
   const apiRoot = getApiRoot(appName, options)
 

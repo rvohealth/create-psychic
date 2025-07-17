@@ -1,13 +1,13 @@
-import DreamCliLogger from '../logger/DreamCliLogger.js'
-import colorize from '../logger/loggable/colorize.js'
-import getApiRoot from './getApiRoot.js'
-import getLockfileName from './getLockfileName.js'
-import { InitPsychicAppCliOptions } from './newPsychicApp.js'
-import sspawn from './sspawn.js'
+import DreamCliLogger from '../../logger/DreamCliLogger.js'
+import colorize from '../../logger/loggable/colorize.js'
+import getApiRoot from '../getApiRoot.js'
+import getLockfileName from '../getLockfileName.js'
+import { NewPsychicAppCliOptions } from '../newPsychicApp.js'
+import sspawn from '../sspawn.js'
 
 export default async function installApiDependencies(
   appName: string,
-  { options, logger }: { options: InitPsychicAppCliOptions; logger: DreamCliLogger }
+  { options, logger }: { options: NewPsychicAppCliOptions; logger: DreamCliLogger }
 ) {
   const lockfileName = getLockfileName(options.packageManager)
   const apiRoot = getApiRoot(appName, options)
