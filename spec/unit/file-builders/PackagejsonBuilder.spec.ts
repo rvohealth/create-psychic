@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import PackagejsonBuilder from '../../../src/file-builders/PackagejsonBuilder.js'
-import { InitPsychicAppCliOptions } from '../../../src/helpers/newPsychicApp.js'
+import { NewPsychicAppCliOptions } from '../../../src/helpers/newPsychicApp.js'
 
 describe('PackagejsonBuilder', () => {
-  const baseOptions: InitPsychicAppCliOptions = {
+  const baseOptions: NewPsychicAppCliOptions = {
     packageManager: 'yarn',
     workers: false,
     websockets: false,
@@ -21,7 +21,7 @@ describe('PackagejsonBuilder', () => {
 
     context('with backgroundWorkers: false and ws: false', () => {
       it('returns the app with the specified options', async () => {
-        const options: InitPsychicAppCliOptions = { ...baseOptions }
+        const options: NewPsychicAppCliOptions = { ...baseOptions }
         const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
 
         expect(Object.keys(JSON.parse(res).dependencies)).toEqual(
@@ -57,7 +57,7 @@ describe('PackagejsonBuilder', () => {
 
     context('nextjs client', () => {
       it('includes client scripts', async () => {
-        const options: InitPsychicAppCliOptions = { ...baseOptions, client: 'nextjs' }
+        const options: NewPsychicAppCliOptions = { ...baseOptions, client: 'nextjs' }
         const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
         expect(JSON.parse(res).scripts['client']).toEqual('yarn --cwd=../client next dev')
         expect(JSON.parse(res).scripts['client:fspec']).toEqual(
@@ -68,7 +68,7 @@ describe('PackagejsonBuilder', () => {
 
     context('react client', () => {
       it('includes client scripts', async () => {
-        const options: InitPsychicAppCliOptions = { ...baseOptions, client: 'react' }
+        const options: NewPsychicAppCliOptions = { ...baseOptions, client: 'react' }
         const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
         expect(JSON.parse(res).scripts['client']).toEqual('yarn --cwd=../client dev')
         expect(JSON.parse(res).scripts['client:fspec']).toEqual(
@@ -79,7 +79,7 @@ describe('PackagejsonBuilder', () => {
 
     context('nextjs adminClient', () => {
       it('includes admin scripts', async () => {
-        const options: InitPsychicAppCliOptions = { ...baseOptions, adminClient: 'nextjs' }
+        const options: NewPsychicAppCliOptions = { ...baseOptions, adminClient: 'nextjs' }
         const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
         expect(JSON.parse(res).scripts['admin']).toEqual('yarn --cwd=../admin next dev')
         expect(JSON.parse(res).scripts['admin:fspec']).toEqual(
@@ -90,7 +90,7 @@ describe('PackagejsonBuilder', () => {
 
     context('react adminClient', () => {
       it('includes admin scripts', async () => {
-        const options: InitPsychicAppCliOptions = { ...baseOptions, adminClient: 'react' }
+        const options: NewPsychicAppCliOptions = { ...baseOptions, adminClient: 'react' }
         const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
         expect(JSON.parse(res).scripts['admin']).toEqual('yarn --cwd=../admin dev')
         expect(JSON.parse(res).scripts['admin:fspec']).toEqual(
@@ -101,7 +101,7 @@ describe('PackagejsonBuilder', () => {
 
     context('backgroundWorkers: true', () => {
       it('adds worker dependencies', async () => {
-        const options: InitPsychicAppCliOptions = { ...baseOptions, workers: true }
+        const options: NewPsychicAppCliOptions = { ...baseOptions, workers: true }
         const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
 
         expect(Object.keys(JSON.parse(res).dependencies)).toEqual(
@@ -135,7 +135,7 @@ describe('PackagejsonBuilder', () => {
 
     context('ws: true', () => {
       it('adds worker dependencies', async () => {
-        const options: InitPsychicAppCliOptions = { ...baseOptions, websockets: true }
+        const options: NewPsychicAppCliOptions = { ...baseOptions, websockets: true }
         const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
 
         expect(Object.keys(JSON.parse(res).dependencies)).toEqual(
@@ -166,7 +166,7 @@ describe('PackagejsonBuilder', () => {
 
     context('ws: true and bgWorkers: true', () => {
       it('adds worker dependencies', async () => {
-        const options: InitPsychicAppCliOptions = { ...baseOptions, workers: true, websockets: true }
+        const options: NewPsychicAppCliOptions = { ...baseOptions, workers: true, websockets: true }
         const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
 
         expect(Object.keys(JSON.parse(res).dependencies)).toEqual(

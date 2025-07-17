@@ -1,5 +1,4 @@
-import { DreamApp } from '@rvoh/dream'
-import { PsychicApp } from '@rvoh/psychic'
+import { DreamApp } from '@rvoh/dream'<PSYCHIC_IMPORT>
 import { debuglog } from 'node:util'
 import AppEnv from './AppEnv.js'
 import inflections from './inflections.js'
@@ -10,16 +9,16 @@ import srcPath from './system/srcPath.js'
 // Enable debug logging with NODE_DEBUG=sql
 const debugSql = debuglog('sql').enabled
 
-export default async function (app: DreamApp) {
+export default async (app: DreamApp) => {<PROJECT_ROOT>
   app.set('primaryKeyType', <PRIMARY_KEY_TYPE>)
-  app.set('inflections', inflections)
+  app.set('inflections', inflections)<IMPORT_STYLE>
 
-  await app.load('models', srcPath('app', 'models'), path => importDefault(path))
-  await app.load('serializers', srcPath('app', 'serializers'), path => importAll(path))
+  await app.load('models', <MODELS_PATH>, path => importDefault(path))
+  await app.load('serializers', <SERIALIZERS_PATH>, path => importAll(path))
 
   // provides a list of path overrides for your app. This is optional, and will default
   // to the paths expected for a typical psychic application.
-  app.set('paths', {})
+<DREAM_PATHS>
 
   app.set('parallelTests', AppEnv.integer('DREAM_PARALLEL_TESTS', { optional: true }) || 1)
 
@@ -50,14 +49,14 @@ export default async function (app: DreamApp) {
     if (!debugSql) return
 
     if (event.level === 'error') {
-      PsychicApp.logWithLevel('error', 'the following db query encountered an unexpected error: ', {
+      <PSYCHIC_OR_DREAM_APP>.logWithLevel('error', 'the following db query encountered an unexpected error: ', {
         durationMs: event.queryDurationMillis,
         error: event.error,
         sql: event.query.sql,
         params: event.query.parameters.map(maskPII),
       })
     } else {
-      PsychicApp.log('db query completed:', {
+      <PSYCHIC_OR_DREAM_APP>.log('db query completed:', {
         durationMs: event.queryDurationMillis,
         sql: event.query.sql,
         params: event.query.parameters.map(maskPII),

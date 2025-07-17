@@ -6,16 +6,14 @@ import AppEnv from './AppEnv.js'
 import inflections from './inflections.js'
 import routesCb from './routes.js'
 import importDefault from './system/importDefault.js'
-import srcPath from './system/srcPath.js'
-import winstonLogger from './winstonLogger.js'
+import srcPath from './system/srcPath.js'<WINSTON_LOGGER_IMPORT>
 
 export default async (psy: PsychicApp) => {
-  const apiRoot = srcPath('..')
-  psy.set('logger', winstonLogger(apiRoot))
+  const apiRoot = srcPath('..')<WINSTON_LOGGER_BINDING>
 
-  await psy.load('controllers', srcPath('app', 'controllers'), path => importDefault(path))
-  await psy.load('services', srcPath('app', 'services'), path => importDefault(path))
-  await psy.load('initializers', srcPath('conf', 'initializers'), path => importDefault(path))
+  await psy.load('controllers', <CONTROLLERS_PATH>, path => importDefault(path))
+  await psy.load('services', <SERVICES_PATH>, path => importDefault(path))
+  await psy.load('initializers', <INITIALIZERS_PATH>, path => importDefault(path))
 
   psy.set('appName', '<APP_NAME>')
   psy.set('packageManager', '<PACKAGE_MANAGER>')
@@ -29,7 +27,7 @@ export default async (psy: PsychicApp) => {
         key: AppEnv.string('APP_ENCRYPTION_KEY'),
       },
     },
-  })
+  })<IMPORT_STYLE><PSYCHIC_PATHS>
 
   psy.set('inflections', inflections)
   psy.set('routes', routesCb)
@@ -66,7 +64,7 @@ export default async (psy: PsychicApp) => {
   })
 
   psy.set('openapi', {
-    outputFilepath: path.join('src', 'openapi', 'openapi.json'),
+    outputFilepath: path.join(<PSYCHIC_OPENAPI_PATH>, 'openapi.json'),
     defaults: {
       components: {
         schemas: {},
@@ -75,7 +73,7 @@ export default async (psy: PsychicApp) => {
   })
 
   psy.set('openapi', 'mobile', {
-    outputFilepath: path.join('src', 'openapi', 'mobile.openapi.json'),
+    outputFilepath: path.join(<PSYCHIC_OPENAPI_PATH>, 'mobile.openapi.json'),
     suppressResponseEnums: true,
     defaults: {
       components: {
@@ -85,7 +83,7 @@ export default async (psy: PsychicApp) => {
   })
 
   psy.set('openapi', 'admin', {
-    outputFilepath: path.join('src', 'openapi', 'admin.openapi.json'),
+    outputFilepath: path.join(<PSYCHIC_OPENAPI_PATH>, 'admin.openapi.json'),
     defaults: {
       components: {
         schemas: {},
@@ -94,7 +92,7 @@ export default async (psy: PsychicApp) => {
   })
 
   psy.set('openapi', 'validation', {
-    outputFilepath: path.join('src', 'openapi', 'validation.openapi.json'),
+    outputFilepath: path.join(<PSYCHIC_OPENAPI_PATH>, 'validation.openapi.json'),
     syncTypes: true,
     defaults: {
       components: {

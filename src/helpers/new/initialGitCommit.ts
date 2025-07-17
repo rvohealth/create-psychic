@@ -1,7 +1,7 @@
 import * as path from 'node:path'
-import sspawn from './sspawn.js'
-import DreamCliLogger from '../logger/DreamCliLogger.js'
-import colorize from '../logger/loggable/colorize.js'
+import sspawn from '../sspawn.js'
+import DreamCliLogger from '../../logger/DreamCliLogger.js'
+import colorize from '../../logger/loggable/colorize.js'
 
 export default async function initialGitCommit(appName: string, logger: DreamCliLogger) {
   logger.logStartProgress('writing initial commit...')

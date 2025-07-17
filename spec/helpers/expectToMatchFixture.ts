@@ -24,6 +24,11 @@ const FIXTURE_PATHS = [
 
   'expected-files/spec/features/example-feature-spec/with-none.spec.ts',
   'expected-files/spec/features/example-feature-spec/with-react.spec.ts',
+
+  // init
+  'expected-files/app/init/basic.ts',
+  'expected-files/dream/init/basic.ts',
+  'expected-files/cli/dream-only.ts',
 ] as const
 
 type FixturePath = (typeof FIXTURE_PATHS)[number]

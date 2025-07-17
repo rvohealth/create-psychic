@@ -22,7 +22,15 @@ if (typeof importMeta !== 'undefined') {
   }
 }
 
+// this function ultimately needs to point to the root folder that
+// all of your code lives in. In a default psychic application, this
+// will already be correctly set for you, but if you have customized
+// the path to your psychic conf folder, this could be incorrect.
+// for example, if this file is in
+//   "my-app/src/api/conf/system/srcPath.ts",
+// then you will need to add an additional updir, like so:
+//   const pathToSrc = join(finalDirname, '..', '..', '..')
 export default function srcPath(...paths: string[]) {
-  const pathToSrc = join(finalDirname, '..', '..')
+  const pathToSrc = join(finalDirname, <SRC_UPDIRS>)
   return join(pathToSrc, ...paths)
 }

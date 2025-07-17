@@ -1,9 +1,9 @@
 import FeatureSpecGlobalBuilder from '../../../src/file-builders/FeatureSpecGlobalBuilder.js'
-import { InitPsychicAppCliOptions } from '../../../src/helpers/newPsychicApp.js'
+import { NewPsychicAppCliOptions } from '../../../src/helpers/newPsychicApp.js'
 import expectToMatchFixture from '../../helpers/expectToMatchFixture.js'
 
 describe('FeatureSpecGlobalBuilder', () => {
-  const baseOptions: InitPsychicAppCliOptions = {
+  const baseOptions: NewPsychicAppCliOptions = {
     packageManager: 'yarn',
     workers: false,
     websockets: false,
@@ -15,7 +15,7 @@ describe('FeatureSpecGlobalBuilder', () => {
   describe('.build', () => {
     context('basic', () => {
       it('adds client fspec devserver to boilerplate', async () => {
-        const options: InitPsychicAppCliOptions = { ...baseOptions }
+        const options: NewPsychicAppCliOptions = { ...baseOptions }
         const res = await FeatureSpecGlobalBuilder.build({ appName: 'howyadoin', options })
 
         await expectToMatchFixture('expected-files/spec/features/setup/globalSetup-basic.ts', res)
@@ -24,7 +24,7 @@ describe('FeatureSpecGlobalBuilder', () => {
 
     context('with client', () => {
       it('adds client fspec devserver to boilerplate', async () => {
-        const options: InitPsychicAppCliOptions = { ...baseOptions, client: 'react' }
+        const options: NewPsychicAppCliOptions = { ...baseOptions, client: 'react' }
         const res = await FeatureSpecGlobalBuilder.build({ appName: 'howyadoin', options })
 
         await expectToMatchFixture('expected-files/spec/features/setup/globalSetup-with-client.ts', res)
@@ -33,7 +33,7 @@ describe('FeatureSpecGlobalBuilder', () => {
 
     context('with admin', () => {
       it('adds admin fspec devserver to boilerplate', async () => {
-        const options: InitPsychicAppCliOptions = { ...baseOptions, adminClient: 'react' }
+        const options: NewPsychicAppCliOptions = { ...baseOptions, adminClient: 'react' }
         const res = await FeatureSpecGlobalBuilder.build({ appName: 'howyadoin', options })
 
         await expectToMatchFixture('expected-files/spec/features/setup/globalSetup-with-admin.ts', res)
@@ -42,7 +42,7 @@ describe('FeatureSpecGlobalBuilder', () => {
 
     context('with both client AND admin', () => {
       it('adds both admin and client fspec devservers to boilerplate', async () => {
-        const options: InitPsychicAppCliOptions = { ...baseOptions, client: 'react', adminClient: 'react' }
+        const options: NewPsychicAppCliOptions = { ...baseOptions, client: 'react', adminClient: 'react' }
         const res = await FeatureSpecGlobalBuilder.build({ appName: 'howyadoin', options })
 
         await expectToMatchFixture(

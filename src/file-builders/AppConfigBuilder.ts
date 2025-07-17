@@ -1,10 +1,70 @@
 import * as fs from 'node:fs/promises'
+import * as path from 'node:path'
 import apiOnlyOptions from '../helpers/apiOnlyOptions.js'
 import internalSrcPath from '../helpers/internalSrcPath.js'
-import { InitPsychicAppCliOptions } from '../helpers/newPsychicApp.js'
+import { InitPsychicAppCliOptions, NewPsychicAppCliOptions } from '../helpers/newPsychicApp.js'
+import pathToArgs from '../helpers/pathToArgs.js'
+import rewriteEsmImports from '../helpers/rewriteEsmImports.js'
 
 export default class AppConfigBuilder {
-  public static async build({ appName, options }: { appName: string; options: InitPsychicAppCliOptions }) {
+  public static async build({ appName, options }: { appName: string; options: NewPsychicAppCliOptions }) {
+    const baseContents = await this.buildCommon({ appName, options })
+    return baseContents
+      .replace('<WINSTON_LOGGER_IMPORT>', "\nimport winstonLogger from './winstonLogger.js'")
+      .replace('<WINSTON_LOGGER_BINDING>', "\n  psy.set('logger', winstonLogger(apiRoot))")
+      .replace('<IMPORT_STYLE>', '')
+      .replace(/<PSYCHIC_OPENAPI_PATH>/g, "'src', 'openapi'")
+      .replace('<PSYCHIC_PATHS>', '')
+      .replace('<CONTROLLERS_PATH>', "srcPath('app', 'controllers')")
+      .replace('<SERVICES_PATH>', "srcPath('app', 'services')")
+      .replace('<INITIALIZERS_PATH>', "srcPath('conf', 'initializers')")
+  }
+
+  public static async buildForInit({
+    appName,
+    options,
+  }: {
+    appName: string
+    options: InitPsychicAppCliOptions
+  }) {
+    const baseContents = await this.buildCommon({ appName, options })
+    const modifiedContents = baseContents
+      .replace('<WINSTON_LOGGER_IMPORT>', '')
+      .replace('<WINSTON_LOGGER_BINDING>', '')
+      .replace(
+        '<IMPORT_STYLE>',
+        options.importExtension === '.js'
+          ? ''
+          : `\n  psy.set('importExtension', '${options.importExtension}')`
+      )
+      .replace(/<PSYCHIC_OPENAPI_PATH>/g, pathToArgs(options.openapiPath))
+      .replace('<CONTROLLERS_PATH>', `srcPath('..', ${pathToArgs(options.controllersPath)})`)
+      .replace('<SERVICES_PATH>', `srcPath('..', ${pathToArgs(options.servicesPath)})`)
+      .replace('<INITIALIZERS_PATH>', `srcPath('..', ${pathToArgs(options.confPath)}, 'initializers')`)
+      .replace(
+        '<PSYCHIC_PATHS>',
+        `
+  psy.set('paths', {
+    apiRoutes: '${path.join(options.confPath, 'routes.ts')}',
+    controllers: '${options.controllersPath}',
+    services: '${options.servicesPath}',
+    controllerSpecs: '${options.controllerSpecsPath}',
+  })\
+`
+      )
+
+    return options.importExtension === '.js'
+      ? modifiedContents
+      : rewriteEsmImports(modifiedContents, options.importExtension)
+  }
+
+  private static async buildCommon({
+    appName,
+    options,
+  }: {
+    appName: string
+    options: NewPsychicAppCliOptions
+  }) {
     const contents = (
       await fs.readFile(internalSrcPath('..', 'boilerplate', 'api', 'src', 'conf', 'app.ts'))
     ).toString()
@@ -20,7 +80,7 @@ export default class AppConfigBuilder {
   }
 }
 
-function startHookContent(options: InitPsychicAppCliOptions) {
+function startHookContent(options: NewPsychicAppCliOptions) {
   if (options.client !== 'none' && options.adminClient !== 'none') {
     return `\
   psy.on('server:start', async () => {
@@ -54,7 +114,7 @@ function startHookContent(options: InitPsychicAppCliOptions) {
   }
 }
 
-function shutdownHookContent(options: InitPsychicAppCliOptions) {
+function shutdownHookContent(options: NewPsychicAppCliOptions) {
   if (options.client !== 'none' && options.adminClient !== 'none') {
     return `\
   psy.on('server:shutdown', () => {
@@ -88,14 +148,14 @@ function shutdownHookContent(options: InitPsychicAppCliOptions) {
   }
 }
 
-function dreamImportStatement(options: InitPsychicAppCliOptions) {
+function dreamImportStatement(options: NewPsychicAppCliOptions) {
   if (apiOnlyOptions(options)) {
     return ''
   }
   return "import { DreamCLI } from '@rvoh/dream'\n"
 }
 
-function psychicImportStatement(options: InitPsychicAppCliOptions) {
+function psychicImportStatement(options: NewPsychicAppCliOptions) {
   if (apiOnlyOptions(options)) {
     return "import { PsychicApp } from '@rvoh/psychic'"
   }

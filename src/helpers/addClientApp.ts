@@ -4,7 +4,7 @@ import ESLintConfBuilder from '../file-builders/EslintConfBuilder.js'
 import ViteConfBuilder from '../file-builders/ViteConfBuilder.js'
 import DreamCliLogger, { DreamCliForegroundColor } from '../logger/DreamCliLogger.js'
 import addMissingClientGitignoreStatements from './addMissingClientGitignoreStatements.js'
-import { cliClientAppTypes, InitPsychicAppCliOptions, PsychicPackageManager } from './newPsychicApp.js'
+import { cliClientAppTypes, NewPsychicAppCliOptions, PsychicPackageManager } from './newPsychicApp.js'
 import sspawn from './sspawn.js'
 import colorize from '../logger/loggable/colorize.js'
 import getLockfileName from './getLockfileName.js'
@@ -24,7 +24,7 @@ export default async function addClientApp({
   clientRootFolderName: string
   rootPath: string
   appName: string
-  options: InitPsychicAppCliOptions
+  options: NewPsychicAppCliOptions
   logger: DreamCliLogger
   sourceColor: DreamCliForegroundColor
   port: number
