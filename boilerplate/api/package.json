@@ -65,6 +65,7 @@
     "expect-playwright": "^0.8.0",
     "kysely-codegen": "~0.17.0",
     "luxon-jest-matchers": "^0.1.14",
+    "openapi-typescript": "^7.8.0",
     "prettier": "^3.3.3",
     "puppeteer": "~24.6.0",
     "supertest": "^7.0.0",
