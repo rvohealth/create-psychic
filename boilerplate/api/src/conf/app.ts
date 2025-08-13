@@ -32,6 +32,15 @@ export default async (psy: PsychicApp) => {
   psy.set('inflections', inflections)
   psy.set('routes', routesCb)
 
+  /**
+   * Uncomment to automatically replace `<`, `>`, `&`, `/`, `\`, `'`, and `"` with \u00xx unicode
+   * representations of those characters when rendering json. Note that parsing the resulting json
+   * will restore the original content and is not safe to inject directly into an html document. 
+   * In the context of modern tooling, enabling sanitization should not be necessary, but security
+   * reviews may require it. If that is the case, this config makes it easy to satisfy the requirement.
+   */
+  // psy.set('sanitizeResponseJson', true)
+
   psy.set('json', {
     limit: '20kb',
   })
