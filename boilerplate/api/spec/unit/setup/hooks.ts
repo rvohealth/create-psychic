@@ -1,10 +1,10 @@
 import '../../../src/conf/global.js'
 
-import { DreamApp } from '@rvoh/dream'
+import { Dream, DreamApp } from '@rvoh/dream'
 import { provideDreamViteMatchers, truncate } from '@rvoh/dream-spec-helpers'
 import initializePsychicApp from '../../../src/conf/system/initializePsychicApp.js'
 
-provideDreamViteMatchers()
+provideDreamViteMatchers(Dream)
 
 // define global context variable, setting it equal to describe
 // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any

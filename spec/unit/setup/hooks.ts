@@ -1,15 +1,12 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
+import { Dream } from '@rvoh/dream'
 import { provideDreamViteMatchers } from '@rvoh/dream-spec-helpers'
 import * as fs from 'node:fs/promises'
 import pg from 'pg'
 import defaultDbCredentials from '../../../src/helpers/defaultDbCredentials.js'
 
-provideDreamViteMatchers()
-
-// define global context variable, setting it equal to describe
-// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
-;(global as any).context = describe
+provideDreamViteMatchers(Dream)
 
 beforeEach(async () => {
   try {
@@ -20,7 +17,7 @@ beforeEach(async () => {
   await truncate(defaultDbCredentials('howyadoin', 'test'))
 })
 
-afterEach(async () => {
+afterEach(() => {
   try {
     // await fs.rm('howyadoin', { force: true, recursive: true })
   } catch {

@@ -1,13 +1,13 @@
 import '../../../src/conf/global.js'
 
-import { DreamApp } from '@rvoh/dream'
+import { Dream, DreamApp } from '@rvoh/dream'
 import { provideDreamViteMatchers, truncate } from '@rvoh/dream-spec-helpers'
 import { PsychicServer } from '@rvoh/psychic'
 import { providePuppeteerViteMatchers } from '@rvoh/psychic-spec-helpers'
 import initializePsychicApp from '../../../src/conf/system/initializePsychicApp.js'
 import getPage from './getPage.js'
 
-provideDreamViteMatchers()
+provideDreamViteMatchers(Dream)
 providePuppeteerViteMatchers()
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any

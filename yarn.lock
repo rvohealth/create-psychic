@@ -551,7 +551,8 @@ __metadata:
   resolution: "@rvoh/create-psychic@workspace:."
   dependencies:
     "@eslint/js": "npm:=9.0.0"
-    "@rvoh/dream-spec-helpers": "npm:=0.2.0"
+    "@rvoh/dream": "npm:=1.7.0"
+    "@rvoh/dream-spec-helpers": "npm:=1.2.0"
     "@types/node": "npm:^22.6.1"
     "@types/pg": "npm:^8"
     "@types/supertest": "npm:^6.0.2"
@@ -575,17 +576,37 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@rvoh/dream-spec-helpers@npm:=0.2.0":
-  version: 0.2.0
-  resolution: "@rvoh/dream-spec-helpers@npm:0.2.0"
+"@rvoh/dream-spec-helpers@npm:=1.2.0":
+  version: 1.2.0
+  resolution: "@rvoh/dream-spec-helpers@npm:1.2.0"
   dependencies:
     lodash.sortby: "npm:^4.7.0"
   peerDependencies:
     "@types/node": "*"
     "@types/pg": "*"
     pg: "*"
-    ts-node: "*"
-  checksum: 10c0/383d28ca32b2abd399366e996329c04ca10a2e80597fe7e476655fcffd7dca6b2109b79697964179adb2ec04f2591c6a9c41f34f4b11ba639f4429bb02885ea8
+  checksum: 10c0/686e54c9794a368c349059c362894f0e49703851d428c634fb70693d6bb3a28ee850b77ab0291437b663ce0ffd347d9e2338e151e87b02c742c49e7d786ddbe6
+  languageName: node
+  linkType: hard
+
+"@rvoh/dream@npm:=1.7.0":
+  version: 1.7.0
+  resolution: "@rvoh/dream@npm:1.7.0"
+  dependencies:
+    colorette: "npm:^2.0.20"
+    commander: "npm:^12.1.0"
+    dotenv: "npm:^16.4.5"
+    luxon: "npm:^3.5.0"
+    pluralize-esm: "npm:^9.0.5"
+    yoctocolors: "npm:^2.1.1"
+  peerDependencies:
+    "@rvoh/dream-spec-helpers": "*"
+    "@types/node": "*"
+    "@types/pg": "*"
+    kysely: ^0.27.4
+    kysely-codegen: ~0.17.0
+    pg: "*"
+  checksum: 10c0/1f98e4e0bee3de4bcbdcb01650829bcc5a7fe5b18bd190ed3f850469c62252c0c279ed90f226b4202743e53cfe8e7b9cdce58200ed0187219731a74bc557143b
   languageName: node
   linkType: hard
 
@@ -1306,6 +1327,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"colorette@npm:^2.0.20":
+  version: 2.0.20
+  resolution: "colorette@npm:2.0.20"
+  checksum: 10c0/e94116ff33b0ff56f3b83b9ace895e5bf87c2a7a47b3401b8c3f3226e050d5ef76cf4072fb3325f9dc24d1698f9b730baf4e05eeaf861d74a1883073f4c98a40
+  languageName: node
+  linkType: hard
+
 "combined-stream@npm:^1.0.8":
   version: 1.0.8
   resolution: "combined-stream@npm:1.0.8"
@@ -1326,6 +1354,13 @@ __metadata:
   version: 10.0.1
   resolution: "commander@npm:10.0.1"
   checksum: 10c0/53f33d8927758a911094adadda4b2cbac111a5b377d8706700587650fd8f45b0bbe336de4b5c3fe47fd61f420a3d9bd452b6e0e6e5600a7e74d7bf0174f6efe3
+  languageName: node
+  linkType: hard
+
+"commander@npm:^12.1.0":
+  version: 12.1.0
+  resolution: "commander@npm:12.1.0"
+  checksum: 10c0/6e1996680c083b3b897bfc1cfe1c58dfbcd9842fd43e1aaf8a795fbc237f65efcc860a3ef457b318e73f29a4f4a28f6403c3d653d021d960e4632dd45bde54a9
   languageName: node
   linkType: hard
 
@@ -1435,6 +1470,13 @@ __metadata:
   dependencies:
     path-type: "npm:^4.0.0"
   checksum: 10c0/dcac00920a4d503e38bb64001acb19df4efc14536ada475725e12f52c16777afdee4db827f55f13a908ee7efc0cb282e2e3dbaeeb98c0993dd93d1802d3bf00c
+  languageName: node
+  linkType: hard
+
+"dotenv@npm:^16.4.5":
+  version: 16.6.1
+  resolution: "dotenv@npm:16.6.1"
+  checksum: 10c0/15ce56608326ea0d1d9414a5c8ee6dcf0fffc79d2c16422b4ac2268e7e2d76ff5a572d37ffe747c377de12005f14b3cc22361e79fc7f1061cce81f77d2c973dc
   languageName: node
   linkType: hard
 
@@ -2420,6 +2462,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"luxon@npm:^3.5.0":
+  version: 3.7.1
+  resolution: "luxon@npm:3.7.1"
+  checksum: 10c0/f83bc23a4c09da9111bc2510d2f5346e1ced4938379ebff13e308fece2ea852eb6e8b9ed8053b8d82e0fce05d5dd46e4cd64d8831ca04cfe32c0954b6f087258
+  languageName: node
+  linkType: hard
+
 "magic-string@npm:^0.30.17":
   version: 0.30.17
   resolution: "magic-string@npm:0.30.17"
@@ -3046,6 +3095,13 @@ __metadata:
   version: 4.0.0
   resolution: "pino-std-serializers@npm:4.0.0"
   checksum: 10c0/9e8ccac9ce04a27ccc7aa26481d431b9e037d866b101b89d895c60b925baffb82685e84d5c29b05d8e3d7c146d766a9b08949cb24ab1ec526a16134c9962d649
+  languageName: node
+  linkType: hard
+
+"pluralize-esm@npm:^9.0.5":
+  version: 9.0.5
+  resolution: "pluralize-esm@npm:9.0.5"
+  checksum: 10c0/99708b7e9ff7b98f333bb7373e3d7f6db44edf0e700d0de18f82fd4e3bf80e47ecdcdfbbefbc91cdf304af00d0553fa8ccc79aedd7b57a2972a3355afcbf4037
   languageName: node
   linkType: hard
 

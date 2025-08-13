@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "@rvoh/create-psychic",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "creates a new psychic app",
   "author": "RVO Health",
   "repository": {
@@ -39,7 +39,8 @@
   },
   "devDependencies": {
     "@eslint/js": "=9.0.0",
-    "@rvoh/dream-spec-helpers": "=0.2.0",
+    "@rvoh/dream": "=1.7.0",
+    "@rvoh/dream-spec-helpers": "=1.2.0",
     "@types/pg": "^8",
     "@types/supertest": "^6.0.2",
     "eslint": "^9.9.1",
