@@ -7,8 +7,8 @@ import SrcPathHelperBuilder from '../../file-builders/SrcPathHelperBuilder.js'
 import copyRecursive from '../copyRecursive.js'
 import internalSrcPath from '../internalSrcPath.js'
 import { importExtensions, InitPsychicAppCliOptions } from '../newPsychicApp.js'
-import addRootPathForCoreSpecs from './addRootPathForCoreSpecs.js'
 import rewriteEsmImports from '../rewriteEsmImports.js'
+import addRootPathForCoreSpecs from './addRootPathForCoreSpecs.js'
 
 export default async function copyInitApiBoilerplate(appName: string, options: InitPsychicAppCliOptions) {
   copyRecursiveSync(
@@ -51,6 +51,7 @@ export default async function copyInitApiBoilerplate(appName: string, options: I
     rmFileSync(path.join(options.confPath, 'system', 'initializePsychicApp.ts'))
     rmFileSync(path.join(options.confPath, 'app.ts'))
     rmFileSync(path.join(options.confPath, 'routes.ts'))
+    rmFileSync(path.join(options.confPath, 'routes.admin.ts'))
     rmFileSync(path.join(options.utilsPath, 'i18n.ts'))
     rmFileSync(path.join(options.confPath, 'winstonLogger.ts'))
     rmFileSync(path.join(options.confPath, 'initializers', 'openapi-request-validation.ts'))
