@@ -84,6 +84,12 @@ export default async (psy: PsychicApp) => {
         schemas: {},
       },
     },
+    validate: {
+      requestBody: true,
+      headers: true,
+      query: true,
+      responseBody: AppEnv.isTest,
+    }
   })
 
   psy.set('openapi', 'mobile', {
@@ -103,6 +109,12 @@ export default async (psy: PsychicApp) => {
         schemas: {},
       },
     },
+    validate: {
+      requestBody: true,
+      headers: true,
+      query: true,
+      responseBody: AppEnv.isTest,
+    }
   })
 
   psy.set('openapi', 'validation', {

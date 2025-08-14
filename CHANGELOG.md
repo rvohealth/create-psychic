@@ -1,3 +1,7 @@
+## 1.0.8
+
+- use new validation engine provided by psychic
+
 ## 1.0.6
 
 - update generated db index to ensure it provides a connectionName to the underlying `untypedDb` function provided by dream, now that dream supports multiple db connections.
