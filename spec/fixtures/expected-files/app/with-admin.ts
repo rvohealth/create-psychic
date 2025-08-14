@@ -22,7 +22,7 @@ export default async (psy: PsychicApp) => {
   psy.set('packageManager', 'yarn')
   psy.set('apiOnly', false)
   psy.set('apiRoot', apiRoot)
-  psy.set('clientRoot', srcPath('..', '..', 'client'))
+
   psy.set('encryption', {
     cookies: {
       current: {
@@ -34,6 +34,11 @@ export default async (psy: PsychicApp) => {
 
   psy.set('inflections', inflections)
   psy.set('routes', routesCb)
+
+  /**
+   * Configure default headers (e.g.: overriding the default cache-control of 'max-age=0, private, must-revalidate')
+   */
+  // psy.set('defaultResponseHeaders', { 'cache-control': 'no-cache, no-store' })
 
   /**
    * Uncomment to automatically replace `<`, `>`, `&`, `/`, `\`, `'`, and `"` with \u00xx unicode

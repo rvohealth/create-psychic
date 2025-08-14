@@ -19,7 +19,7 @@ export default async (psy: PsychicApp) => {
   psy.set('packageManager', '<PACKAGE_MANAGER>')
   psy.set('apiOnly', <API_ONLY>)
   psy.set('apiRoot', apiRoot)
-  psy.set('clientRoot', srcPath('..', '..', 'client'))
+
   psy.set('encryption', {
     cookies: {
       current: {
@@ -33,9 +33,14 @@ export default async (psy: PsychicApp) => {
   psy.set('routes', routesCb)
 
   /**
+   * Configure default headers (e.g.: overriding the default cache-control of 'max-age=0, private, must-revalidate')
+   */
+  // psy.set('defaultResponseHeaders', { 'cache-control': 'no-cache, no-store' })
+
+  /**
    * Uncomment to automatically replace `<`, `>`, `&`, `/`, `\`, `'`, and `"` with \u00xx unicode
    * representations of those characters when rendering json. Note that parsing the resulting json
-   * will restore the original content and is not safe to inject directly into an html document. 
+   * will restore the original content and is not safe to inject directly into an html document.
    * In the context of modern tooling, enabling sanitization should not be necessary, but security
    * reviews may require it. If that is the case, this config makes it easy to satisfy the requirement.
    */
