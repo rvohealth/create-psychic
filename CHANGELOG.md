@@ -1,4 +1,4 @@
-## 1.0.8
+## 1.0.7
 
 - use new validation engine provided by psychic
 
