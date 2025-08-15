@@ -8,7 +8,7 @@ export default async function installInitApiDependencies(options: InitPsychicApp
   const devDeps = devDepsArr.join(' ')
 
   const baseDeps = ['@rvoh/dream', 'dotenv', 'kysely@0.27.6', 'pg', 'pluralize-esm']
-  const psychicDeps = ['@rvoh/psychic', 'express-winston', 'express-openapi-validator', 'express', 'winston']
+  const psychicDeps = ['@rvoh/psychic', 'express-winston', 'express', 'winston']
   const depsArr = options.dreamOnly ? baseDeps : [...baseDeps, ...psychicDeps]
 
   if (options.workers || options.websockets) depsArr.push('ioredis')
