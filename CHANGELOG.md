@@ -1,3 +1,7 @@
+## 1.0.9
+
+- openapi and param validation error logging in dev
+
 ## 1.0.8
 
 - detailed openapi validation errors only in dev or test
