@@ -92,6 +92,7 @@ export default async (psy: PsychicApp) => {
       headers: true,
       query: true,
       responseBody: AppEnv.isTest,
+      detailedErrors: AppEnv.isDevelopmentOrTest,
     }
   })
 
@@ -117,6 +118,7 @@ export default async (psy: PsychicApp) => {
       headers: true,
       query: true,
       responseBody: AppEnv.isTest,
+      detailedErrors: AppEnv.isDevelopmentOrTest,
     }
   })
 

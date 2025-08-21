@@ -1,3 +1,7 @@
+## 1.0.8
+
+- detailed openapi validation errors only in dev or test
+
 ## 1.0.7
 
 - use new validation engine provided by psychic
