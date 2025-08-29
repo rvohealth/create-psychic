@@ -62,8 +62,8 @@ export default async (psy: PsychicApp) => {
   // from the SSL certificate that you'll install on your load balancer.
   if (AppEnv.isProduction) {
     psy.set('ssl', {
-      key: AppEnv.string('SSL_KEY_PATH'),
-      cert: AppEnv.string('SSL_CERT_PATH'),
+      key: AppEnv.string('SSL_KEY_PATH', { optional: true }),
+      cert: AppEnv.string('SSL_CERT_PATH', { optional: true }),
     })
   }
 

@@ -9,6 +9,7 @@ DB_USER=${creds.user}
 DB_NAME=${creds.name}
 DB_PORT=${creds.port}
 DB_HOST=${creds.host}
+DB_PASSWORD=${creds.password}
 REPLICA_DB_PORT=${creds.port}
 REPLICA_DB_HOST=${creds.host}
 DB_NO_SSL=1
