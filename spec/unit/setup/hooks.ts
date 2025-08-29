@@ -5,10 +5,13 @@ import { provideDreamViteMatchers } from '@rvoh/dream-spec-helpers'
 import * as fs from 'node:fs/promises'
 import pg from 'pg'
 import defaultDbCredentials from '../../../src/helpers/defaultDbCredentials.js'
+import PackagejsonSpecHacker from '../../helpers/PackagejsonSpecHacker.js'
 
 provideDreamViteMatchers(Dream)
 
 beforeEach(async () => {
+  await PackagejsonSpecHacker.hackPackageJson()
+
   try {
     await fs.rm('howyadoin', { force: true, recursive: true })
   } catch {
@@ -17,12 +20,8 @@ beforeEach(async () => {
   await truncate(defaultDbCredentials('howyadoin', 'test'))
 })
 
-afterEach(() => {
-  try {
-    // await fs.rm('howyadoin', { force: true, recursive: true })
-  } catch {
-    //
-  }
+afterEach(async () => {
+  await PackagejsonSpecHacker.unhackPackageJson()
 })
 
 export default async function truncate({

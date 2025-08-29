@@ -70,6 +70,18 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
+
+      - name: Remove packageManager field from package.json
+        run: |
+          node -e "
+            const fs = require('fs');
+            if (fs.existsSync('package.json')) {
+              const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+              delete packageJson.packageManager;
+              fs.writeFileSync('package.json', JSON.stringify(packageJson, null, 2));
+            }
+          "
+
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
