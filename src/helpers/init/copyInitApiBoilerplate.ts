@@ -126,8 +126,22 @@ export default async function copyInitApiBoilerplate(appName: string, options: I
       // we do not want instrumentation files unless we have psychic,
       // since the only purpose of the instrumentation file is to sidecar
       // a psychic server to the starting of the nextjs dev server
-      if (!options.dreamOnly) {
-        const srcPath = fs.existsSync(path.join('.', 'src')) ? path.join('.', 'src') : path.join('.')
+      const srcPath = fs.existsSync(path.join('.', 'src')) ? path.join('.', 'src') : path.join('.')
+
+      if (options.dreamOnly) {
+        copyRecursiveSync(
+          internalSrcPath(
+            '..',
+            'boilerplate',
+            'additional',
+            'templates',
+            'nextjs',
+            'maybeInitializeDreamApp.ts'
+          ),
+          path.join(srcPath, 'api', 'conf', 'system', 'maybeInitializeDreamApp.ts'),
+          options.importExtension
+        )
+      } else {
         copyRecursiveSync(
           internalSrcPath('..', 'boilerplate', 'additional', 'templates', 'nextjs', 'instrumentation.ts'),
           path.join(srcPath, 'instrumentation.mts'),
@@ -143,6 +157,18 @@ export default async function copyInitApiBoilerplate(appName: string, options: I
             'instrumentation-node.ts'
           ),
           path.join(srcPath, 'instrumentation-node.mts'),
+          options.importExtension
+        )
+        copyRecursiveSync(
+          internalSrcPath(
+            '..',
+            'boilerplate',
+            'additional',
+            'templates',
+            'nextjs',
+            'maybeInitializePsychicApp.ts'
+          ),
+          path.join(srcPath, 'api', 'conf', 'system', 'maybeInitializePsychicApp.ts'),
           options.importExtension
         )
       }
