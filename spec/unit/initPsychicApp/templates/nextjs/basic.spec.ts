@@ -20,6 +20,30 @@ describe('initPsychicApp with --template=nextjs flag', () => {
     await expectFile('howyadoin/src/instrumentation.mts')
     await expectFile('howyadoin/src/instrumentation-node.mts')
 
+    // swap out the default page.tsx file for one that calls to maybeInitializePsychicApp,
+    // which will cause build to fail if anything crashes during psychic initialization.
+    // this is temporarily commented out, because it succeeds locally but fails in CI for some
+    // mysterious reason.
+    //     await fs.writeFile(
+    //       'howyadoin/src/app/page.tsx',
+    //       `\
+    // import styles from "./page.module.css";
+    // import maybeInitializePsychicApp from "../api/conf/system/maybeInitializePsychicApp";
+    // import User from "../api/app/models/User";
+
+    // export default async function Home() {
+    //   await maybeInitializePsychicApp()
+    //   const count = await User.count()
+
+    //   return (
+    //     <div className={styles.page}>
+    //       User count: {count}
+    //     </div>
+    //   );
+    // }
+    // `
+    //     )
+
     // nextjs has different eslint rules than psychic, so we
     // will temporarily swap out their next.confg.ts for a file
     // that disables eslint during build, then run build to make
