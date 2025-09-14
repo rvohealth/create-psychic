@@ -1,3 +1,10 @@
+## 1.0.12
+
+- bump Dream and Psychic
+- ensure migrations have been run prior to spec runs
+- swap arguments to db()
+- nodemon
+
 ## 1.0.9
 
 - openapi and param validation error logging in dev
