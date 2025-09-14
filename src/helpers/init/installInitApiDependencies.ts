@@ -7,7 +7,7 @@ export default async function installInitApiDependencies(options: InitPsychicApp
   const devDepsArr = options.dreamOnly ? baseDevDeps : [...baseDevDeps, ...psychicDevDeps]
   const devDeps = devDepsArr.join(' ')
 
-  const baseDeps = ['@rvoh/dream', 'dotenv', 'kysely@0.27.6', 'pg', 'pluralize-esm']
+  const baseDeps = ['@rvoh/dream', 'dotenv', 'kysely', 'pg', 'pluralize-esm']
   const psychicDeps = ['@rvoh/psychic', 'express-winston', 'express', 'winston']
   const depsArr = options.dreamOnly ? baseDeps : [...baseDeps, ...psychicDeps]
 
