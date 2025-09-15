@@ -52,6 +52,8 @@ export default class AppConfigBuilder {
   })\
 `
       )
+      .replace(/AppEnv\.string\('SSL_KEY_PATH'\)/, "AppEnv.string('SSL_KEY_PATH', { optional: true })")
+      .replace(/AppEnv\.string\('SSL_CERT_PATH'\)/, "AppEnv.string('SSL_CERT_PATH', { optional: true })")
 
     return options.importExtension === '.js'
       ? modifiedContents
