@@ -1,11 +1,23 @@
 import { Dream, Encrypt } from '@rvoh/dream'
 import { PsychicServer } from '@rvoh/psychic'
-import { OpenapiSpecRequest } from '@rvoh/psychic-spec-helpers'
+import { OpenapiRequestBody, OpenapiRequestQuery, OpenapiSpecRequest } from '@rvoh/psychic-spec-helpers'
 import User from '../../../src/app/models/User.js'
 import AppEnv from '../../../src/conf/AppEnv.js'
 import { paths as OpenapiPaths } from '../../../src/types/openapi/validation.openapi.js'
 
 export type SpecRequestType = Awaited<ReturnType<typeof session>>
+
+export type RequestBody<HttpMethod extends 'get' | 'post' | 'patch' | 'delete', Uri> = OpenapiRequestBody<
+  OpenapiPaths,
+  HttpMethod,
+  Uri
+>
+
+export type RequestQuery<HttpMethod extends 'get' | 'post' | 'patch' | 'delete', Uri> = OpenapiRequestQuery<
+  OpenapiPaths,
+  HttpMethod,
+  Uri
+>
 
 // eslint-disable-next-line @typescript-eslint/require-await
 async function userJwt(user: User): Promise<string> {

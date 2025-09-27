@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "@rvoh/create-psychic",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "creates a new psychic app",
   "author": "RVO Health",
   "repository": {
@@ -54,7 +54,7 @@
     "typedoc": "^0.26.6",
     "typescript": "^5.5.4",
     "typescript-eslint": "=7.18.0",
-    "vitest": "^3.1.1"
+    "vitest": "^3.2.4"
   },
   "packageManager": "yarn@1.22.19+sha1.4ba7fc5c6e704fce2066ecbfb0b0d8976fe62447"
 }
