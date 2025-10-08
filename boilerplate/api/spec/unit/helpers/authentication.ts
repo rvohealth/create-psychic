@@ -3,7 +3,7 @@ import { PsychicServer } from '@rvoh/psychic'
 import { OpenapiRequestBody, OpenapiRequestQuery, OpenapiSpecRequest } from '@rvoh/psychic-spec-helpers'
 import User from '../../../src/app/models/User.js'
 import AppEnv from '../../../src/conf/AppEnv.js'
-import { paths as OpenapiPaths } from '../../../src/types/openapi/validation.openapi.js'
+import { paths as OpenapiPaths } from '../../../src/types/openapi/spec.openapi.js'
 
 export type SpecRequestType = Awaited<ReturnType<typeof session>>
 

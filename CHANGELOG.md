@@ -1,3 +1,11 @@
+## 1.0.14
+
+- fix spec boilerplate (authentication helper was pointing to legacy type file)
+
+## 1.0.13
+
+- RequestBody and RequestQuery in boilerplate
+
 ## 1.0.12
 
 - bump Dream and Psychic
