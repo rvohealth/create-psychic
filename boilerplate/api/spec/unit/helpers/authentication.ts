@@ -53,7 +53,7 @@ export async function session(user: Dream) {
 
   /** if using password authentication*/
   // const sessionPath = user instanceof User ? '/session' : '/admin/session'
-  // return await request.session(sessionPath, 204, {
+  // return await request.session('post', sessionPath, 204, {
   //   data: {
   //     email: user.email,
   //     password: 'spec-user-password',
