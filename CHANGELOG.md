@@ -1,6 +1,7 @@
 ## 1.0.15
 
 - minor fixes and gitignore/gitkeep changes
+- update `setupPolly` boilerplate to record all requests by default
 
 ## 1.0.14
 

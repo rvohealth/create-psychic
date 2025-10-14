@@ -67,17 +67,17 @@ export default function setupPolly({
     )
   })
 
-  // Default: simply passthrough all URLs
-  polly.server.any().passthrough()
+  /**
+   * record all external requests by default
+   */
+  polly.server.any().passthrough(false)
 
-  // Then: add passthrough(false) for all URLs you want to record
-  polly.server.any(`${process.env.SOME_SAAS_HOST}/*`).passthrough(false)
-
-  // Last: add passthrough(true) for URLs encompassed by wildcard URLs that you have set to passthrough(false)
-  // but that you don't want recorded
-  polly.server
-    .any(`${process.env.SOME_SAAS_HOST}/${process.env.API_ID_FOR_SOME_SAAS_HOST}/oauth2/v2.0/token`)
-    .passthrough(false)
+  /**
+   * carve out individual requests that should not be recorded
+   */
+  // polly.server
+  //   .any(`${process.env.SOME_SAAS_HOST}/${process.env.API_ID_FOR_SOME_SAAS_HOST}/oauth2/v2.0/token`)
+  //   .passthrough(false)
 
   onTestFinished(async () => await polly.stop())
 
