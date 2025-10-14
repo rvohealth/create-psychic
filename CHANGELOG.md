@@ -1,3 +1,7 @@
+## 1.0.15
+
+- minor fixes and gitignore/gitkeep changes
+
 ## 1.0.14
 
 - fix spec boilerplate (authentication helper was pointing to legacy type file)
