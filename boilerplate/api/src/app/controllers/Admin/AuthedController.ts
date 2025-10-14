@@ -27,7 +27,7 @@ export default class AdminAuthedController extends ApplicationController {
   }
 
   protected authedAdminUserId(): string | null {
-    if (process.env.NODE_ENV !== 'test')
+    if (!AppEnv.isTest)
       throw new Error(
         'The current authentication scheme is only for early development. Replace with a production grade authentication scheme.'
       )
