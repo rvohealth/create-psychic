@@ -1,8 +1,8 @@
+import AppEnv from '@conf/AppEnv.js'
 import { PsychicApp } from '@rvoh/psychic'
 import { PsychicAppWebsockets } from '@rvoh/psychic-websockets'
 import { Redis } from 'ioredis'
-import AppEnv from '../AppEnv.js'
-// import User from '../app/models/User.js'
+// import User from '@models/User.js'
 
 export default (psy: PsychicApp) => {
   psy.plugin(async () => {

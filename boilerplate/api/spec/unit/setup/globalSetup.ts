@@ -1,4 +1,4 @@
-import '../../../src/conf/global.js'
+import '@conf/loadEnv.js'
 
 export async function setup() {
   // your custom setup here...

@@ -10,8 +10,6 @@ export default class AppConfigBuilder {
   public static async build({ appName, options }: { appName: string; options: NewPsychicAppCliOptions }) {
     const baseContents = await this.buildCommon({ appName, options })
     return baseContents
-      .replace('<WINSTON_LOGGER_IMPORT>', "\nimport winstonLogger from './winstonLogger.js'")
-      .replace('<WINSTON_LOGGER_BINDING>', "\n  psy.set('logger', winstonLogger(apiRoot))")
       .replace('<IMPORT_STYLE>', '')
       .replace(/<PSYCHIC_OPENAPI_PATH>/g, "'src', 'openapi'")
       .replace('<PSYCHIC_PATHS>', '')
@@ -29,8 +27,6 @@ export default class AppConfigBuilder {
   }) {
     const baseContents = await this.buildCommon({ appName, options })
     const modifiedContents = baseContents
-      .replace('<WINSTON_LOGGER_IMPORT>', '')
-      .replace('<WINSTON_LOGGER_BINDING>', '')
       .replace(
         '<IMPORT_STYLE>',
         options.importExtension === '.js'

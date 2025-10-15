@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import '../global.js'
+import '../loadEnv.js'
 
 import { DreamCLI } from '@rvoh/dream'
 import { Command } from 'commander'

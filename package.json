@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "@rvoh/create-psychic",
-  "version": "1.0.15",
+  "version": "1.0.16",
   "description": "creates a new psychic app",
   "author": "RVO Health",
   "repository": {

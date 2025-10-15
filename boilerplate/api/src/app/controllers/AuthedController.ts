@@ -1,9 +1,9 @@
+import AppEnv from '@conf/AppEnv.js'
+import ApplicationController from '@controllers/ApplicationController.js'
 import { Encrypt } from '@rvoh/dream'
 import { BeforeAction } from '@rvoh/psychic'
-import AppEnv from '../../conf/AppEnv.js'
-import ApplicationController from './ApplicationController.js'
 /** uncomment after creating User model */
-// import User from '../models/User.js'
+// import User from '@models/User.js'
 
 export default class AuthedController extends ApplicationController {
   /** uncomment after creating User model */

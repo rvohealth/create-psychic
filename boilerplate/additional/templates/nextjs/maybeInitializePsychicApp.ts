@@ -1,5 +1,5 @@
+import initializePsychicApp from '@conf/system/initializePsychicApp.js'
 import { PsychicApp } from '@rvoh/psychic'
-import initializePsychicApp from './initializePsychicApp.js'
 
 export default async function maybeInitializePsychicApp() {
   try {

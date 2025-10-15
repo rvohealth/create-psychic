@@ -20,7 +20,18 @@
     /* Dream models are initialized from options passed into .new/.create and from the database. */
     "strictPropertyInitialization": false,
     "target": "ES2022",
-    "useUnknownInCatchVariables": true
+    "useUnknownInCatchVariables": true,
+
+    "baseUrl": "./",
+    "paths": {
+      "@conf/*": ["./src/conf/*"],
+      "@controllers/*": ["./src/app/controllers/*"],
+      "@models/*": ["./src/app/models/*"],
+      "@serializers/*": ["./src/app/serializers/*"],
+      "@services/*": ["./src/app/services/*"],
+      "@spec/*": ["./spec/*"],
+      "@src/*": ["./src/*"]
+    }
   },
   "include": ["src", "noop"]
 }

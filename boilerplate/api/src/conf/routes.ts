@@ -1,5 +1,5 @@
+import adminRoutes from '@conf/routes.admin.js'
 import { PsychicRouter } from '@rvoh/psychic'
-import adminRoutes from './routes.admin.js'
 
 export default function routes(r: PsychicRouter) {
   adminRoutes(r)

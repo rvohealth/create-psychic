@@ -1,3 +1,7 @@
+## 1.0.16
+
+- absolute paths
+
 ## 1.0.15
 
 - minor fixes and gitignore/gitkeep changes

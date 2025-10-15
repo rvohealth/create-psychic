@@ -1,9 +1,9 @@
+import AppEnv from '@conf/AppEnv.js'
+import User from '@models/User.js'
 import { Dream, Encrypt } from '@rvoh/dream'
 import { PsychicServer } from '@rvoh/psychic'
 import { OpenapiRequestBody, OpenapiRequestQuery, OpenapiSpecRequest } from '@rvoh/psychic-spec-helpers'
-import User from '../../../src/app/models/User.js'
-import AppEnv from '../../../src/conf/AppEnv.js'
-import { paths as OpenapiPaths } from '../../../src/types/openapi/spec.openapi.js'
+import { paths as OpenapiPaths } from '@src/types/openapi/spec.openapi.js'
 
 export type SpecRequestType = Awaited<ReturnType<typeof session>>
 

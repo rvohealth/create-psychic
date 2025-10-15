@@ -4,6 +4,7 @@ import AppConfigBuilder from '../../file-builders/AppConfigBuilder.js'
 import DreamConfigBuilder from '../../file-builders/DreamConfigBuilder.js'
 import EnvBuilder from '../../file-builders/EnvBuilder.js'
 import SrcPathHelperBuilder from '../../file-builders/SrcPathHelperBuilder.js'
+import TsConfigBuilder from '../../file-builders/TsConfigBuilder.js'
 import copyRecursive from '../copyRecursive.js'
 import internalSrcPath from '../internalSrcPath.js'
 import { importExtensions, InitPsychicAppCliOptions } from '../newPsychicApp.js'
@@ -91,6 +92,7 @@ export default async function copyInitApiBoilerplate(appName: string, options: I
       path.join(options.confPath, 'app.ts'),
       await AppConfigBuilder.buildForInit({ appName, options })
     )
+
     copyRecursiveSync(
       internalSrcPath('..', 'boilerplate', 'api', 'src', 'openapi'),
       options.openapiPath,
@@ -103,6 +105,8 @@ export default async function copyInitApiBoilerplate(appName: string, options: I
       options.importExtension
     )
   }
+
+  TsConfigBuilder.build({ options })
 
   if (!options.workers) {
     rmFileSync(path.join(options.confPath, 'initializers', 'workers.ts'))

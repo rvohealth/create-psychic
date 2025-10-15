@@ -1,8 +1,8 @@
 import { BackgroundJobConfig, BaseBackgroundedModel } from '@rvoh/psychic-workers'
-import { DBClass } from '../../types/db.js'
-import { connectionTypeConfig, schema } from '../../types/dream.js'
-import { globalTypeConfig } from '../../types/dream.globals.js'
-import psychicTypes from '../../types/psychic.js'
+import { DBClass } from '@src/types/db.js'
+import { globalTypeConfig } from '@src/types/dream.globals.js'
+import { connectionTypeConfig, schema } from '@src/types/dream.js'
+import psychicTypes from '@src/types/psychic.js'
 
 export default class ApplicationBackgroundedModel extends BaseBackgroundedModel {
   public declare DB: DBClass

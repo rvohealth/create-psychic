@@ -1,10 +1,11 @@
 import { DreamApp } from '@rvoh/dream'<PSYCHIC_IMPORT>
+
+import AppEnv from '@conf/AppEnv.js'
+import inflections from '@conf/inflections.js'
+import importAll from '@conf/system/importAll.js'
+import importDefault from '@conf/system/importDefault.js'
+import srcPath from '@conf/system/srcPath.js'
 import { debuglog } from 'node:util'
-import AppEnv from './AppEnv.js'
-import inflections from './inflections.js'
-import importAll from './system/importAll.js'
-import importDefault from './system/importDefault.js'
-import srcPath from './system/srcPath.js'
 
 // Enable debug logging with NODE_DEBUG=sql
 const debugSql = debuglog('sql').enabled

@@ -1,6 +1,6 @@
+import AppEnv from '@conf/AppEnv.js'
 import * as path from 'node:path'
 import * as winston from 'winston'
-import AppEnv from './AppEnv.js'
 
 export default function winstonLogger(rootPath: string) {
   const logDirectory = path.join(rootPath, 'logs')

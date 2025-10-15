@@ -17,7 +17,7 @@ export default function initPsychicAppDefaults(): InitPsychicAppCliOptions {
     executablesPath: 'src/api',
     openapiPath: 'src/api/openapi',
     factoriesPath: 'spec/factories',
-    typesPath: 'src/api/types',
+    typesPath: 'src/types',
     utilsPath: 'src/api/utils',
     controllerSpecsPath: 'spec/unit/controllers',
     modelSpecsPath: 'spec/unit/models',

@@ -1,9 +1,9 @@
-import './loadEnv.js'
+import '@conf/loadEnv.js'
 
+import AppEnv from '@conf/AppEnv.js'
+import initializeDreamApp from '@conf/system/initializeDreamApp.js'
 import { loadRepl } from '@rvoh/dream'
 import * as repl from 'node:repl'
-import AppEnv from './AppEnv.js'
-import initializeDreamApp from './system/initializeDreamApp.js'
 
 const replServer = repl.start('> ')
 

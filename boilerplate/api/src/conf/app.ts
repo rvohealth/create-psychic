@@ -1,15 +1,19 @@
 <DREAM_IMPORT_STATEMENT><PSYCHIC_IMPORT_STATEMENT>
-import expressWinston from 'express-winston'
+
+import AppEnv from '@conf/AppEnv.js'
+import inflections from '@conf/inflections.js'
+import routesCb from '@conf/routes.js'
+import importDefault from '@conf/system/importDefault.js'
+import srcPath from '@conf/system/srcPath.js'
 import * as path from 'node:path'
+
+import winstonLogger from '@conf/winstonLogger.js'
+import expressWinston from 'express-winston'
 import winston from 'winston'
-import AppEnv from './AppEnv.js'
-import inflections from './inflections.js'
-import routesCb from './routes.js'
-import importDefault from './system/importDefault.js'
-import srcPath from './system/srcPath.js'<WINSTON_LOGGER_IMPORT>
 
 export default async (psy: PsychicApp) => {
-  const apiRoot = srcPath('..')<WINSTON_LOGGER_BINDING>
+  const apiRoot = srcPath('..')
+  psy.set('logger', winstonLogger(apiRoot))
 
   await psy.load('controllers', <CONTROLLERS_PATH>, path => importDefault(path))
   await psy.load('services', <SERVICES_PATH>, path => importDefault(path))

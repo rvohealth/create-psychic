@@ -1,11 +1,11 @@
-import '../../../src/conf/global.js'
+import '@conf/loadEnv.js'
 
+import initializePsychicApp from '@conf/system/initializePsychicApp.js'
 import { Dream, DreamApp } from '@rvoh/dream'
 import { provideDreamViteMatchers, truncate } from '@rvoh/dream-spec-helpers'
 import { PsychicServer } from '@rvoh/psychic'
 import { providePuppeteerViteMatchers } from '@rvoh/psychic-spec-helpers'
-import initializePsychicApp from '../../../src/conf/system/initializePsychicApp.js'
-import getPage from './getPage.js'
+import getPage from '@spec/features/setup/getPage.js'
 
 provideDreamViteMatchers(Dream)
 providePuppeteerViteMatchers()

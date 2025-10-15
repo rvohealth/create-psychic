@@ -1,6 +1,20 @@
+import '../../src/conf/loadEnv.js'
+
 import { defineConfig } from 'vitest/config'
+import srcPath from '../../src/conf/system/srcPath.js'
 
 export default defineConfig({
+  resolve: {
+    alias: {
+      '@conf': srcPath('conf'),
+      '@controllers': srcPath('app', 'controllers'),
+      '@models': srcPath('app', 'models'),
+      '@serializers': srcPath('app', 'serializers'),
+      '@services': srcPath('app', 'services'),
+      '@spec': srcPath('..', 'spec'),
+      '@src': srcPath(),
+    },
+  },
   test: {
     dir: './spec/features',
     globals: true,

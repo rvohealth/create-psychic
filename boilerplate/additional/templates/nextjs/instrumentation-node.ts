@@ -1,5 +1,5 @@
+import initializePsychicApp from '@conf/system/initializePsychicApp.js'
 import { PsychicServer } from '@rvoh/psychic'
-import initializePsychicApp from './api/conf/system/initializePsychicApp.js'
 
 export default async function nodeInstrumentation() {
   await initializePsychicApp()

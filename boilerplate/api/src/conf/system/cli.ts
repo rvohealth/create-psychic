@@ -5,7 +5,7 @@
 // commanderjs docs:
 // https://github.com/tj/commander.js#quick-start
 
-import '../global.js'
+import '../loadEnv.js'
 
 import { PsychicCLI } from '@rvoh/psychic'
 import { Command } from 'commander'

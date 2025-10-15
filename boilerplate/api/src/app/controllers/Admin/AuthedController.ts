@@ -1,9 +1,9 @@
+import AppEnv from '@conf/AppEnv.js'
+import ApplicationController from '@controllers/ApplicationController.js'
 import { Encrypt } from '@rvoh/dream'
 import { BeforeAction, PsychicOpenapiNames } from '@rvoh/psychic'
-import AppEnv from '../../../conf/AppEnv.js'
-import ApplicationController from '../ApplicationController.js'
 /** uncomment after creating AdminUser model */
-// import AdminUser from '../../models/AdminUser.js'
+// import AdminUser from '@models/AdminUser.js'
 
 export default class AdminAuthedController extends ApplicationController {
   public static override get openapiNames(): PsychicOpenapiNames<ApplicationController> {

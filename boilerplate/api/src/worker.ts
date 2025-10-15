@@ -1,9 +1,9 @@
-import './conf/global.js'
+import '@conf/loadEnv.js'
 
+import increaseNodeStackTraceLimits from '@conf/system/increaseNodeStackTraceLimits.js'
+import initializePsychicApp from '@conf/system/initializePsychicApp.js'
 import { PsychicApp } from '@rvoh/psychic'
 import { background } from '@rvoh/psychic-workers'
-import increaseNodeStackTraceLimits from './conf/system/increaseNodeStackTraceLimits.js'
-import initializePsychicApp from './conf/system/initializePsychicApp.js'
 
 /**
  * Provides an exception class which can be thrown when

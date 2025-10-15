@@ -1,10 +1,11 @@
 import { DreamApp } from '@rvoh/dream'
+
+import AppEnv from '@conf/AppEnv.js'
+import inflections from '@conf/inflections.js'
+import importAll from '@conf/system/importAll.js'
+import importDefault from '@conf/system/importDefault.js'
+import srcPath from '@conf/system/srcPath.js'
 import { debuglog } from 'node:util'
-import AppEnv from './AppEnv.js'
-import inflections from './inflections.js'
-import importAll from './system/importAll.js'
-import importDefault from './system/importDefault.js'
-import srcPath from './system/srcPath.js'
 
 // Enable debug logging with NODE_DEBUG=sql
 const debugSql = debuglog('sql').enabled
@@ -22,7 +23,7 @@ export default async (app: DreamApp) => {
   app.set('paths', {
     conf: 'src/api/conf',
     db: 'src/api/db',
-    types: 'src/api/types',
+    types: 'src/types',
     factories: 'spec/factories',
     models: 'src/api/app/models',
     modelSpecs: 'spec/unit/models',
