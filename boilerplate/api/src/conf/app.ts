@@ -12,6 +12,8 @@ import expressWinston from 'express-winston'
 import winston from 'winston'
 
 export default async (psy: PsychicApp) => {
+  Error.stackTraceLimit = 50
+
   const apiRoot = srcPath('..')
   psy.set('logger', winstonLogger(apiRoot))
 

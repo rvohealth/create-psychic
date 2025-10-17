@@ -1,6 +1,5 @@
 import '@conf/loadEnv.js'
 
-import increaseNodeStackTraceLimits from '@conf/system/increaseNodeStackTraceLimits.js'
 import initializePsychicApp from '@conf/system/initializePsychicApp.js'
 import { PsychicApp } from '@rvoh/psychic'
 import { background } from '@rvoh/psychic-workers'
@@ -10,8 +9,6 @@ import { background } from '@rvoh/psychic-workers'
  * we do not want the error to trigger an exception log
  */
 export class ExpectedBackgroundJobException extends Error {}
-
-increaseNodeStackTraceLimits()
 
 async function startBackgroundWorkers() {
   await initializePsychicApp()
