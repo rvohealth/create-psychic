@@ -1,6 +1,6 @@
 import '@conf/loadEnv.js'
 
-import { PsychicDevtools } from '@rvoh/psychic'
+import { PsychicDevtools } from '@rvoh/psychic/internal'
 
 export async function setup() {
   await PsychicDevtools.launchDevServer('clientFspecApp', { port: 3000, cmd: 'yarn client:fspec' })

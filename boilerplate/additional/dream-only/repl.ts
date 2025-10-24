@@ -2,7 +2,7 @@ import '@conf/loadEnv.js'
 
 import AppEnv from '@conf/AppEnv.js'
 import initializeDreamApp from '@conf/system/initializeDreamApp.js'
-import { loadRepl } from '@rvoh/dream'
+import { loadRepl } from '@rvoh/dream/internal'
 import * as repl from 'node:repl'
 
 const replServer = repl.start('> ')
