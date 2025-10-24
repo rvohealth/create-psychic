@@ -1,4 +1,5 @@
-import { BackgroundJobConfig, BaseBackgroundedModel } from '@rvoh/psychic-workers'
+import { BaseBackgroundedModel } from '@rvoh/psychic-workers'
+import { BackgroundJobConfig } from '@rvoh/psychic-workers/types'
 import { DBClass } from '@src/types/db.js'
 import { globalTypeConfig } from '@src/types/dream.globals.js'
 import { connectionTypeConfig, schema } from '@src/types/dream.js'

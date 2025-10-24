@@ -157,5 +157,6 @@ function psychicImportStatement(options: NewPsychicAppCliOptions) {
   if (apiOnlyOptions(options)) {
     return "import { PsychicApp } from '@rvoh/psychic'"
   }
-  return "import { PsychicApp, PsychicDevtools } from '@rvoh/psychic'"
+  return `import { PsychicApp } from '@rvoh/psychic'
+import { PsychicDevtools } from '@rvoh/psychic/internal'`
 }
