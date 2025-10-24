@@ -1,6 +1,6 @@
 import AppEnv from '@conf/AppEnv.js'
 import ApplicationController from '@controllers/ApplicationController.js'
-import { Encrypt } from '@rvoh/dream'
+import { Encrypt } from '@rvoh/dream/utils'
 import { BeforeAction } from '@rvoh/psychic'
 /** uncomment after creating User model */
 // import User from '@models/User.js'

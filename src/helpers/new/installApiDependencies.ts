@@ -15,7 +15,7 @@ export default async function installApiDependencies(
   switch (options.packageManager) {
     case 'yarn':
       await sspawn(
-        `cd ${apiRoot} && touch ${lockfileName} && corepack enable yarn && yarn set version stable && yarn install && yarn add @rvoh/dream @rvoh/psychic`,
+        `cd ${apiRoot} && touch ${lockfileName} && corepack enable yarn && yarn set version stable && yarn install`,
         {
           onStdout: message => {
             logger.logContinueProgress(colorize('[api]', { color: 'cyan' }) + ' ' + message, {
