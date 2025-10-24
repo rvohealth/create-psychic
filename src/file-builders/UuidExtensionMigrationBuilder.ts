@@ -2,7 +2,7 @@ export default class UuidExtensionMigrationBuilder {
   public static build() {
     return `\
 import { Kysely } from 'kysely'
-import { DreamMigrationHelpers } from '@rvoh/dream'
+import { DreamMigrationHelpers } from '@rvoh/dream/db'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function up(db: Kysely<any>): Promise<void> {
