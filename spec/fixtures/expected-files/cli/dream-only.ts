@@ -2,7 +2,7 @@
 
 import '../loadEnv.js'
 
-import { DreamCLI } from '@rvoh/dream'
+import { DreamCLI } from '@rvoh/dream/system'
 import { Command } from 'commander'
 import seedDb from '../../db/seed.js'
 import initializeDreamApp from './initializeDreamApp.js'

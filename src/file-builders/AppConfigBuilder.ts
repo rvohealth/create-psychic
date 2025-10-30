@@ -150,7 +150,7 @@ function dreamImportStatement(options: NewPsychicAppCliOptions) {
   if (apiOnlyOptions(options)) {
     return ''
   }
-  return "import { DreamCLI } from '@rvoh/dream'\n"
+  return "import { DreamCLI } from '@rvoh/dream/system'\n"
 }
 
 function psychicImportStatement(options: NewPsychicAppCliOptions) {
@@ -158,5 +158,5 @@ function psychicImportStatement(options: NewPsychicAppCliOptions) {
     return "import { PsychicApp } from '@rvoh/psychic'"
   }
   return `import { PsychicApp } from '@rvoh/psychic'
-import { PsychicDevtools } from '@rvoh/psychic/internal'`
+import { PsychicDevtools } from '@rvoh/psychic/system'`
 }

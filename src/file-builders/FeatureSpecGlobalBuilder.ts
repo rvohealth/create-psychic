@@ -27,7 +27,7 @@ function psychicImports(options: NewPsychicAppCliOptions) {
   if (options.client === 'none' && options.adminClient === 'none') {
     return ''
   } else {
-    return "\n\nimport { PsychicDevtools } from '@rvoh/psychic/internal'"
+    return "\n\nimport { PsychicDevtools } from '@rvoh/psychic/system'"
   }
 }
 
