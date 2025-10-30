@@ -1,6 +1,6 @@
 import AppEnv from '@conf/AppEnv.js'
 import { PsychicApp } from '@rvoh/psychic'
-import { PsychicAppWorkers } from '@rvoh/psychic-workers/types'
+import { PsychicAppWorkers } from '@rvoh/psychic-workers'
 import { Queue, Worker } from 'bullmq'
 import { Cluster, Redis } from 'ioredis'
 import * as os from 'os'
