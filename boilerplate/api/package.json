@@ -29,7 +29,7 @@
     "@bull-board/express": "^5.21.4",
     "@rvoh/dream": "=2.0.0-alpha.3",
     "@rvoh/psychic": "=2.0.0-alpha.2",
-    "@rvoh/psychic-websockets": "=2.0.0-alpha.1",
+    "@rvoh/psychic-websockets": "=2.0.0-alpha.2",
     "@rvoh/psychic-workers": "=2.0.0-alpha.2",
     "@socket.io/redis-adapter": "^8.3.0",
     "@socket.io/redis-emitter": "^5.1.0",
