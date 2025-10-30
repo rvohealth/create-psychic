@@ -2,6 +2,16 @@
 
 This repo houses the cli tool used to provision new psychic apps.
 
+## Specs
+
+To run specs:
+
+```console
+DEBUG=1 yarn spec
+# OR, to run a specific spec
+DEBUG=1 yarn spec spec/unit/initPsychicApp/basic.spec.ts
+```
+
 ## Testing
 
 To test the new app builder, you can run `yarn psy new myapp` from within the project directory.
