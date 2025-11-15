@@ -23,8 +23,7 @@ PsychicCLI.provide(program, {
 
 const SUPPORTED_AI_ENUM_VALUES = ['cursor', 'copilot', 'claude'] as const
 type SUPPORTED_AI_ENUM = (typeof SUPPORTED_AI_ENUM_VALUES)[number]
-const AI_RULES_URL =
-  'https://raw.githubusercontent.com/rvohealth/create-psychic/refs/heads/create-psychic/2.0/ai/rules'
+const AI_RULES_URL = 'https://raw.githubusercontent.com/rvohealth/create-psychic/refs/heads/main/ai/rules'
 const AI_FILE_MAP: Record<SUPPORTED_AI_ENUM, string> = {
   claude: 'CLAUDE.md',
   copilot: '.github/copilot-instructions.md',
