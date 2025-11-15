@@ -203,6 +203,17 @@ After a generator has run:
 
 When working with this codebase, prioritize Dream and Psychic patterns and conventions. Refer to the official documentation at https://psychicframework.com/ when needed.
 
+## Customizing These Rules
+
+- **Any customizations to these rules must be added AFTER the following marker:**
+  ```
+  //////////////////////////////////////////////
+  // end:OFFICIAL PSYCHIC RULES DO NOT MODIFY //
+  //////////////////////////////////////////////
+  ```
+- **Do not modify any content above this marker** - it will be replaced when `yarn psy sync:ai-rules` is run
+- **All project-specific customizations should be placed below the end marker**
+
 //////////////////////////////////////////////
 // end:OFFICIAL PSYCHIC RULES DO NOT MODIFY //
 //////////////////////////////////////////////
