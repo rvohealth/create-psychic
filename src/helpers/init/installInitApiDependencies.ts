@@ -7,16 +7,16 @@ export default async function installInitApiDependencies(options: InitPsychicApp
   const devDepsArr = options.dreamOnly ? baseDevDeps : [...baseDevDeps, ...psychicDevDeps]
   const devDeps = devDepsArr.join(' ')
 
-  const baseDeps = ['@rvoh/dream@alpha', 'dotenv', 'kysely', 'pg', 'pluralize-esm']
-  const psychicDeps = ['@rvoh/psychic@alpha', 'express-winston', 'express', 'winston']
+  const baseDeps = ['@rvoh/dream', 'dotenv', 'kysely', 'pg', 'pluralize-esm']
+  const psychicDeps = ['@rvoh/psychic', 'express-winston', 'express', 'winston']
   const depsArr = options.dreamOnly ? baseDeps : [...baseDeps, ...psychicDeps]
 
   if (options.workers || options.websockets) depsArr.push('ioredis')
 
-  if (options.workers) depsArr.push('@rvoh/psychic-workers@alpha', 'bullmq')
+  if (options.workers) depsArr.push('@rvoh/psychic-workers', 'bullmq')
   if (options.websockets)
     depsArr.push(
-      '@rvoh/psychic-websockets@alpha',
+      '@rvoh/psychic-websockets',
       '@socket.io/redis-adapter',
       '@socket.io/redis-emitter',
       'socket.io',

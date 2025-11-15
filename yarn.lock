@@ -565,7 +565,7 @@ __metadata:
   resolution: "@rvoh/create-psychic@workspace:."
   dependencies:
     "@eslint/js": "npm:=9.0.0"
-    "@rvoh/dream": "npm:^2.0.0-alpha.3"
+    "@rvoh/dream": "npm:^2.0.0"
     "@rvoh/dream-spec-helpers": "npm:^1.2.0"
     "@types/node": "npm:^22.6.1"
     "@types/pg": "npm:^8"
@@ -604,9 +604,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rvoh/dream@npm:^2.0.0-alpha.3":
-  version: 2.0.0-alpha.3
-  resolution: "@rvoh/dream@npm:2.0.0-alpha.3"
+"@rvoh/dream@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "@rvoh/dream@npm:2.0.0"
   dependencies:
     colorette: "npm:^2.0.20"
     commander: "npm:^12.1.0"
@@ -621,7 +621,7 @@ __metadata:
     kysely: ^0.28.5
     kysely-codegen: ~0.19.0
     pg: "*"
-  checksum: 10c0/dec517cb362d4c010fa83dc0670cd63ecf963f14293c6ba5ccf8d716f520c86a8954080f5647bb0a22ddcb898aabc457fd1289e8ce897ebe97d69531d2a3500d
+  checksum: 10c0/8c56893a11d5272761589a4e042ecd67af1e2388e1039eeb465756bacd1e974f0ba1afb6a937bf4753287bf50bc1fc5dafbf6f9b273ce6baa9fca4cb0506cd53
   languageName: node
   linkType: hard
 
