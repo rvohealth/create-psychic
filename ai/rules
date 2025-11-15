@@ -5,7 +5,7 @@
 // is run
 
 //////////////////////////////////////////
-// OFFICIAL PSYCHIC RULES
+// OFFICIAL PSYCHIC RULES DO NOT MODIFY //
 //////////////////////////////////////////
 
 # Dream ORM and Psychic Framework Rules
@@ -203,6 +203,6 @@ After a generator has run:
 
 When working with this codebase, prioritize Dream and Psychic patterns and conventions. Refer to the official documentation at https://psychicframework.com/ when needed.
 
-//////////////////////////////////////////
-// end:OFFICIAL PSYCHIC RULES
-//////////////////////////////////////////
+//////////////////////////////////////////////
+// end:OFFICIAL PSYCHIC RULES DO NOT MODIFY //
+//////////////////////////////////////////////
