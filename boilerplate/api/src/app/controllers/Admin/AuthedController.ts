@@ -1,7 +1,8 @@
 import AppEnv from '@conf/AppEnv.js'
 import ApplicationController from '@controllers/ApplicationController.js'
-import { Encrypt } from '@rvoh/dream'
-import { BeforeAction, PsychicOpenapiNames } from '@rvoh/psychic'
+import { Encrypt } from '@rvoh/dream/utils'
+import { BeforeAction } from '@rvoh/psychic'
+import { PsychicOpenapiNames } from '@rvoh/psychic/openapi'
 /** uncomment after creating AdminUser model */
 // import AdminUser from '@models/AdminUser.js'
 

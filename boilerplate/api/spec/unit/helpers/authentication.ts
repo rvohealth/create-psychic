@@ -1,6 +1,7 @@
 import AppEnv from '@conf/AppEnv.js'
 import User from '@models/User.js'
-import { Dream, Encrypt } from '@rvoh/dream'
+import { Dream } from '@rvoh/dream'
+import { Encrypt } from '@rvoh/dream/utils'
 import { PsychicServer } from '@rvoh/psychic'
 import { OpenapiRequestBody, OpenapiRequestQuery, OpenapiSpecRequest } from '@rvoh/psychic-spec-helpers'
 import { paths as OpenapiPaths } from '@src/types/openapi/spec.openapi.js'

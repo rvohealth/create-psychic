@@ -1,5 +1,6 @@
-import { DreamCLI } from '@rvoh/dream'
-import { PsychicApp, PsychicDevtools } from '@rvoh/psychic'
+import { DreamCLI } from '@rvoh/dream/system'
+import { PsychicApp } from '@rvoh/psychic'
+import { PsychicDevtools } from '@rvoh/psychic/system'
 
 import AppEnv from '@conf/AppEnv.js'
 import inflections from '@conf/inflections.js'

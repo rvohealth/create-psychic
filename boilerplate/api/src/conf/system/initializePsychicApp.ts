@@ -1,4 +1,5 @@
-import { PsychicApp, PsychicAppInitOptions } from '@rvoh/psychic'
+import { PsychicApp } from '@rvoh/psychic'
+import { PsychicAppInitOptions } from '@rvoh/psychic/types'
 import psychicConf from '../app.js'
 import dreamConf from '../dream.js'
 
