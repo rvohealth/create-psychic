@@ -22,7 +22,6 @@ export default defineConfig({
     fileParallelism: false,
     maxConcurrency: 1,
     maxWorkers: 1,
-    minWorkers: 1,
     watch: false,
     mockReset: true,
     clearMocks: true,

@@ -1,11 +1,11 @@
 import { launchPage } from '@rvoh/psychic-spec-helpers'
 import { debuglog } from 'node:util'
-import { LaunchOptions, Page } from 'puppeteer'
+import { LaunchOptions } from 'puppeteer'
 
 // Enable debug logging with NODE_DEBUG=fspec
 const debugFspec = debuglog('fspec').enabled
 
-let page: Page
+let page: Awaited<ReturnType<typeof launchPage>>
 
 export default async function getPage(opts?: LaunchOptions) {
   if (!page) {

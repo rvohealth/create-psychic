@@ -1,3 +1,7 @@
+## 2.0.0
+
+- Dream & Psychic 2.0
+
 ## 1.0.16
 
 - absolute paths
