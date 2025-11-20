@@ -1,3 +1,11 @@
+## 2.0.3
+
+- bump packages
+
+## 2.0.2
+
+- fix typo in readme boilerplate
+
 ## 2.0.0
 
 - Dream & Psychic 2.0
