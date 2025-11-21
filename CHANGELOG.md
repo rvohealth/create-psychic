@@ -1,5 +1,9 @@
 ## 2.0.3
 
+- bump Node to 24.11.1
+
+## 2.0.3
+
 - bump packages
 
 ## 2.0.2
