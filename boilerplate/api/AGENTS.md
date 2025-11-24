@@ -8,6 +8,8 @@
 // OFFICIAL PSYCHIC RULES DO NOT MODIFY //
 //////////////////////////////////////////
 
+# AGENTS.md
+
 # Dream ORM and Psychic Framework Rules
 
 This project uses [Dream ORM](https://github.com/rvohealth/dream) and [Psychic web framework](https://github.com/rvohealth/psychic), which are open-source frameworks that provide:
@@ -113,6 +115,7 @@ After a generator has run:
    - Then update the corresponding generated controller
    - **Note**: Controller specs will hang if there is no response within a controller (the code for each controller action in the generated controller starts out commented out)
 5. **Commit generated code as its own commit** with a commit message in the following format:
+
    - First line: Indicate what was generated (e.g., "Generated Room resource")
    - Blank line
    - "```console"
