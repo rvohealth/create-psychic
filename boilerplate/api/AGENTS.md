@@ -10,26 +10,9 @@
 
 # AGENTS.md
 
-# Dream ORM and Psychic Framework Rules
+## Dream ORM and Psychic Framework
 
-This project uses [Dream ORM](https://github.com/rvohealth/dream) and [Psychic web framework](https://github.com/rvohealth/psychic), which are open-source frameworks that provide:
-
-## Dream ORM
-
-- TypeScript-first ORM built on Kysely
-- Active Record pattern with associations
-- Migrations and schema management
-- Serializers for API responses
-- Factory pattern for testing
-
-## Psychic Framework
-
-- Web framework built on Express
-- Integrates with Dream ORM
-- Automatic OpenAPI spec generation
-- WebSocket support
-- Background job processing with BullMQ
-- Generator commands for scaffolding (models, controllers, serializers, etc.)
+This project uses [Dream ORM](https://github.com/rvohealth/dream) and [Psychic web framework](https://github.com/rvohealth/psychic).
 
 ## Project Structure
 
@@ -56,7 +39,12 @@ This project uses [Dream ORM](https://github.com/rvohealth/dream) and [Psychic w
 - Controllers extend `ApplicationController`, `AuthedController`, or `UnauthedController`
 - Serializers define API response structure
 - Use `yarn psy` commands for CLI operations (db:migrate, g:model, g:controller, etc.)
-- **Always check `yarn psy <command> --help` before using any generator or CLI command** to understand the correct syntax and available options
+- **CRITICAL: ALWAYS run `yarn psy <command> --help` BEFORE running any generator command to verify the exact syntax and available options.**
+- **Do NOT rely on memory or assumptions about generator syntax.** Common mistakes include:
+  - Assuming flags like `:unique` exist (they don't - check `--help` to see actual options)
+  - Wrong argument order (model name vs namespace vs fields)
+  - Guessing at field type syntax
+- **If a generator fails or produces unexpected output, the first step is to re-check `--help`.**
 - Generator commands follow patterns like: `yarn psy g:model ModelName field:type`
 - STI (Single Table Inheritance) is supported for models
 

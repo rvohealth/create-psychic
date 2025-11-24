@@ -21,7 +21,8 @@ PsychicCLI.provide(program, {
   seedDb,
 })
 
-const AI_RULES_URL = 'https://raw.githubusercontent.com/rvohealth/create-psychic/refs/heads/main/ai/rules'
+const AI_RULES_URL =
+  'https://raw.githubusercontent.com/rvohealth/create-psychic/refs/heads/main/boilerplate/api/AGENTS.md'
 
 program
   .command('sync:ai-rules')
