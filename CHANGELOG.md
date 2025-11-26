@@ -1,3 +1,7 @@
+## 2.0.6
+
+update readme to mention AGENTS.md
+
 ## 2.0.5
 
 AGENTS.md
