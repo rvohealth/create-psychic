@@ -87,8 +87,8 @@ jobs:
         with:
           version: 10
 
-      - run: npm install -g corepack
       - run: corepack enable
+      - run: NODE_ENV=development yarn install --immutable
 
       - run: 'echo "nodeLinker: node-modules" > ./.yarnrc.yml'
       - run: 'echo -e "npmScopes:" >> ./.yarnrc.yml'
@@ -128,8 +128,8 @@ jobs:
         with:
           node-version: "24"
 
-      - run: npm install -g corepack
       - run: corepack enable
+      - run: NODE_ENV=development yarn install --immutable
 
       - run: 'echo "nodeLinker: node-modules" > ./.yarnrc.yml'
       - run: 'echo -e "npmScopes:" >> ./.yarnrc.yml'
