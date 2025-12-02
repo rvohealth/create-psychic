@@ -1,6 +1,7 @@
 ## 2.0.6
 
-update readme to mention AGENTS.md
+- update readme to mention AGENTS.md
+- fix `setupPolly` for controller specs
 
 ## 2.0.5
 

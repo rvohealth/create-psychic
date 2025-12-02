@@ -63,7 +63,7 @@ export default function setupPolly({
   polly.server.any().on('beforePersist', (req, recording) => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
     recording.request.headers = recording.request.headers.filter(
-      ({ name }: any) => !excludedRequestHeaders.includes(name)
+      ({ name }: any) => !excludedRequestHeaders.includes(name),
     )
   })
 
@@ -71,6 +71,14 @@ export default function setupPolly({
    * record all external requests by default
    */
   polly.server.any().passthrough(false)
+
+  /**
+   * allow all localhost requests so requests to the app itself are not recorded
+   */
+  polly.server
+    .any()
+    .filter(req => /^https?:\/\/(localhost|127.0.0.1)/.test(req.url || ''))
+    .passthrough(true)
 
   /**
    * carve out individual requests that should not be recorded
