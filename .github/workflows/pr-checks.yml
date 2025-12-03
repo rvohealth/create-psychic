@@ -89,11 +89,6 @@ jobs:
 
       - run: corepack enable
 
-      - run: 'echo "nodeLinker: node-modules" > ./.yarnrc.yml'
-      - run: 'echo -e "npmScopes:" >> ./.yarnrc.yml'
-      - run: 'echo -e "  rvohealth:" >> ./.yarnrc.yml'
-      - run: 'echo -e "    npmRegistryServer: ''https://npm.pkg.github.com''" >> ./.yarnrc.yml'
-
       - name: Cache node_modules
         id: cache-node-modules
         uses: actions/cache@v4
@@ -127,11 +122,6 @@ jobs:
           node-version: "24"
 
       - run: corepack enable
-
-      - run: 'echo "nodeLinker: node-modules" > ./.yarnrc.yml'
-      - run: 'echo -e "npmScopes:" >> ./.yarnrc.yml'
-      - run: 'echo -e "  rvohealth:" >> ./.yarnrc.yml'
-      - run: 'echo -e "    npmRegistryServer: ''https://npm.pkg.github.com''" >> ./.yarnrc.yml'
 
       - name: Cache node_modules
         id: cache-node-modules
