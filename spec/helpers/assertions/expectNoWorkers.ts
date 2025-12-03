@@ -6,4 +6,5 @@ export default async function expectNoWorkers() {
   await expectNoFile('howyadoin/src/api/app/models/ApplicationBackgroundedModel.ts')
   await expectNoFile('howyadoin/src/api/app/services/ApplicationBackgroundedService.ts')
   await expectNoFile('howyadoin/src/api/app/services/ApplicationScheduledService.ts')
+  await expectNoFile('howyadoin/src/api/app/types/workers.ts')
 }

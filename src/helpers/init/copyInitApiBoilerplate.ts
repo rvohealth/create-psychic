@@ -110,6 +110,7 @@ export default async function copyInitApiBoilerplate(appName: string, options: I
 
   if (!options.workers) {
     rmFileSync(path.join(options.confPath, 'initializers', 'workers.ts'))
+    rmFileSync(path.join(options.typesPath, 'workers.ts'))
     rmFileSync(path.join(options.modelsPath, 'ApplicationBackgroundedModel.ts'))
 
     // services folder only exists if dreamOnly is false

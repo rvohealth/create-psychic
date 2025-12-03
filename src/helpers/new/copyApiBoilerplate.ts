@@ -23,20 +23,13 @@ export default async function copyApiBoilerplate(appName: string, options: NewPs
 
   fs.cpSync(internalSrcPath('..', 'boilerplate', 'README.md'), path.join(appRoot, 'README.md'))
 
-  // yarnrc.yml included as non-dot-file so that it becomes part of the package
-  // move it to .yarnrc.yml if using yarn; otherwise, delete it
-  if (options.packageManager === 'yarn') {
-    fs.renameSync(path.join(apiRoot, 'yarnrc.yml'), path.join(apiRoot, '.yarnrc.yml'))
-  } else {
-    fs.rmSync(path.join(apiRoot, 'yarnrc.yml'))
-  }
-
   fs.renameSync(path.join(apiRoot, 'gitignore'), path.join(apiRoot, '.gitignore'))
   fs.writeFileSync(
     path.join(apiRoot, 'src', 'conf', 'system', 'srcPath.ts'),
     await SrcPathHelperBuilder.build(options)
   )
 
+  fs.writeFileSync(path.join(apiRoot, '.node-version'), process.version.replace(/^v/, ''))
   fs.writeFileSync(path.join(apiRoot, '.env'), EnvBuilder.build({ appName, env: 'development' }))
   fs.writeFileSync(path.join(apiRoot, '.env.test'), EnvBuilder.build({ appName, env: 'test' }))
   fs.writeFileSync(path.join(apiRoot, 'package.json'), await PackagejsonBuilder.buildAPI(appName, options))
@@ -64,6 +57,7 @@ export default async function copyApiBoilerplate(appName: string, options: NewPs
   if (!options.workers) {
     fs.rmSync(path.join(apiRoot, 'src', 'worker.ts'))
     fs.rmSync(path.join(apiRoot, 'src', 'conf', 'initializers', 'workers.ts'))
+    fs.rmSync(path.join(apiRoot, 'src', 'types', 'workers.ts'))
     fs.rmSync(path.join(apiRoot, 'src', 'app', 'models', 'ApplicationBackgroundedModel.ts'))
     fs.rmSync(path.join(apiRoot, 'src', 'app', 'services', 'ApplicationBackgroundedService.ts'))
     fs.rmSync(path.join(apiRoot, 'src', 'app', 'services', 'ApplicationScheduledService.ts'))
