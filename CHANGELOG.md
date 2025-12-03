@@ -1,3 +1,9 @@
+## 2.1.0
+
+- update readme to mention AGENTS.md
+- fix `setupPolly` for controller specs
+- Update boilerplate for latest Dream and Psychic
+
 ## 2.0.5
 
 AGENTS.md
