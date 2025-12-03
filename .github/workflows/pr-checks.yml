@@ -87,7 +87,6 @@ jobs:
         with:
           version: 10
 
-      - run: npm install -g corepack
       - run: corepack enable
 
       - run: 'echo "nodeLinker: node-modules" > ./.yarnrc.yml'
@@ -128,7 +127,6 @@ jobs:
         with:
           node-version: "24"
 
-      - run: npm install -g corepack
       - run: corepack enable
 
       - run: 'echo "nodeLinker: node-modules" > ./.yarnrc.yml'
