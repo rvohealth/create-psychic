@@ -92,7 +92,6 @@ jobs:
       - run: 'echo "nodeLinker: node-modules" > ./.yarnrc.yml'
       - run: 'echo -e "npmScopes:" >> ./.yarnrc.yml'
       - run: 'echo -e "  rvohealth:" >> ./.yarnrc.yml'
-      - run: 'echo -e "    npmAuthToken: ''${{ secrets.GITHUB_TOKEN }}''" >> ./.yarnrc.yml'
       - run: 'echo -e "    npmRegistryServer: ''https://npm.pkg.github.com''" >> ./.yarnrc.yml'
 
       - name: Cache node_modules
@@ -132,7 +131,6 @@ jobs:
       - run: 'echo "nodeLinker: node-modules" > ./.yarnrc.yml'
       - run: 'echo -e "npmScopes:" >> ./.yarnrc.yml'
       - run: 'echo -e "  rvohealth:" >> ./.yarnrc.yml'
-      - run: 'echo -e "    npmAuthToken: ''${{ secrets.GITHUB_TOKEN }}''" >> ./.yarnrc.yml'
       - run: 'echo -e "    npmRegistryServer: ''https://npm.pkg.github.com''" >> ./.yarnrc.yml'
 
       - name: Cache node_modules
