@@ -1,10 +1,10 @@
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: psychic-cli
-  description: global CLI for psychic
+  name: create-psychic
+  description: new Psychic app generator
   annotations:
-    github.com/project-slug: rvohealth/psychic-cli
+    github.com/project-slug: rvohealth/create-psychic
 spec:
   type: library # can be one of: service, library, website, event-driven-service
   lifecycle: production # can be one of: experimental, production, deprecated
