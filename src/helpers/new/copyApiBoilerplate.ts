@@ -23,6 +23,14 @@ export default async function copyApiBoilerplate(appName: string, options: NewPs
 
   fs.cpSync(internalSrcPath('..', 'boilerplate', 'README.md'), path.join(appRoot, 'README.md'))
 
+  // yarnrc.yml included as non-dot-file so that it becomes part of the package
+  // move it to .yarnrc.yml if using yarn; otherwise, delete it
+  if (options.packageManager === 'yarn') {
+    fs.renameSync(path.join(apiRoot, 'yarnrc.yml'), path.join(apiRoot, '.yarnrc.yml'))
+  } else {
+    fs.rmSync(path.join(apiRoot, 'yarnrc.yml'))
+  }
+
   fs.renameSync(path.join(apiRoot, 'gitignore'), path.join(apiRoot, '.gitignore'))
   fs.writeFileSync(
     path.join(apiRoot, 'src', 'conf', 'system', 'srcPath.ts'),
