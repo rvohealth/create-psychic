@@ -44,6 +44,7 @@
     "pluralize-esm": "^9.0.5",
     "socket.io": "^4.8.0",
     "socket.io-adapter": "^2.5.5",
+    "typescript": "^5.5.4",
     "winston": "^3.14.2"
   },
   "devDependencies": {
@@ -71,7 +72,6 @@
     "supertest": "^7.0.0",
     "tsc-alias": "^1.8.16",
     "tsx": "^4.19.3",
-    "typescript": "^5.5.4",
     "typescript-eslint": "^8.4.0",
     "vitest": "^4.0.10"
   }

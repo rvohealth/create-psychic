@@ -1,3 +1,7 @@
+## 2.1.1
+
+- add typescript as explicit dependency, since it is now required for the new AST building mechanisms in dream/psychic.
+
 ## 2.1.0
 
 - update readme to mention AGENTS.md
