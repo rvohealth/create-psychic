@@ -4,7 +4,7 @@ import { Dream } from '@rvoh/dream'
 import { Encrypt } from '@rvoh/dream/utils'
 import { PsychicServer } from '@rvoh/psychic'
 import { OpenapiRequestBody, OpenapiRequestQuery, OpenapiSpecRequest } from '@rvoh/psychic-spec-helpers'
-import { paths as OpenapiPaths } from '@src/types/openapi/spec.openapi.js'
+import { paths as OpenapiPaths } from '@src/types/openapi/tests.openapi.js'
 
 export type SpecRequestType = Awaited<ReturnType<typeof session>>
 

@@ -8,7 +8,7 @@ import { PsychicOpenapiNames } from '@rvoh/psychic/openapi'
 
 export default class AdminAuthedController extends ApplicationController {
   public static override get openapiNames(): PsychicOpenapiNames<ApplicationController> {
-    return ['admin', 'validation']
+    return ['admin', 'tests']
   }
 
   /** uncomment after creating AdminUser model */

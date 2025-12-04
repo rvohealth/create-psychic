@@ -129,8 +129,8 @@ export default async (psy: PsychicApp) => {
     }
   })
 
-  psy.set('openapi', 'validation', {
-    outputFilepath: path.join('src', 'api', 'openapi', 'spec.openapi.json'),
+  psy.set('openapi', 'tests', {
+    outputFilepath: path.join('src', 'api', 'openapi', 'tests.openapi.json'),
     syncTypes: true,
     defaults: {
       components: {
