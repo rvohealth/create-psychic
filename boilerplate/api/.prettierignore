@@ -8,3 +8,4 @@ src/conf/routeTypes.ts
 dist/
 .yarn/
 .yarnrc.yml
+pnpm-lock.yaml

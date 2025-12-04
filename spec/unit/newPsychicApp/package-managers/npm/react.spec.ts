@@ -20,7 +20,9 @@ describe('newPsychicApp with react client', () => {
         npm run uspec &&
         npm run uspec:js &&
         npm run fspec &&
-        npm run fspec:js`
+        npm run fspec:js &&
+        npm run build &&
+        npm run build:spec`
     )
   }, 120_000)
 })

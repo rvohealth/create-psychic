@@ -10,7 +10,7 @@
 
 # AGENTS.md
 
-> **Note**: Throughout this document, `{{PM}}` is used as a placeholder for the package manager command (e.g., `yarn`, `pnpm`, or `npm run`). See the "Package Manager Configuration" section at the end of this file for details.
+> **Note**: Throughout this document, `{{PM}}` is used as a placeholder for the package manager run command (e.g., `pnpm`, `yarn`, or `npm run`). See the "Package Manager Configuration" section at the end of this file for details.
 
 ## Dream ORM and Psychic Framework
 
@@ -193,7 +193,7 @@ After a generator has run:
 - **Prefer expressive code over comments** - if you find yourself writing a comment to explain what a line does, consider if the code can be made more expressive through better naming or extraction instead
 - **TSDoc comments explaining "how" or "when" to use a function, method, or class are welcome**
 
-When working with this codebase, prioritize Dream and Psychic patterns and conventions. Refer to the official documentation at https://psychicframework.com/ when needed.
+When working with this codebase, prioritize Dream and Psychic patterns and conventions. Refer to the official documentation at https://psychicframework.com when needed.
 
 ## Customizing These Rules
 
@@ -210,6 +210,3 @@ When working with this codebase, prioritize Dream and Psychic patterns and conve
 // end:OFFICIAL PSYCHIC RULES DO NOT MODIFY //
 //////////////////////////////////////////////
 
-## Package Manager Configuration
-
-**Package Manager**: `yarn`

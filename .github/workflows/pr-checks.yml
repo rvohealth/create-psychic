@@ -65,6 +65,7 @@ jobs:
       LEGACY_APP_ENCRYPTION_KEY: ${{ secrets.LEGACY_APP_ENCRYPTION_KEY }}
       PSYCHIC_CORE_DEVELOPMENT: 1
       CI: 1
+      YARN_ENABLE_IMMUTABLE_INSTALLS: false
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -89,30 +90,34 @@ jobs:
 
       - run: corepack enable
 
-      - name: Cache node_modules
-        id: cache-node-modules
-        uses: actions/cache@v4
-        with:
-          path: ~/.yarn-cache
-          key: ${{ runner.os }}-cache-node-modules-${{ hashFiles('**/yarn.lock') }}
-
-      - if: ${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
-        name: List the state of node modules
-        continue-on-error: true
-        run: yarn list
-      - run: yarn install --immutable
+      - run: pnpm install --frozen-lockfile
 
       - name: install puppeteer browsers
-        run: npx puppeteer browsers install firefox
+        run: pnpm puppeteer browsers install firefox
 
-      - run: DEBUG=1 yarn spec --shard=${{ matrix.shard }}/${{ strategy.job-total }}
+      - run: DEBUG=1 pnpm spec --shard=${{ matrix.shard }}/${{ strategy.job-total }}
+
+  lint:
+    name: Linting
+    runs-on: ubuntu-latest
+    env:
+      NODE_ENV: development
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - run: corepack enable
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
 
   check-build:
     name: Check build
     runs-on: ubuntu-latest
     env:
       NODE_ENV: development
-      YARN_CACHE_FOLDER: ~/.yarn-cache
       GITHUB_OAUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
@@ -123,17 +128,5 @@ jobs:
 
       - run: corepack enable
 
-      - name: Cache node_modules
-        id: cache-node-modules
-        uses: actions/cache@v4
-        with:
-          path: ~/.yarn-cache
-          key: ${{ runner.os }}-cache-node-modules-${{ hashFiles('**/yarn.lock') }}
-
-      - if: ${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
-        name: List the state of node modules
-        continue-on-error: true
-        run: yarn list
-
-      - run: yarn install --immutable
-      - run: yarn build
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build

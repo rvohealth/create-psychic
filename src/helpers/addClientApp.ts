@@ -177,5 +177,3 @@ function viteCmd(packageManager: PsychicPackageManager, clientRootFolderName: st
       return `npm create vite@latest ${clientRootFolderName} -- --template ${template}`
   }
 }
-
-type ViteTemplate = 'react-ts' | 'vue-ts' | ''

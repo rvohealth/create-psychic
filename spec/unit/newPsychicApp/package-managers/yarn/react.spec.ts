@@ -20,7 +20,9 @@ describe('newPsychicApp with react client', () => {
         yarn uspec &&
         yarn uspec:js &&
         yarn fspec &&
-        yarn fspec:js`
+        yarn fspec:js &&
+        yarn build &&
+        yarn build:spec`
     )
   }, 120_000)
 })

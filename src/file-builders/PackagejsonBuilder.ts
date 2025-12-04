@@ -1,5 +1,5 @@
 import { NewPsychicAppCliOptions } from '../helpers/newPsychicApp.js'
-import { replaceYarnInFileContents } from '../helpers/replaceYarnInFile.js'
+import { replaceYarnAndNpxInFileContents } from '../helpers/replaceYarnAndNpxInFile.js'
 import safelyImportJsonFile from '../helpers/safelyImportJsonFile.js'
 
 export default class PackagejsonBuilder {
@@ -79,7 +79,7 @@ export default class PackagejsonBuilder {
       removeDependency(packagejson, 'ioredis')
     }
 
-    return replaceYarnInFileContents(JSON.stringify(packagejson, null, 2), options.packageManager)
+    return replaceYarnAndNpxInFileContents(JSON.stringify(packagejson, null, 2), options.packageManager)
   }
 }
 

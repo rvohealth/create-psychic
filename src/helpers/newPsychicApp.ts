@@ -15,7 +15,7 @@ import sleep from './sleep.js'
 export const cliPrimaryKeyTypes = ['bigserial', 'serial', 'uuid'] as const
 export const cliClientAppTypes = ['nextjs', 'react', 'vue', 'nuxt', 'none'] as const
 
-export const psychicPackageManagers = ['yarn', 'pnpm', 'npm'] as const
+export const psychicPackageManagers = ['pnpm', 'yarn', 'npm'] as const
 export const initTemplates = ['none', 'nextjs'] as const
 export const importExtensions = ['.js', '.ts', 'none'] as const
 export type PsychicPackageManager = (typeof psychicPackageManagers)[number]
