@@ -6,6 +6,7 @@ export default async function expectToMatchFixture(fixturePath: FixturePath, act
   expect(actualContent).toEqual(fixture)
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const FIXTURE_PATHS = [
   'expected-files/app/basic.ts',
   'expected-files/app/with-client.ts',

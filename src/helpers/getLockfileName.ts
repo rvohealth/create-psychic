@@ -9,6 +9,6 @@ export default function getLockfileName(packageManager: PsychicPackageManager) {
     case 'pnpm':
       return 'pnpm-lock.yaml'
     default:
-      throw new Error(`unexpected package manager: ${packageManager}`)
+      throw new Error(`unexpected package manager: ${packageManager as unknown as 'yarn'}`)
   }
 }

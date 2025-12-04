@@ -1,4 +1,7 @@
-.yarn/
-.yarnrc.yml
+pnpm-lock.yaml
 spec/fixtures
 AGENTS.md
+dist
+howyadoin
+.github
+boilerplate

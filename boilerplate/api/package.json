@@ -8,8 +8,8 @@
   "scripts": {
     "psy": "NODE_ENV=${NODE_ENV:-test} tsx src/conf/system/cli.ts",
     "psy:js": "node ./dist/src/conf/system/cli.js",
-    "build": "APP_NAME=$npm_package_name APP_VERSION=$npm_package_version echo \"building $npm_package_name...\" && rm -rf dist && echo \"node --version\" && node --version && echo \"npx tsc --version\" && npx tsc --version && npx tsc -p ./tsconfig.build.json && npx tsc-alias -p ./tsconfig.build.json",
-    "build:spec": "NODE_ENV=test APP_NAME=$npm_package_name APP_VERSION=$npm_package_version echo \"building $npm_package_name...\" && rm -rf dist && echo \"node --version\" && node --version && echo \"npx tsc --version\" && npx tsc --version && npx tsc --pretty -p ./tsconfig.build-spec.json && npx tsc-alias -p ./tsconfig.build-spec.json && cp -r ./recordings ./dist/recordings && [ -e .env.test ] && cp .env.test ./dist/",
+    "build": "APP_NAME=$npm_package_name APP_VERSION=$npm_package_version echo \"building $npm_package_name...\" && rm -rf dist && echo \"node --version\" && node --version && echo \"<NPX_RUN> tsc --version\" && <NPX_RUN> tsc --version && <NPX_RUN> tsc -p ./tsconfig.build.json && <NPX_RUN> tsc-alias -p ./tsconfig.build.json",
+    "build:spec": "NODE_ENV=test APP_NAME=$npm_package_name APP_VERSION=$npm_package_version echo \"building $npm_package_name...\" && rm -rf dist && echo \"node --version\" && node --version && echo \"<NPX_RUN> tsc --version\" && <NPX_RUN> tsc --version && <NPX_RUN> tsc --pretty -p ./tsconfig.build-spec.json && <NPX_RUN> tsc-alias -p ./tsconfig.build-spec.json && cp -r ./recordings ./dist/recordings && [ -e .env.test ] && cp .env.test ./dist/",
     "dev": "APP_NAME=$npm_package_name APP_VERSION=$npm_package_version NODE_ENV=development WORKER_COUNT=0 WORKER_COUNT=0 nodemon --quiet --no-stdin",
     "dev-worker": "APP_NAME=$npm_package_name APP_VERSION=$npm_package_version NODE_ENV=development WORKER_COUNT=1 tsx ./src/worker.ts",
     "prod": "APP_NAME=$npm_package_name APP_VERSION=$npm_package_version NODE_ENV=production node ./dist/src/main.js",
@@ -23,7 +23,9 @@
     "console": "yarn psy db:integrity-check && APP_NAME=$npm_package_name APP_VERSION=$npm_package_version tsx ./src/conf/repl.ts",
     "console:js": "APP_NAME=$npm_package_name APP_VERSION=$npm_package_version node ./dist/src/conf/repl.js",
     "format": "<YARN_RUN> prettier . --write",
-    "lint": "<YARN_RUN> eslint --no-warn-ignored \"src/**/*.ts\" \"spec/**/*.ts\" && <YARN_RUN> prettier . --check"
+    "lint": "<YARN_RUN> eslint --no-warn-ignored \"src/**/*.ts\" \"spec/**/*.ts\" && <YARN_RUN> prettier . --check",
+    "prettier": "prettier",
+    "eslint": "eslint"
   },
   "dependencies": {
     "@bull-board/express": "^5.21.4",
@@ -44,7 +46,7 @@
     "pluralize-esm": "^9.0.5",
     "socket.io": "^4.8.0",
     "socket.io-adapter": "^2.5.5",
-    "typescript": "^5.5.4",
+    "typescript": "^5.8.3",
     "winston": "^3.14.2"
   },
   "devDependencies": {

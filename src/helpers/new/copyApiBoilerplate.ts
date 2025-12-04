@@ -12,6 +12,8 @@ import copyRecursive from '../copyRecursive.js'
 import getApiRoot from '../getApiRoot.js'
 import internalSrcPath from '../internalSrcPath.js'
 import { NewPsychicAppCliOptions } from '../newPsychicApp.js'
+import replaceYarnInFile from '../replaceYarnAndNpxInFile.js'
+import sanitizeAgentsFileContents from '../sanitizeAgentsFileContents.js'
 
 export default async function copyApiBoilerplate(appName: string, options: NewPsychicAppCliOptions) {
   const appRoot = path.join('.', appName)
@@ -21,7 +23,10 @@ export default async function copyApiBoilerplate(appName: string, options: NewPs
 
   copyRecursive(internalSrcPath('..', 'boilerplate', 'api'), apiRoot)
 
+  sanitizeAgentsFileContents(apiRoot, options.packageManager)
+
   fs.cpSync(internalSrcPath('..', 'boilerplate', 'README.md'), path.join(appRoot, 'README.md'))
+  await replaceYarnInFile(path.join(appRoot, 'README.md'), options.packageManager)
 
   // yarnrc.yml included as non-dot-file so that it becomes part of the package
   // move it to .yarnrc.yml if using yarn; otherwise, delete it

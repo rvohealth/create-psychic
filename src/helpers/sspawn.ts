@@ -6,7 +6,7 @@ export default function sspawn(
 ) {
   return new Promise((accept, reject) => {
     ssspawn(command, opts).on('close', code => {
-      if (code !== 0) reject(code)
+      if (code !== 0) reject(code as unknown as Error)
       accept({})
     })
   })
@@ -30,7 +30,8 @@ export function ssspawn(
   // when this cli utility runs node commands,
   // it can properly hijack the stdout from the command
   proc.stdout.on('data', chunk => {
-    const txt = chunk?.toString()?.trim()
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+    const txt = (chunk?.toString() as string)?.trim()
     if (typeof txt !== 'string' || !txt) return
 
     if (process.env.NODE_ENV !== 'test' || process.env.DEBUG === '1') {

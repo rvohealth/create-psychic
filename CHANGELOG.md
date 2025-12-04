@@ -1,3 +1,10 @@
+## 2.1.2
+
+- switch to pnpm
+- bump eslint
+
+* make pnpm the default package manager going forward
+
 ## 2.1.1
 
 - add typescript as explicit dependency, since it is now required for the new AST building mechanisms in dream/psychic.
