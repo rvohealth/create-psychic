@@ -8,7 +8,7 @@ const config = typescriptEslint.config(
   eslint.configs.recommended,
   ...typescriptEslint.configs.recommendedTypeChecked,
   {
-    ignores: ['spec/fixtures', 'src/types/psychic.ts', 'src/types/dream.ts', 'src/types/db.ts'],
+    ignores: ['src/types/**/*.ts'],
   },
   {
     files: ['**/*.ts'],
