@@ -1,7 +1,7 @@
 // Include any rule customizations rules
 // below the OFFICIAL PSYCHIC RULES
 // the OFFICIAL PSYCHIC RULES will be
-// replaced whenever `yarn psy sync:ai-rules`
+// replaced whenever `{{PM}} psy sync:ai-rules`
 // is run
 
 //////////////////////////////////////////
@@ -9,6 +9,8 @@
 //////////////////////////////////////////
 
 # AGENTS.md
+
+> **Note**: Throughout this document, `{{PM}}` is used as a placeholder for the package manager command (e.g., `yarn`, `pnpm`, or `npm run`). See the "Package Manager Configuration" section at the end of this file for details.
 
 ## Dream ORM and Psychic Framework
 
@@ -38,42 +40,42 @@ This project uses [Dream ORM](https://github.com/rvohealth/dream) and [Psychic w
 - Models use Dream's Active Record pattern
 - Controllers extend `ApplicationController`, `AuthedController`, or `UnauthedController`
 - Serializers define API response structure
-- Use `yarn psy` commands for CLI operations (db:migrate, g:model, g:controller, etc.)
-- **CRITICAL: ALWAYS run `yarn psy <command> --help` BEFORE running any generator command to verify the exact syntax and available options.**
+- Use `{{PM}} psy` commands for CLI operations (db:migrate, g:model, g:controller, etc.)
+- **CRITICAL: ALWAYS run `{{PM}} psy <command> --help` BEFORE running any generator command to verify the exact syntax and available options.**
 - **Do NOT rely on memory or assumptions about generator syntax.** Common mistakes include:
   - Assuming flags like `:unique` exist (they don't - check `--help` to see actual options)
   - Wrong argument order (model name vs namespace vs fields)
   - Guessing at field type syntax
 - **If a generator fails or produces unexpected output, the first step is to re-check `--help`.**
-- Generator commands follow patterns like: `yarn psy g:model ModelName field:type`
+- Generator commands follow patterns like: `{{PM}} psy g:model ModelName field:type`
 - STI (Single Table Inheritance) is supported for models
 
 ## Naming Conventions
 
 - **Generator commands**: Always use snake_case for column names in generator commands
-  - Example: `yarn psy g:model Stay Guest:belongs_to Place:belongs_to arrive_on:date depart_on:date adults:integer cubs:integer deleted_at:datetime:optional`
+  - Example: `{{PM}} psy g:model Stay Guest:belongs_to Place:belongs_to arrive_on:date depart_on:date adults:integer cubs:integer deleted_at:datetime:optional`
 - **TypeScript model properties**: Always use camelCase in TypeScript code
   - Example: `arriveOn`, `departOn`, `deletedAt` (not `arrive_on`, `depart_on`, `deleted_at`)
 - The generator automatically converts snake_case column names to camelCase in the generated TypeScript model files
 
 ## Key Commands
 
-- `yarn psy db:migrate` - Run migrations
-- `yarn psy sync` - Sync types from the database, OpenAPI specs, controller request/response body shapes for controller specs, front end types (where relevant), and other sync actions (which may be enhanced by plugins)
-- `yarn psy g:model` - Generate a model
-- `yarn psy g:migration` - Generate a migration (used to make database changes when not generating a model or a resource)
-- `yarn psy g:controller` - Generate a controller
-- `yarn psy g:resource` - Generate a full resource (model, controller, serializer, routes)
-- `yarn uspec` - Run unit specs
-- `yarn fspec` - Run feature specs
+- `{{PM}} psy db:migrate` - Run migrations
+- `{{PM}} psy sync` - Sync types from the database, OpenAPI specs, controller request/response body shapes for controller specs, front end types (where relevant), and other sync actions (which may be enhanced by plugins)
+- `{{PM}} psy g:model` - Generate a model
+- `{{PM}} psy g:migration` - Generate a migration (used to make database changes when not generating a model or a resource)
+- `{{PM}} psy g:controller` - Generate a controller
+- `{{PM}} psy g:resource` - Generate a full resource (model, controller, serializer, routes)
+- `{{PM}} uspec` - Run unit specs
+- `{{PM}} fspec` - Run feature specs
 
 ## Running Specs
 
-- **Run all unit specs**: `yarn uspec`
-- **Run all feature specs in a headless browser**: `yarn fspec`
-- **Run all feature specs in a visible browser**: `yarn fspec:visible`
+- **Run all unit specs**: `{{PM}} uspec`
+- **Run all feature specs in a headless browser**: `{{PM}} fspec`
+- **Run all feature specs in a visible browser**: `{{PM}} fspec:visible`
 - **Run a specific spec file**: Include a path to an individual file, e.g.:
-  - `yarn uspec spec/unit/controllers/V1/Host/PlacesController.spec.ts`
+  - `{{PM}} uspec spec/unit/controllers/V1/Host/PlacesController.spec.ts`
 - **Run only specific specs within a file**: Include `.only` on a `describe`, `context`, or `it` block to run only the specs in that block
   - Example: `it.only('returns the index of Places', async () => {`
 - **Skip specific specs within a file**: Include `.skip` on a `describe`, `context`, or `it` block to skip the specs in that block
@@ -96,8 +98,8 @@ This project uses [Dream ORM](https://github.com/rvohealth/dream) and [Psychic w
 After a generator has run:
 
 1. **If the generator created a migration file**, the first step is to update the migration file as needed (for example, to add `unique()` to any column)
-2. **Run the migrations**: `yarn psy db:migrate`
-3. **If sync or post-sync operations throw an error**, try running `yarn psy sync --ignore-errors`
+2. **Run the migrations**: `{{PM}} psy db:migrate`
+3. **If sync or post-sync operations throw an error**, try running `{{PM}} psy sync --ignore-errors`
 4. **If the generator was a resource generator**:
    - Update the generated controller spec first
    - Then update the corresponding generated controller
@@ -114,25 +116,25 @@ After a generator has run:
      Generated Room resource
 
      ```console
-     yarn psy g:resource --sti-base-serializer --owning-model=Place v1/host/places/rooms Room type:enum:room_types:Bathroom,Bedroom,Kitchen,Den
+     {{PM}} psy g:resource --sti-base-serializer --owning-model=Place v1/host/places/rooms Room type:enum:room_types:Bathroom,Bedroom,Kitchen,Den
      ```
 
-## When to Run `yarn psy sync`
+## When to Run `{{PM}} psy sync`
 
-- **Run `yarn psy sync`** whenever:
+- **Run `{{PM}} psy sync`** whenever:
   - An association is added or changed in a Dream model
   - The OpenAPI shape needs to be updated (e.g., when a serializer is changed, an OpenAPI decorator in a controller is changed, or a route is changed)
-- **If in a controller spec, there are type errors related to what types an endpoint accepts or returns**, this means that the OpenAPI shape is out of sync and `yarn psy sync` needs to be run
-- **No need to run `yarn psy sync` after a migration** because:
-  - Running migrations (`yarn psy db:migrate`) automatically runs psy sync
-  - Running `yarn psy db:reset` (which is sometimes necessary, especially when switching between branches that contain migrations but have not yet been merged into main) automatically runs psy sync
+- **If in a controller spec, there are type errors related to what types an endpoint accepts or returns**, this means that the OpenAPI shape is out of sync and `{{PM}} psy sync` needs to be run
+- **No need to run `{{PM}} psy sync` after a migration** because:
+  - Running migrations (`{{PM}} psy db:migrate`) automatically runs psy sync
+  - Running `{{PM}} psy db:reset` (which is sometimes necessary, especially when switching between branches that contain migrations but have not yet been merged into main) automatically runs psy sync
 
 ## Adding Properties to Existing Models
 
-- **Always use the migration generator** (`yarn psy g:migration`) to create a migration for any database schema changes; although optimized for adding fields, the scaffolding can easily be modified to make other database changes as well, using either DreamMigrationHelpers or Kysely-native calls
+- **Always use the migration generator** (`{{PM}} psy g:migration`) to create a migration for any database schema changes; although optimized for adding fields, the scaffolding can easily be modified to make other database changes as well, using either DreamMigrationHelpers or Kysely-native calls
 - Prefer a DreamMigrationHelpers method over compound Kysely calls when DreamMigrationHelpers provides a relevant method
 - After generating the migration, manually add the property declaration to the model file
-- Example: To add a `timezone` field to User, run `yarn psy g:migration add_timezone_to_users` then add `public timezone: DreamColumn<User, 'timezone'>` to the User model
+- Example: To add a `timezone` field to User, run `{{PM}} psy g:migration add_timezone_to_users` then add `public timezone: DreamColumn<User, 'timezone'>` to the User model
 
 ## Date and Time Handling
 
@@ -201,9 +203,13 @@ When working with this codebase, prioritize Dream and Psychic patterns and conve
   // end:OFFICIAL PSYCHIC RULES DO NOT MODIFY //
   //////////////////////////////////////////////
   ```
-- **Do not modify any content above this marker** - it will be replaced when `yarn psy sync:ai-rules` is run
+- **Do not modify any content above this marker** - it will be replaced when `{{PM}} psy sync:ai-rules` is run
 - **All project-specific customizations should be placed below the end marker**
 
 //////////////////////////////////////////////
 // end:OFFICIAL PSYCHIC RULES DO NOT MODIFY //
 //////////////////////////////////////////////
+
+## Package Manager Configuration
+
+**Package Manager**: `yarn`
