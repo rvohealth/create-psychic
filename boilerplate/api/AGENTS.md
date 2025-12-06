@@ -149,38 +149,52 @@ After a generator has run:
 - Example: `import { CalendarDate, DateTime } from '@rvoh/dream'`
 - Example: `CalendarDate.today({ zone: 'America/New_York' })` to get today's date in a specific timezone
 
-## Using RAG/MCP for Dream/Psychic Documentation
+## Sources of Truth for Dream/Psychic Documentation
 
-**CRITICAL: Before creating or modifying any code that uses Dream or Psychic framework patterns, you MUST query the MCP server first.**
+**CRITICAL: Never guess, assume, or invent method names, API patterns, or generator syntax.**
 
-Dream and Psychic are vast frameworks with many patterns, APIs, and conventions that may not be obvious or may differ from assumptions. The MCP server contains official framework documentation and should be your primary source of truth.
+Dream and Psychic are vast frameworks with many patterns, APIs, and conventions that may not be obvious or may differ from assumptions. Always consult authoritative sources in the following order:
 
-### When to Query the MCP Server
+### Primary Sources of Truth (in order of priority)
 
-Query the MCP server BEFORE implementing any of the following:
+1. **TSDocs** - For method signatures, parameters, return types, and usage examples of functions and classes
+   - Check TSDocs in your IDE or in the source code before using any Dream/Psychic API
+   - TSDocs are the definitive source for "what arguments does this method take" and "what does this method return"
 
-- **Controller code** - Decorator patterns (`@OpenAPI`), request/response handling, parameter extraction (`paramsFor`, `castParam`), authentication patterns, etc.
-- **Model operations** - Query methods, associations, validations, callbacks, scopes, etc.
-- **Any Dream/Psychic API usage** - If you're not 100% certain about method names, signatures, or patterns, query the MCP server
-- **Any assumptions** - Never invent method names or assume API patterns exist without verification
+2. **`{{PM}} psy --help` and `{{PM}} psy <command> --help`** - For generator command syntax and available options
+   - **ALWAYS run `{{PM}} psy <command> --help`** before using any generator to verify exact syntax
+   - Do not rely on memory or assumptions about what flags or arguments are available
 
-### Query-First Workflow
+3. **MCP Server** - For architectural patterns, best practices, and framework concepts
+   - Query the MCP server for questions about "how should I structure this", "what pattern should I use", or "how does X work"
+   - Use MCP to understand framework conventions and architectural decisions
+   - The MCP server contains official Dream/Psychic documentation and examples
 
-**The rule is simple: If you're about to use a Dream or Psychic API and you're not certain about it, query the MCP server first. Do not guess, do not assume, do not invent method names.**
+### Verification Workflow
+
+**Never write code based on assumptions. Always verify first using the appropriate source.**
 
 1. **Understand the task** - What needs to be implemented?
-2. **Query MCP server** - Ask about the relevant Dream/Psychic patterns before writing any code
-3. **Review examples** - Look at existing code in the codebase that uses similar patterns (but still verify with MCP if uncertain)
-4. **Implement** - Write the code using the patterns learned from MCP
-5. **Verify** - Run tests and check for errors
+2. **Identify what you need to verify**:
+   - Generator syntax? → Run `{{PM}} psy <command> --help`
+   - Method/function signature? → Check TSDocs
+   - Architectural pattern or framework concept? → Query MCP server
+3. **Verify before implementing** - Use the appropriate source from the list above
+4. **Review examples** - Look at existing code in the codebase that uses similar patterns
+5. **Implement** - Write the code using verified information
+6. **Test** - Run specs to validate the implementation
 
-**Do NOT skip step 2.** Querying the MCP server should be part of your planning phase, not something you do after encountering errors.
+### When to Use Each Source
+
+- **TSDocs**: "What parameters does `paramsFor` accept?", "What does `where()` return?", "How do I call this method?"
+- **`{{PM}} psy --help`**: "What's the syntax for generating a migration?", "What flags does `g:resource` support?", "How do I specify a belongs_to relationship?"
+- **MCP Server**: "How should I structure a controller?", "What's the pattern for handling authentication?", "When should I use a service vs a model method?"
 
 ### Fallback Strategy
 
-- **If the RAG/MCP server is not available or not responding**, clearly communicate this to the user rather than proceeding with assumptions
-- The MCP server contains official Dream/Psychic documentation and should be the primary source for framework-specific information
-- When MCP is unavailable, check TSDocs in the codebase, but acknowledge the limitation
+- **If the MCP server is not available or not responding**, clearly communicate this to the user
+- TSDocs and `{{PM}} psy --help` are always available and should be used as the foundation
+- When uncertain about framework patterns and MCP is unavailable, look for similar examples in the existing codebase, but acknowledge the limitation
 
 ## Behavior-Driven Development (BDD)
 
