@@ -5,13 +5,11 @@
  *
  * Requirements:
  *   - Node.js 18+
- *   - axios (yarn add axios)
  *   - @types/node (for type safety)
  *
  * This script implements a fallback JSON-RPC-like MCP bridge over stdio.
  */
 
-import axios from 'axios'
 import * as readline from 'readline'
 
 const RAG_API_ENDPOINT = process.env.RAG_API_ENDPOINT || 'http://localhost:8000/query'
@@ -113,12 +111,25 @@ rl.on('line', (line: string) => {
         const query = arguments_.query
         const top_k = arguments_.top_k || 5
         try {
-          const response = await axios.post<unknown>(
-            RAG_API_ENDPOINT,
-            { query, top_k },
-            { timeout: RAG_API_TIMEOUT }
-          )
-          const ragResults = response.data
+          const abortController = new AbortController()
+          const timeoutId = setTimeout(() => abortController.abort(), RAG_API_TIMEOUT)
+
+          const response = await fetch(RAG_API_ENDPOINT, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ query, top_k }),
+            signal: abortController.signal,
+          })
+
+          clearTimeout(timeoutId)
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`)
+          }
+
+          const ragResults = await response.json()
           writeResponse({
             jsonrpc: '2.0',
             id,
@@ -133,10 +144,14 @@ rl.on('line', (line: string) => {
           })
         } catch (e) {
           const error = e instanceof Error ? e : new Error(String(e))
+          const errorMessage =
+            error.name === 'AbortError'
+              ? `Request timeout after ${RAG_API_TIMEOUT}ms`
+              : `Error querying RAG API: ${error.message}`
           writeResponse({
             jsonrpc: '2.0',
             id,
-            error: { code: -32000, message: `Error querying RAG API: ${error.message}` },
+            error: { code: -32000, message: errorMessage },
           })
         }
       } else {

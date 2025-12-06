@@ -1,3 +1,7 @@
+## 2.1.3
+
+- fix mcp-http-bridge.ts
+
 ## 2.1.2
 
 - switch to pnpm
