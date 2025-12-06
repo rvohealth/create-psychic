@@ -151,11 +151,36 @@ After a generator has run:
 
 ## Using RAG/MCP for Dream/Psychic Documentation
 
-- **Always use the RAG/MCP server if it is available** to get accurate information about Dream and Psychic framework patterns, APIs, and best practices
-- Query the RAG system for framework-specific questions before making assumptions about APIs or patterns
-- **If the RAG/MCP server is not available or not responding, clearly communicate this** to the user rather than proceeding with assumptions
-- The RAG contains official Dream/Psychic documentation and should be the primary source for framework-specific information
-- Do not assume method names, patterns, or APIs - query the RAG or check TSDocs when in doubt
+**CRITICAL: Before creating or modifying any code that uses Dream or Psychic framework patterns, you MUST query the MCP server first.**
+
+Dream and Psychic are vast frameworks with many patterns, APIs, and conventions that may not be obvious or may differ from assumptions. The MCP server contains official framework documentation and should be your primary source of truth.
+
+### When to Query the MCP Server
+
+Query the MCP server BEFORE implementing any of the following:
+
+- **Controller code** - Decorator patterns (`@OpenAPI`), request/response handling, parameter extraction (`paramsFor`, `castParam`), authentication patterns, etc.
+- **Model operations** - Query methods, associations, validations, callbacks, scopes, etc.
+- **Any Dream/Psychic API usage** - If you're not 100% certain about method names, signatures, or patterns, query the MCP server
+- **Any assumptions** - Never invent method names or assume API patterns exist without verification
+
+### Query-First Workflow
+
+**The rule is simple: If you're about to use a Dream or Psychic API and you're not certain about it, query the MCP server first. Do not guess, do not assume, do not invent method names.**
+
+1. **Understand the task** - What needs to be implemented?
+2. **Query MCP server** - Ask about the relevant Dream/Psychic patterns before writing any code
+3. **Review examples** - Look at existing code in the codebase that uses similar patterns (but still verify with MCP if uncertain)
+4. **Implement** - Write the code using the patterns learned from MCP
+5. **Verify** - Run tests and check for errors
+
+**Do NOT skip step 2.** Querying the MCP server should be part of your planning phase, not something you do after encountering errors.
+
+### Fallback Strategy
+
+- **If the RAG/MCP server is not available or not responding**, clearly communicate this to the user rather than proceeding with assumptions
+- The MCP server contains official Dream/Psychic documentation and should be the primary source for framework-specific information
+- When MCP is unavailable, check TSDocs in the codebase, but acknowledge the limitation
 
 ## Behavior-Driven Development (BDD)
 
