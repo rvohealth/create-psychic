@@ -22,7 +22,7 @@ describe('newPsychicApp with react client', () => {
         pnpm fspec &&
         pnpm fspec:js &&
         pnpm build &&
-        pnpm build:spec`
+        pnpm build:spec`,
     )
   }, 120_000)
 })

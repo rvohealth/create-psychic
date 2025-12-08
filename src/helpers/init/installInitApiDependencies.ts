@@ -20,7 +20,7 @@ export default async function installInitApiDependencies(options: InitPsychicApp
       '@socket.io/redis-adapter',
       '@socket.io/redis-emitter',
       'socket.io',
-      'socket.io-adapter'
+      'socket.io-adapter',
     )
   const deps = depsArr.join(' ')
 

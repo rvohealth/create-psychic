@@ -10,7 +10,7 @@ export default async function buildNewPsychicAppOptionsWithPrompt(options: NewPs
   if (!options.packageManager || !psychicPackageManagers.includes(options.packageManager)) {
     const answer = await new Select(
       'what package manager would you like to use?',
-      psychicPackageManagers
+      psychicPackageManagers,
     ).run()
     options.packageManager = answer
   }
@@ -24,7 +24,7 @@ export default async function buildNewPsychicAppOptionsWithPrompt(options: NewPs
   if (!options.client && !options.adminClient) {
     const answer = await new Select(
       `Would you like a monorepo?\nFor more info, see https://psychicframework.com/docs/learn-more/monorepos`,
-      ['yes', 'no'] as const
+      ['yes', 'no'] as const,
     ).run()
     monoRepo = answer === 'yes'
   }
@@ -33,7 +33,7 @@ export default async function buildNewPsychicAppOptionsWithPrompt(options: NewPs
     if (!options.client || !cliClientAppTypes.includes(options.client)) {
       const answer = await new Select(
         'which front end client would you like to use?',
-        cliClientAppTypes
+        cliClientAppTypes,
       ).run()
       options.client = answer
     }
@@ -41,7 +41,7 @@ export default async function buildNewPsychicAppOptionsWithPrompt(options: NewPs
     if (!options.adminClient || !cliClientAppTypes.includes(options.adminClient)) {
       const answer = await new Select(
         'which front end client would you like to use for your admin app?',
-        cliClientAppTypes
+        cliClientAppTypes,
       ).run()
       options.adminClient = answer
     }

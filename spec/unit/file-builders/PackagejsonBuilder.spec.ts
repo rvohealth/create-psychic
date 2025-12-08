@@ -34,7 +34,7 @@ describe('PackagejsonBuilder', () => {
             'express',
             'express-winston',
             'kysely',
-          ])
+          ]),
         )
 
         expect(Object.keys(JSON.parse(res).dependencies)).not.toEqual(
@@ -46,7 +46,7 @@ describe('PackagejsonBuilder', () => {
             'ioredis',
             'socket.io',
             'socket.io-adapter',
-          ])
+          ]),
         )
 
         expect(JSON.parse(res).scripts['client']).toBeUndefined()
@@ -60,7 +60,7 @@ describe('PackagejsonBuilder', () => {
         const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
         expect(JSON.parse(res).scripts['client']).toEqual('yarn --cwd=../client next dev')
         expect(JSON.parse(res).scripts['client:fspec']).toEqual(
-          'BROWSER=none NEXT_PUBLIC_PSYCHIC_ENV=test yarn --cwd=../client next dev'
+          'BROWSER=none NEXT_PUBLIC_PSYCHIC_ENV=test yarn --cwd=../client next dev',
         )
       })
     })
@@ -71,7 +71,7 @@ describe('PackagejsonBuilder', () => {
         const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
         expect(JSON.parse(res).scripts['client']).toEqual('yarn --cwd=../client dev')
         expect(JSON.parse(res).scripts['client:fspec']).toEqual(
-          'BROWSER=none VITE_PSYCHIC_ENV=test yarn --cwd=../client dev'
+          'BROWSER=none VITE_PSYCHIC_ENV=test yarn --cwd=../client dev',
         )
       })
     })
@@ -82,7 +82,7 @@ describe('PackagejsonBuilder', () => {
         const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
         expect(JSON.parse(res).scripts['admin']).toEqual('yarn --cwd=../admin next dev')
         expect(JSON.parse(res).scripts['admin:fspec']).toEqual(
-          'BROWSER=none NEXT_PUBLIC_PSYCHIC_ENV=test yarn --cwd=../admin next dev --port 3001'
+          'BROWSER=none NEXT_PUBLIC_PSYCHIC_ENV=test yarn --cwd=../admin next dev --port 3001',
         )
       })
     })
@@ -93,7 +93,7 @@ describe('PackagejsonBuilder', () => {
         const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
         expect(JSON.parse(res).scripts['admin']).toEqual('yarn --cwd=../admin dev')
         expect(JSON.parse(res).scripts['admin:fspec']).toEqual(
-          'BROWSER=none VITE_PSYCHIC_ENV=test yarn --cwd=../admin dev --port 3001'
+          'BROWSER=none VITE_PSYCHIC_ENV=test yarn --cwd=../admin dev --port 3001',
         )
       })
     })
@@ -117,7 +117,7 @@ describe('PackagejsonBuilder', () => {
             '@bull-board/express',
             'bullmq',
             'ioredis',
-          ])
+          ]),
         )
 
         expect(Object.keys(JSON.parse(res).dependencies)).not.toEqual(
@@ -126,7 +126,7 @@ describe('PackagejsonBuilder', () => {
             '@socket.io/redis-emitter',
             'socket.io',
             'socket.io-adapter',
-          ])
+          ]),
         )
       })
     })
@@ -152,11 +152,11 @@ describe('PackagejsonBuilder', () => {
             'socket.io',
             'socket.io-adapter',
             'ioredis',
-          ])
+          ]),
         )
 
         expect(Object.keys(JSON.parse(res).dependencies)).not.toEqual(
-          expect.arrayContaining(['@bull-board/express', 'bullmq'])
+          expect.arrayContaining(['@bull-board/express', 'bullmq']),
         )
       })
     })
@@ -185,7 +185,7 @@ describe('PackagejsonBuilder', () => {
             'ioredis',
             '@bull-board/express',
             'bullmq',
-          ])
+          ]),
         )
       })
     })

@@ -3,7 +3,7 @@ import * as fs from 'node:fs/promises'
 
 export default async function temporarilySwapNextjsConfig(
   newFileContents: string,
-  cb: () => void | Promise<void>
+  cb: () => void | Promise<void>,
 ) {
   const nextConfPath = path.join(process.cwd(), 'howyadoin', 'next.config.ts')
   const existingContents = (await fs.readFile(nextConfPath)).toString()

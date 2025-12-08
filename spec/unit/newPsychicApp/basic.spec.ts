@@ -24,7 +24,7 @@ describe('newPsychicApp without websockets or background jobs', () => {
     await sspawn(
       `\
         cd howyadoin &&
-        yarn build`
+        yarn build`,
     )
   }, 120_000)
 })

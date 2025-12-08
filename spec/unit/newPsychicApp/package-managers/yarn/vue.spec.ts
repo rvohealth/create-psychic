@@ -20,7 +20,7 @@ describe('newPsychicApp with vue client', () => {
         yarn uspec &&
         yarn uspec:js &&
         yarn fspec &&
-        yarn fspec:js`
+        yarn fspec:js`,
     )
   }, 120_000)
 })

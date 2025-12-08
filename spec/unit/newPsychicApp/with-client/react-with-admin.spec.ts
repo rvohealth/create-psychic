@@ -22,7 +22,7 @@ describe('newPsychicApp with react client', () => {
 !.yarn/plugins
 !.yarn/releases
 !.yarn/sdks
-!.yarn/versions`
+!.yarn/versions`,
     )
 
     await expectFileToContain(
@@ -35,7 +35,7 @@ describe('newPsychicApp with react client', () => {
 !.yarn/plugins
 !.yarn/releases
 !.yarn/sdks
-!.yarn/versions`
+!.yarn/versions`,
     )
   }, 60_000)
 })

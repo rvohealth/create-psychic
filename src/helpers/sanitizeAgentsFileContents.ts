@@ -5,7 +5,7 @@ import { DreamAppAllowedPackageManagersEnum } from '@rvoh/dream/system'
 
 export default function sanitizeAgentsFileContents(
   apiRoot: string,
-  packageManager: DreamAppAllowedPackageManagersEnum
+  packageManager: DreamAppAllowedPackageManagersEnum,
 ) {
   const agentsPath = path.join(apiRoot, 'AGENTS.md')
   fs.writeFileSync(
@@ -15,6 +15,6 @@ export default function sanitizeAgentsFileContents(
 ## Package Manager Configuration
 
 **Package Manager Run Command**: \`${runCmdForPackageManager(packageManager)}\`
-`
+`,
   )
 }

@@ -14,6 +14,6 @@ ${gitignoreContents}
 !.yarn/plugins
 !.yarn/releases
 !.yarn/sdks
-!.yarn/versions`
+!.yarn/versions`,
   )
 }

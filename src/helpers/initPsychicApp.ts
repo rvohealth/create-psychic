@@ -34,12 +34,12 @@ export default async function initPsychicApp(appName: string, options: InitPsych
         `${title
           .split('')
           .map(() => '')
-          .join('-')}-`
+          .join('-')}-`,
       ),
       {
         logPrefix: ' ',
         logPrefixColor: 'greenBright',
-      }
+      },
     )
   }
 

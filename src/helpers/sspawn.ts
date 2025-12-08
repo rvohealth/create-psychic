@@ -2,7 +2,7 @@ import { spawn } from 'child_process'
 
 export default function sspawn(
   command: string,
-  opts: Record<string, unknown> & { onStdout?: (str: string) => void } = {}
+  opts: Record<string, unknown> & { onStdout?: (str: string) => void } = {},
 ) {
   return new Promise((accept, reject) => {
     ssspawn(command, opts).on('close', code => {
@@ -14,7 +14,7 @@ export default function sspawn(
 
 export function ssspawn(
   command: string,
-  opts: Record<string, unknown> & { onStdout?: (str: string) => void } = {}
+  opts: Record<string, unknown> & { onStdout?: (str: string) => void } = {},
 ) {
   const proc = spawn(command, {
     // even though github security scans want to remove this,

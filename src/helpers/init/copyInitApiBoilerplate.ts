@@ -15,32 +15,32 @@ export default async function copyInitApiBoilerplate(appName: string, options: I
   copyRecursiveSync(
     internalSrcPath('..', 'boilerplate', 'api', 'src', 'app', 'models'),
     options.modelsPath,
-    options.importExtension
+    options.importExtension,
   )
   copyRecursiveSync(
     internalSrcPath('..', 'boilerplate', 'api', 'src', 'app', 'serializers'),
     options.serializersPath,
-    options.importExtension
+    options.importExtension,
   )
   copyRecursiveSync(
     internalSrcPath('..', 'boilerplate', 'api', 'src', 'db'),
     options.dbPath,
-    options.importExtension
+    options.importExtension,
   )
   copyRecursiveSync(
     internalSrcPath('..', 'boilerplate', 'api', 'src', 'utils'),
     options.utilsPath,
-    options.importExtension
+    options.importExtension,
   )
   copyRecursiveSync(
     internalSrcPath('..', 'boilerplate', 'api', 'src', 'conf'),
     options.confPath,
-    options.importExtension
+    options.importExtension,
   )
   copyRecursiveSync(
     internalSrcPath('..', 'boilerplate', 'api', 'src', 'types'),
     options.typesPath,
-    options.importExtension
+    options.importExtension,
   )
 
   prependOrWriteFileSync(path.join('.', '.env'), EnvBuilder.build({ appName, env: 'development' }))
@@ -59,50 +59,50 @@ export default async function copyInitApiBoilerplate(appName: string, options: I
     copyRecursiveSync(
       internalSrcPath('..', 'boilerplate', 'additional', 'dream-only', 'repl.ts'),
       path.join(options.confPath, 'repl.ts'),
-      options.importExtension
+      options.importExtension,
     )
     copyRecursiveSync(
       internalSrcPath('..', 'boilerplate', 'additional', 'dream-only', 'cli.ts'),
       path.join(options.confPath, 'system', 'cli.ts'),
-      options.importExtension
+      options.importExtension,
     )
     copyRecursiveSync(
       internalSrcPath('..', 'boilerplate', 'additional', 'dream-only', 'initializeDreamApp.ts'),
       path.join(options.confPath, 'system', 'initializeDreamApp.ts'),
-      options.importExtension
+      options.importExtension,
     )
   } else {
     // otherwise, we need to add all of the existing boilerplate for a psychic app
     copyRecursiveSync(
       internalSrcPath('..', 'boilerplate', 'api', 'src', 'app', 'controllers'),
       options.controllersPath,
-      options.importExtension
+      options.importExtension,
     )
     copyRecursiveSync(
       internalSrcPath('..', 'boilerplate', 'api', 'src', 'app', 'services'),
       options.servicesPath,
-      options.importExtension
+      options.importExtension,
     )
     copyRecursiveSync(
       internalSrcPath('..', 'boilerplate', 'api', 'src', 'main.ts'),
       path.join(options.executablesPath, 'main.ts'),
-      options.importExtension
+      options.importExtension,
     )
     writeFileSync(
       path.join(options.confPath, 'app.ts'),
-      await AppConfigBuilder.buildForInit({ appName, options })
+      await AppConfigBuilder.buildForInit({ appName, options }),
     )
 
     copyRecursiveSync(
       internalSrcPath('..', 'boilerplate', 'api', 'src', 'openapi'),
       options.openapiPath,
-      options.importExtension
+      options.importExtension,
     )
     writeFileSync(path.join(options.openapiPath, '.gitkeep'), '')
     copyRecursiveSync(
       internalSrcPath('..', 'boilerplate', 'api', 'src', 'worker.ts'),
       path.join(options.executablesPath, 'worker.ts'),
-      options.importExtension
+      options.importExtension,
     )
   }
 
@@ -141,16 +141,16 @@ export default async function copyInitApiBoilerplate(appName: string, options: I
             'additional',
             'templates',
             'nextjs',
-            'maybeInitializeDreamApp.ts'
+            'maybeInitializeDreamApp.ts',
           ),
           path.join(srcPath, 'api', 'conf', 'system', 'maybeInitializeDreamApp.ts'),
-          options.importExtension
+          options.importExtension,
         )
       } else {
         copyRecursiveSync(
           internalSrcPath('..', 'boilerplate', 'additional', 'templates', 'nextjs', 'instrumentation.ts'),
           path.join(srcPath, 'instrumentation.mts'),
-          options.importExtension
+          options.importExtension,
         )
         copyRecursiveSync(
           internalSrcPath(
@@ -159,10 +159,10 @@ export default async function copyInitApiBoilerplate(appName: string, options: I
             'additional',
             'templates',
             'nextjs',
-            'instrumentation-node.ts'
+            'instrumentation-node.ts',
           ),
           path.join(srcPath, 'instrumentation-node.mts'),
-          options.importExtension
+          options.importExtension,
         )
         copyRecursiveSync(
           internalSrcPath(
@@ -171,10 +171,10 @@ export default async function copyInitApiBoilerplate(appName: string, options: I
             'additional',
             'templates',
             'nextjs',
-            'maybeInitializePsychicApp.ts'
+            'maybeInitializePsychicApp.ts',
           ),
           path.join(srcPath, 'api', 'conf', 'system', 'maybeInitializePsychicApp.ts'),
-          options.importExtension
+          options.importExtension,
         )
       }
       break
@@ -183,17 +183,17 @@ export default async function copyInitApiBoilerplate(appName: string, options: I
 
   writeFileSync(
     path.join(options.confPath, 'dream.ts'),
-    await DreamConfigBuilder.buildForInit({ appName, options })
+    await DreamConfigBuilder.buildForInit({ appName, options }),
   )
   writeFileSync(
     path.join(options.confPath, 'system', 'srcPath.ts'),
-    await SrcPathHelperBuilder.build(options)
+    await SrcPathHelperBuilder.build(options),
   )
 }
 
 function copyRecursiveSync(path: string, dest: string, importExtension: (typeof importExtensions)[number]) {
   copyRecursive(path, addRootPathForCoreSpecs(dest), fileContents =>
-    rewriteEsmImports(fileContents, importExtension)
+    rewriteEsmImports(fileContents, importExtension),
   )
 }
 

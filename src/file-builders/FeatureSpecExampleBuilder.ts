@@ -6,7 +6,7 @@ export default class FeatureSpecExampleBuilder {
   public static async build(options: NewPsychicAppCliOptions) {
     const contents = (
       await fs.readFile(
-        internalSrcPath('..', 'boilerplate', 'api', 'spec', 'features', 'example-feature-spec.spec.ts')
+        internalSrcPath('..', 'boilerplate', 'api', 'spec', 'features', 'example-feature-spec.spec.ts'),
       )
     ).toString()
 

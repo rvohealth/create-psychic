@@ -7,7 +7,7 @@ export default class FeatureSpecGlobalBuilder {
   public static async build({ options }: { appName: string; options: NewPsychicAppCliOptions }) {
     const contents = (
       await fs.readFile(
-        internalSrcPath('..', 'boilerplate', 'api', 'spec', 'features', 'setup', 'globalSetup.ts')
+        internalSrcPath('..', 'boilerplate', 'api', 'spec', 'features', 'setup', 'globalSetup.ts'),
       )
     ).toString()
 
@@ -16,7 +16,7 @@ export default class FeatureSpecGlobalBuilder {
         .replace('<PSYCHIC_IMPORTS>', psychicImports(options))
         .replace('<DEV_TOOLS_SETUP>', devToolsSetupContent(options))
         .replace('<DEV_TOOLS_TEARDOWN>', devToolsTeardownContent(options)),
-      options.packageManager
+      options.packageManager,
     )
 
     // TODO: replace yarn

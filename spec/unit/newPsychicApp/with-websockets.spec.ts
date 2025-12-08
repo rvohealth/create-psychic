@@ -22,7 +22,7 @@ describe('newPsychicApp with websockets', () => {
 
     await expectToMatchFixture(
       'expected-files/app/with-websockets.ts',
-      await readFile('howyadoin/src/conf/app.ts')
+      await readFile('howyadoin/src/conf/app.ts'),
     )
 
     await expectToMatchFixture('expected-files/ws/basic.ts', await readFile('howyadoin/src/utils/ws.ts'))
@@ -30,7 +30,7 @@ describe('newPsychicApp with websockets', () => {
     await sspawn(
       `\
         cd howyadoin &&
-        yarn build`
+        yarn build`,
     )
   }, 120_000)
 })

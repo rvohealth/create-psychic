@@ -7,7 +7,7 @@ import sspawn from '../sspawn.js'
 
 export default async function installApiDependencies(
   appName: string,
-  { options, logger }: { options: NewPsychicAppCliOptions; logger: DreamCliLogger }
+  { options, logger }: { options: NewPsychicAppCliOptions; logger: DreamCliLogger },
 ) {
   const lockfileName = getLockfileName(options.packageManager)
   const apiRoot = getApiRoot(appName, options)
@@ -22,7 +22,7 @@ export default async function installApiDependencies(
               logPrefixColor: 'cyan',
             })
           },
-        }
+        },
       )
       break
 
@@ -35,7 +35,7 @@ export default async function installApiDependencies(
               logPrefixColor: 'cyan',
             })
           },
-        }
+        },
       )
       break
 
@@ -48,7 +48,7 @@ export default async function installApiDependencies(
               logPrefixColor: 'cyan',
             })
           },
-        }
+        },
       )
       break
   }

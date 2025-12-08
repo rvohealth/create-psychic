@@ -2,7 +2,7 @@ import { importExtensions } from './newPsychicApp.js'
 
 export default function rewriteEsmImports(
   fileContents: string,
-  importExtension: (typeof importExtensions)[number]
+  importExtension: (typeof importExtensions)[number],
 ) {
   return fileContents
     .replace(/(from '[^\n]*).js'\n/g, '$1' + suffix(importExtension) + "'\n")

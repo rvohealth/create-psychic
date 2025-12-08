@@ -55,7 +55,7 @@ export default async function truncate({
     // with each run, so that subsequent runs can create new migrations
     // for the same tables.
     `DROP SCHEMA public CASCADE;
-CREATE SCHEMA public;`
+CREATE SCHEMA public;`,
   )
   await client.end()
 }

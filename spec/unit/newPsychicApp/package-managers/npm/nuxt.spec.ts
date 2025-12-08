@@ -20,7 +20,7 @@ describe('newPsychicApp with nuxt client', () => {
         npm run uspec &&
         npm run uspec:js &&
         npm run fspec &&
-        npm run fspec:js`
+        npm run fspec:js`,
     )
   }, 120_000)
 })

@@ -21,7 +21,7 @@ describe('newPsychicApp with nextjs client', () => {
         pnpm uspec &&
         pnpm uspec:js &&
         pnpm fspec &&
-        pnpm fspec:js`
+        pnpm fspec:js`,
     )
   }, 120_000)
 })

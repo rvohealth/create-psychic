@@ -9,7 +9,7 @@ export default function colorize(
   }: {
     color?: DreamCliForegroundColor | undefined
     bgColor?: DreamCliBgColor | undefined
-  }
+  },
 ) {
   const foregroundApplied = color ? c[color](text) : text
   return bgColor ? c[bgColor](foregroundApplied) : foregroundApplied

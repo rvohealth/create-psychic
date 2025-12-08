@@ -47,7 +47,7 @@ describe('FeatureSpecGlobalBuilder', () => {
 
         await expectToMatchFixture(
           'expected-files/spec/features/setup/globalSetup-with-client-and-admin.ts',
-          res
+          res,
         )
       })
     })

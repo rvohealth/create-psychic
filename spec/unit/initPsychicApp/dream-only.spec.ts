@@ -21,11 +21,11 @@ describe('initPsychicApp with --dream-only flag', () => {
     await expectNoFile('howyadoin/src/api/conf/app.ts')
     await expectToMatchFixture(
       'expected-files/dream/init/basic.ts',
-      await readFile('howyadoin/src/api/conf/dream.ts')
+      await readFile('howyadoin/src/api/conf/dream.ts'),
     )
     await expectToMatchFixture(
       'expected-files/cli/dream-only.ts',
-      await readFile('howyadoin/src/api/conf/system/cli.ts')
+      await readFile('howyadoin/src/api/conf/system/cli.ts'),
     )
 
     // nextjs has different eslint rules than psychic, so we
@@ -37,7 +37,7 @@ describe('initPsychicApp with --dream-only flag', () => {
       await sspawn(
         `\
         cd howyadoin &&
-        npm run build`
+        npm run build`,
       )
     })
   }, 120_000)

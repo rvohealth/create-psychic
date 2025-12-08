@@ -15,7 +15,7 @@ describe('newPsychicApp with uuid', () => {
     await sspawn(
       `\
         cd howyadoin &&
-        yarn uspec`
+        yarn uspec`,
     )
   }, 120_000)
 })

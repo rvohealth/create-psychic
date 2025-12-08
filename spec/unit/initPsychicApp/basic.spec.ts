@@ -16,7 +16,7 @@ describe('initPsychicApp without websockets or background jobs', () => {
 
     await expectToMatchFixture(
       'expected-files/app/init/basic.ts',
-      await readFile('howyadoin/src/api/conf/app.ts')
+      await readFile('howyadoin/src/api/conf/app.ts'),
     )
 
     // nextjs has different eslint rules than psychic, so we
@@ -28,7 +28,7 @@ describe('initPsychicApp without websockets or background jobs', () => {
       await sspawn(
         `\
         cd howyadoin &&
-        npm run build`
+        npm run build`,
       )
     })
   }, 120_000)

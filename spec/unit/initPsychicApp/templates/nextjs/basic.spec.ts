@@ -53,7 +53,7 @@ describe('initPsychicApp with --template=nextjs flag', () => {
       await sspawn(
         `\
         cd howyadoin &&
-        npm run build`
+        npm run build`,
       )
     })
   }, 120_000)

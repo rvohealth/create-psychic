@@ -46,7 +46,7 @@ export default async function addClientApp({
             colorize(`[${clientRootFolderName}]`, { color: sourceColor }) + ' ' + message,
             {
               logPrefixColor: sourceColor,
-            }
+            },
           )
         },
       })
@@ -55,11 +55,11 @@ export default async function addClientApp({
         path.join(apiRoot, '..', clientRootFolderName, 'vite.config.ts'),
         await ViteConfBuilder.build(path.join(apiRoot, '..', clientRootFolderName, 'vite.config.ts'), {
           port,
-        })
+        }),
       )
       fs.writeFileSync(
         path.join(apiRoot, '..', clientRootFolderName, '.eslintrc.cjs'),
-        ESLintConfBuilder.buildForViteReact()
+        ESLintConfBuilder.buildForViteReact(),
       )
 
       break
@@ -71,7 +71,7 @@ export default async function addClientApp({
             colorize(`[${clientRootFolderName}]`, { color: sourceColor }) + ' ' + message,
             {
               logPrefixColor: sourceColor,
-            }
+            },
           )
         },
       })
@@ -80,7 +80,7 @@ export default async function addClientApp({
         path.join(apiRoot, '..', clientRootFolderName, 'vite.config.ts'),
         await ViteConfBuilder.build(path.join(apiRoot, '..', clientRootFolderName, 'vite.config.ts'), {
           port,
-        })
+        }),
       )
       break
 
@@ -93,10 +93,10 @@ export default async function addClientApp({
               colorize(`[${clientRootFolderName}]`, { color: sourceColor }) + ' ' + message,
               {
                 logPrefixColor: sourceColor,
-              }
+              },
             )
           },
-        }
+        },
       )
       break
 
@@ -109,10 +109,10 @@ export default async function addClientApp({
               colorize(`[${clientRootFolderName}]`, { color: sourceColor }) + ' ' + message,
               {
                 logPrefixColor: sourceColor,
-              }
+              },
             )
           },
-        }
+        },
       )
       break
   }
@@ -128,10 +128,10 @@ export default async function addClientApp({
           colorize(`[${clientRootFolderName}]`, { color: sourceColor }) + ' ' + message,
           {
             logPrefixColor: sourceColor,
-          }
+          },
         )
       },
-    }
+    },
   )
 
   logger.logEndProgress()

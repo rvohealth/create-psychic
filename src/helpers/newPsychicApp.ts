@@ -71,12 +71,12 @@ export default async function newPsychicApp(appName: string, options: NewPsychic
         `${appName
           .split('')
           .map(() => '')
-          .join('-')}-`
+          .join('-')}-`,
       ),
       {
         logPrefix: ' ',
         logPrefixColor: 'greenBright',
-      }
+      },
     )
   }
 

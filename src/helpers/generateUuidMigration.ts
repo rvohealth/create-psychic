@@ -10,7 +10,7 @@ import UuidExtensionMigrationBuilder from '../file-builders/UuidExtensionMigrati
 
 export default async function generateUuidMigration(
   appName: string,
-  { logger, options }: { logger: DreamCliLogger; options: NewPsychicAppCliOptions }
+  { logger, options }: { logger: DreamCliLogger; options: NewPsychicAppCliOptions },
 ) {
   const apiRoot = getApiRoot(appName, options)
 
@@ -31,13 +31,13 @@ export default async function generateUuidMigration(
 
   if (!migration) {
     throw new Error(
-      `Failed to generate initial uuid migration. Migration not found matching: "add-uuid-extension.ts"`
+      `Failed to generate initial uuid migration. Migration not found matching: "add-uuid-extension.ts"`,
     )
   }
 
   fs.writeFileSync(
     path.join(apiRoot, 'src', 'db', 'migrations', migration),
-    UuidExtensionMigrationBuilder.build()
+    UuidExtensionMigrationBuilder.build(),
   )
 
   logger.logEndProgress()

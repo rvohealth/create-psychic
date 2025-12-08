@@ -41,7 +41,7 @@ describe('newPsychicApp without websockets or background jobs', () => {
         yarn psy g:model User6 email:string &&
         NODE_ENV=test yarn psy db:migrate &&
         yarn uspec &&
-        yarn build`
+        yarn build`,
     )
   }, 140_000)
 })

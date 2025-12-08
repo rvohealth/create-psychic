@@ -29,7 +29,7 @@ describe('FeatureSpecExampleBuilder', () => {
 
         await expectToMatchFixture(
           'expected-files/spec/features/example-feature-spec/with-react.spec.ts',
-          res
+          res,
         )
       })
     })

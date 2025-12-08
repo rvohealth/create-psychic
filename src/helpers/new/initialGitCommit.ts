@@ -15,7 +15,7 @@ export default async function initialGitCommit(appName: string, logger: DreamCli
           logPrefixColor: 'cyan',
         })
       },
-    }
+    },
   )
 
   logger.logEndProgress()

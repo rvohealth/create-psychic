@@ -22,11 +22,10 @@ export default async function addMissingScriptsToPackageJson(options: InitPsychi
   userPackagejson.scripts[psyOrDreamCmd] = `NODE_ENV=\${NODE_ENV:-test} tsx ${path.join(
     options.confPath,
     'system',
-    'cli.ts'
+    'cli.ts',
   )}`
-  userPackagejson.scripts[
-    'uspec'
-  ] = `APP_NAME=$npm_package_name APP_VERSION=$npm_package_version vitest --config ./spec/unit/vite.config.ts`
+  userPackagejson.scripts['uspec'] =
+    `APP_NAME=$npm_package_name APP_VERSION=$npm_package_version vitest --config ./spec/unit/vite.config.ts`
 
   await fs.writeFile(userPackagejsonPath, JSON.stringify(userPackagejson, null, 2))
 }

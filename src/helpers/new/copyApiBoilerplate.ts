@@ -39,7 +39,7 @@ export default async function copyApiBoilerplate(appName: string, options: NewPs
   fs.renameSync(path.join(apiRoot, 'gitignore'), path.join(apiRoot, '.gitignore'))
   fs.writeFileSync(
     path.join(apiRoot, 'src', 'conf', 'system', 'srcPath.ts'),
-    await SrcPathHelperBuilder.build(options)
+    await SrcPathHelperBuilder.build(options),
   )
 
   fs.writeFileSync(path.join(apiRoot, '.node-version'), process.version.replace(/^v/, ''))
@@ -49,22 +49,22 @@ export default async function copyApiBoilerplate(appName: string, options: NewPs
 
   fs.writeFileSync(
     path.join(apiRoot, 'src', 'conf', 'app.ts'),
-    await AppConfigBuilder.build({ appName, options })
+    await AppConfigBuilder.build({ appName, options }),
   )
 
   fs.writeFileSync(
     path.join(apiRoot, 'src', 'conf', 'dream.ts'),
-    await DreamConfigBuilder.build({ appName, options })
+    await DreamConfigBuilder.build({ appName, options }),
   )
 
   fs.writeFileSync(
     path.join(apiRoot, 'spec', 'features', 'setup', 'globalSetup.ts'),
-    await FeatureSpecGlobalBuilder.build({ appName, options })
+    await FeatureSpecGlobalBuilder.build({ appName, options }),
   )
 
   fs.writeFileSync(
     path.join(apiRoot, 'spec', 'features', 'example-feature-spec.spec.ts'),
-    await FeatureSpecExampleBuilder.build(options)
+    await FeatureSpecExampleBuilder.build(options),
   )
 
   if (!options.workers) {

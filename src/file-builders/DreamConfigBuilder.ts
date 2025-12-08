@@ -34,12 +34,12 @@ export default class DreamConfigBuilder {
         '<IMPORT_STYLE>',
         options.importExtension === '.js'
           ? ''
-          : `\n  app.set('importExtension', '${options.importExtension}')`
+          : `\n  app.set('importExtension', '${options.importExtension}')`,
       )
       .replace(
         '<PROJECT_ROOT>',
         `
-  app.set('projectRoot', srcPath('..'))`
+  app.set('projectRoot', srcPath('..'))`,
       )
       .replace('<MODELS_PATH>', `srcPath('..', ${pathToArgs(options.modelsPath)})`)
       .replace('<SERIALIZERS_PATH>', `srcPath('..', ${pathToArgs(options.serializersPath)})`)
@@ -55,7 +55,7 @@ export default class DreamConfigBuilder {
     modelSpecs: '${options.modelSpecsPath}',
     serializers: '${options.serializersPath}',
   })\
-`
+`,
       )
 
     return options.importExtension === '.js'

@@ -25,13 +25,13 @@ describe('newPsychicApp without websockets or background jobs', () => {
 
     await expectToMatchFixture(
       'expected-files/app/with-workers.ts',
-      await readFile('howyadoin/src/conf/app.ts')
+      await readFile('howyadoin/src/conf/app.ts'),
     )
 
     await sspawn(
       `\
         cd howyadoin &&
-        yarn build`
+        yarn build`,
     )
   }, 120_000)
 })

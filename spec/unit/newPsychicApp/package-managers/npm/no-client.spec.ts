@@ -18,7 +18,7 @@ describe('newPsychicApp with react client', () => {
       `\
         cd howyadoin &&
         npm run uspec &&
-        npm run uspec:js`
+        npm run uspec:js`,
     )
   }, 120_000)
 })

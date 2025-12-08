@@ -18,6 +18,6 @@ const config = typescriptEslint.config(
       parser: typescriptParser,
       parserOptions: { project: './tsconfig.json' },
     },
-  }
+  },
 )
 export default config

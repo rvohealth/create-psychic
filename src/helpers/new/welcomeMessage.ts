@@ -26,12 +26,12 @@ export default function welcomeMessage(apiRoot: string, packageManager: PsychicP
 
   ${c.gray(`to create a resource (model, migration, serializer, and controller)`)}
   ${c.magentaBright(
-    `$ ${runCmd} psy g:resource api/v1/users user organization:belongs_to favorites:enum:favorite_foods:Chalupas,Other`
+    `$ ${runCmd} psy g:resource api/v1/users user organization:belongs_to favorites:enum:favorite_foods:Chalupas,Other`,
   )}
 
   ${c.gray(`to create a model`)}
   ${c.magentaBright(
-    `$ ${runCmd} psy g:model user organization:belongs_to likes_chalupas:boolean some_id:uuid`
+    `$ ${runCmd} psy g:model user organization:belongs_to likes_chalupas:boolean some_id:uuid`,
   )}
 
   ${c.gray(`to create a migration`)}

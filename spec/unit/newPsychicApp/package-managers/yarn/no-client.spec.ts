@@ -18,7 +18,7 @@ describe('newPsychicApp with no client', () => {
       `\
         cd howyadoin &&
         yarn uspec &&
-        yarn uspec:js`
+        yarn uspec:js`,
     )
   }, 120_000)
 })

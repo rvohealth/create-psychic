@@ -13,7 +13,7 @@ export default async function buildInitPsychicAppOptionsWithPrompt(options: Init
   if (options.dreamOnly === undefined) {
     const answer = await new Select(
       'Do you want a dream-only integration? Doing this would omit psychic as a dependency.',
-      ['no', 'yes'] as const
+      ['no', 'yes'] as const,
     ).run()
     options.dreamOnly = answer === 'yes'
 
@@ -35,7 +35,7 @@ export default async function buildInitPsychicAppOptionsWithPrompt(options: Init
   if (options.importExtension === undefined) {
     const answer = await new Select(
       'What import suffix would you like to use for your files?',
-      importExtensions
+      importExtensions,
     ).run()
     options.importExtension = answer
   }
@@ -43,7 +43,7 @@ export default async function buildInitPsychicAppOptionsWithPrompt(options: Init
   if (!options.packageManager || !psychicPackageManagers.includes(options.packageManager)) {
     const answer = await new Select(
       'what package manager would you like to use?',
-      psychicPackageManagers
+      psychicPackageManagers,
     ).run()
     options.packageManager = answer
   }
@@ -72,7 +72,7 @@ export default async function buildInitPsychicAppOptionsWithPrompt(options: Init
   if (options.factoriesPath === undefined) {
     const defaultVal = path.join('.', 'spec', 'factories')
     const answer = await prompt(
-      `What would you like your spec factories path to be? (defaults to ${defaultVal}`
+      `What would you like your spec factories path to be? (defaults to ${defaultVal}`,
     )
     options.factoriesPath = answer || defaultVal
   }
@@ -99,7 +99,7 @@ export default async function buildInitPsychicAppOptionsWithPrompt(options: Init
   if (options.executablesPath === undefined && !options.dreamOnly) {
     const defaultVal = path.join('.', 'src')
     const answer = await prompt(
-      `What would you like your top-level executables path to be? (defaults to ${defaultVal}`
+      `What would you like your top-level executables path to be? (defaults to ${defaultVal}`,
     )
     options.executablesPath = answer || defaultVal
   }
@@ -137,7 +137,7 @@ export default async function buildInitPsychicAppOptionsWithPrompt(options: Init
   if (options.controllerSpecsPath === undefined && !options.dreamOnly) {
     const defaultVal = path.join('.', 'spec', 'unit', 'controllers')
     const answer = await prompt(
-      `What would you like your controller spec path to be? (defaults to ${defaultVal}`
+      `What would you like your controller spec path to be? (defaults to ${defaultVal}`,
     )
     options.controllerSpecsPath = answer || defaultVal
   }

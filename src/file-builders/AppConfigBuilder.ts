@@ -31,7 +31,7 @@ export default class AppConfigBuilder {
         '<IMPORT_STYLE>',
         options.importExtension === '.js'
           ? ''
-          : `\n  psy.set('importExtension', '${options.importExtension}')`
+          : `\n  psy.set('importExtension', '${options.importExtension}')`,
       )
       .replace(/<PSYCHIC_OPENAPI_PATH>/g, pathToArgs(options.openapiPath))
       .replace('<CONTROLLERS_PATH>', `srcPath('..', ${pathToArgs(options.controllersPath)})`)
@@ -46,7 +46,7 @@ export default class AppConfigBuilder {
     services: '${options.servicesPath}',
     controllerSpecs: '${options.controllerSpecsPath}',
   })\
-`
+`,
       )
       .replace(/AppEnv\.string\('SSL_KEY_PATH'\)/, "AppEnv.string('SSL_KEY_PATH', { optional: true })")
       .replace(/AppEnv\.string\('SSL_CERT_PATH'\)/, "AppEnv.string('SSL_CERT_PATH', { optional: true })")
