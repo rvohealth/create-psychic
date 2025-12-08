@@ -4,7 +4,7 @@ import { globalTypeConfig } from '@src/types/dream.globals.js'
 import { connectionTypeConfig, schema } from '@src/types/dream.js'
 
 export default class ApplicationModel extends Dream {
-  public declare DB: DB
+  declare public DB: DB
 
   public override get schema() {
     return schema

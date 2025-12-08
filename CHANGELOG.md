@@ -1,3 +1,7 @@
+## 2.1.4
+
+- fix order of `declare public` in boilerplate
+
 ## 2.1.3
 
 - fix mcp-http-bridge.ts

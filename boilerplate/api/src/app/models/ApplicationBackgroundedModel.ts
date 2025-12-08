@@ -6,7 +6,7 @@ import { connectionTypeConfig, schema } from '@src/types/dream.js'
 import psychicWorkerTypes from '@src/types/workers.js'
 
 export default class ApplicationBackgroundedModel extends BaseBackgroundedModel {
-  public declare DB: DB
+  declare public DB: DB
 
   public override get schema() {
     return schema

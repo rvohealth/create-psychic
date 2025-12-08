@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "@rvoh/create-psychic",
-  "version": "2.1.3",
+  "version": "2.1.4",
   "description": "creates a new psychic app",
   "author": "RVO Health",
   "repository": {
@@ -50,7 +50,7 @@
     "kysely": "^0.28.7",
     "luxon-jest-matchers": "^0.1.14",
     "pg": "^8.13.3",
-    "prettier": "^2.8.7",
+    "prettier": "^3.7.4",
     "puppeteer": "^24.32.0",
     "supertest": "^7.1.3",
     "tslib": "^2.7.0",
