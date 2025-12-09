@@ -8,12 +8,15 @@ importers:
 
   .:
     dependencies:
+      '@rvoh/dream':
+        specifier: 2.1.4
+        version: 2.1.4(@types/node@22.13.0)(@types/pg@8.11.11)(commander@12.1.0)(dotenv@17.2.3)(kysely-codegen@0.19.0(kysely@0.28.7)(pg@8.13.3)(typescript@5.9.3))(kysely@0.28.7)(pg@8.13.3)(pluralize-esm@9.0.5)(typescript@5.9.3)
       '@types/node':
         specifier: ^22.6.1
         version: 22.13.0
       commander:
-        specifier: ^10.0.1
-        version: 10.0.1
+        specifier: ^12.1.0
+        version: 12.1.0
       ora:
         specifier: ^6.3.0
         version: 6.3.0
@@ -30,9 +33,6 @@ importers:
       '@eslint/js':
         specifier: ^9.39.1
         version: 9.39.1
-      '@rvoh/dream':
-        specifier: ^2.1.0
-        version: 2.1.0(@types/node@22.13.0)(@types/pg@8.11.11)(kysely-codegen@0.19.0(kysely@0.28.7)(pg@8.13.3)(typescript@5.9.3))(kysely@0.28.7)(pg@8.13.3)
       '@rvoh/dream-spec-helpers':
         specifier: ^2.0.0
         version: 2.0.0(@types/node@22.13.0)(@types/pg@8.11.11)(pg@8.13.3)
@@ -432,14 +432,18 @@ packages:
       '@types/pg': '*'
       pg: '*'
 
-  '@rvoh/dream@2.1.0':
-    resolution: {integrity: sha512-7ly6PXjagVgfJ7Edfreyryr6mXIDQZ1VbAW4Y5sykpJVXO24m7fOfZG+FME+eniv7D489akM4e0HgB6p42WuzA==}
+  '@rvoh/dream@2.1.4':
+    resolution: {integrity: sha512-faouFjFuvvpm/H2mWfo+onGZx9bws0ZKyb4SPxUbZm6TG1xvSK0LSTLKwmtp6zNCzBlXink1CVTtS5lARWzPHw==}
     peerDependencies:
       '@types/node': '*'
       '@types/pg': '*'
+      commander: ^12
+      dotenv: '*'
       kysely: ^0.28.5
       kysely-codegen: ~0.19.0
       pg: '*'
+      pluralize-esm: '*'
+      typescript: ^5
 
   '@shikijs/core@1.29.1':
     resolution: {integrity: sha512-Mo1gGGkuOYjDu5H8YwzmOuly9vNr8KDVkqj9xiKhhhFS8jisAtDSEWB9hzqRHLVQgFdA310e8XRJcW4tYhRB2A==}
@@ -802,10 +806,6 @@ packages:
 
   comma-separated-tokens@2.0.3:
     resolution: {integrity: sha512-Fu4hJdvzeylCfQPp9SGWidpzrMs7tTrlu6Vb8XGaRGck8QSNZJJp538Wrb60Lax4fPwR64ViY468OIUTbRlGZg==}
-
-  commander@10.0.1:
-    resolution: {integrity: sha512-y4Mg2tXshplEbSGzx7amzPwKKOCGuoSRP/CjEdwwk0FOGlUbq6lKuoyDZTNZkmxHdJtp54hdfY/JUrdL7Xfdug==}
-    engines: {node: '>=14'}
 
   commander@12.1.0:
     resolution: {integrity: sha512-Vw8qHK3bZM9y/P10u3Vib8o/DdkvA2OtPtZvD871QKjy74Wj1WSKFILMPRPSdUSx5RFK1arlJzEtA4PkFgnbuA==}
@@ -2311,18 +2311,19 @@ snapshots:
       '@types/pg': 8.11.11
       pg: 8.13.3
 
-  '@rvoh/dream@2.1.0(@types/node@22.13.0)(@types/pg@8.11.11)(kysely-codegen@0.19.0(kysely@0.28.7)(pg@8.13.3)(typescript@5.9.3))(kysely@0.28.7)(pg@8.13.3)':
+  '@rvoh/dream@2.1.4(@types/node@22.13.0)(@types/pg@8.11.11)(commander@12.1.0)(dotenv@17.2.3)(kysely-codegen@0.19.0(kysely@0.28.7)(pg@8.13.3)(typescript@5.9.3))(kysely@0.28.7)(pg@8.13.3)(pluralize-esm@9.0.5)(typescript@5.9.3)':
     dependencies:
       '@types/node': 22.13.0
       '@types/pg': 8.11.11
       colorette: 2.0.20
       commander: 12.1.0
-      dotenv: 16.6.1
+      dotenv: 17.2.3
       kysely: 0.28.7
       kysely-codegen: 0.19.0(kysely@0.28.7)(pg@8.13.3)(typescript@5.9.3)
       luxon: 3.7.1
       pg: 8.13.3
       pluralize-esm: 9.0.5
+      typescript: 5.9.3
       yoctocolors: 2.1.1
 
   '@shikijs/core@1.29.1':
@@ -2728,8 +2729,6 @@ snapshots:
       delayed-stream: 1.0.0
 
   comma-separated-tokens@2.0.3: {}
-
-  commander@10.0.1: {}
 
   commander@12.1.0: {}
 

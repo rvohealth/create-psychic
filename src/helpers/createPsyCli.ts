@@ -1,11 +1,11 @@
+import { primaryKeyTypes } from '@rvoh/dream/system'
 import { Command } from 'commander'
+import initPsychicApp from './initPsychicApp.js'
 import newPsychicApp, {
   cliClientAppTypes,
-  cliPrimaryKeyTypes,
   InitPsychicAppCliOptions,
   NewPsychicAppCliOptions,
 } from './newPsychicApp.js'
-import initPsychicApp from './initPsychicApp.js'
 
 export default function createPsyCli() {
   const program = new Command()
@@ -19,7 +19,7 @@ export default function createPsyCli() {
 
     .option(
       '--primary-key-type <KEY_TYPE>',
-      `One of: ${cliPrimaryKeyTypes.join(
+      `One of: ${primaryKeyTypes.join(
         ', ',
       )}. The type of primary key to use by default when generating Dream models (can be changed by hand in the migration file)`,
     )
@@ -44,7 +44,7 @@ export default function createPsyCli() {
     .option('--websockets', 'include websockets in your application')
     .option(
       '--primary-key-type <KEY_TYPE>',
-      `One of: ${cliPrimaryKeyTypes.join(
+      `One of: ${primaryKeyTypes.join(
         ', ',
       )}. The type of primary key to use by default when generating Dream models (can be changed by hand in the migration file)`,
     )
@@ -64,10 +64,6 @@ export default function createPsyCli() {
     .option('--utils-path <path>', 'the path to your utils directory')
     .option('--executables-path <path>', 'the path to your top-level executables')
     .option('--serializers-path <path>', 'the path to your serializers directory')
-    .option(
-      '--types-path <path>',
-      'the path to the internal types directory used to store psychic and dream types',
-    )
     .option('--system-files-path <path>', 'the path to your system directory')
     .option('--conf-path <path>', 'the path to your controllers directory')
     .option('--models-path <path>', 'the path to your models directory')

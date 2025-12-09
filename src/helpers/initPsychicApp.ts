@@ -1,6 +1,5 @@
 import c from 'yoctocolors'
 import DreamCliLogger from '../logger/DreamCliLogger.js'
-import generateUuidMigration from './generateUuidMigration.js'
 import addMissingScriptsToPackageJson from './init/addMissingScriptsToPackageJson.js'
 import addMissingTsconfigRules from './init/addMissingTsconfigRules.js'
 import buildInitPsychicAppOptionsWithPrompt from './init/buildInitPsychicAppOptionsWithPrompt.js'
@@ -10,7 +9,6 @@ import installInitApiDependencies from './init/installInitApiDependencies.js'
 import logo from './logo.js'
 import { InitPsychicAppCliOptions } from './newPsychicApp.js'
 
-export const cliPrimaryKeyTypes = ['bigserial', 'serial', 'uuid'] as const
 export const cliClientAppTypes = ['nextjs', 'react', 'vue', 'nuxt', 'none'] as const
 
 export const psychicPackageManagers = ['yarn', 'pnpm', 'npm'] as const
@@ -60,10 +58,6 @@ export default async function initPsychicApp(appName: string, options: InitPsych
 
   await addMissingScriptsToPackageJson(options)
   await addMissingTsconfigRules()
-
-  if (options.primaryKeyType === 'uuid') {
-    await generateUuidMigration(appName, { logger, options })
-  }
 
   if (!testEnv()) {
     logger.log(logo(), { logPrefix: '' })

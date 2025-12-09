@@ -9,7 +9,7 @@ describe('newPsychicApp with uuid', () => {
       workers: false,
       client: 'none',
       adminClient: 'none',
-      primaryKeyType: 'uuid4',
+      primaryKeyType: 'uuid7',
     })
 
     await sspawn(

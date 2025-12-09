@@ -1,3 +1,7 @@
+## 2.1.5
+
+- leverage native postgres UUIDv4 and UUIDv7
+
 ## 2.1.4
 
 - fix order of `declare public` in boilerplate

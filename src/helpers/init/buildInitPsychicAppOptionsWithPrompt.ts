@@ -1,6 +1,6 @@
+import { primaryKeyTypes } from '@rvoh/dream/system'
 import * as path from 'node:path'
 import {
-  cliPrimaryKeyTypes,
   importExtensions,
   InitPsychicAppCliOptions,
   initTemplates,
@@ -48,8 +48,11 @@ export default async function buildInitPsychicAppOptionsWithPrompt(options: Init
     options.packageManager = answer
   }
 
-  if (!options.primaryKeyType || !cliPrimaryKeyTypes.includes(options.primaryKeyType)) {
-    const answer = await new Select('what primary key type would you like to use?', cliPrimaryKeyTypes).run()
+  if (!options.primaryKeyType || !primaryKeyTypes.includes(options.primaryKeyType)) {
+    const answer = await new Select(
+      'what primary key type would you like to use? (uuid7 requires Postgres 18)',
+      primaryKeyTypes,
+    ).run()
     options.primaryKeyType = answer
   }
 
