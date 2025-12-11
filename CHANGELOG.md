@@ -1,3 +1,7 @@
+## 2.1.6
+
+- root level AGENTS.md
+
 ## 2.1.5
 
 - leverage native postgres UUIDv4 and UUIDv7

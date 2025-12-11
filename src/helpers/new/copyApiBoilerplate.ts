@@ -19,7 +19,10 @@ export default async function copyApiBoilerplate(appName: string, options: NewPs
   const appRoot = path.join('.', appName)
   const apiRoot = getApiRoot(appName, options)
 
-  if (!apiOnlyOptions(options)) fs.mkdirSync(appRoot)
+  if (!apiOnlyOptions(options)) {
+    fs.mkdirSync(appRoot)
+    fs.cpSync(internalSrcPath('..', 'boilerplate', 'AGENTS.md'), path.join(appRoot, 'AGENTS.md'))
+  }
 
   copyRecursive(internalSrcPath('..', 'boilerplate', 'api'), apiRoot)
 
