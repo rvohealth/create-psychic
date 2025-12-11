@@ -13,7 +13,7 @@ const debugSql = debuglog('sql').enabled
 export default async (app: DreamApp) => {<PROJECT_ROOT>
   app.set('primaryKeyType', <PRIMARY_KEY_TYPE>)
   app.set('inflections', inflections)<IMPORT_STYLE>
-
+<DREAM_PACKAGE_MANAGER>
   await app.load('models', <MODELS_PATH>, path => importDefault(path))
   await app.load('serializers', <SERIALIZERS_PATH>, path => importAll(path))
 

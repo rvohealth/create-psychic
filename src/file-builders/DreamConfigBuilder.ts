@@ -14,6 +14,7 @@ export default class DreamConfigBuilder {
       .replace('<PRIMARY_KEY_TYPE>', `'${options.primaryKeyType}'`)
       .replace('<PSYCHIC_IMPORT>', "\nimport { PsychicApp } from '@rvoh/psychic'")
       .replace(/<PSYCHIC_OR_DREAM_APP>/g, 'PsychicApp')
+      .replace('<DREAM_PACKAGE_MANAGER>', '')
       .replace('<DREAM_PATHS>', "  app.set('paths', {})")
       .replace('<MODELS_PATH>', "srcPath('app', 'models')")
       .replace('<IMPORT_STYLE>', '')
@@ -30,6 +31,7 @@ export default class DreamConfigBuilder {
       .replace('<PRIMARY_KEY_TYPE>', `'${options.primaryKeyType}'`)
       .replace('<PSYCHIC_IMPORT>', '')
       .replace(/<PSYCHIC_OR_DREAM_APP>/g, 'DreamApp')
+      .replace('<DREAM_PACKAGE_MANAGER>', `  app.set('packageManager', '${options.packageManager}')`)
       .replace(
         '<IMPORT_STYLE>',
         options.importExtension === '.js'
