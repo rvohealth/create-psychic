@@ -1,7 +1,7 @@
 /**
  * MCP-HTTP Bridge (TypeScript): Connects MCP stdio protocol to your HTTP RAG API.
  *
- * Usage: npx ts-node mcp_http_bridge.ts (or via a yarn script)
+ * Usage: npx ts-node mcp_http_bridge.ts
  *
  * Requirements:
  *   - Node.js 18+

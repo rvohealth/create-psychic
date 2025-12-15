@@ -1,5 +1,9 @@
 ## 2.1.6
 
+- mcp bridge comment cleanup
+
+## 2.1.6
+
 - root level AGENTS.md
 - root level .gitignore
 - .prettierignore at root and in api because VSCode will only pick up the one at the root of the workspace
