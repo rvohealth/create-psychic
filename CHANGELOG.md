@@ -1,3 +1,7 @@
+## 2.1.8
+
+- fix unexpected build regressions caused by new dotfiles
+
 ## 2.1.6
 
 - mcp bridge comment cleanup
