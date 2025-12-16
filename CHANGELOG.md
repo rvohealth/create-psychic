@@ -1,3 +1,7 @@
+## 2.1.9
+
+- use specified package manager to build out sidechaining for client dev server
+
 ## 2.1.8
 
 - fix unexpected build regressions caused by new dotfiles

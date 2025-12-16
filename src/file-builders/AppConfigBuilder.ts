@@ -5,6 +5,7 @@ import internalSrcPath from '../helpers/internalSrcPath.js'
 import { InitPsychicAppCliOptions, NewPsychicAppCliOptions } from '../helpers/newPsychicApp.js'
 import pathToArgs from '../helpers/pathToArgs.js'
 import rewriteEsmImports from '../helpers/rewriteEsmImports.js'
+import runCmdForPackageManager from '../helpers/runCmdForPackageManager.js'
 
 export default class AppConfigBuilder {
   public static async build({ appName, options }: { appName: string; options: NewPsychicAppCliOptions }) {
@@ -79,12 +80,13 @@ export default class AppConfigBuilder {
 }
 
 function startHookContent(options: NewPsychicAppCliOptions) {
+  const runCmd = runCmdForPackageManager(options.packageManager)
   if (options.client !== 'none' && options.adminClient !== 'none') {
     return `\
   psy.on('server:start', async () => {
     if (AppEnv.isDevelopment && AppEnv.boolean('CLIENT')) {
       DreamCLI.logger.logStartProgress('starting dev servers...')
-      await PsychicDevtools.launchDevServer('clientApp', { port: 3000, cmd: 'yarn client' })
+      await PsychicDevtools.launchDevServer('clientApp', { port: 3000, cmd: '${runCmd} client' })
       await PsychicDevtools.launchDevServer('adminApp', { port: 3001, cmd: 'yarn admin' })
       DreamCLI.logger.logEndProgress()
     }
@@ -94,7 +96,7 @@ function startHookContent(options: NewPsychicAppCliOptions) {
   psy.on('server:start', async () => {
     if (AppEnv.isDevelopment && AppEnv.boolean('CLIENT')) {
       DreamCLI.logger.logStartProgress('starting dev server...')
-      await PsychicDevtools.launchDevServer('clientApp', { port: 3000, cmd: 'yarn client' })
+      await PsychicDevtools.launchDevServer('clientApp', { port: 3000, cmd: '${runCmd} client' })
       DreamCLI.logger.logEndProgress()
     }
   })`
@@ -103,7 +105,7 @@ function startHookContent(options: NewPsychicAppCliOptions) {
   psy.on('server:start', async () => {
     if (AppEnv.isDevelopment && AppEnv.boolean('CLIENT')) {
       DreamCLI.logger.logStartProgress('starting dev server...')
-      await PsychicDevtools.launchDevServer('adminApp', { port: 3001, cmd: 'yarn admin' })
+      await PsychicDevtools.launchDevServer('adminApp', { port: 3001, cmd: '${runCmd} admin' })
       DreamCLI.logger.logEndProgress()
     }
   })`
