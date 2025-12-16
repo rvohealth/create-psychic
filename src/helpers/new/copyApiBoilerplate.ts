@@ -21,7 +21,7 @@ export default async function copyApiBoilerplate(appName: string, options: NewPs
 
   if (!apiOnlyOptions(options)) {
     fs.mkdirSync(appRoot)
-    fs.cpSync(internalSrcPath('..', 'boilerplate', '.gitignore'), path.join(appRoot, '.gitignore'))
+    fs.cpSync(internalSrcPath('..', 'boilerplate', 'gitignore'), path.join(appRoot, '.gitignore'))
     fs.cpSync(internalSrcPath('..', 'boilerplate', 'AGENTS.md'), path.join(appRoot, 'AGENTS.md'))
     fs.cpSync(
       internalSrcPath('..', 'boilerplate', 'api', '.prettierignore'),
