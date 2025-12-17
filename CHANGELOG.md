@@ -1,3 +1,7 @@
+## 2.1.10
+
+- javascript mcp bridge so can simply run it with node
+
 ## 2.1.9
 
 - use specified package manager to build out sidechaining for client dev server
@@ -6,7 +10,7 @@
 
 - fix unexpected build regressions caused by new dotfiles
 
-## 2.1.6
+## 2.1.7
 
 - mcp bridge comment cleanup
 

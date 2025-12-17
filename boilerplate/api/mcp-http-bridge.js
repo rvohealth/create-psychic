@@ -1,46 +1,20 @@
 /**
- * MCP-HTTP Bridge (TypeScript): Connects MCP stdio protocol to your HTTP RAG API.
+ * MCP-HTTP Bridge (JavaScript): Connects MCP stdio protocol to your HTTP RAG API.
  *
- * Usage: npx ts-node mcp_http_bridge.ts
+ * Usage: node mcp-http-bridge.js
  *
  * Requirements:
  *   - Node.js 18+
- *   - @types/node (for type safety)
  *
  * This script implements a fallback JSON-RPC-like MCP bridge over stdio.
  */
 
-import * as readline from 'readline'
+import * as readline from 'node:readline'
 
 const RAG_API_ENDPOINT = process.env.RAG_API_ENDPOINT || 'http://localhost:8000/query'
 const RAG_API_TIMEOUT = 10000
 
-interface JsonRpcRequest {
-  jsonrpc?: string
-  method: string
-  params?: {
-    name?: string
-    arguments?: {
-      query?: string
-      top_k?: number
-    }
-  }
-  id?: string | number | null
-}
-
-interface JsonRpcError {
-  code: number
-  message: string
-}
-
-interface JsonRpcResponse {
-  jsonrpc: string
-  id?: string | number | null
-  result?: unknown
-  error?: JsonRpcError
-}
-
-function writeResponse(response: JsonRpcResponse) {
+function writeResponse(response) {
   process.stdout.write(JSON.stringify(response) + '\n')
 }
 
@@ -50,11 +24,11 @@ const rl = readline.createInterface({
   terminal: false,
 })
 
-rl.on('line', (line: string) => {
+rl.on('line', line => {
   void (async () => {
-    let request: JsonRpcRequest
+    let request
     try {
-      request = JSON.parse(line) as JsonRpcRequest
+      request = JSON.parse(line)
     } catch (e) {
       const error = e instanceof Error ? e : new Error(String(e))
       writeResponse({
