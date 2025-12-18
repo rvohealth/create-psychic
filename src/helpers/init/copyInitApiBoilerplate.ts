@@ -143,7 +143,7 @@ export default async function copyInitApiBoilerplate(appName: string, options: I
             'nextjs',
             'maybeInitializeDreamApp.ts',
           ),
-          path.join(srcPath, 'api', 'conf', 'system', 'maybeInitializeDreamApp.ts'),
+          path.join(options.confPath, 'system', 'maybeInitializeDreamApp.ts'),
           options.importExtension,
         )
       } else {
@@ -173,7 +173,7 @@ export default async function copyInitApiBoilerplate(appName: string, options: I
             'nextjs',
             'maybeInitializePsychicApp.ts',
           ),
-          path.join(srcPath, 'api', 'conf', 'system', 'maybeInitializePsychicApp.ts'),
+          path.join(options.confPath, 'system', 'maybeInitializePsychicApp.ts'),
           options.importExtension,
         )
       }
