@@ -1,3 +1,7 @@
+## 2.1.11
+
+fix broken init command when using --dream-only flag
+
 ## 2.1.10
 
 - javascript mcp bridge so can simply run it with node
