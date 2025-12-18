@@ -1,6 +1,7 @@
 ## 2.1.11
 
-fix broken init command when using --dream-only flag
+- fix broken init command when using --dream-only flag
+- don't write a node-version unless their node version is recent
 
 ## 2.1.10
 

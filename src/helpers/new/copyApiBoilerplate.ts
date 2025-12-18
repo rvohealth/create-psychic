@@ -50,7 +50,11 @@ export default async function copyApiBoilerplate(appName: string, options: NewPs
     await SrcPathHelperBuilder.build(options),
   )
 
-  fs.writeFileSync(path.join(apiRoot, '.node-version'), process.version.replace(/^v/, ''))
+  const nodeVersion = process.version.replace(/^v/, '')
+  if (!/^(0|1|20|21)/.test(nodeVersion)) {
+    fs.writeFileSync(path.join(apiRoot, '.node-version'), nodeVersion)
+  }
+
   fs.writeFileSync(path.join(apiRoot, '.env'), EnvBuilder.build({ appName, env: 'development' }))
   fs.writeFileSync(path.join(apiRoot, '.env.test'), EnvBuilder.build({ appName, env: 'test' }))
   fs.writeFileSync(path.join(apiRoot, 'package.json'), await PackagejsonBuilder.buildAPI(appName, options))
