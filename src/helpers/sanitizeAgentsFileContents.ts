@@ -1,6 +1,6 @@
 import * as path from 'node:path'
 import * as fs from 'node:fs'
-import runCmdForPackageManager from './runCmdForPackageManager.js'
+import runCmdForPackageManager from './packageManager/runCmdForPackageManager.js'
 import { DreamAppAllowedPackageManagersEnum } from '@rvoh/dream/system'
 
 export default function sanitizeAgentsFileContents(

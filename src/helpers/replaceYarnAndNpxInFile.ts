@@ -1,7 +1,7 @@
 import * as fs from 'node:fs/promises'
 import { PsychicPackageManager } from './newPsychicApp.js'
-import runCmdForPackageManager from './runCmdForPackageManager.js'
-import npxCmdForPackageManager from './npxCmdForPackageManager.js'
+import runCmdForPackageManager from './packageManager/runCmdForPackageManager.js'
+import npxCmdForPackageManager from './packageManager/npxCmdForPackageManager.js'
 
 export default async function replaceYarnInFile(filepath: string, packageManager: PsychicPackageManager) {
   const file = (await fs.readFile(filepath)).toString()

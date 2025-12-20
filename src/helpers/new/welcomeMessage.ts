@@ -1,6 +1,6 @@
 import c from 'yoctocolors'
 import { PsychicPackageManager } from '../newPsychicApp.js'
-import runCmdForPackageManager from '../runCmdForPackageManager.js'
+import runCmdForPackageManager from '../packageManager/runCmdForPackageManager.js'
 
 export default function welcomeMessage(apiRoot: string, packageManager: PsychicPackageManager) {
   const runCmd = runCmdForPackageManager(packageManager)
