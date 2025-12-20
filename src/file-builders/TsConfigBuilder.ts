@@ -17,8 +17,8 @@ export default class TsConfigBuilder {
     let tsconfigPath = path.join(process.cwd(), addRootPathForCoreSpecs('tsconfig.json'))
 
     if (!fs.existsSync(tsconfigPath)) {
-      fs.cpSync(internalSrcPath('..', 'boilerplate', 'tsconfig.build.json'), tsconfigBuildPath)
-      fs.cpSync(internalSrcPath('..', 'boilerplate', 'tsconfig.json'), tsconfigPath)
+      fs.cpSync(internalSrcPath('..', 'boilerplate', 'api', 'tsconfig.build.json'), tsconfigBuildPath)
+      fs.cpSync(internalSrcPath('..', 'boilerplate', 'api', 'tsconfig.json'), tsconfigPath)
       tsconfigPath = tsconfigBuildPath
     }
 
