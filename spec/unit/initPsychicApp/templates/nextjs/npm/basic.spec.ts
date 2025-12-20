@@ -1,21 +1,25 @@
-import sspawn from '../../../../../src/helpers/sspawn.js'
-import expectNoWebsockets from '../../../../helpers/assertions/expectNoWebsockets.js'
-import expectNoWorkers from '../../../../helpers/assertions/expectNoWorkers.js'
-import temporarilyDisableEslintForNextjsBuild from '../../../../helpers/init/temporarilyDisableEslintForNextjsBuild.js'
-import initPsychicAppDefaults from '../../../../helpers/initPsychicAppDefaults.js'
-import initSpecPsychicApp from '../../../../helpers/initSpecPsychicApp.js'
+import sspawn from '../../../../../../src/helpers/sspawn.js'
+import expectNoWebsockets from '../../../../../helpers/assertions/expectNoWebsockets.js'
+import expectNoWorkers from '../../../../../helpers/assertions/expectNoWorkers.js'
+import expectFile from '../../../../../helpers/expectFile.js'
+import temporarilyDisableEslintForNextjsBuild from '../../../../../helpers/init/temporarilyDisableEslintForNextjsBuild.js'
+import initPsychicAppDefaults from '../../../../../helpers/initPsychicAppDefaults.js'
+import initSpecPsychicApp from '../../../../../helpers/initSpecPsychicApp.js'
 
-describe('initPsychicApp with --template=nextjs flag and dreamOnly: true', () => {
-  it('initializes an app configured specifically for nextjs', async () => {
+describe('initPsychicApp with --template=nextjs flag', () => {
+  it('initializes an app configured with npm specifically for nextjs', async () => {
     await initSpecPsychicApp('howyadoin', {
       ...initPsychicAppDefaults(),
+      packageManager: 'npm',
       template: 'nextjs',
       importExtension: 'none',
-      dreamOnly: true,
     })
 
     await expectNoWorkers()
     await expectNoWebsockets()
+
+    await expectFile('howyadoin/src/instrumentation.mts')
+    await expectFile('howyadoin/src/instrumentation-node.mts')
 
     // swap out the default page.tsx file for one that calls to maybeInitializePsychicApp,
     // which will cause build to fail if anything crashes during psychic initialization.

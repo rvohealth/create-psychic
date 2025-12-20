@@ -1,7 +1,7 @@
 import * as path from 'node:path'
 import c from 'yoctocolors'
 import { InitPsychicAppCliOptions } from '../newPsychicApp.js'
-import runCmdForPackageManager from '../runCmdForPackageManager.js'
+import runCmdForPackageManager from '../packageManager/runCmdForPackageManager.js'
 
 export default function initMessage(options: InitPsychicAppCliOptions) {
   const runCmd = runCmdForPackageManager(options.packageManager)

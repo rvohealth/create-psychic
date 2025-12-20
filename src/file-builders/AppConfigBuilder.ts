@@ -5,7 +5,7 @@ import internalSrcPath from '../helpers/internalSrcPath.js'
 import { InitPsychicAppCliOptions, NewPsychicAppCliOptions } from '../helpers/newPsychicApp.js'
 import pathToArgs from '../helpers/pathToArgs.js'
 import rewriteEsmImports from '../helpers/rewriteEsmImports.js'
-import runCmdForPackageManager from '../helpers/runCmdForPackageManager.js'
+import runCmdForPackageManager from '../helpers/packageManager/runCmdForPackageManager.js'
 
 export default class AppConfigBuilder {
   public static async build({ appName, options }: { appName: string; options: NewPsychicAppCliOptions }) {

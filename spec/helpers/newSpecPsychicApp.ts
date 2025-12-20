@@ -1,6 +1,6 @@
 import apiOnlyOptions from '../../src/helpers/apiOnlyOptions.js'
 import newPsychicApp, { NewPsychicAppCliOptions } from '../../src/helpers/newPsychicApp.js'
-import runCmdForPackageManager from '../../src/helpers/runCmdForPackageManager.js'
+import runCmdForPackageManager from '../../src/helpers/packageManager/runCmdForPackageManager.js'
 import sspawn from '../../src/helpers/sspawn.js'
 import expectFile from './expectFile.js'
 

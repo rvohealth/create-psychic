@@ -1,15 +1,16 @@
-import sspawn from '../../../../../src/helpers/sspawn.js'
-import expectNoWebsockets from '../../../../helpers/assertions/expectNoWebsockets.js'
-import expectNoWorkers from '../../../../helpers/assertions/expectNoWorkers.js'
-import expectFile from '../../../../helpers/expectFile.js'
-import temporarilyDisableEslintForNextjsBuild from '../../../../helpers/init/temporarilyDisableEslintForNextjsBuild.js'
-import initPsychicAppDefaults from '../../../../helpers/initPsychicAppDefaults.js'
-import initSpecPsychicApp from '../../../../helpers/initSpecPsychicApp.js'
+import sspawn from '../../../../../../src/helpers/sspawn.js'
+import expectNoWebsockets from '../../../../../helpers/assertions/expectNoWebsockets.js'
+import expectNoWorkers from '../../../../../helpers/assertions/expectNoWorkers.js'
+import expectFile from '../../../../../helpers/expectFile.js'
+import temporarilyDisableEslintForNextjsBuild from '../../../../../helpers/init/temporarilyDisableEslintForNextjsBuild.js'
+import initPsychicAppDefaults from '../../../../../helpers/initPsychicAppDefaults.js'
+import initSpecPsychicApp from '../../../../../helpers/initSpecPsychicApp.js'
 
 describe('initPsychicApp with --template=nextjs flag', () => {
-  it('initializes an app configured specifically for nextjs', async () => {
+  it('initializes an app configured with yarn specifically for nextjs', async () => {
     await initSpecPsychicApp('howyadoin', {
       ...initPsychicAppDefaults(),
+      packageManager: 'yarn',
       template: 'nextjs',
       importExtension: 'none',
     })
@@ -53,7 +54,7 @@ describe('initPsychicApp with --template=nextjs flag', () => {
       await sspawn(
         `\
         cd howyadoin &&
-        npm run build`,
+        yarn build`,
       )
     })
   }, 120_000)

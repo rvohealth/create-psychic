@@ -1,12 +1,12 @@
-import { PsychicPackageManager } from './newPsychicApp.js'
+import { PsychicPackageManager } from '../newPsychicApp.js'
 
-export default function npxCmdForPackageManager(packageManager: PsychicPackageManager) {
+export default function runCmdForPackageManager(packageManager: PsychicPackageManager) {
   switch (packageManager) {
     case 'yarn':
     case 'pnpm':
       return packageManager
     case 'npm':
-      return `npx`
+      return `${packageManager} run`
     default:
       throw new Error(`unexpected package manager: ${packageManager as string}`)
   }

@@ -1,3 +1,8 @@
+## 2.1.12
+
+- fix dev dependency installation for pnpm during init command
+- ensure all latest dev/non-dev dependencies are added correctly during init
+
 ## 2.1.11
 
 - fix broken init command when using --dream-only flag

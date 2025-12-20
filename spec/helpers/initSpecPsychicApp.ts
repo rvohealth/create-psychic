@@ -7,8 +7,9 @@ import expectFile from './expectFile.js'
 
 export default async function initSpecPsychicApp(appName: string, options: InitPsychicAppCliOptions) {
   await sspawn(
-    `npx create-next-app@latest howyadoin --eslint --app --ts --skip-install --use-${options.packageManager} --yes --disable-git`,
+    `npx create-next-app@latest howyadoin --eslint --app --ts --skip-install --use-${options.packageManager} --yes --disable-git --webpack --no-tailwind --src-dir`,
   )
+
   await initPsychicApp(appName, options)
   await expectFile(path.join('howyadoin', options.confPath, 'dream.ts'))
 
