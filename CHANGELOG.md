@@ -1,3 +1,8 @@
+## 2.1.13
+
+- use cross-env in package.json for windows compatibility
+- fix init issue with missing boilerplate tsconfig files
+
 ## 2.1.12
 
 - fix dev dependency installation for pnpm during init command
