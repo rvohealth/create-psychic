@@ -1,3 +1,7 @@
+## 2.1.14
+
+- no comments in json files
+
 ## 2.1.13
 
 - use cross-env in package.json for windows compatibility
