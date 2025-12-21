@@ -1,3 +1,7 @@
+## 2.1.16
+
+- safer way to read json files with potential comments
+
 ## 2.1.15
 
 - more comments needed to be removed
