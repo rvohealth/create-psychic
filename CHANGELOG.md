@@ -1,3 +1,7 @@
+## 2.1.17
+
+- importDefault and importAll are windows safe
+
 ## 2.1.16
 
 - safer way to read json files with potential comments
