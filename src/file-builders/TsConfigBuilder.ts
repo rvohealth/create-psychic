@@ -1,5 +1,6 @@
 import * as fs from 'node:fs'
 import * as path from 'node:path'
+import ts from 'typescript'
 import addRootPathForCoreSpecs from '../helpers/init/addRootPathForCoreSpecs.js'
 import internalSrcPath from '../helpers/internalSrcPath.js'
 import { InitPsychicAppCliOptions } from '../helpers/newPsychicApp.js'
@@ -22,7 +23,13 @@ export default class TsConfigBuilder {
       tsconfigPath = tsconfigBuildPath
     }
 
-    const json = JSON.parse(fs.readFileSync(tsconfigPath).toString()) as TsConfigStub
+    const result = ts.readConfigFile(tsconfigPath, path => ts.sys.readFile(path))
+    if (result.error) {
+      throw new Error(
+        `Failed to read tsconfig file: ${ts.formatDiagnostic(result.error, ts.createCompilerHost({}))}`,
+      )
+    }
+    const json = (result.config || {}) as TsConfigStub
 
     if (!json.compilerOptions) json.compilerOptions = {}
     const compilerOptions = json.compilerOptions
