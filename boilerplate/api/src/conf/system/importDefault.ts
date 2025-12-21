@@ -1,3 +1,6 @@
+import { pathToFileURL } from "node:url"
+
 export default async function importDefault<ReturnType = unknown>(path: string) {
-  return ((await import(path)) as { default: ReturnType }).default
+  const importPath = path.startsWith('/') || /^[A-Za-z]:/.test(path) ? pathToFileURL(path).href : path
+  return ((await import(importPath)) as { default: ReturnType }).default
 }
