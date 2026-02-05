@@ -30,6 +30,16 @@ const FIXTURE_PATHS = [
   'expected-files/app/init/basic.ts',
   'expected-files/dream/init/basic.ts',
   'expected-files/cli/dream-only.ts',
+
+  // docker-compose
+  'expected-files/docker-compose/pnpm/client-basic.yml',
+  'expected-files/docker-compose/pnpm/no-client-basic.yml',
+  'expected-files/docker-compose/npm/client-basic.yml',
+  'expected-files/docker-compose/npm/no-client-basic.yml',
+  'expected-files/docker-compose/yarn/client-basic.yml',
+  'expected-files/docker-compose/yarn/no-client-basic.yml',
+  'expected-files/docker-compose/yarn/workers-basic.yml',
+  'expected-files/docker-compose/yarn/websockets-basic.yml',
 ] as const
 
 type FixturePath = (typeof FIXTURE_PATHS)[number]

@@ -20,7 +20,7 @@ function assertionText(options: NewPsychicAppCliOptions) {
       return '<TEXT_FROM_YOUR_CLIENT_APP_HERE>'
 
     case 'nextjs':
-      return options.client
+      return 'get started'
 
     default:
       // generally speaking, the home page of any

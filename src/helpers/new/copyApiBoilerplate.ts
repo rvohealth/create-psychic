@@ -14,6 +14,8 @@ import internalSrcPath from '../internalSrcPath.js'
 import { NewPsychicAppCliOptions } from '../newPsychicApp.js'
 import replaceYarnInFile from '../replaceYarnAndNpxInFile.js'
 import sanitizeAgentsFileContents from '../sanitizeAgentsFileContents.js'
+import DockerComposeBuilder from '../../file-builders/docker/DockerComposeBuilder.js'
+import PsychicDockerDevBuilder from '../../file-builders/docker/PsychicDockerfileDevBuilder.js'
 
 export default async function copyApiBoilerplate(appName: string, options: NewPsychicAppCliOptions) {
   const appRoot = path.join('.', appName)
@@ -35,6 +37,9 @@ export default async function copyApiBoilerplate(appName: string, options: NewPs
 
   fs.cpSync(internalSrcPath('..', 'boilerplate', 'README.md'), path.join(appRoot, 'README.md'))
   await replaceYarnInFile(path.join(appRoot, 'README.md'), options.packageManager)
+
+  fs.writeFileSync(path.join(appRoot, 'docker-compose.yml'), await DockerComposeBuilder.build(options))
+  fs.writeFileSync(path.join(apiRoot, 'Dockerfile.dev'), await PsychicDockerDevBuilder.build(options))
 
   // yarnrc.yml included as non-dot-file so that it becomes part of the package
   // move it to .yarnrc.yml if using yarn; otherwise, delete it

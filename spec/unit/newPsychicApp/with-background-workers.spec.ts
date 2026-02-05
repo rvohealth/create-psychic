@@ -28,6 +28,11 @@ describe('newPsychicApp without websockets or background jobs', () => {
       await readFile('howyadoin/src/conf/app.ts'),
     )
 
+    await expectToMatchFixture(
+      'expected-files/docker-compose/yarn/workers-basic.yml',
+      await readFile('howyadoin/docker-compose.yml'),
+    )
+
     await sspawn(
       `\
         cd howyadoin &&

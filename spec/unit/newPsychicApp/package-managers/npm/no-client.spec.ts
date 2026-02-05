@@ -1,5 +1,7 @@
+import * as fs from 'node:fs'
 import sspawn from '../../../../../src/helpers/sspawn.js'
 import expectFile from '../../../../helpers/expectFile.js'
+import expectToMatchFixture from '../../../../helpers/expectToMatchFixture.js'
 import newSpecPsychicApp from '../../../../helpers/newSpecPsychicApp.js'
 
 describe('newPsychicApp with react client', () => {
@@ -14,6 +16,14 @@ describe('newPsychicApp with react client', () => {
     })
 
     await expectFile('./howyadoin/package-lock.json')
+    await expectFile('./howyadoin/docker-compose.yml')
+    await expectFile('./howyadoin/Dockerfile.dev')
+
+    await expectToMatchFixture(
+      'expected-files/docker-compose/npm/no-client-basic.yml',
+      fs.readFileSync('./howyadoin/docker-compose.yml').toString(),
+    )
+
     await sspawn(
       `\
         cd howyadoin &&

@@ -1,0 +1,62 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+      target: "dev"
+    command: sh -c "pnpm install && pnpm psy db:migrate --skip-sync && pnpm psy db:seed && pnpm dev"
+    environment:
+      CI: "true"
+      NODE_TLS_REJECT_UNAUTHORIZED: "${NODE_TLS_REJECT_UNAUTHORIZED:-0}"
+      NPM_CONFIG_STRICT_SSL: "false"
+      DB_HOST: db
+      WS_REDIS_HOST: redis
+      BG_JOBS_REDIS_HOST: redis
+      NODE_ENV: "${NODE_ENV:-development}"
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+    ports:
+      - "7777:7777"
+      - "8888:8888"
+    working_dir: /usr/src/app
+    volumes:
+      - .:/usr/src/app:cached
+    networks:
+      - backend
+    depends_on:
+      db:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+
+  db:
+    image: postgres:13-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: howyadoin_development
+    user: postgres
+    ports:
+      - "7433:5432"
+    volumes:
+      - db:/var/lib/postgresql/data
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+
+volumes:
+  db:
+
+networks:
+  backend:
