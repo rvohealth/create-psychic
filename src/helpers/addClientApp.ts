@@ -9,6 +9,7 @@ import sspawn from './sspawn.js'
 import colorize from '../logger/loggable/colorize.js'
 import getLockfileName from './getLockfileName.js'
 import getApiRoot from './getApiRoot.js'
+import ClientDockerDevBuilder from '../file-builders/docker/ClientDockerfileDevBuilder.js'
 
 export default async function addClientApp({
   client,
@@ -118,6 +119,11 @@ export default async function addClientApp({
   }
 
   addMissingClientGitignoreStatements(path.join(apiRoot, '..', clientRootFolderName, '.gitignore'))
+
+  fs.writeFileSync(
+    path.join(apiRoot, '..', clientRootFolderName, 'Dockerfile.dev'),
+    await ClientDockerDevBuilder.build(options),
+  )
 
   // only bother installing packages if not in test env to save time
   await sspawn(

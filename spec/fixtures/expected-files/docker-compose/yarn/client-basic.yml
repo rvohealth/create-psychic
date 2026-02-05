@@ -1,0 +1,89 @@
+services:
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile.dev
+      target: "dev"
+    command: sh -c "yarn install && yarn psy db:migrate --skip-sync && yarn psy db:seed && yarn dev"
+    environment:
+      CI: "true"
+      NODE_TLS_REJECT_UNAUTHORIZED: "${NODE_TLS_REJECT_UNAUTHORIZED:-0}"
+      NPM_CONFIG_STRICT_SSL: "false"
+      DB_HOST: db
+      WS_REDIS_HOST: redis
+      BG_JOBS_REDIS_HOST: redis
+      NODE_ENV: "${NODE_ENV:-development}"
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+    ports:
+      - "7777:7777"
+      - "8888:8888"
+    working_dir: /usr/src/app
+    volumes:
+      - ./api:/usr/src/app:cached
+    networks:
+      - backend
+      - frontend
+    depends_on:
+      db:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile.dev
+      target: "dev"
+    user: "0"
+    command: sh -c "yarn install && yarn dev"
+    environment:
+      CI: "true"
+      NODE_ENV: "${NODE_ENV:-development}"
+      NODE_TLS_REJECT_UNAUTHORIZED: "${NODE_TLS_REJECT_UNAUTHORIZED:-0}"
+      NPM_CONFIG_STRICT_SSL: "false"
+    ports:
+      - "3000:3000"
+    working_dir: /usr/src/app
+    volumes:
+      - ./client:/usr/src/app:cached
+      # Isolate container node_modules so Linux arm64-musl native deps (e.g. rollup) are used, not host's
+      - client_node_modules:/usr/src/app/node_modules
+    networks:
+      - frontend
+    depends_on:
+      - api
+
+  db:
+    image: postgres:13-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: howyadoin_development
+    user: postgres
+    ports:
+      - "7433:5432"
+    volumes:
+      - db:/var/lib/postgresql/data
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+
+volumes:
+  db:
+  client_node_modules:
+
+networks:
+  backend:
+  frontend:
