@@ -6,7 +6,6 @@ services:
       target: "dev"
     command: sh -c "pnpm install && pnpm psy db:migrate --skip-sync && pnpm psy db:seed && pnpm dev"
     environment:
-      CI: "true"
       NODE_TLS_REJECT_UNAUTHORIZED: "${NODE_TLS_REJECT_UNAUTHORIZED:-0}"
       NPM_CONFIG_STRICT_SSL: "false"
       DB_HOST: db
@@ -17,7 +16,6 @@ services:
       DB_PASSWORD: postgres
     ports:
       - "7777:7777"
-      - "8888:8888"
     working_dir: /usr/src/app
     volumes:
       - ./api:/usr/src/app:cached
@@ -27,10 +25,6 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    deploy:
-      resources:
-        limits:
-          cpus: "2"
 
   client:
     build:
@@ -40,7 +34,6 @@ services:
     user: "0"
     command: sh -c "pnpm install && pnpm dev"
     environment:
-      CI: "true"
       NODE_ENV: "${NODE_ENV:-development}"
       NODE_TLS_REJECT_UNAUTHORIZED: "${NODE_TLS_REJECT_UNAUTHORIZED:-0}"
       NPM_CONFIG_STRICT_SSL: "false"
@@ -75,10 +68,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-    deploy:
-      resources:
-        limits:
-          cpus: "2"
 
 volumes:
   db:

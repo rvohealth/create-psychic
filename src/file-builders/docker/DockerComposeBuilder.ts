@@ -13,11 +13,13 @@ export default class DockerComposeBuilder {
       .toString()
       .replace(/<CLIENT_YAML>/, this.clientYaml(options))
       .replace(/<REDIS_YAML>/, this.redisYaml(options))
+      .replace(/<WS_YAML>/, this.wsYaml(options))
+      .replace(/<WORKER_YAML>/, this.workerYaml(options))
       .replace(/<VOLUMES_YAML>/, this.volumesYaml(options))
       .replace(/<NETWORKS_YAML>/, this.networksYaml(options))
-      .replace(/<API_DEPENDS_ON_YAML>/, this.apiDependsOnYaml(options))
+      .replace(/<API_DEPENDS_ON_YAML>/g, this.apiDependsOnYaml(options))
       .replace(/<CONTEXT_VALUE>/g, options.client === 'none' ? '.' : './api')
-      .replace(/\n\n\n/g, '\n\n')
+      .replace(/\n{2,}/g, '\n\n')
 
     return replaceYarnAndNpxInFileContents(contents, options.packageManager)
   }
@@ -76,10 +78,6 @@ networks:
       interval: 1s
       timeout: 3s
       retries: 5
-    deploy:
-      resources:
-        limits:
-          cpus: "2"
 `
   }
 
@@ -95,7 +93,6 @@ networks:
     user: "0"
     command: sh -c "yarn install && yarn dev"
     environment:
-      CI: "true"
       NODE_ENV: "\${NODE_ENV:-development}"
       NODE_TLS_REJECT_UNAUTHORIZED: "\${NODE_TLS_REJECT_UNAUTHORIZED:-0}"
       NPM_CONFIG_STRICT_SSL: "false"
@@ -110,6 +107,61 @@ networks:
       - frontend
     depends_on:
       - api
+`
+  }
+
+  private static wsYaml(options: NewPsychicAppCliOptions) {
+    if (!options.websockets) return ''
+
+    return `\
+  ws:
+    build:
+      context: <CONTEXT_VALUE>
+      dockerfile: Dockerfile.dev
+      target: "dev"
+    command: sh -c "yarn install && yarn ws"
+    environment:
+      NODE_TLS_REJECT_UNAUTHORIZED: "\${NODE_TLS_REJECT_UNAUTHORIZED:-0}"
+      NPM_CONFIG_STRICT_SSL: "false"
+      DB_HOST: db
+      WS_REDIS_HOST: redis
+      BG_JOBS_REDIS_HOST: redis
+      NODE_ENV: "\${NODE_ENV:-development}"
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+    ports:
+      - "8888:8888"
+    working_dir: /usr/src/app
+    volumes:
+      - <CONTEXT_VALUE>:/usr/src/app:cached
+<API_DEPENDS_ON_YAML>
+`
+  }
+
+  private static workerYaml(options: NewPsychicAppCliOptions) {
+    if (!options.workers) return ''
+    return `\
+  worker:
+    build:
+      context: <CONTEXT_VALUE>
+      dockerfile: Dockerfile.dev
+      target: "dev"
+    command: sh -c "yarn install && yarn dev-worker"
+    environment:
+      NODE_TLS_REJECT_UNAUTHORIZED: "\${NODE_TLS_REJECT_UNAUTHORIZED:-0}"
+      NPM_CONFIG_STRICT_SSL: "false"
+      GITHUB_OAUTH_TOKEN: "\${GITHUB_OAUTH_TOKEN}"
+      BULLMQ_PRO_NPM_TOKEN: "\${BULLMQ_PRO_NPM_TOKEN}"
+      DB_HOST: db
+      WS_REDIS_HOST: redis
+      BG_JOBS_REDIS_HOST: redis
+      NODE_ENV: "\${NODE_ENV:-development}"
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+    working_dir: /usr/src/app
+    volumes:
+      - <CONTEXT_VALUE>:/usr/src/app:cached
+<API_DEPENDS_ON_YAML>
 `
   }
 }

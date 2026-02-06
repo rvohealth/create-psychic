@@ -65,6 +65,8 @@ export default class PackagejsonBuilder {
     }
 
     if (!options.websockets) {
+      removeScript(packagejson, 'ws')
+      removeScript(packagejson, 'ws:fspec')
       removeDependency(packagejson, '@rvoh/psychic-websockets')
       removeDependency(packagejson, '@socket.io/redis-adapter')
       removeDependency(packagejson, '@socket.io/redis-emitter')
@@ -84,4 +86,10 @@ export default class PackagejsonBuilder {
 function removeDependency(packageJson: any, key: string) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
   delete packageJson.dependencies[key]
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function removeScript(packageJson: any, key: string) {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+  delete packageJson.scripts[key]
 }

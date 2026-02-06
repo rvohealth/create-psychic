@@ -94,7 +94,8 @@ export default async function copyApiBoilerplate(appName: string, options: NewPs
   }
 
   if (!options.websockets) {
+    fs.rmSync(path.join(apiRoot, 'src', 'ws.ts'))
     fs.rmSync(path.join(apiRoot, 'src', 'conf', 'initializers', 'websockets.ts'))
-    fs.rmSync(path.join(apiRoot, 'src', 'utils', 'ws.ts'))
+    fs.rmSync(path.join(apiRoot, 'src', 'utils', 'AppWs.ts'))
   }
 }
