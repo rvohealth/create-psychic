@@ -1,3 +1,8 @@
+## 2.2.0
+
+- update to @rvoh/psychic-websockets@v3.0.0
+- add docker-compose boilerplate to new psychic applications
+
 ## 2.1.17
 
 - importDefault and importAll are windows safe

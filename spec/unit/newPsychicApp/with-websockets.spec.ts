@@ -19,6 +19,7 @@ describe('newPsychicApp with websockets', () => {
     await expectNoFile('howyadoin/src/worker.ts')
     await expectNoFile('howyadoin/src/conf/initializers/workers.ts')
     await expectFile('howyadoin/src/conf/initializers/websockets.ts')
+    await expectFile('howyadoin/src/ws.ts')
 
     await expectToMatchFixture(
       'expected-files/app/with-websockets.ts',
@@ -30,7 +31,10 @@ describe('newPsychicApp with websockets', () => {
       await readFile('howyadoin/docker-compose.yml'),
     )
 
-    await expectToMatchFixture('expected-files/ws/basic.ts', await readFile('howyadoin/src/utils/ws.ts'))
+    await expectToMatchFixture(
+      'expected-files/AppWs/basic.ts',
+      await readFile('howyadoin/src/utils/AppWs.ts'),
+    )
 
     await sspawn(
       `\
