@@ -123,7 +123,7 @@ export default async function copyInitApiBoilerplate(appName: string, options: I
 
   if (!options.websockets) {
     rmFileSync(path.join(options.confPath, 'initializers', 'websockets.ts'))
-    rmFileSync(path.join(options.utilsPath, 'ws.ts'))
+    rmFileSync(path.join(options.utilsPath, 'AppWs.ts'))
   }
 
   switch (options.template) {

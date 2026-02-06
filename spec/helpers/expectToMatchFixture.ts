@@ -16,7 +16,7 @@ const FIXTURE_PATHS = [
   'expected-files/app/with-workers-and-websockets.ts',
   'expected-files/app/with-websockets.ts',
 
-  'expected-files/ws/basic.ts',
+  'expected-files/AppWs/basic.ts',
 
   'expected-files/spec/features/setup/globalSetup-basic.ts',
   'expected-files/spec/features/setup/globalSetup-with-client.ts',

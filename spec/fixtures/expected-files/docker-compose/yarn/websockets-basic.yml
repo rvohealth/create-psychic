@@ -6,7 +6,6 @@ services:
       target: "dev"
     command: sh -c "yarn install && yarn psy db:migrate --skip-sync && yarn psy db:seed && yarn dev"
     environment:
-      CI: "true"
       NODE_TLS_REJECT_UNAUTHORIZED: "${NODE_TLS_REJECT_UNAUTHORIZED:-0}"
       NPM_CONFIG_STRICT_SSL: "false"
       DB_HOST: db
@@ -17,6 +16,39 @@ services:
       DB_PASSWORD: postgres
     ports:
       - "7777:7777"
+    working_dir: /usr/src/app
+    volumes:
+      - .:/usr/src/app:cached
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z localhost 7777 || exit 1"]
+      interval: 10s
+      timeout: 10s
+      retries: 12
+      start_period: 30s
+    networks:
+      - backend
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  ws:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+      target: "dev"
+    command: sh -c "yarn ws"
+    environment:
+      NODE_TLS_REJECT_UNAUTHORIZED: "${NODE_TLS_REJECT_UNAUTHORIZED:-0}"
+      NPM_CONFIG_STRICT_SSL: "false"
+      DB_HOST: db
+      WS_REDIS_HOST: redis
+      BG_JOBS_REDIS_HOST: redis
+      NODE_ENV: "${NODE_ENV:-development}"
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+    ports:
       - "8888:8888"
     working_dir: /usr/src/app
     volumes:
@@ -26,12 +58,10 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      api:
+        condition: service_healthy
       redis:
         condition: service_healthy
-    deploy:
-      resources:
-        limits:
-          cpus: "2"
 
   db:
     image: postgres:13-alpine
@@ -52,13 +82,9 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-    deploy:
-      resources:
-        limits:
-          cpus: "2"
 
   redis:
-    image: redis:6.2-alpine
+    image: redis:7.4.7-alpine
     restart: always
     command: redis-server --save 20 1 --loglevel warning
     ports:
@@ -72,10 +98,6 @@ services:
       interval: 1s
       timeout: 3s
       retries: 5
-    deploy:
-      resources:
-        limits:
-          cpus: "2"
 
 volumes:
   db:

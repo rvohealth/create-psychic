@@ -11,8 +11,10 @@ export default (psy: PsychicApp) => {
 }
 
 function initializeWebsockets(wsApp: PsychicAppWebsockets) {
-  wsApp.set('websockets', {
-    connection: AppEnv.isProduction
+  if (AppEnv.serviceRole !== 'websockets' && !AppEnv.isTest) return
+
+  wsApp.set('connection',
+    AppEnv.isProduction
       ? new Redis({
           host: AppEnv.string('WS_REDIS_HOST'),
           port: AppEnv.integer('WS_REDIS_PORT', { optional: true }) || 6379,
@@ -28,7 +30,12 @@ function initializeWebsockets(wsApp: PsychicAppWebsockets) {
           password: AppEnv.string('WS_REDIS_PASSWORD', { optional: true }),
           // tls:  {},
           maxRetriesPerRequest: null,
-        }),
+        })
+  )
+
+  wsApp.set('socketio', {
+    // socket.io server options here
+    cors: wsApp.psychicApp.corsOptions,
   })
 
   // ******
