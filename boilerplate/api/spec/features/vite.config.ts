@@ -8,6 +8,7 @@ export default defineConfig({
     alias: {
       '@conf': srcPath('conf'),
       '@controllers': srcPath('app', 'controllers'),
+      '@middleware': srcPath('middleware'),
       '@models': srcPath('app', 'models'),
       '@serializers': srcPath('app', 'serializers'),
       '@services': srcPath('app', 'services'),

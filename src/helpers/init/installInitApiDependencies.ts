@@ -1,11 +1,10 @@
-import addCmdForPackageManager from '../packageManager/addCmdForPackageManager.js'
 import { InitPsychicAppCliOptions } from '../newPsychicApp.js'
+import addCmdForPackageManager from '../packageManager/addCmdForPackageManager.js'
 import sspawn from '../sspawn.js'
 
 export default async function installInitApiDependencies(options: InitPsychicAppCliOptions) {
   const baseDevDeps = [
     '@eslint/js',
-    '@rvoh/dream-spec-helpers',
     '@rvoh/dream-spec-helpers',
     '@types/node',
     '@types/pg',
@@ -16,7 +15,6 @@ export default async function installInitApiDependencies(options: InitPsychicApp
     'eslint',
     'kysely-codegen',
     'luxon-jest-matchers',
-    'openapi-typescript',
     'prettier',
     'supertest',
     'tsc-alias',
@@ -30,8 +28,14 @@ export default async function installInitApiDependencies(options: InitPsychicApp
     '@pollyjs/adapter-node-http',
     '@pollyjs/core',
     '@pollyjs/persister-fs',
-    '@rvoh/psychic-spec-helpers',
-    '@types/express',
+    '@rvoh/psychic-spec-helpers@alpha',
+    '@types/koa__cors',
+    '@types/koa__router',
+    '@types/koa-bodyparser',
+    '@types/koa-conditional-get',
+    '@types/koa-etag',
+    '@types/koa-passport',
+    '@types/koa',
     'expect-playwright',
     'nodemon',
     'puppeteer',
@@ -40,12 +44,11 @@ export default async function installInitApiDependencies(options: InitPsychicApp
   const devDeps = devDepsArr.join(' ')
 
   const baseDeps = [
-    '@bull-board/express',
     '@rvoh/dream',
 
-    // need to hold commander to 12.1.0 until dream bumps up, since
+    // need to hold commander to 14.0.3 until dream bumps up, since
     // this will otherwise cause type errors at build
-    'commander@12.1.0',
+    'commander@14.0.3',
 
     'dotenv',
     'kysely',
@@ -53,7 +56,17 @@ export default async function installInitApiDependencies(options: InitPsychicApp
     'pluralize-esm',
     'typescript',
   ]
-  const psychicDeps = ['@rvoh/psychic', 'express-winston', 'express', 'winston']
+  const psychicDeps = [
+    '@koa/cors',
+    '@koa/etag',
+    '@koa/router',
+    '@rvoh/psychic@alpha',
+    'koa',
+    'koa-bodyparser',
+    'koa-conditional-get',
+    'openapi-typescript',
+    'winston',
+  ]
   const depsArr = options.dreamOnly ? baseDeps : [...baseDeps, ...psychicDeps]
 
   if (options.workers || options.websockets) depsArr.push('ioredis')

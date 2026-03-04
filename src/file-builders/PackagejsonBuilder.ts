@@ -61,7 +61,6 @@ export default class PackagejsonBuilder {
     if (!options.workers) {
       removeDependency(packagejson, '@rvoh/psychic-workers')
       removeDependency(packagejson, 'bullmq')
-      removeDependency(packagejson, '@bull-board/express')
     }
 
     if (!options.websockets) {

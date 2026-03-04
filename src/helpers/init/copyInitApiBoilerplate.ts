@@ -84,6 +84,11 @@ export default async function copyInitApiBoilerplate(appName: string, options: I
       options.importExtension,
     )
     copyRecursiveSync(
+      internalSrcPath('..', 'boilerplate', 'api', 'src', 'middleware'),
+      options.middlewarePath,
+      options.importExtension,
+    )
+    copyRecursiveSync(
       internalSrcPath('..', 'boilerplate', 'api', 'src', 'main.ts'),
       path.join(options.executablesPath, 'main.ts'),
       options.importExtension,

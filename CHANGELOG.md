@@ -1,3 +1,7 @@
+## 3.0.0
+
+- psychic 3.0
+
 ## 2.2.0
 
 - update to @rvoh/psychic-websockets@v3.0.0
