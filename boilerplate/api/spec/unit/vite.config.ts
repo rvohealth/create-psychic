@@ -8,6 +8,7 @@ export default defineConfig({
     alias: {
       '@conf': srcPath('conf'),
       '@controllers': srcPath('app', 'controllers'),
+      '@middleware': srcPath('middleware'),
       '@models': srcPath('app', 'models'),
       '@serializers': srcPath('app', 'serializers'),
       '@services': srcPath('app', 'services'),
@@ -29,6 +30,7 @@ export default defineConfig({
     printConsoleTrace: true,
     hookTimeout: 20000,
     testTimeout: 20000,
+    passWithNoTests: true,
 
     globalSetup: './spec/unit/setup/globalSetup.js',
   },

@@ -5,14 +5,14 @@ import { Redis } from 'ioredis'
 // import User from '@models/User.js'
 
 export default (psy: PsychicApp) => {
+  if (AppEnv.serviceRole !== 'websockets' && !AppEnv.isTest) return
+
   psy.plugin(async () => {
     await PsychicAppWebsockets.init(psy, initializeWebsockets)
   })
 }
 
 function initializeWebsockets(wsApp: PsychicAppWebsockets) {
-  if (AppEnv.serviceRole !== 'websockets' && !AppEnv.isTest) return
-
   wsApp.set('connection',
     AppEnv.isProduction
       ? new Redis({
@@ -34,8 +34,7 @@ function initializeWebsockets(wsApp: PsychicAppWebsockets) {
   )
 
   wsApp.set('socketio', {
-    // socket.io server options here
-    cors: wsApp.psychicApp.corsOptions,
+    // socketio server options here
   })
 
   // ******
