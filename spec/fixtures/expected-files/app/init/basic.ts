@@ -8,7 +8,8 @@ import srcPath from '@conf/system/srcPath.js'
 import * as path from 'node:path'
 
 import winstonLogger from '@conf/winstonLogger.js'
-import expressWinston from 'express-winston'
+import requestLogger from '@middleware/requestLogger.js'
+import type Koa from 'koa'
 import winston from 'winston'
 
 export default async (psy: PsychicApp) => {
@@ -59,7 +60,7 @@ export default async (psy: PsychicApp) => {
   // psy.set('sanitizeResponseJson', true)
 
   psy.set('json', {
-    limit: '20kb',
+    jsonLimit: '20kb',
   })
 
   // Encryption between the load balancer and your Psychic webservers
@@ -73,10 +74,13 @@ export default async (psy: PsychicApp) => {
     })
   }
 
+  const allowedOrigins = JSON.parse(AppEnv.string('CORS_HOSTS', { optional: true }) || '[]') as string[]
   psy.set('cors', {
     credentials: true,
-    origin: JSON.parse(AppEnv.string('CORS_HOSTS', { optional: true }) || '[]') as string[],
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+    origin: (ctx: Koa.Context) => {
+      const requestOrigin = ctx.get('Origin')
+      return allowedOrigins.includes(requestOrigin) ? requestOrigin : ''
+    },
   })
 
   psy.set('cookie', {
@@ -101,7 +105,7 @@ export default async (psy: PsychicApp) => {
       headers: true,
       query: true,
       responseBody: AppEnv.isTest,
-    }
+    },
   })
 
   psy.set('openapi', 'mobile', {
@@ -126,7 +130,7 @@ export default async (psy: PsychicApp) => {
       headers: true,
       query: true,
       responseBody: AppEnv.isTest,
-    }
+    },
   })
 
   psy.set('openapi', 'tests', {
@@ -139,26 +143,19 @@ export default async (psy: PsychicApp) => {
     },
   })
 
-  // run a callback when the express server starts. the express app will be passed to each callback as the first argument
+  // run a callback when the koa server starts
   psy.on('server:init:after-middleware', psychicServer => {
-    const app = psychicServer.expressApp
-
-    // Support application/x-www-form-urlencoded request body. This is not usually needed, since JSON is the usual standard,
-    // but some webhooks (e.g. Twilio) post application/x-www-form-urlencoded data. If this is needed, uncomment the
-    // next line and add `import { urlencoded } from 'express'` to the imports at the top of this file.
-    // app.use(urlencoded({ extended: true }))
+    const app = psychicServer.koaApp
 
     if (!AppEnv.isTest || AppEnv.boolean('REQUEST_LOGGING')) {
       const SENSITIVE_FIELDS = ['password', 'token', 'authentication', 'authorization', 'secret']
 
       app.use(
-        expressWinston.logger({
+        requestLogger({
           transports: [new winston.transports.Console()],
           format: winston.format.combine(winston.format.json()),
-          meta: true, // optional: control whether you want to log the meta data about the request (default to true)
-          msg: 'HTTP {{req.method}} {{req.url}}', // optional: customize the default logging message. E.g. "{{res.statusCode}} {{req.method}} {{res.responseTime}}ms {{req.url}}"
-          expressFormat: true, // Use the default Express/morgan request formatting. Enabling this will override any msg if true. Will only output colors with colorize set to true
-          colorize: false, // Color the text and status code, using the Express/morgan color palette (text: gray, status: default green, 3XX cyan, 4XX yellow, 5XX red).
+          meta: true,
+          colorize: false,
           headerBlacklist: [
             'authorization',
             'content-length',
@@ -188,8 +185,8 @@ export default async (psy: PsychicApp) => {
 
   // this function will be run any time a server error is encountered
   // that psychic isn't sure how to respond to (i.e. 500 internal server errors)
-  psy.on('server:error', (err, _, res) => {
-    if (!res.headersSent) res.sendStatus(500)
+  psy.on('server:error', (err, ctx) => {
+    if (!ctx.headerSent) ctx.status = 500
     else if (AppEnv.isDevelopmentOrTest) throw err
   })
 }

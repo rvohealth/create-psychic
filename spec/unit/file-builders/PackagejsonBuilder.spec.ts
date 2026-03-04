@@ -26,26 +26,30 @@ describe('PackagejsonBuilder', () => {
 
         expect(Object.keys(JSON.parse(res).dependencies)).toEqual(
           expect.arrayContaining([
-            '@rvoh/psychic',
+            '@koa/cors',
+            '@koa/etag',
+            '@koa/router',
             '@rvoh/dream',
+            '@rvoh/psychic',
+            'commander',
+            'koa-bodyparser',
+            'koa-conditional-get',
+            'koa',
+            'kysely',
+            'openapi-typescript',
             'pg',
             'winston',
-            'commander',
-            'express',
-            'express-winston',
-            'kysely',
           ]),
         )
 
         expect(Object.keys(JSON.parse(res).dependencies)).not.toEqual(
           expect.arrayContaining([
-            '@bull-board/express',
             '@socket.io/redis-adapter',
             '@socket.io/redis-emitter',
             'bullmq',
             'ioredis',
-            'socket.io',
             'socket.io-adapter',
+            'socket.io',
           ]),
         )
 
@@ -105,18 +109,22 @@ describe('PackagejsonBuilder', () => {
 
         expect(Object.keys(JSON.parse(res).dependencies)).toEqual(
           expect.arrayContaining([
-            '@rvoh/psychic',
-            '@rvoh/psychic-workers',
+            '@koa/cors',
+            '@koa/etag',
+            '@koa/router',
             '@rvoh/dream',
+            '@rvoh/psychic-workers',
+            '@rvoh/psychic',
+            'bullmq',
+            'commander',
+            'ioredis',
+            'koa-bodyparser',
+            'koa-conditional-get',
+            'koa',
+            'kysely',
+            'openapi-typescript',
             'pg',
             'winston',
-            'commander',
-            'express',
-            'express-winston',
-            'kysely',
-            '@bull-board/express',
-            'bullmq',
-            'ioredis',
           ]),
         )
 
@@ -138,26 +146,29 @@ describe('PackagejsonBuilder', () => {
 
         expect(Object.keys(JSON.parse(res).dependencies)).toEqual(
           expect.arrayContaining([
-            '@rvoh/psychic',
-            '@rvoh/psychic-websockets',
+            '@koa/cors',
+            '@koa/etag',
+            '@koa/router',
             '@rvoh/dream',
-            'pg',
-            'winston',
-            'commander',
-            'express',
-            'express-winston',
-            'kysely',
+            '@rvoh/psychic-websockets',
+            '@rvoh/psychic',
             '@socket.io/redis-adapter',
             '@socket.io/redis-emitter',
-            'socket.io',
-            'socket.io-adapter',
+            'commander',
             'ioredis',
+            'koa-bodyparser',
+            'koa-conditional-get',
+            'koa',
+            'kysely',
+            'openapi-typescript',
+            'pg',
+            'socket.io-adapter',
+            'socket.io',
+            'winston',
           ]),
         )
 
-        expect(Object.keys(JSON.parse(res).dependencies)).not.toEqual(
-          expect.arrayContaining(['@bull-board/express', 'bullmq']),
-        )
+        expect(Object.keys(JSON.parse(res).dependencies)).not.toEqual(expect.arrayContaining(['bullmq']))
       })
     })
 
@@ -168,23 +179,27 @@ describe('PackagejsonBuilder', () => {
 
         expect(Object.keys(JSON.parse(res).dependencies)).toEqual(
           expect.arrayContaining([
-            '@rvoh/psychic',
+            '@koa/cors',
+            '@koa/etag',
+            '@koa/router',
+            '@rvoh/dream',
             '@rvoh/psychic-websockets',
             '@rvoh/psychic-workers',
-            '@rvoh/dream',
-            'pg',
-            'winston',
-            'commander',
-            'express',
-            'express-winston',
-            'kysely',
+            '@rvoh/psychic',
             '@socket.io/redis-adapter',
             '@socket.io/redis-emitter',
-            'socket.io',
-            'socket.io-adapter',
-            'ioredis',
-            '@bull-board/express',
             'bullmq',
+            'commander',
+            'ioredis',
+            'koa-bodyparser',
+            'koa-conditional-get',
+            'koa',
+            'kysely',
+            'openapi-typescript',
+            'pg',
+            'socket.io-adapter',
+            'socket.io',
+            'winston',
           ]),
         )
       })
