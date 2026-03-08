@@ -46,6 +46,15 @@ export default async (app: DreamApp) => {<PROJECT_ROOT>
       : undefined,
   })
 
+  app.set('encryption', {
+    columns: {
+      current: {
+        algorithm: 'aes-256-gcm',
+        key: AppEnv.string('COLUMN_ENCRYPTION_KEY'),
+      },
+    },
+  })
+
   app.on('db:log', event => {
     if (!debugSql) return
 
