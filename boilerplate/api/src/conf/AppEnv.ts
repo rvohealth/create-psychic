@@ -10,6 +10,7 @@ class AppEnvClass extends Env<{
     | 'BG_JOBS_REDIS_HOST'
     | 'BG_JOBS_REDIS_PASSWORD'
     | 'BG_JOBS_REDIS_USERNAME'
+    | 'COLUMN_ENCRYPTION_KEY'
     | 'CORS_HOSTS'
     | 'DB_HOST'
     | 'DB_NAME'
