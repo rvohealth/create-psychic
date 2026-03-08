@@ -53,6 +53,7 @@ export default async function copyInitApiBoilerplate(appName: string, options: I
     rmFileSync(path.join(options.confPath, 'app.ts'))
     rmFileSync(path.join(options.confPath, 'routes.ts'))
     rmFileSync(path.join(options.confPath, 'routes.admin.ts'))
+    rmFileSync(path.join(options.confPath, 'routes.internal.ts'))
     rmFileSync(path.join(options.utilsPath, 'i18n.ts'))
     rmFileSync(path.join(options.confPath, 'winstonLogger.ts'))
 

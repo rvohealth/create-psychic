@@ -9,6 +9,7 @@ describe('FeatureSpecGlobalBuilder', () => {
     websockets: false,
     client: 'none',
     adminClient: 'none',
+    internalClient: 'none',
     primaryKeyType: 'bigserial',
   }
 
@@ -47,6 +48,27 @@ describe('FeatureSpecGlobalBuilder', () => {
 
         await expectToMatchFixture(
           'expected-files/spec/features/setup/globalSetup-with-client-and-admin.ts',
+          res,
+        )
+      })
+    })
+
+    context('with internal', () => {
+      it('adds internal fspec devserver to boilerplate', async () => {
+        const options: NewPsychicAppCliOptions = { ...baseOptions, internalClient: 'react' }
+        const res = await FeatureSpecGlobalBuilder.build({ appName: 'howyadoin', options })
+
+        await expectToMatchFixture('expected-files/spec/features/setup/globalSetup-with-internal.ts', res)
+      })
+    })
+
+    context('with both client AND internal', () => {
+      it('adds both internal and client fspec devservers to boilerplate', async () => {
+        const options: NewPsychicAppCliOptions = { ...baseOptions, client: 'react', internalClient: 'react' }
+        const res = await FeatureSpecGlobalBuilder.build({ appName: 'howyadoin', options })
+
+        await expectToMatchFixture(
+          'expected-files/spec/features/setup/globalSetup-with-client-and-internal.ts',
           res,
         )
       })

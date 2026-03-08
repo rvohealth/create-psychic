@@ -13,6 +13,7 @@ describe('newPsychicApp with nextjs client', () => {
       workers: false,
       client: 'nextjs',
       adminClient: 'none',
+      internalClient: 'none',
       primaryKeyType: 'bigserial',
     })
 

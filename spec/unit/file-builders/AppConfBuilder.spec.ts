@@ -20,6 +20,7 @@ describe('AppConfBuilder', () => {
       websockets: false,
       client: 'none',
       adminClient: 'none',
+      internalClient: 'none',
       primaryKeyType: 'bigserial',
     }
 
@@ -83,6 +84,24 @@ describe('AppConfBuilder', () => {
         const res = await AppConfigBuilder.build({ appName: 'howyadoin', options })
 
         await expectToMatchFixture('expected-files/app/with-client-and-admin.ts', res)
+      })
+    })
+
+    context('with internal', () => {
+      it('returns the app with the specified options', async () => {
+        const options: NewPsychicAppCliOptions = { ...baseOptions, internalClient: 'react' }
+        const res = await AppConfigBuilder.build({ appName: 'howyadoin', options })
+
+        await expectToMatchFixture('expected-files/app/with-internal.ts', res)
+      })
+    })
+
+    context('with both client AND internal', () => {
+      it('returns the app with the specified options', async () => {
+        const options: NewPsychicAppCliOptions = { ...baseOptions, client: 'react', internalClient: 'react' }
+        const res = await AppConfigBuilder.build({ appName: 'howyadoin', options })
+
+        await expectToMatchFixture('expected-files/app/with-client-and-internal.ts', res)
       })
     })
   })

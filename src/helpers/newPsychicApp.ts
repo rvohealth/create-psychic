@@ -24,6 +24,7 @@ export interface NewPsychicAppCliOptions {
   primaryKeyType: PrimaryKeyType
   client: (typeof cliClientAppTypes)[number]
   adminClient: (typeof cliClientAppTypes)[number]
+  internalClient: (typeof cliClientAppTypes)[number]
   workers: boolean
   websockets: boolean
 }
@@ -36,6 +37,7 @@ export interface InitPsychicAppCliOptions {
   primaryKeyType: PrimaryKeyType
   client: (typeof cliClientAppTypes)[number]
   adminClient: (typeof cliClientAppTypes)[number]
+  internalClient: (typeof cliClientAppTypes)[number]
   workers: boolean
   websockets: boolean
   serializersPath: string
@@ -130,6 +132,19 @@ export default async function newPsychicApp(appName: string, options: NewPsychic
       options,
       rootPath,
       port: 3001,
+    })
+  }
+
+  if (options.internalClient !== 'none') {
+    await addClientApp({
+      sourceColor: 'cyan',
+      logger,
+      client: options.internalClient,
+      clientRootFolderName: 'internal',
+      appName,
+      options,
+      rootPath,
+      port: 3002,
     })
   }
 

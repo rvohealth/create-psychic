@@ -9,6 +9,7 @@ describe('FeatureSpecExampleBuilder', () => {
     websockets: false,
     client: 'none',
     adminClient: 'none',
+    internalClient: 'none',
     primaryKeyType: 'bigserial',
   }
 

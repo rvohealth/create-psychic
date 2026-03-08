@@ -20,7 +20,7 @@ export default async function buildNewPsychicAppOptionsWithPrompt(options: NewPs
   }
 
   let monoRepo = false
-  if (!options.client && !options.adminClient) {
+  if (!options.client && !options.adminClient && !options.internalClient) {
     const answer = await new Select(
       `Would you like a monorepo?\nFor more info, see https://psychicframework.com/docs/learn-more/monorepos`,
       ['yes', 'no'] as const,
@@ -44,10 +44,19 @@ export default async function buildNewPsychicAppOptionsWithPrompt(options: NewPs
       ).run()
       options.adminClient = answer
     }
+
+    if (!options.internalClient || !cliClientAppTypes.includes(options.internalClient)) {
+      const answer = await new Select(
+        'which front end client would you like to use for your internal app?',
+        cliClientAppTypes,
+      ).run()
+      options.internalClient = answer
+    }
   } else {
     // if they explicitly provide clients, we do not want to override, so we use ||=
     options.client ||= 'none'
     options.adminClient ||= 'none'
+    options.internalClient ||= 'none'
   }
 
   if (options.workers === undefined) {

@@ -44,7 +44,7 @@ export default async function installInitApiDependencies(options: InitPsychicApp
   const devDeps = devDepsArr.join(' ')
 
   const baseDeps = [
-    '@rvoh/dream',
+    '@rvoh/dream@alpha',
 
     // need to hold commander to 14.0.3 until dream bumps up, since
     // this will otherwise cause type errors at build
