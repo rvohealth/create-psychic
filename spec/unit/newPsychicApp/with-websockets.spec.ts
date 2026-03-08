@@ -13,6 +13,7 @@ describe('newPsychicApp with websockets', () => {
       workers: false,
       client: 'none',
       adminClient: 'none',
+      internalClient: 'none',
       primaryKeyType: 'bigserial',
     })
 

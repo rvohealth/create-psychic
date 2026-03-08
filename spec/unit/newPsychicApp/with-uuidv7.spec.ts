@@ -9,6 +9,7 @@ describe('newPsychicApp with uuid', () => {
       workers: false,
       client: 'none',
       adminClient: 'none',
+      internalClient: 'none',
       primaryKeyType: 'uuid7',
     })
 

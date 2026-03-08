@@ -58,6 +58,29 @@ export default class PackagejsonBuilder {
         }
     }
 
+    switch (options.internalClient) {
+      case 'none':
+        break
+
+      default:
+        switch (options.internalClient) {
+          case 'nextjs':
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+            packagejson.scripts['internal'] = `yarn --cwd=../internal next dev`
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+            packagejson.scripts['internal:fspec'] =
+              `BROWSER=none NEXT_PUBLIC_PSYCHIC_ENV=test yarn --cwd=../internal next dev --port 3002`
+            break
+
+          default:
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+            packagejson.scripts['internal'] = `yarn --cwd=../internal dev`
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+            packagejson.scripts['internal:fspec'] =
+              `BROWSER=none VITE_PSYCHIC_ENV=test yarn --cwd=../internal dev --port 3002`
+        }
+    }
+
     if (!options.workers) {
       removeDependency(packagejson, '@rvoh/psychic-workers')
       removeDependency(packagejson, 'bullmq')

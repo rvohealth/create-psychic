@@ -10,6 +10,7 @@ describe('PackagejsonBuilder', () => {
     websockets: false,
     client: 'none',
     adminClient: 'none',
+    internalClient: 'none',
     primaryKeyType: 'bigserial',
   }
 
@@ -98,6 +99,28 @@ describe('PackagejsonBuilder', () => {
         expect(JSON.parse(res).scripts['admin']).toEqual('yarn --cwd=../admin dev')
         expect(JSON.parse(res).scripts['admin:fspec']).toEqual(
           'BROWSER=none VITE_PSYCHIC_ENV=test yarn --cwd=../admin dev --port 3001',
+        )
+      })
+    })
+
+    context('nextjs internalClient', () => {
+      it('includes internal scripts', async () => {
+        const options: NewPsychicAppCliOptions = { ...baseOptions, internalClient: 'nextjs' }
+        const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
+        expect(JSON.parse(res).scripts['internal']).toEqual('yarn --cwd=../internal next dev')
+        expect(JSON.parse(res).scripts['internal:fspec']).toEqual(
+          'BROWSER=none NEXT_PUBLIC_PSYCHIC_ENV=test yarn --cwd=../internal next dev --port 3002',
+        )
+      })
+    })
+
+    context('react internalClient', () => {
+      it('includes internal scripts', async () => {
+        const options: NewPsychicAppCliOptions = { ...baseOptions, internalClient: 'react' }
+        const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
+        expect(JSON.parse(res).scripts['internal']).toEqual('yarn --cwd=../internal dev')
+        expect(JSON.parse(res).scripts['internal:fspec']).toEqual(
+          'BROWSER=none VITE_PSYCHIC_ENV=test yarn --cwd=../internal dev --port 3002',
         )
       })
     })
