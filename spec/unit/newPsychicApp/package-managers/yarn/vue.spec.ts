@@ -12,6 +12,7 @@ describe('newPsychicApp with vue client', () => {
       workers: false,
       client: 'vue',
       adminClient: 'none',
+      internalClient: 'none',
       primaryKeyType: 'bigserial',
     })
 

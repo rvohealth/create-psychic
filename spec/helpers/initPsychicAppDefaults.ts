@@ -7,6 +7,7 @@ export default function initPsychicAppDefaults(): InitPsychicAppCliOptions {
     workers: false,
     client: 'none',
     adminClient: 'none',
+    internalClient: 'none',
     primaryKeyType: 'bigserial',
     confPath: 'src/api/conf',
     controllersPath: 'src/api/app/controllers',

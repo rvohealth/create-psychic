@@ -81,71 +81,56 @@ export default class AppConfigBuilder {
 
 function startHookContent(options: NewPsychicAppCliOptions) {
   const runCmd = runCmdForPackageManager(options.packageManager)
-  if (options.client !== 'none' && options.adminClient !== 'none') {
-    return `\
-  psy.on('server:start', async () => {
-    if (AppEnv.isDevelopment && AppEnv.boolean('CLIENT')) {
-      DreamCLI.logger.logStartProgress('starting dev servers...')
-      await PsychicDevtools.launchDevServer('clientApp', { port: 3000, cmd: '${runCmd} client' })
-      await PsychicDevtools.launchDevServer('adminApp', { port: 3001, cmd: 'yarn admin' })
-      DreamCLI.logger.logEndProgress()
-    }
-  })`
-  } else if (options.client !== 'none') {
-    return `\
-  psy.on('server:start', async () => {
-    if (AppEnv.isDevelopment && AppEnv.boolean('CLIENT')) {
-      DreamCLI.logger.logStartProgress('starting dev server...')
-      await PsychicDevtools.launchDevServer('clientApp', { port: 3000, cmd: '${runCmd} client' })
-      DreamCLI.logger.logEndProgress()
-    }
-  })`
-  } else if (options.adminClient !== 'none') {
-    return `\
-  psy.on('server:start', async () => {
-    if (AppEnv.isDevelopment && AppEnv.boolean('CLIENT')) {
-      DreamCLI.logger.logStartProgress('starting dev server...')
-      await PsychicDevtools.launchDevServer('adminApp', { port: 3001, cmd: '${runCmd} admin' })
-      DreamCLI.logger.logEndProgress()
-    }
-  })`
-  } else {
+  const servers: { name: string; port: number; cmd: string }[] = []
+
+  if (options.client !== 'none') servers.push({ name: 'clientApp', port: 3000, cmd: `${runCmd} client` })
+  if (options.adminClient !== 'none') servers.push({ name: 'adminApp', port: 3001, cmd: `${runCmd} admin` })
+  if (options.internalClient !== 'none')
+    servers.push({ name: 'internalApp', port: 3002, cmd: `${runCmd} internal` })
+
+  if (servers.length === 0) {
     return "  psy.on('server:start', () => {})"
   }
+
+  const plural = servers.length > 1 ? 'servers' : 'server'
+  const launchLines = servers
+    .map(s => `      await PsychicDevtools.launchDevServer('${s.name}', { port: ${s.port}, cmd: '${s.cmd}' })`)
+    .join('\n')
+
+  return `\
+  psy.on('server:start', async () => {
+    if (AppEnv.isDevelopment && AppEnv.boolean('CLIENT')) {
+      DreamCLI.logger.logStartProgress('starting dev ${plural}...')
+${launchLines}
+      DreamCLI.logger.logEndProgress()
+    }
+  })`
 }
 
 function shutdownHookContent(options: NewPsychicAppCliOptions) {
-  if (options.client !== 'none' && options.adminClient !== 'none') {
-    return `\
-  psy.on('server:shutdown', () => {
-    if (AppEnv.isDevelopment && AppEnv.boolean('CLIENT')) {
-      DreamCLI.logger.logStartProgress('stopping dev servers...')
-      PsychicDevtools.stopDevServer('clientApp')
-      PsychicDevtools.stopDevServer('adminApp')
-      DreamCLI.logger.logEndProgress()
-    }
-  })`
-  } else if (options.client !== 'none') {
-    return `\
-  psy.on('server:shutdown', () => {
-    if (AppEnv.isDevelopment && AppEnv.boolean('CLIENT')) {
-      DreamCLI.logger.logStartProgress('stopping dev server...')
-      PsychicDevtools.stopDevServer('clientApp')
-      DreamCLI.logger.logEndProgress()
-    }
-  })`
-  } else if (options.adminClient !== 'none') {
-    return `\
-  psy.on('server:shutdown', () => {
-    if (AppEnv.isDevelopment && AppEnv.boolean('CLIENT')) {
-      DreamCLI.logger.logStartProgress('stopping dev server...')
-      PsychicDevtools.stopDevServer('adminApp')
-      DreamCLI.logger.logEndProgress()
-    }
-  })`
-  } else {
+  const servers: string[] = []
+
+  if (options.client !== 'none') servers.push('clientApp')
+  if (options.adminClient !== 'none') servers.push('adminApp')
+  if (options.internalClient !== 'none') servers.push('internalApp')
+
+  if (servers.length === 0) {
     return "  psy.on('server:shutdown', () => {})"
   }
+
+  const plural = servers.length > 1 ? 'servers' : 'server'
+  const stopLines = servers
+    .map(s => `      PsychicDevtools.stopDevServer('${s}')`)
+    .join('\n')
+
+  return `\
+  psy.on('server:shutdown', () => {
+    if (AppEnv.isDevelopment && AppEnv.boolean('CLIENT')) {
+      DreamCLI.logger.logStartProgress('stopping dev ${plural}...')
+${stopLines}
+      DreamCLI.logger.logEndProgress()
+    }
+  })`
 }
 
 function dreamImportStatement(options: NewPsychicAppCliOptions) {

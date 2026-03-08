@@ -12,6 +12,8 @@ const FIXTURE_PATHS = [
   'expected-files/app/with-client.ts',
   'expected-files/app/with-admin.ts',
   'expected-files/app/with-client-and-admin.ts',
+  'expected-files/app/with-internal.ts',
+  'expected-files/app/with-client-and-internal.ts',
   'expected-files/app/with-workers.ts',
   'expected-files/app/with-workers-and-websockets.ts',
   'expected-files/app/with-websockets.ts',
@@ -22,6 +24,8 @@ const FIXTURE_PATHS = [
   'expected-files/spec/features/setup/globalSetup-with-client.ts',
   'expected-files/spec/features/setup/globalSetup-with-admin.ts',
   'expected-files/spec/features/setup/globalSetup-with-client-and-admin.ts',
+  'expected-files/spec/features/setup/globalSetup-with-internal.ts',
+  'expected-files/spec/features/setup/globalSetup-with-client-and-internal.ts',
 
   'expected-files/spec/features/example-feature-spec/with-none.spec.ts',
   'expected-files/spec/features/example-feature-spec/with-react.spec.ts',

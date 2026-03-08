@@ -12,6 +12,7 @@ describe('newPsychicApp with no client', () => {
       workers: false,
       client: 'none',
       adminClient: 'none',
+      internalClient: 'none',
       primaryKeyType: 'bigserial',
     })
 

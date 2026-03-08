@@ -33,7 +33,7 @@
     "@koa/cors": "^5.0.0",
     "@koa/etag": "^5.0.2",
     "@koa/router": "^15.3.0",
-    "@rvoh/dream": "^2.3.3",
+    "@rvoh/dream": "^2.4.0-alpha",
     "@rvoh/psychic-websockets": "^3.0.0",
     "@rvoh/psychic-workers": "^2.2.0",
     "@rvoh/psychic": "^3.0.0-alpha",
