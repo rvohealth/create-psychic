@@ -5,15 +5,13 @@ export interface RequestLoggerOptions {
   winstonInstance?: winston.Logger
   transports?: winston.transport[]
   format?: winston.Logform.Format
-  meta?: boolean
-  headerBlacklist?: string[]
-  bodyBlacklist?: string[]
+  headerBlocklist?: string[]
+  bodyBlocklist?: string[]
   ignoredRoutes?: string[]
-  colorize?: boolean
 }
 
-function filterObject(obj: Record<string, unknown>, blacklist: string[]): Record<string, unknown> {
-  const lower = blacklist.map(k => k.toLowerCase())
+function filterObject(obj: Record<string, unknown>, Blocklist: string[]): Record<string, unknown> {
+  const lower = Blocklist.map(k => k.toLowerCase())
   const filtered: Record<string, unknown> = {}
   for (const key of Object.keys(obj)) {
     if (!lower.includes(key.toLowerCase())) {
@@ -28,9 +26,8 @@ export default function requestLogger(options: RequestLoggerOptions = {}): Koa.M
     winstonInstance,
     transports,
     format,
-    meta = true,
-    headerBlacklist = [],
-    bodyBlacklist = [],
+    headerBlocklist = [],
+    bodyBlocklist = [],
     ignoredRoutes = [],
   } = options
 
@@ -62,26 +59,23 @@ export default function requestLogger(options: RequestLoggerOptions = {}): Koa.M
     else level = 'info'
 
     const logEntry: Record<string, unknown> = { message, level }
+    const headers = filterObject(ctx.headers as Record<string, unknown>, headerBlocklist)
+    const rawBody = (ctx.request as unknown as Record<string, unknown>).body as
+      | Record<string, unknown>
+      | undefined
+    const body = rawBody ? filterObject(rawBody, bodyBlocklist) : undefined
 
-    if (meta) {
-      const headers = filterObject(ctx.headers as Record<string, unknown>, headerBlacklist)
-      const rawBody = (ctx.request as unknown as Record<string, unknown>).body as
-        | Record<string, unknown>
-        | undefined
-      const body = rawBody ? filterObject(rawBody, bodyBlacklist) : undefined
-
-      logEntry.meta = {
-        req: {
-          method: ctx.method,
-          url: ctx.url,
-          headers,
-          body,
-        },
-        res: {
-          statusCode: status,
-        },
-        responseTime: duration,
-      }
+    logEntry.meta = {
+      req: {
+        method: ctx.method,
+        url: ctx.url,
+        headers,
+        body,
+      },
+      res: {
+        statusCode: status,
+      },
+      responseTime: duration,
     }
 
     logger.log(logEntry as winston.LogEntry)

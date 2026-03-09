@@ -24,7 +24,7 @@ Spec failures typically show only `Unknown Error: 1` with no details. To diagnos
 
 2. **Log the actual command.** Once you've identified the failing `sspawn` call, add a `console.log` of the command string being passed to `sspawn` so you can see it.
 
-3. **Run commands manually.** The spec creates a `howyadoin` directory (preserved after failure). `cd` into it (or `howyadoin/api` for non-api-only setups) and run each `&&`-chained command from the `sspawn` call individually. This reveals the actual error output that `sspawn` swallows.
+3. **Run commands manually.** The spec creates a `howyadoin` directory (each spec run automatically deletes and recreates it, so you never need to delete it manually). `cd` into it (or `howyadoin/api` for non-api-only setups) and run each `&&`-chained command from the `sspawn` call individually. This reveals the actual error output that `sspawn` swallows.
 
 4. **Revert debug logs** after diagnosing.
 

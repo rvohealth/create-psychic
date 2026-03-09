@@ -1,4 +1,5 @@
 import AppEnv from '@conf/AppEnv.js'
+import allowedCorsOrigins from '@conf/system/allowedCorsOrigins.js'
 import { PsychicApp } from '@rvoh/psychic'
 import { PsychicAppWebsockets } from '@rvoh/psychic-websockets'
 import { Redis } from 'ioredis'
@@ -13,7 +14,8 @@ export default (psy: PsychicApp) => {
 }
 
 function initializeWebsockets(wsApp: PsychicAppWebsockets) {
-  wsApp.set('connection',
+  wsApp.set(
+    'connection',
     AppEnv.isProduction
       ? new Redis({
           host: AppEnv.string('WS_REDIS_HOST'),
@@ -30,11 +32,15 @@ function initializeWebsockets(wsApp: PsychicAppWebsockets) {
           password: AppEnv.string('WS_REDIS_PASSWORD', { optional: true }),
           // tls:  {},
           maxRetriesPerRequest: null,
-        })
+        }),
   )
 
   wsApp.set('socketio', {
     // socketio server options here
+    cors: {
+      credentials: true,
+      origin: allowedCorsOrigins(),
+    },
   })
 
   // ******
