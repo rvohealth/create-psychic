@@ -28,7 +28,7 @@ export default async function installInitApiDependencies(options: InitPsychicApp
     '@pollyjs/adapter-node-http',
     '@pollyjs/core',
     '@pollyjs/persister-fs',
-    '@rvoh/psychic-spec-helpers@alpha',
+    '@rvoh/psychic-spec-helpers',
     '@types/koa__cors',
     '@types/koa__router',
     '@types/koa-bodyparser',
@@ -44,7 +44,7 @@ export default async function installInitApiDependencies(options: InitPsychicApp
   const devDeps = devDepsArr.join(' ')
 
   const baseDeps = [
-    '@rvoh/dream@alpha',
+    '@rvoh/dream',
 
     // need to hold commander to 14.0.3 until dream bumps up, since
     // this will otherwise cause type errors at build
@@ -60,7 +60,7 @@ export default async function installInitApiDependencies(options: InitPsychicApp
     '@koa/cors',
     '@koa/etag',
     '@koa/router',
-    '@rvoh/psychic@alpha',
+    '@rvoh/psychic',
     'koa',
     'koa-bodyparser',
     'koa-conditional-get',
