@@ -34,7 +34,8 @@ function psychicImports(options: NewPsychicAppCliOptions) {
 function devToolsSetupContent(options: NewPsychicAppCliOptions) {
   const servers: { name: string; port: number; cmd: string }[] = []
 
-  if (options.client !== 'none') servers.push({ name: 'clientFspecApp', port: 3000, cmd: 'yarn client:fspec' })
+  if (options.client !== 'none')
+    servers.push({ name: 'clientFspecApp', port: 3000, cmd: 'yarn client:fspec' })
   if (options.adminClient !== 'none')
     servers.push({ name: 'adminFspecApp', port: 3001, cmd: 'yarn admin:fspec' })
   if (options.internalClient !== 'none')

@@ -94,7 +94,9 @@ function startHookContent(options: NewPsychicAppCliOptions) {
 
   const plural = servers.length > 1 ? 'servers' : 'server'
   const launchLines = servers
-    .map(s => `      await PsychicDevtools.launchDevServer('${s.name}', { port: ${s.port}, cmd: '${s.cmd}' })`)
+    .map(
+      s => `      await PsychicDevtools.launchDevServer('${s.name}', { port: ${s.port}, cmd: '${s.cmd}' })`,
+    )
     .join('\n')
 
   return `\
@@ -119,9 +121,7 @@ function shutdownHookContent(options: NewPsychicAppCliOptions) {
   }
 
   const plural = servers.length > 1 ? 'servers' : 'server'
-  const stopLines = servers
-    .map(s => `      PsychicDevtools.stopDevServer('${s}')`)
-    .join('\n')
+  const stopLines = servers.map(s => `      PsychicDevtools.stopDevServer('${s}')`).join('\n')
 
   return `\
   psy.on('server:shutdown', () => {
