@@ -7,8 +7,9 @@ import importDefault from '@conf/system/importDefault.js'
 import srcPath from '@conf/system/srcPath.js'
 import * as path from 'node:path'
 
+import allowedCorsOrigins from '@conf/system/allowedCorsOrigins.js'
+import requestLogger from '@conf/system/requestLogger.js'
 import winstonLogger from '@conf/winstonLogger.js'
-import requestLogger from '@middleware/requestLogger.js'
 import type Koa from 'koa'
 import winston from 'winston'
 
@@ -68,7 +69,7 @@ export default async (psy: PsychicApp) => {
     })
   }
 
-  const allowedOrigins = JSON.parse(AppEnv.string('CORS_HOSTS', { optional: true }) || '[]') as string[]
+  const allowedOrigins = allowedCorsOrigins()
   psy.set('cors', {
     credentials: true,
     origin: (ctx: Koa.Context) => {
@@ -163,9 +164,7 @@ export default async (psy: PsychicApp) => {
         requestLogger({
           transports: [new winston.transports.Console()],
           format: winston.format.combine(winston.format.json()),
-          meta: true,
-          colorize: false,
-          headerBlacklist: [
+          headerBlocklist: [
             'authorization',
             'content-length',
             'connection',
@@ -179,7 +178,7 @@ export default async (psy: PsychicApp) => {
             'user-agent',
           ],
           ignoredRoutes: ['/health_check'],
-          bodyBlacklist: SENSITIVE_FIELDS,
+          bodyBlocklist: SENSITIVE_FIELDS,
         }),
       )
     }
