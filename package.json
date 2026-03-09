@@ -32,7 +32,7 @@
     "format": "pnpm prettier . --write"
   },
   "dependencies": {
-    "@rvoh/dream": "2.3.3",
+    "@rvoh/dream": "^2.4.0",
     "@types/node": "^22.6.1",
     "commander": "^14.0.3",
     "pino-std-serializers": "^4.0.0",
