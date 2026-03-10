@@ -1,6 +1,7 @@
 ## 3.0.1
 
 - more idiomatic way of testing Dream constructor name
+- mcp.json immediately ready to use
 
 ## 3.0.0
 
