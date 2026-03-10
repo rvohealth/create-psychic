@@ -1,5 +1,9 @@
 ## 3.0.2
 
+- CLAUDE.md
+
+## 3.0.2
+
 - custom .mcp.json based on whether API-only or not
 - update AGENTS.md
 
