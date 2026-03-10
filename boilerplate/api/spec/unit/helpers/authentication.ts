@@ -64,7 +64,7 @@ export async function session(user: Dream) {
   let bearerToken: string
   if (user instanceof User) {
     bearerToken = await userJwt(user)
-  } else if (user.constructor.name === 'InternalUser') {
+  } else if (user.sanitizedConstructorName === 'InternalUser') {
     bearerToken = await internalUserJwt(user)
   } else {
     bearerToken = await adminUserJwt(user)
