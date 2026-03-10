@@ -44,6 +44,10 @@ const FIXTURE_PATHS = [
   'expected-files/docker-compose/yarn/no-client-basic.yml',
   'expected-files/docker-compose/yarn/workers-basic.yml',
   'expected-files/docker-compose/yarn/websockets-basic.yml',
+
+  // mcp.json
+  'expected-files/mcpJson/atRootOfApiOnly.json',
+  'expected-files/mcpJson/atRootOfAppWithClient.json',
 ] as const
 
 type FixturePath = (typeof FIXTURE_PATHS)[number]

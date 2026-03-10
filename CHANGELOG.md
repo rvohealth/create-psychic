@@ -1,3 +1,7 @@
+## 3.0.2
+
+- custom .mcp.json based on whether API-only or not
+
 ## 3.0.1
 
 - more idiomatic way of testing Dream constructor name

@@ -1,6 +1,8 @@
 import * as fs from 'node:fs'
 import * as path from 'node:path'
 import AppConfigBuilder from '../../file-builders/AppConfigBuilder.js'
+import DockerComposeBuilder from '../../file-builders/docker/DockerComposeBuilder.js'
+import PsychicDockerDevBuilder from '../../file-builders/docker/PsychicDockerfileDevBuilder.js'
 import DreamConfigBuilder from '../../file-builders/DreamConfigBuilder.js'
 import EnvBuilder from '../../file-builders/EnvBuilder.js'
 import FeatureSpecExampleBuilder from '../../file-builders/FeatureSpecExampleBuilder.js'
@@ -14,8 +16,6 @@ import internalSrcPath from '../internalSrcPath.js'
 import { NewPsychicAppCliOptions } from '../newPsychicApp.js'
 import replaceYarnInFile from '../replaceYarnAndNpxInFile.js'
 import sanitizeAgentsFileContents from '../sanitizeAgentsFileContents.js'
-import DockerComposeBuilder from '../../file-builders/docker/DockerComposeBuilder.js'
-import PsychicDockerDevBuilder from '../../file-builders/docker/PsychicDockerfileDevBuilder.js'
 
 export default async function copyApiBoilerplate(appName: string, options: NewPsychicAppCliOptions) {
   const appRoot = path.join('.', appName)
@@ -32,6 +32,12 @@ export default async function copyApiBoilerplate(appName: string, options: NewPs
   }
 
   copyRecursive(internalSrcPath('..', 'boilerplate', 'api'), apiRoot)
+
+  if (apiOnlyOptions(options)) {
+    fs.cpSync(internalSrcPath('..', 'boilerplate', 'api-only-mcp.json'), path.join(appRoot, '.mcp.json'))
+  } else {
+    fs.cpSync(internalSrcPath('..', 'boilerplate', 'non-api-only-mcp.json'), path.join(appRoot, '.mcp.json'))
+  }
 
   sanitizeAgentsFileContents(apiRoot, options.packageManager)
 
