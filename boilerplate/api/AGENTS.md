@@ -61,7 +61,7 @@ This project uses [Dream ORM](https://github.com/rvohealth/dream) and [Psychic w
 ## Key Commands
 
 - `{{PM}} psy db:migrate` - Run migrations
-- `{{PM}} psy sync` - Sync types from the database, OpenAPI specs, controller request/response body shapes for controller specs, front end types (where relevant), and other sync actions (which may be enhanced by plugins)
+- `{{PM}} psy sync` - Sync types from the database, OpenAPI specs, controller request/response body shapes for controller specs, serializer global names, front end types (where relevant), and other sync actions (which may be enhanced by plugins)
 - `{{PM}} psy g:model` - Generate a model
 - `{{PM}} psy g:migration` - Generate a migration (used to make database changes when not generating a model or a resource)
 - `{{PM}} psy g:controller` - Generate a controller
@@ -123,6 +123,7 @@ After a generator has run:
 
 - **Run `{{PM}} psy sync`** whenever:
   - An association is added or changed in a Dream model
+  - A serializer export is added or renamed
   - The OpenAPI shape needs to be updated (e.g., when a serializer is changed, an OpenAPI decorator in a controller is changed, or a route is changed)
 - **If in a controller spec, there are type errors related to what types an endpoint accepts or returns**, this means that the OpenAPI shape is out of sync and `{{PM}} psy sync` needs to be run
 - **No need to run `{{PM}} psy sync` after a migration** because:
