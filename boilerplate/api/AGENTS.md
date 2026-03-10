@@ -93,6 +93,18 @@ This project uses [Dream ORM](https://github.com/rvohealth/dream) and [Psychic w
   - **Model generator (or sti-child generator)** is preferred over the migration generator when a new model is being generated
   - **Migration generator** is used to make database changes when not generating a model or a resource
 
+### STI Child Generator Tip
+
+When generating an STI parent with a `type` enum, the enum values must match the STI child model names. Use the `--model-name` flag in the sti-child generator to control the model class name independently of the namespace path. Example:
+
+```console
+# generate the STI parent:
+{{PM}} psy g:resource --sti-base-serializer --owning-model=Place v1/host/places/\{\}/rooms Room type:enum:room_types:Bathroom,Bedroom,Kitchen,Den,LivingRoom Place:belongs_to position:integer:optional deleted_at:datetime:optional
+
+# generate an STI child:
+{{PM}} psy g:sti-child --model-name=Kitchen Room/Kitchen extends Room appliances:enum\[\]:appliance_types:stove,oven,microwave,dishwasher
+```
+
 ## Generator Workflow
 
 After a generator has run:
