@@ -1,4 +1,10 @@
+## 3.0.1
+
+- more idiomatic way of testing Dream constructor name
+
 ## 3.0.0
+
+- psychic 3.0
 
 - psychic 3.0
 
