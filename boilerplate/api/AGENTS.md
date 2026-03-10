@@ -235,6 +235,51 @@ Dream and Psychic are vast frameworks with many patterns, APIs, and conventions 
 
 When working with this codebase, prioritize Dream and Psychic patterns and conventions. Refer to the official documentation at https://psychicframework.com when needed.
 
+## Troubleshooting Migrations
+
+- **"Corrupted migrations" error**: When switching between branches with different migrations, or when a migration was removed during initial development (which is never allowed once a migration has been merged into the trunk), `{{PM}} psy db:migrate` fails with "corrupted migrations" errors. The fix is `{{PM}} psy db:reset`.
+
+## STI Create Actions Must Use Switch on Child Model Classes
+
+When creating an STI model in a controller, **never pass the raw `type` string to the base model's `create` method** (e.g., `Room.create({ type: 'Kitchen' })`). Even though it may appear to work at runtime, it:
+1. Bypasses validators, setters, and lifecycle events on the intended model
+2. Fails OpenAPI response validation: the base model's `create()` doesn't produce a properly typed STI child instance, so response serialization doesn't invoke the correct serializer
+
+**Solution:** Use a switch statement on the validated type enum to instantiate the correct STI child class:
+
+```ts
+const type = this.castParam('type', 'string', { enum: RoomTypeEnumValues })
+const params = this.paramsFor(Room)
+
+let room: Room
+switch (type) {
+  case 'Bathroom':
+    room = await Bathroom.create(params)
+    break
+  case 'Bedroom':
+    room = await Bedroom.create(params)
+    break
+  case 'Kitchen':
+    room = await Kitchen.create(params)
+    break
+  case 'Den':
+    room = await Den.create(params)
+    break
+  default: {
+    // protection so that if a new RoomTypesEnum is ever added, this will throw a type
+    // error at build time until a case is added to handle that new RoomTypesEnum
+    const _never: never = type
+    // even though this should never happen due to the type protection, throw an error to satisfy later types
+    throw new Error(`Unknown room type: ${_never}`)
+  }
+}
+```
+
+Key details:
+- Use `this.castParam('type', 'string', { enum: RoomTypeEnumValues })` to validate and narrow the type
+- The `const _never: never = type` pattern ensures exhaustive matching at compile time
+- Each STI child class (e.g., `Kitchen`) has its own serializer that produces the correct OpenAPI schema shape
+
 ## Customizing These Rules
 
 - **Any customizations to these rules must be added AFTER the following marker:**
