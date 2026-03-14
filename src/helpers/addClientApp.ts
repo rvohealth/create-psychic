@@ -125,6 +125,15 @@ export default async function addClientApp({
     await ClientDockerDevBuilder.build(options),
   )
 
+  // use node-modules linker for yarn client apps to ensure compatibility
+  // with vite's rolldown bundler, which doesn't support yarn PnP
+  if (options.packageManager === 'yarn') {
+    fs.writeFileSync(
+      path.join(apiRoot, '..', clientRootFolderName, '.yarnrc.yml'),
+      'nodeLinker: node-modules\n',
+    )
+  }
+
   // only bother installing packages if not in test env to save time
   await sspawn(
     `cd ${path.join(apiRoot, '..', clientRootFolderName)} && ${installCmd(options.packageManager)}`,
