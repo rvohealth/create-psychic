@@ -1,9 +1,19 @@
 import '../../src/conf/loadEnv.js'
 
+import babel, { defineRolldownBabelPreset } from '@rolldown/plugin-babel'
 import { defineConfig } from 'vitest/config'
 import srcPath from '../../src/conf/system/srcPath.js'
 
+const decorators = defineRolldownBabelPreset({
+  preset: () => ({
+    plugins: [['@babel/plugin-proposal-decorators', { version: '2023-11' }]],
+  }),
+  rolldown: { filter: { code: '@' } },
+})
+
 export default defineConfig({
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-explicit-any
+  plugins: [babel({ presets: [decorators] } as any)],
   resolve: {
     alias: {
       '@conf': srcPath('conf'),
