@@ -66,6 +66,11 @@ export default async function buildInitPsychicAppOptionsWithPrompt(options: Init
     options.websockets = answer === 'yes'
   }
 
+  if (options.psychicSkill === undefined) {
+    const answer = await new Select('Install psychic-skill for Claude Code?', ['yes', 'no'] as const).run()
+    options.psychicSkill = answer === 'yes'
+  }
+
   if (options.confPath === undefined) {
     const defaultVal = path.join('.', 'src', 'conf')
     const answer = await prompt(`What would you like your conf path to be? (defaults to ${defaultVal}`)

@@ -10,6 +10,7 @@ describe('newPsychicApp with websockets', () => {
     await newSpecPsychicApp('howyadoin', {
       packageManager: 'yarn',
       websockets: true,
+      psychicSkill: false,
       workers: false,
       client: 'none',
       adminClient: 'none',

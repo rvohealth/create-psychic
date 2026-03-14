@@ -9,6 +9,7 @@ describe('newPsychicApp with react client', () => {
     await newSpecPsychicApp('howyadoin', {
       packageManager: 'npm',
       websockets: false,
+      psychicSkill: false,
       workers: false,
       client: 'none',
       adminClient: 'none',

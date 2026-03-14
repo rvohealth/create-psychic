@@ -68,4 +68,9 @@ export default async function buildNewPsychicAppOptionsWithPrompt(options: NewPs
     const answer = await new Select('websockets?', ['yes', 'no'] as const).run()
     options.websockets = answer === 'yes'
   }
+
+  if (options.psychicSkill === undefined) {
+    const answer = await new Select('Install psychic-skill for Claude Code?', ['yes', 'no'] as const).run()
+    options.psychicSkill = answer === 'yes'
+  }
 }

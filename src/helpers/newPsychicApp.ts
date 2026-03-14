@@ -4,6 +4,7 @@ import DreamCliLogger from '../logger/DreamCliLogger.js'
 import addClientApp from './addClientApp.js'
 import apiOnlyOptions from './apiOnlyOptions.js'
 import gitInit from './gitInit.js'
+import installPsychicSkill from './installPsychicSkill.js'
 import logo from './logo.js'
 import buildNewPsychicAppOptionsWithPrompt from './new/buildNewPsychicAppOptionsWithPrompt.js'
 import copyApiBoilerplate from './new/copyApiBoilerplate.js'
@@ -27,6 +28,7 @@ export interface NewPsychicAppCliOptions {
   internalClient: (typeof cliClientAppTypes)[number]
   workers: boolean
   websockets: boolean
+  psychicSkill: boolean
 }
 
 export interface InitPsychicAppCliOptions {
@@ -40,6 +42,7 @@ export interface InitPsychicAppCliOptions {
   internalClient: (typeof cliClientAppTypes)[number]
   workers: boolean
   websockets: boolean
+  psychicSkill: boolean
   serializersPath: string
   typesPath: string
   modelsPath: string
@@ -98,6 +101,14 @@ export default async function newPsychicApp(appName: string, options: NewPsychic
   }
 
   await installApiDependencies(appName, { options, logger })
+
+  if (options.psychicSkill) {
+    if (!testEnv()) {
+      logger.logEndProgress()
+      logger.logStartProgress(`installing psychic-skill...`)
+    }
+    installPsychicSkill(rootPath)
+  }
 
   if (!testEnv()) {
     // sleeping here because yarn has a delayed print that we need to clean up after install completes

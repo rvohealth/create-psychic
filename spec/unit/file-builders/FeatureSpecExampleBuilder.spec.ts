@@ -7,6 +7,7 @@ describe('FeatureSpecExampleBuilder', () => {
     packageManager: 'yarn',
     workers: false,
     websockets: false,
+    psychicSkill: false,
     client: 'none',
     adminClient: 'none',
     internalClient: 'none',
