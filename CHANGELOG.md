@@ -1,3 +1,7 @@
+## 3.1.0
+
+- prompt to install psychic-skill
+
 ## 3.0.2
 
 - CLAUDE.md

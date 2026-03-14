@@ -8,6 +8,8 @@ describe('newPsychicApp with react client', () => {
     await newPsychicApp('howyadoin', {
       packageManager: 'yarn',
       websockets: false,
+      claudePsychicSkill: false,
+      codexPsychicSkill: false,
       workers: false,
       client: 'react',
       adminClient: 'react',

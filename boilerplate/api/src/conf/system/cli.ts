@@ -38,8 +38,16 @@ program
 // end:OFFICIAL PSYCHIC RULES DO NOT MODIFY //
 //////////////////////////////////////////////
 `)
+    const previousRules = currentFileContents.length > 1 ? currentFileContents.at(0)! : ''
     const customRules = currentFileContents.length > 1 ? currentFileContents.at(-1)! : ''
-    fs.writeFileSync(targetPath, rules + customRules)
+    const previousRulesParts = previousRules.split(`\
+//////////////////////////////////////////
+// OFFICIAL PSYCHIC RULES DO NOT MODIFY //
+//////////////////////////////////////////
+`)
+
+    const prefix = previousRulesParts.length > 1 ? previousRulesParts.at(0)! : ''
+    fs.writeFileSync(targetPath, prefix + rules + customRules)
 
     process.exit()
   })

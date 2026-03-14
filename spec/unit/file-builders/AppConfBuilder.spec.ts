@@ -18,6 +18,8 @@ describe('AppConfBuilder', () => {
       packageManager: 'yarn',
       workers: false,
       websockets: false,
+      claudePsychicSkill: false,
+      codexPsychicSkill: false,
       client: 'none',
       adminClient: 'none',
       internalClient: 'none',

@@ -83,10 +83,10 @@ function startHookContent(options: NewPsychicAppCliOptions) {
   const runCmd = runCmdForPackageManager(options.packageManager)
   const servers: { name: string; port: number; cmd: string }[] = []
 
-  if (options.client !== 'none') servers.push({ name: 'clientApp', port: 3000, cmd: `${runCmd} client` })
-  if (options.adminClient !== 'none') servers.push({ name: 'adminApp', port: 3001, cmd: `${runCmd} admin` })
+  if (options.client !== 'none') servers.push({ name: 'clientApp', port: 3050, cmd: `${runCmd} client` })
+  if (options.adminClient !== 'none') servers.push({ name: 'adminApp', port: 3051, cmd: `${runCmd} admin` })
   if (options.internalClient !== 'none')
-    servers.push({ name: 'internalApp', port: 3002, cmd: `${runCmd} internal` })
+    servers.push({ name: 'internalApp', port: 3052, cmd: `${runCmd} internal` })
 
   if (servers.length === 0) {
     return "  psy.on('server:start', () => {})"

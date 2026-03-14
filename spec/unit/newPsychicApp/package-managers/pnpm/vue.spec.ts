@@ -9,6 +9,8 @@ describe('newPsychicApp with vue client', () => {
     await newSpecPsychicApp('howyadoin', {
       packageManager: 'pnpm',
       websockets: false,
+      claudePsychicSkill: false,
+      codexPsychicSkill: false,
       workers: false,
       client: 'vue',
       adminClient: 'none',
