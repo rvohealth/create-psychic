@@ -1,13 +1,14 @@
 import * as fs from 'node:fs/promises'
 
 export default class ViteConfBuilder {
-  public static async build(pathToExistingViteConf: string, { port = 3000 }: { port: number }) {
+  public static async build(pathToExistingViteConf: string, { port = 3050 }: { port: number }) {
     const contents = (await fs.readFile(pathToExistingViteConf)).toString()
     return contents.replace(
       /\}\)/,
       `
   server: {
     port: ${port},
+    strictPort: true,
   },
 })
 `,

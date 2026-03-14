@@ -42,7 +42,7 @@ export default async function buildInitPsychicAppOptionsWithPrompt(options: Init
 
   if (!options.packageManager || !psychicPackageManagers.includes(options.packageManager)) {
     const answer = await new Select(
-      'what package manager would you like to use?',
+      'What package manager would you like to use?',
       psychicPackageManagers,
     ).run()
     options.packageManager = answer
@@ -50,20 +50,35 @@ export default async function buildInitPsychicAppOptionsWithPrompt(options: Init
 
   if (!options.primaryKeyType || !primaryKeyTypes.includes(options.primaryKeyType)) {
     const answer = await new Select(
-      'what primary key type would you like to use? (uuid7 requires Postgres 18)',
+      'What primary key type would you like to use? (uuid7 requires Postgres 18)',
       primaryKeyTypes,
     ).run()
     options.primaryKeyType = answer
   }
 
   if (options.workers === undefined && !options.dreamOnly) {
-    const answer = await new Select('background workers?', ['yes', 'no'] as const).run()
+    const answer = await new Select('Background workers?', ['yes', 'no'] as const).run()
     options.workers = answer === 'yes'
   }
 
   if (options.websockets === undefined && !options.dreamOnly) {
-    const answer = await new Select('websockets?', ['yes', 'no'] as const).run()
+    const answer = await new Select('Websockets?', ['yes', 'no'] as const).run()
     options.websockets = answer === 'yes'
+  }
+
+  if (options.claudePsychicSkill === undefined && options.codexPsychicSkill === undefined) {
+    const answer = await new Select('AI agent skills?', [
+      'Claude Code',
+      'Codex',
+      'both',
+      'none',
+    ] as const).run()
+
+    options.claudePsychicSkill = answer === 'Claude Code' || answer === 'both'
+    options.codexPsychicSkill = answer === 'Codex' || answer === 'both'
+  } else {
+    options.claudePsychicSkill ??= false
+    options.codexPsychicSkill ??= false
   }
 
   if (options.confPath === undefined) {

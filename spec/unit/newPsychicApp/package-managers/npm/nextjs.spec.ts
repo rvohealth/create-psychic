@@ -5,11 +5,12 @@ import newSpecPsychicApp from '../../../../helpers/newSpecPsychicApp.js'
 import expectToMatchFixture from '../../../../helpers/expectToMatchFixture.js'
 
 describe('newPsychicApp with nextjs client', () => {
-  // TODO: works locally, not passing in CI
-  it.skip('correctly provisions a nextjs client', async () => {
+  it('correctly provisions a nextjs client', async () => {
     await newSpecPsychicApp('howyadoin', {
       packageManager: 'npm',
       websockets: false,
+      claudePsychicSkill: false,
+      codexPsychicSkill: false,
       workers: false,
       client: 'nextjs',
       adminClient: 'none',
@@ -25,6 +26,14 @@ describe('newPsychicApp with nextjs client', () => {
       'expected-files/docker-compose/npm/client-basic.yml',
       fs.readFileSync('./howyadoin/docker-compose.yml').toString(),
     )
+
+    // verify next.config.ts has distDir for fspec build separation
+    const nextConfig = fs.readFileSync('./howyadoin/client/next.config.ts').toString()
+    expect(nextConfig).toContain('distDir: process.env.NEXT_DIST_DIR ?? ".next"')
+
+    // verify .gitignore includes .next-fspec
+    const gitignore = fs.readFileSync('./howyadoin/client/.gitignore').toString()
+    expect(gitignore).toContain('.next-fspec')
 
     await sspawn(
       `\

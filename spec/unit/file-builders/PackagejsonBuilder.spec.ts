@@ -8,6 +8,8 @@ describe('PackagejsonBuilder', () => {
     packageManager: 'yarn',
     workers: false,
     websockets: false,
+    claudePsychicSkill: false,
+    codexPsychicSkill: false,
     client: 'none',
     adminClient: 'none',
     internalClient: 'none',
@@ -59,13 +61,35 @@ describe('PackagejsonBuilder', () => {
       })
     })
 
-    context('nextjs client', () => {
-      it('includes client scripts', async () => {
+    context('nextjs client (yarn)', () => {
+      it('includes client scripts using next binary directly', async () => {
         const options: NewPsychicAppCliOptions = { ...baseOptions, client: 'nextjs' }
         const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
         expect(JSON.parse(res).scripts['client']).toEqual('yarn --cwd=../client next dev')
         expect(JSON.parse(res).scripts['client:fspec']).toEqual(
-          'BROWSER=none NEXT_PUBLIC_PSYCHIC_ENV=test yarn --cwd=../client next dev',
+          'BROWSER=none NEXT_PUBLIC_PSYCHIC_ENV=test NEXT_DIST_DIR=.next-fspec yarn --cwd=../client next dev --port 3050',
+        )
+      })
+    })
+
+    context('nextjs client (npm)', () => {
+      it('includes client scripts using dev script with -- separator', async () => {
+        const options: NewPsychicAppCliOptions = { ...baseOptions, client: 'nextjs', packageManager: 'npm' }
+        const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
+        expect(JSON.parse(res).scripts['client']).toEqual('npm run --prefix=../client dev')
+        expect(JSON.parse(res).scripts['client:fspec']).toEqual(
+          'BROWSER=none NEXT_PUBLIC_PSYCHIC_ENV=test NEXT_DIST_DIR=.next-fspec npm run --prefix=../client dev -- --port 3050',
+        )
+      })
+    })
+
+    context('nuxt client', () => {
+      it('includes client scripts', async () => {
+        const options: NewPsychicAppCliOptions = { ...baseOptions, client: 'nuxt' }
+        const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
+        expect(JSON.parse(res).scripts['client']).toEqual('yarn --cwd=../client dev')
+        expect(JSON.parse(res).scripts['client:fspec']).toEqual(
+          'BROWSER=none NUXT_BUILD_DIR=.nuxt-fspec yarn --cwd=../client dev --port 3050',
         )
       })
     })
@@ -87,7 +111,18 @@ describe('PackagejsonBuilder', () => {
         const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
         expect(JSON.parse(res).scripts['admin']).toEqual('yarn --cwd=../admin next dev')
         expect(JSON.parse(res).scripts['admin:fspec']).toEqual(
-          'BROWSER=none NEXT_PUBLIC_PSYCHIC_ENV=test yarn --cwd=../admin next dev --port 3001',
+          'BROWSER=none NEXT_PUBLIC_PSYCHIC_ENV=test NEXT_DIST_DIR=.next-fspec yarn --cwd=../admin next dev --port 3051',
+        )
+      })
+    })
+
+    context('nuxt adminClient', () => {
+      it('includes admin scripts', async () => {
+        const options: NewPsychicAppCliOptions = { ...baseOptions, adminClient: 'nuxt' }
+        const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
+        expect(JSON.parse(res).scripts['admin']).toEqual('yarn --cwd=../admin dev')
+        expect(JSON.parse(res).scripts['admin:fspec']).toEqual(
+          'BROWSER=none NUXT_BUILD_DIR=.nuxt-fspec yarn --cwd=../admin dev --port 3051',
         )
       })
     })
@@ -98,7 +133,7 @@ describe('PackagejsonBuilder', () => {
         const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
         expect(JSON.parse(res).scripts['admin']).toEqual('yarn --cwd=../admin dev')
         expect(JSON.parse(res).scripts['admin:fspec']).toEqual(
-          'BROWSER=none VITE_PSYCHIC_ENV=test yarn --cwd=../admin dev --port 3001',
+          'BROWSER=none VITE_PSYCHIC_ENV=test yarn --cwd=../admin dev --port 3051',
         )
       })
     })
@@ -109,7 +144,18 @@ describe('PackagejsonBuilder', () => {
         const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
         expect(JSON.parse(res).scripts['internal']).toEqual('yarn --cwd=../internal next dev')
         expect(JSON.parse(res).scripts['internal:fspec']).toEqual(
-          'BROWSER=none NEXT_PUBLIC_PSYCHIC_ENV=test yarn --cwd=../internal next dev --port 3002',
+          'BROWSER=none NEXT_PUBLIC_PSYCHIC_ENV=test NEXT_DIST_DIR=.next-fspec yarn --cwd=../internal next dev --port 3052',
+        )
+      })
+    })
+
+    context('nuxt internalClient', () => {
+      it('includes internal scripts', async () => {
+        const options: NewPsychicAppCliOptions = { ...baseOptions, internalClient: 'nuxt' }
+        const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
+        expect(JSON.parse(res).scripts['internal']).toEqual('yarn --cwd=../internal dev')
+        expect(JSON.parse(res).scripts['internal:fspec']).toEqual(
+          'BROWSER=none NUXT_BUILD_DIR=.nuxt-fspec yarn --cwd=../internal dev --port 3052',
         )
       })
     })
@@ -120,7 +166,7 @@ describe('PackagejsonBuilder', () => {
         const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
         expect(JSON.parse(res).scripts['internal']).toEqual('yarn --cwd=../internal dev')
         expect(JSON.parse(res).scripts['internal:fspec']).toEqual(
-          'BROWSER=none VITE_PSYCHIC_ENV=test yarn --cwd=../internal dev --port 3002',
+          'BROWSER=none VITE_PSYCHIC_ENV=test yarn --cwd=../internal dev --port 3052',
         )
       })
     })

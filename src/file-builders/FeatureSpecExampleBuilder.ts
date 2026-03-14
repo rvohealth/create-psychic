@@ -23,16 +23,6 @@ function assertionText(options: NewPsychicAppCliOptions) {
       return 'get started'
 
     default:
-      // generally speaking, the home page of any
-      // front-end client application will typically
-      // have their name on the home page, capitalized.
-      //
-      // for those that have it non-capitalized,
-      // they should be handled in the previous case block
-      return capitaize(options.client)
+      return 'Get started'
   }
-}
-
-function capitaize(str: string) {
-  return (str[0] ?? '').toUpperCase() + str.slice(1)
 }
