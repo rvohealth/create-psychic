@@ -116,9 +116,6 @@ export default async function newPsychicApp(appName: string, options: NewPsychic
     await gitInit(appName, logger)
   }
 
-  // don't sync yet, since we need to run migrations first
-  // await sspawn(`yarn --cwd=${projectPath} dream sync:existing`)
-
   if (options.client !== 'none') {
     await addClientApp({
       sourceColor: 'magenta',

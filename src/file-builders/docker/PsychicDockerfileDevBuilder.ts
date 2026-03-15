@@ -1,7 +1,7 @@
 import * as fs from 'node:fs/promises'
 import internalSrcPath from '../../helpers/internalSrcPath.js'
 import { NewPsychicAppCliOptions } from '../../helpers/newPsychicApp.js'
-import { replaceYarnAndNpxInFileContents } from '../../helpers/replaceYarnAndNpxInFile.js'
+import { replacePackageManagerInFileContents } from '../../helpers/replacePackageManagerInFile.js'
 
 export default class PsychicDockerDevBuilder {
   public static async build(options: NewPsychicAppCliOptions) {
@@ -11,6 +11,6 @@ export default class PsychicDockerDevBuilder {
       )
     ).toString()
 
-    return replaceYarnAndNpxInFileContents(contents, options.packageManager)
+    return replacePackageManagerInFileContents(contents, options.packageManager)
   }
 }

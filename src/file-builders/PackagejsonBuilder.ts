@@ -1,5 +1,5 @@
 import { NewPsychicAppCliOptions } from '../helpers/newPsychicApp.js'
-import { replaceYarnAndNpxInFileContents } from '../helpers/replaceYarnAndNpxInFile.js'
+import { replacePackageManagerInFileContents } from '../helpers/replacePackageManagerInFile.js'
 import safelyImportJsonFile from '../helpers/safelyImportJsonFile.js'
 
 export default class PackagejsonBuilder {
@@ -22,17 +22,17 @@ export default class PackagejsonBuilder {
 
       case 'nextjs':
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        packagejson.scripts['client'] = `yarn --cwd=../client next dev`
+        packagejson.scripts['client'] = `{{PM_CWD}}=../client next dev`
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         packagejson.scripts['client:fspec'] =
-          `BROWSER=none NEXT_PUBLIC_PSYCHIC_ENV=test yarn --cwd=../client next dev`
+          `BROWSER=none NEXT_PUBLIC_PSYCHIC_ENV=test {{PM_CWD}}=../client next dev`
         break
 
       default:
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        packagejson.scripts['client'] = `yarn --cwd=../client dev`
+        packagejson.scripts['client'] = `{{PM_CWD}}=../client dev`
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        packagejson.scripts['client:fspec'] = `BROWSER=none VITE_PSYCHIC_ENV=test yarn --cwd=../client dev`
+        packagejson.scripts['client:fspec'] = `BROWSER=none VITE_PSYCHIC_ENV=test {{PM_CWD}}=../client dev`
     }
 
     switch (options.adminClient) {
@@ -43,18 +43,18 @@ export default class PackagejsonBuilder {
         switch (options.adminClient) {
           case 'nextjs':
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-            packagejson.scripts['admin'] = `yarn --cwd=../admin next dev`
+            packagejson.scripts['admin'] = `{{PM_CWD}}=../admin next dev`
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
             packagejson.scripts['admin:fspec'] =
-              `BROWSER=none NEXT_PUBLIC_PSYCHIC_ENV=test yarn --cwd=../admin next dev --port 3001`
+              `BROWSER=none NEXT_PUBLIC_PSYCHIC_ENV=test {{PM_CWD}}=../admin next dev --port 3001`
             break
 
           default:
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-            packagejson.scripts['admin'] = `yarn --cwd=../admin dev`
+            packagejson.scripts['admin'] = `{{PM_CWD}}=../admin dev`
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
             packagejson.scripts['admin:fspec'] =
-              `BROWSER=none VITE_PSYCHIC_ENV=test yarn --cwd=../admin dev --port 3001`
+              `BROWSER=none VITE_PSYCHIC_ENV=test {{PM_CWD}}=../admin dev --port 3001`
         }
     }
 
@@ -66,18 +66,18 @@ export default class PackagejsonBuilder {
         switch (options.internalClient) {
           case 'nextjs':
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-            packagejson.scripts['internal'] = `yarn --cwd=../internal next dev`
+            packagejson.scripts['internal'] = `{{PM_CWD}}=../internal next dev`
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
             packagejson.scripts['internal:fspec'] =
-              `BROWSER=none NEXT_PUBLIC_PSYCHIC_ENV=test yarn --cwd=../internal next dev --port 3002`
+              `BROWSER=none NEXT_PUBLIC_PSYCHIC_ENV=test {{PM_CWD}}=../internal next dev --port 3002`
             break
 
           default:
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-            packagejson.scripts['internal'] = `yarn --cwd=../internal dev`
+            packagejson.scripts['internal'] = `{{PM_CWD}}=../internal dev`
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
             packagejson.scripts['internal:fspec'] =
-              `BROWSER=none VITE_PSYCHIC_ENV=test yarn --cwd=../internal dev --port 3002`
+              `BROWSER=none VITE_PSYCHIC_ENV=test {{PM_CWD}}=../internal dev --port 3002`
         }
     }
 
@@ -100,7 +100,7 @@ export default class PackagejsonBuilder {
       removeDependency(packagejson, 'ioredis')
     }
 
-    return replaceYarnAndNpxInFileContents(JSON.stringify(packagejson, null, 2), options.packageManager)
+    return replacePackageManagerInFileContents(JSON.stringify(packagejson, null, 2), options.packageManager)
   }
 }
 

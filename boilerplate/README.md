@@ -12,6 +12,6 @@ Since Dream and Psychic are new, and not understood by the LLMs, there is a cust
 
 AI rules for developing a Dream and Psychic application are provided in `./api/AGENTS.md`\*. These rules may be customized by adding to the bottom of the file (a rule exists in the file to instruct AI to add new rules outside of the official Psychic rules).
 
-To fetch the current version of the AI rules, use `<YARN> psy sync:ai-rules`.
+To fetch the current version of the AI rules, use `{{PM}} psy sync:ai-rules`.
 
 \* if this Psychic app was created without a front-end client, then these files are in the project root

@@ -5,5 +5,5 @@ import { PsychicRouter } from '@rvoh/psychic'
 export default function routes(r: PsychicRouter) {
   adminRoutes(r)
   internalRoutes(r)
-  // add routes here, perhaps by running `yarn psy g:resource v1/pets Pet name:citext birthdate:date species:enum:pet_species:dog,cat,fish`
+  // add routes here, perhaps by running `{{PM}} psy g:resource v1/pets Pet name:citext birthdate:date species:enum:pet_species:dog,cat,fish`
 }

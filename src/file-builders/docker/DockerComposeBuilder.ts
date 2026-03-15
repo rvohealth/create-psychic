@@ -1,7 +1,7 @@
 import * as fs from 'node:fs/promises'
 import internalSrcPath from '../../helpers/internalSrcPath.js'
 import { NewPsychicAppCliOptions } from '../../helpers/newPsychicApp.js'
-import { replaceYarnAndNpxInFileContents } from '../../helpers/replaceYarnAndNpxInFile.js'
+import { replacePackageManagerInFileContents } from '../../helpers/replacePackageManagerInFile.js'
 
 export default class DockerComposeBuilder {
   public static async build(options: NewPsychicAppCliOptions) {
@@ -23,7 +23,7 @@ export default class DockerComposeBuilder {
       .replace(/<CONTEXT_VALUE>/g, options.client === 'none' ? '.' : './api')
       .replace(/\n{2,}/g, '\n\n')
 
-    return replaceYarnAndNpxInFileContents(contents, options.packageManager)
+    return replacePackageManagerInFileContents(contents, options.packageManager)
   }
 
   private static workerDependsOnYaml(options: NewPsychicAppCliOptions) {
@@ -118,7 +118,7 @@ networks:
       dockerfile: Dockerfile.dev
       target: "dev"
     user: "0"
-    command: sh -c "yarn install && yarn dev"
+    command: sh -c "{{PM}} install && {{PM}} dev"
     environment:
       NODE_ENV: "\${NODE_ENV:-development}"
       NODE_TLS_REJECT_UNAUTHORIZED: "\${NODE_TLS_REJECT_UNAUTHORIZED:-0}"
@@ -146,7 +146,7 @@ networks:
       context: <CONTEXT_VALUE>
       dockerfile: Dockerfile.dev
       target: "dev"
-    command: sh -c "yarn ws"
+    command: sh -c "{{PM}} ws"
     environment:
       NODE_TLS_REJECT_UNAUTHORIZED: "\${NODE_TLS_REJECT_UNAUTHORIZED:-0}"
       NPM_CONFIG_STRICT_SSL: "false"
@@ -173,7 +173,7 @@ networks:
       context: <CONTEXT_VALUE>
       dockerfile: Dockerfile.dev
       target: "dev"
-    command: sh -c "yarn dev-worker"
+    command: sh -c "{{PM}} dev-worker"
     environment:
       NODE_TLS_REJECT_UNAUTHORIZED: "\${NODE_TLS_REJECT_UNAUTHORIZED:-0}"
       NPM_CONFIG_STRICT_SSL: "false"

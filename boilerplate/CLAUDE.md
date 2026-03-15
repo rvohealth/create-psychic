@@ -1,9 +1,3 @@
 ## CRITICAL: Read this first
-   Before doing ANYTHING else, read AGENTS.md in this directory
-   and follow all instructions in it. This is mandatory.
 
-## AI Skill
-   If the psychic-skill is installed at `.claude/skills/psychic-skill/`,
-   it will auto-load and provide comprehensive Dream & Psychic development
-   guidance. To update it, run `/psychic-update-skill`. To install it, run:
-   `git clone https://github.com/daniel-nelson/psychic-skill.git .claude/skills/psychic-skill && cd .claude/skills/psychic-skill && ./setup`
+Before doing any work in the `api` directory, you MUST first read and follow all rules specified in `api/CLAUDE.md`. Do not proceed with any changes to files in the `api` directory without consulting that file first.
