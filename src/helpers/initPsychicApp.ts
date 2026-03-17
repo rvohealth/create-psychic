@@ -60,12 +60,20 @@ export default async function initPsychicApp(appName: string, options: InitPsych
   await addMissingScriptsToPackageJson(options)
   await addMissingTsconfigRules()
 
-  if (options.psychicSkill) {
+  if (options.claudePsychicSkill) {
     if (!testEnv()) {
       logger.logEndProgress()
-      logger.logStartProgress(`installing psychic-skill...`)
+      logger.logStartProgress(`installing claude psychic-skill...`)
     }
-    installPsychicSkill('.')
+    installPsychicSkill('.', 'claude')
+  }
+
+  if (options.codexPsychicSkill) {
+    if (!testEnv()) {
+      logger.logEndProgress()
+      logger.logStartProgress(`installing codex psychic-skill...`)
+    }
+    installPsychicSkill('.', 'codex')
   }
 
   if (!testEnv()) {

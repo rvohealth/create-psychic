@@ -4,7 +4,8 @@ export default function initPsychicAppDefaults(): InitPsychicAppCliOptions {
   return {
     packageManager: 'npm',
     websockets: false,
-    psychicSkill: false,
+    claudePsychicSkill: false,
+    codexPsychicSkill: false,
     workers: false,
     client: 'none',
     adminClient: 'none',

@@ -10,7 +10,8 @@ describe('newPsychicApp with nextjs client', () => {
     await newSpecPsychicApp('howyadoin', {
       packageManager: 'pnpm',
       websockets: false,
-      psychicSkill: false,
+      claudePsychicSkill: false,
+      codexPsychicSkill: false,
       workers: false,
       client: 'nextjs',
       adminClient: 'none',

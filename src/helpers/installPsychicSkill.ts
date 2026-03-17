@@ -4,10 +4,13 @@ import * as path from 'node:path'
 
 const PSYCHIC_SKILL_REPO = 'https://github.com/daniel-nelson/psychic-skill.git'
 
-export default function installPsychicSkill(appRoot: string) {
-  const skillDir = path.join(appRoot, '.claude', 'skills', 'psychic-skill')
+export type AgentSkill = 'claude' | 'codex'
 
-  fs.mkdirSync(path.join(appRoot, '.claude', 'skills'), { recursive: true })
+export default function installPsychicSkill(appRoot: string, agentSkill: AgentSkill) {
+  const agentRoot = agentSkill === 'claude' ? '.claude' : '.codex'
+  const skillDir = path.join(appRoot, agentRoot, 'skills', 'psychic-skill')
+
+  fs.mkdirSync(path.join(appRoot, agentRoot, 'skills'), { recursive: true })
 
   execSync(`git clone ${PSYCHIC_SKILL_REPO} ${skillDir}`, { stdio: 'ignore' })
 

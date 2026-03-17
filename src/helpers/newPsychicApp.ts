@@ -28,7 +28,8 @@ export interface NewPsychicAppCliOptions {
   internalClient: (typeof cliClientAppTypes)[number]
   workers: boolean
   websockets: boolean
-  psychicSkill: boolean
+  claudePsychicSkill: boolean
+  codexPsychicSkill: boolean
 }
 
 export interface InitPsychicAppCliOptions {
@@ -42,7 +43,8 @@ export interface InitPsychicAppCliOptions {
   internalClient: (typeof cliClientAppTypes)[number]
   workers: boolean
   websockets: boolean
-  psychicSkill: boolean
+  claudePsychicSkill: boolean
+  codexPsychicSkill: boolean
   serializersPath: string
   typesPath: string
   modelsPath: string
@@ -102,12 +104,20 @@ export default async function newPsychicApp(appName: string, options: NewPsychic
 
   await installApiDependencies(appName, { options, logger })
 
-  if (options.psychicSkill) {
+  if (options.claudePsychicSkill) {
     if (!testEnv()) {
       logger.logEndProgress()
-      logger.logStartProgress(`installing psychic-skill...`)
+      logger.logStartProgress(`installing claude psychic-skill...`)
     }
-    installPsychicSkill(rootPath)
+    installPsychicSkill(rootPath, 'claude')
+  }
+
+  if (options.codexPsychicSkill) {
+    if (!testEnv()) {
+      logger.logEndProgress()
+      logger.logStartProgress(`installing codex psychic-skill...`)
+    }
+    installPsychicSkill(rootPath, 'codex')
   }
 
   if (!testEnv()) {

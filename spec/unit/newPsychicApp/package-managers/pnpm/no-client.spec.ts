@@ -9,7 +9,8 @@ describe('newPsychicApp with no client', () => {
     await newSpecPsychicApp('howyadoin', {
       packageManager: 'pnpm',
       websockets: false,
-      psychicSkill: false,
+      claudePsychicSkill: false,
+      codexPsychicSkill: false,
       workers: false,
       client: 'none',
       adminClient: 'none',
