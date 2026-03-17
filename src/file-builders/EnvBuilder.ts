@@ -17,7 +17,11 @@ APP_ENCRYPTION_KEY="${generateKey()}"
 COLUMN_ENCRYPTION_KEY="${generateKey()}"
 WEB_SERVICE=1
 WORKER_SERVICE=${env === 'test' ? 0 : 1}
-CORS_HOSTS='["http://localhost:3050"]'
+CORS_HOSTS='${
+      env === 'test'
+        ? '["http://localhost:3050", "http://localhost:3051", "http://localhost:3052"]'
+        : '["http://localhost:3000", "http://localhost:3001", "http://localhost:3002"]'
+    }'
 TZ=UTC
 `
     return env === 'test'
