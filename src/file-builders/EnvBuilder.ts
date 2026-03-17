@@ -17,7 +17,7 @@ APP_ENCRYPTION_KEY="${generateKey()}"
 COLUMN_ENCRYPTION_KEY="${generateKey()}"
 WEB_SERVICE=1
 WORKER_SERVICE=${env === 'test' ? 0 : 1}
-CORS_HOSTS='["http://localhost:3000"]'
+CORS_HOSTS='["http://localhost:3050"]'
 TZ=UTC
 DREAM_PARALLEL_TESTS=3
 `

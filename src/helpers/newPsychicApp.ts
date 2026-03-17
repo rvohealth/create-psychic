@@ -125,7 +125,7 @@ export default async function newPsychicApp(appName: string, options: NewPsychic
       appName,
       options,
       rootPath,
-      port: 3000,
+      port: 3050,
     })
   }
 
@@ -138,7 +138,7 @@ export default async function newPsychicApp(appName: string, options: NewPsychic
       appName,
       options,
       rootPath,
-      port: 3001,
+      port: 3051,
     })
   }
 
@@ -151,7 +151,7 @@ export default async function newPsychicApp(appName: string, options: NewPsychic
       appName,
       options,
       rootPath,
-      port: 3002,
+      port: 3052,
     })
   }
 

@@ -124,7 +124,7 @@ networks:
       NODE_TLS_REJECT_UNAUTHORIZED: "\${NODE_TLS_REJECT_UNAUTHORIZED:-0}"
       NPM_CONFIG_STRICT_SSL: "false"
     ports:
-      - "3000:3000"
+      - "3050:3050"
     working_dir: /usr/src/app
     volumes:
       - ./client:/usr/src/app:cached

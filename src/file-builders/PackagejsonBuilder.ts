@@ -25,7 +25,7 @@ export default class PackagejsonBuilder {
         packagejson.scripts['client'] = `{{PM_CWD}}=../client next dev`
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         packagejson.scripts['client:fspec'] =
-          `BROWSER=none NEXT_PUBLIC_PSYCHIC_ENV=test {{PM_CWD}}=../client next dev`
+          `BROWSER=none NEXT_PUBLIC_PSYCHIC_ENV=test {{PM_CWD}}=../client next dev --port 3050`
         break
 
       default:
@@ -46,7 +46,7 @@ export default class PackagejsonBuilder {
             packagejson.scripts['admin'] = `{{PM_CWD}}=../admin next dev`
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
             packagejson.scripts['admin:fspec'] =
-              `BROWSER=none NEXT_PUBLIC_PSYCHIC_ENV=test {{PM_CWD}}=../admin next dev --port 3001`
+              `BROWSER=none NEXT_PUBLIC_PSYCHIC_ENV=test {{PM_CWD}}=../admin next dev --port 3051`
             break
 
           default:
@@ -54,7 +54,7 @@ export default class PackagejsonBuilder {
             packagejson.scripts['admin'] = `{{PM_CWD}}=../admin dev`
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
             packagejson.scripts['admin:fspec'] =
-              `BROWSER=none VITE_PSYCHIC_ENV=test {{PM_CWD}}=../admin dev --port 3001`
+              `BROWSER=none VITE_PSYCHIC_ENV=test {{PM_CWD}}=../admin dev --port 3051`
         }
     }
 
@@ -69,7 +69,7 @@ export default class PackagejsonBuilder {
             packagejson.scripts['internal'] = `{{PM_CWD}}=../internal next dev`
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
             packagejson.scripts['internal:fspec'] =
-              `BROWSER=none NEXT_PUBLIC_PSYCHIC_ENV=test {{PM_CWD}}=../internal next dev --port 3002`
+              `BROWSER=none NEXT_PUBLIC_PSYCHIC_ENV=test {{PM_CWD}}=../internal next dev --port 3052`
             break
 
           default:
@@ -77,7 +77,7 @@ export default class PackagejsonBuilder {
             packagejson.scripts['internal'] = `{{PM_CWD}}=../internal dev`
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
             packagejson.scripts['internal:fspec'] =
-              `BROWSER=none VITE_PSYCHIC_ENV=test {{PM_CWD}}=../internal dev --port 3002`
+              `BROWSER=none VITE_PSYCHIC_ENV=test {{PM_CWD}}=../internal dev --port 3052`
         }
     }
 

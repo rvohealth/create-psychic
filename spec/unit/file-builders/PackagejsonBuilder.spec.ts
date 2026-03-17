@@ -66,7 +66,7 @@ describe('PackagejsonBuilder', () => {
         const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
         expect(JSON.parse(res).scripts['client']).toEqual('yarn --cwd=../client next dev')
         expect(JSON.parse(res).scripts['client:fspec']).toEqual(
-          'BROWSER=none NEXT_PUBLIC_PSYCHIC_ENV=test yarn --cwd=../client next dev',
+          'BROWSER=none NEXT_PUBLIC_PSYCHIC_ENV=test yarn --cwd=../client next dev --port 3050',
         )
       })
     })
@@ -88,7 +88,7 @@ describe('PackagejsonBuilder', () => {
         const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
         expect(JSON.parse(res).scripts['admin']).toEqual('yarn --cwd=../admin next dev')
         expect(JSON.parse(res).scripts['admin:fspec']).toEqual(
-          'BROWSER=none NEXT_PUBLIC_PSYCHIC_ENV=test yarn --cwd=../admin next dev --port 3001',
+          'BROWSER=none NEXT_PUBLIC_PSYCHIC_ENV=test yarn --cwd=../admin next dev --port 3051',
         )
       })
     })
@@ -99,7 +99,7 @@ describe('PackagejsonBuilder', () => {
         const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
         expect(JSON.parse(res).scripts['admin']).toEqual('yarn --cwd=../admin dev')
         expect(JSON.parse(res).scripts['admin:fspec']).toEqual(
-          'BROWSER=none VITE_PSYCHIC_ENV=test yarn --cwd=../admin dev --port 3001',
+          'BROWSER=none VITE_PSYCHIC_ENV=test yarn --cwd=../admin dev --port 3051',
         )
       })
     })
@@ -110,7 +110,7 @@ describe('PackagejsonBuilder', () => {
         const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
         expect(JSON.parse(res).scripts['internal']).toEqual('yarn --cwd=../internal next dev')
         expect(JSON.parse(res).scripts['internal:fspec']).toEqual(
-          'BROWSER=none NEXT_PUBLIC_PSYCHIC_ENV=test yarn --cwd=../internal next dev --port 3002',
+          'BROWSER=none NEXT_PUBLIC_PSYCHIC_ENV=test yarn --cwd=../internal next dev --port 3052',
         )
       })
     })
@@ -121,7 +121,7 @@ describe('PackagejsonBuilder', () => {
         const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
         expect(JSON.parse(res).scripts['internal']).toEqual('yarn --cwd=../internal dev')
         expect(JSON.parse(res).scripts['internal:fspec']).toEqual(
-          'BROWSER=none VITE_PSYCHIC_ENV=test yarn --cwd=../internal dev --port 3002',
+          'BROWSER=none VITE_PSYCHIC_ENV=test yarn --cwd=../internal dev --port 3052',
         )
       })
     })
