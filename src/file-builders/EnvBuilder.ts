@@ -4,7 +4,7 @@ import defaultDbCredentials from '../helpers/defaultDbCredentials.js'
 export default class EnvBuilder {
   public static build({ env, appName }: { env: 'test' | 'development' | 'production'; appName: string }) {
     const creds = defaultDbCredentials(appName, env)
-    return `\
+    const base = `\
 DB_USER=${creds.user}
 DB_NAME=${creds.name}
 DB_PORT=${creds.port}
@@ -19,8 +19,12 @@ WEB_SERVICE=1
 WORKER_SERVICE=${env === 'test' ? 0 : 1}
 CORS_HOSTS='["http://localhost:3050"]'
 TZ=UTC
-DREAM_PARALLEL_TESTS=3
 `
+    return env === 'test'
+      ? `${base}
+DREAM_PARALLEL_TESTS=4
+`
+      : base
   }
 }
 
