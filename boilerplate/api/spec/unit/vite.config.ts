@@ -1,7 +1,7 @@
 import '../../src/conf/loadEnv.js'
 
 import babel, { defineRolldownBabelPreset } from '@rolldown/plugin-babel'
-import { defineConfig } from 'vitest/config'
+import { defineConfig, type ViteUserConfig } from 'vitest/config'
 import srcPath from '../../src/conf/system/srcPath.js'
 
 const decorators = defineRolldownBabelPreset({
@@ -11,9 +11,11 @@ const decorators = defineRolldownBabelPreset({
   rolldown: { filter: { code: '@' } },
 })
 
+const babelOptions = { presets: [decorators] } as Parameters<typeof babel>[0]
+const babelPlugin = (await babel(babelOptions)) as unknown as NonNullable<ViteUserConfig['plugins']>[number]
+
 export default defineConfig({
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-explicit-any
-  plugins: [babel({ presets: [decorators] } as any)],
+  plugins: [babelPlugin],
   resolve: {
     alias: {
       '@conf': srcPath('conf'),
