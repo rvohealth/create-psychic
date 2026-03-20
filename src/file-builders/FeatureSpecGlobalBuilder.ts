@@ -35,11 +35,11 @@ function devToolsSetupContent(options: NewPsychicAppCliOptions) {
   const servers: { name: string; port: number; cmd: string }[] = []
 
   if (options.client !== 'none')
-    servers.push({ name: 'clientFspecApp', port: 3050, cmd: 'yarn client:fspec' })
+    servers.push({ name: 'clientFspecApp', port: 3050, cmd: '{{PM}} client:fspec' })
   if (options.adminClient !== 'none')
-    servers.push({ name: 'adminFspecApp', port: 3051, cmd: 'yarn admin:fspec' })
+    servers.push({ name: 'adminFspecApp', port: 3051, cmd: '{{PM}} admin:fspec' })
   if (options.internalClient !== 'none')
-    servers.push({ name: 'internalFspecApp', port: 3052, cmd: 'yarn internal:fspec' })
+    servers.push({ name: 'internalFspecApp', port: 3052, cmd: '{{PM}} internal:fspec' })
 
   if (servers.length === 0) {
     return '  // global setup here...'

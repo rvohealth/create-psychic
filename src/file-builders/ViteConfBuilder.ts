@@ -8,6 +8,7 @@ export default class ViteConfBuilder {
       `
   server: {
     port: ${port},
+    strictPort: true,
   },
 })
 `,

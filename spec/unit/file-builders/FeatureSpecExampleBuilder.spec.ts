@@ -36,5 +36,17 @@ describe('FeatureSpecExampleBuilder', () => {
         )
       })
     })
+
+    context('nextjs', () => {
+      it('adds client fspec devserver to boilerplate', async () => {
+        const options: NewPsychicAppCliOptions = { ...baseOptions, client: 'nextjs' }
+        const res = await FeatureSpecExampleBuilder.build(options)
+
+        await expectToMatchFixture(
+          'expected-files/spec/features/example-feature-spec/with-nextjs.spec.ts',
+          res,
+        )
+      })
+    })
   })
 })

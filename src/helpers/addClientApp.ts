@@ -1,6 +1,8 @@
 import * as fs from 'node:fs'
 import * as path from 'node:path'
 import ESLintConfBuilder from '../file-builders/EslintConfBuilder.js'
+import NextConfigBuilder from '../file-builders/NextConfigBuilder.js'
+import NuxtConfigBuilder from '../file-builders/NuxtConfigBuilder.js'
 import ViteConfBuilder from '../file-builders/ViteConfBuilder.js'
 import DreamCliLogger, { DreamCliForegroundColor } from '../logger/DreamCliLogger.js'
 import addMissingClientGitignoreStatements from './addMissingClientGitignoreStatements.js'
@@ -85,7 +87,7 @@ export default async function addClientApp({
       )
       break
 
-    case 'nextjs':
+    case 'nextjs': {
       await sspawn(
         `cd ${rootPath} && npx create-next-app@latest ${clientRootFolderName} --eslint --app --ts --skip-install --use-${options.packageManager} --yes --disable-git && cd ${clientRootFolderName} ${initPackageManager}`,
         {
@@ -99,9 +101,15 @@ export default async function addClientApp({
           },
         },
       )
-      break
 
-    case 'nuxt':
+      const nextConfigPath = path.join(apiRoot, '..', clientRootFolderName, 'next.config.ts')
+      fs.writeFileSync(nextConfigPath, await NextConfigBuilder.build(nextConfigPath))
+
+      addFspecBuildDirToGitignore(path.join(apiRoot, '..', clientRootFolderName, '.gitignore'), '.next-fspec')
+      break
+    }
+
+    case 'nuxt': {
       await sspawn(
         `cd ${rootPath} && ${options.packageManager} create nuxt-app ${clientRootFolderName} --packageManager ${options.packageManager} --no-install ${initPackageManager}`,
         {
@@ -115,7 +123,15 @@ export default async function addClientApp({
           },
         },
       )
+
+      const nuxtConfigPath = path.join(apiRoot, '..', clientRootFolderName, 'nuxt.config.ts')
+      if (fs.existsSync(nuxtConfigPath)) {
+        fs.writeFileSync(nuxtConfigPath, await NuxtConfigBuilder.build(nuxtConfigPath))
+      }
+
+      addFspecBuildDirToGitignore(path.join(apiRoot, '..', clientRootFolderName, '.gitignore'), '.nuxt-fspec')
       break
+    }
   }
 
   addMissingClientGitignoreStatements(path.join(apiRoot, '..', clientRootFolderName, '.gitignore'))
@@ -179,6 +195,15 @@ function installCmd(packageManager: PsychicPackageManager) {
       return `touch ${lockfile} && yarn install`
     default:
       return `${packageManager} install`
+  }
+}
+
+function addFspecBuildDirToGitignore(gitignorePath: string, dirName: string) {
+  if (fs.existsSync(gitignorePath)) {
+    const contents = fs.readFileSync(gitignorePath).toString()
+    if (!contents.includes(dirName)) {
+      fs.writeFileSync(gitignorePath, `${contents}\n\n# fspec build directory\n${dirName}\n`)
+    }
   }
 }
 

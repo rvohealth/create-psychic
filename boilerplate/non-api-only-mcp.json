@@ -4,7 +4,6 @@
       "command": "node",
       "args": ["./api/mcp-http-bridge.js"],
       "env": {
-        "RAG_API_KEY": "",
         "RAG_API_ENDPOINT": "https://rag.psychicframework.com/query"
       }
     }
