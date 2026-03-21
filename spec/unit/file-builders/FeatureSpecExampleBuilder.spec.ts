@@ -7,6 +7,8 @@ describe('FeatureSpecExampleBuilder', () => {
     packageManager: 'yarn',
     workers: false,
     websockets: false,
+    claudePsychicSkill: false,
+    codexPsychicSkill: false,
     client: 'none',
     adminClient: 'none',
     internalClient: 'none',
@@ -30,6 +32,18 @@ describe('FeatureSpecExampleBuilder', () => {
 
         await expectToMatchFixture(
           'expected-files/spec/features/example-feature-spec/with-react.spec.ts',
+          res,
+        )
+      })
+    })
+
+    context('nextjs', () => {
+      it('adds client fspec devserver to boilerplate', async () => {
+        const options: NewPsychicAppCliOptions = { ...baseOptions, client: 'nextjs' }
+        const res = await FeatureSpecExampleBuilder.build(options)
+
+        await expectToMatchFixture(
+          'expected-files/spec/features/example-feature-spec/with-nextjs.spec.ts',
           res,
         )
       })

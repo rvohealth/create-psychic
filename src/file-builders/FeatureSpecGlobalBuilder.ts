@@ -1,7 +1,7 @@
 import * as fs from 'node:fs/promises'
 import internalSrcPath from '../helpers/internalSrcPath.js'
 import { NewPsychicAppCliOptions } from '../helpers/newPsychicApp.js'
-import { replaceYarnAndNpxInFileContents } from '../helpers/replaceYarnAndNpxInFile.js'
+import { replacePackageManagerInFileContents } from '../helpers/replacePackageManagerInFile.js'
 
 export default class FeatureSpecGlobalBuilder {
   public static async build({ options }: { appName: string; options: NewPsychicAppCliOptions }) {
@@ -11,7 +11,7 @@ export default class FeatureSpecGlobalBuilder {
       )
     ).toString()
 
-    return replaceYarnAndNpxInFileContents(
+    return replacePackageManagerInFileContents(
       contents
         .replace('<PSYCHIC_IMPORTS>', psychicImports(options))
         .replace('<DEV_TOOLS_SETUP>', devToolsSetupContent(options))
@@ -35,11 +35,11 @@ function devToolsSetupContent(options: NewPsychicAppCliOptions) {
   const servers: { name: string; port: number; cmd: string }[] = []
 
   if (options.client !== 'none')
-    servers.push({ name: 'clientFspecApp', port: 3000, cmd: 'yarn client:fspec' })
+    servers.push({ name: 'clientFspecApp', port: 3050, cmd: '{{PM}} client:fspec' })
   if (options.adminClient !== 'none')
-    servers.push({ name: 'adminFspecApp', port: 3001, cmd: 'yarn admin:fspec' })
+    servers.push({ name: 'adminFspecApp', port: 3051, cmd: '{{PM}} admin:fspec' })
   if (options.internalClient !== 'none')
-    servers.push({ name: 'internalFspecApp', port: 3002, cmd: 'yarn internal:fspec' })
+    servers.push({ name: 'internalFspecApp', port: 3052, cmd: '{{PM}} internal:fspec' })
 
   if (servers.length === 0) {
     return '  // global setup here...'

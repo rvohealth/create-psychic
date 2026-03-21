@@ -6,6 +6,7 @@ import buildInitPsychicAppOptionsWithPrompt from './init/buildInitPsychicAppOpti
 import copyInitApiBoilerplate from './init/copyInitApiBoilerplate.js'
 import initMessage from './init/initMessage.js'
 import installInitApiDependencies from './init/installInitApiDependencies.js'
+import installPsychicSkill from './installPsychicSkill.js'
 import logo from './logo.js'
 import { InitPsychicAppCliOptions } from './newPsychicApp.js'
 
@@ -58,6 +59,22 @@ export default async function initPsychicApp(appName: string, options: InitPsych
 
   await addMissingScriptsToPackageJson(options)
   await addMissingTsconfigRules()
+
+  if (options.claudePsychicSkill) {
+    if (!testEnv()) {
+      logger.logEndProgress()
+      logger.logStartProgress(`installing claude psychic-skill...`)
+    }
+    installPsychicSkill('.', 'claude')
+  }
+
+  if (options.codexPsychicSkill) {
+    if (!testEnv()) {
+      logger.logEndProgress()
+      logger.logStartProgress(`installing codex psychic-skill...`)
+    }
+    installPsychicSkill('.', 'codex')
+  }
 
   if (!testEnv()) {
     logger.log(logo(), { logPrefix: '' })

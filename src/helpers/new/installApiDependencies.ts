@@ -15,7 +15,7 @@ export default async function installApiDependencies(
   switch (options.packageManager) {
     case 'yarn':
       await sspawn(
-        `cd ${apiRoot} && touch ${lockfileName} && corepack enable yarn && yarn set version stable && yarn install && yarn add @rvoh/dream @rvoh/psychic && yarn psy sync:ai-rules`,
+        `cd ${apiRoot} && touch ${lockfileName} && corepack enable yarn && yarn set version stable && yarn install && yarn up @rvoh/*`,
         {
           onStdout: message => {
             logger.logContinueProgress(colorize('[api]', { color: 'cyan' }) + ' ' + message, {
@@ -27,21 +27,18 @@ export default async function installApiDependencies(
       break
 
     case 'pnpm':
-      await sspawn(
-        `cd ${apiRoot} && corepack enable pnpm && pnpm install && pnpm add @rvoh/dream @rvoh/psychic && pnpm run psy sync:ai-rules`,
-        {
-          onStdout: message => {
-            logger.logContinueProgress(colorize('[api]', { color: 'cyan' }) + ' ' + message, {
-              logPrefixColor: 'cyan',
-            })
-          },
+      await sspawn(`cd ${apiRoot} && corepack enable pnpm && pnpm install && pnpm up @rvoh/*`, {
+        onStdout: message => {
+          logger.logContinueProgress(colorize('[api]', { color: 'cyan' }) + ' ' + message, {
+            logPrefixColor: 'cyan',
+          })
         },
-      )
+      })
       break
 
     case 'npm':
       await sspawn(
-        `cd ${apiRoot} && touch ${lockfileName} && npm install && npm install @rvoh/dream @rvoh/psychic && npm run psy sync:ai-rules`,
+        `cd ${apiRoot} && touch ${lockfileName} && npm install && npm update @rvoh/dream @rvoh/psychic @rvoh/psychic-workers @rvoh/psychic-websockets`,
         {
           onStdout: message => {
             logger.logContinueProgress(colorize('[api]', { color: 'cyan' }) + ' ' + message, {

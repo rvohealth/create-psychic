@@ -189,7 +189,7 @@ export default async (psy: PsychicApp) => {
   psy.on('server:start', async () => {
     if (AppEnv.isDevelopment && AppEnv.boolean('CLIENT')) {
       DreamCLI.logger.logStartProgress('starting dev server...')
-      await PsychicDevtools.launchDevServer('clientApp', { port: 3000, cmd: 'yarn client' })
+      await PsychicDevtools.launchDevServer('clientApp', { port: 3050, cmd: 'yarn client' })
       DreamCLI.logger.logEndProgress()
     }
   })

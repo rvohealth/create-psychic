@@ -14,8 +14,7 @@ import copyRecursive from '../copyRecursive.js'
 import getApiRoot from '../getApiRoot.js'
 import internalSrcPath from '../internalSrcPath.js'
 import { NewPsychicAppCliOptions } from '../newPsychicApp.js'
-import replaceYarnInFile from '../replaceYarnAndNpxInFile.js'
-import sanitizeAgentsFileContents from '../sanitizeAgentsFileContents.js'
+import replacePackageManagerInFile from '../replacePackageManagerInFile.js'
 
 export default async function copyApiBoilerplate(appName: string, options: NewPsychicAppCliOptions) {
   const appRoot = path.join('.', appName)
@@ -25,6 +24,7 @@ export default async function copyApiBoilerplate(appName: string, options: NewPs
     fs.mkdirSync(appRoot)
     fs.cpSync(internalSrcPath('..', 'boilerplate', 'gitignore'), path.join(appRoot, '.gitignore'))
     fs.cpSync(internalSrcPath('..', 'boilerplate', 'AGENTS.md'), path.join(appRoot, 'AGENTS.md'))
+    fs.cpSync(internalSrcPath('..', 'boilerplate', 'CLAUDE.md'), path.join(appRoot, 'CLAUDE.md'))
     fs.cpSync(
       internalSrcPath('..', 'boilerplate', 'api', '.prettierignore'),
       path.join(appRoot, '.prettierignore'),
@@ -39,13 +39,14 @@ export default async function copyApiBoilerplate(appName: string, options: NewPs
     fs.cpSync(internalSrcPath('..', 'boilerplate', 'non-api-only-mcp.json'), path.join(appRoot, '.mcp.json'))
   }
 
-  sanitizeAgentsFileContents(apiRoot, options.packageManager)
-
   fs.cpSync(internalSrcPath('..', 'boilerplate', 'README.md'), path.join(appRoot, 'README.md'))
-  await replaceYarnInFile(path.join(appRoot, 'README.md'), options.packageManager)
 
   fs.writeFileSync(path.join(appRoot, 'docker-compose.yml'), await DockerComposeBuilder.build(options))
   fs.writeFileSync(path.join(apiRoot, 'Dockerfile.dev'), await PsychicDockerDevBuilder.build(options))
+
+  await replacePackageManagerInFile(path.join(apiRoot, 'AGENTS.md'), options.packageManager)
+  await replacePackageManagerInFile(path.join(appRoot, 'README.md'), options.packageManager)
+  await replacePackageManagerInFile(path.join(appRoot, 'docker-compose.yml'), options.packageManager)
 
   // yarnrc.yml included as non-dot-file so that it becomes part of the package
   // move it to .yarnrc.yml if using yarn; otherwise, delete it

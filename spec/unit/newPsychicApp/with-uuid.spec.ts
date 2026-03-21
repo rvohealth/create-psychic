@@ -6,6 +6,8 @@ describe('newPsychicApp with uuid', () => {
     await newSpecPsychicApp('howyadoin', {
       packageManager: 'yarn',
       websockets: false,
+      claudePsychicSkill: false,
+      codexPsychicSkill: false,
       workers: false,
       client: 'none',
       adminClient: 'none',

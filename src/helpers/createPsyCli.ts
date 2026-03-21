@@ -16,6 +16,8 @@ export default function createPsyCli() {
     .argument('<name>', 'name of the app you want to create')
     .option('--workers', 'include background workers in your application')
     .option('--websockets', 'include websockets in your application')
+    .option('--claude-psychic-skill', 'install psychic-skill for Claude Code')
+    .option('--codex-psychic-skill', 'install psychic-skill for Codex')
 
     .option(
       '--primary-key-type <KEY_TYPE>',
@@ -42,6 +44,8 @@ export default function createPsyCli() {
     )
     .option('--workers', 'include background workers in your application')
     .option('--websockets', 'include websockets in your application')
+    .option('--claude-psychic-skill', 'install psychic-skill for Claude Code')
+    .option('--codex-psychic-skill', 'install psychic-skill for Codex')
     .option(
       '--primary-key-type <KEY_TYPE>',
       `One of: ${primaryKeyTypes.join(

@@ -4,6 +4,7 @@ import DreamCliLogger from '../logger/DreamCliLogger.js'
 import addClientApp from './addClientApp.js'
 import apiOnlyOptions from './apiOnlyOptions.js'
 import gitInit from './gitInit.js'
+import installPsychicSkill from './installPsychicSkill.js'
 import logo from './logo.js'
 import buildNewPsychicAppOptionsWithPrompt from './new/buildNewPsychicAppOptionsWithPrompt.js'
 import copyApiBoilerplate from './new/copyApiBoilerplate.js'
@@ -27,6 +28,8 @@ export interface NewPsychicAppCliOptions {
   internalClient: (typeof cliClientAppTypes)[number]
   workers: boolean
   websockets: boolean
+  claudePsychicSkill: boolean
+  codexPsychicSkill: boolean
 }
 
 export interface InitPsychicAppCliOptions {
@@ -40,6 +43,8 @@ export interface InitPsychicAppCliOptions {
   internalClient: (typeof cliClientAppTypes)[number]
   workers: boolean
   websockets: boolean
+  claudePsychicSkill: boolean
+  codexPsychicSkill: boolean
   serializersPath: string
   typesPath: string
   modelsPath: string
@@ -99,14 +104,27 @@ export default async function newPsychicApp(appName: string, options: NewPsychic
 
   await installApiDependencies(appName, { options, logger })
 
+  if (options.claudePsychicSkill) {
+    if (!testEnv()) {
+      logger.logEndProgress()
+      logger.logStartProgress(`installing claude psychic-skill...`)
+    }
+    installPsychicSkill(rootPath, 'claude')
+  }
+
+  if (options.codexPsychicSkill) {
+    if (!testEnv()) {
+      logger.logEndProgress()
+      logger.logStartProgress(`installing codex psychic-skill...`)
+    }
+    installPsychicSkill(rootPath, 'codex')
+  }
+
   if (!testEnv()) {
     // sleeping here because yarn has a delayed print that we need to clean up after install completes
     await sleep(1000)
     await gitInit(appName, logger)
   }
-
-  // don't sync yet, since we need to run migrations first
-  // await sspawn(`yarn --cwd=${projectPath} dream sync:existing`)
 
   if (options.client !== 'none') {
     await addClientApp({
@@ -117,7 +135,7 @@ export default async function newPsychicApp(appName: string, options: NewPsychic
       appName,
       options,
       rootPath,
-      port: 3000,
+      port: 3050,
     })
   }
 
@@ -130,7 +148,7 @@ export default async function newPsychicApp(appName: string, options: NewPsychic
       appName,
       options,
       rootPath,
-      port: 3001,
+      port: 3051,
     })
   }
 
@@ -143,7 +161,7 @@ export default async function newPsychicApp(appName: string, options: NewPsychic
       appName,
       options,
       rootPath,
-      port: 3002,
+      port: 3052,
     })
   }
 
