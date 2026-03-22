@@ -46,7 +46,7 @@
     "koa": "^3.1.2",
     "koa-bodyparser": "^4.4.1",
     "koa-conditional-get": "^3.0.0",
-    "kysely": "^0.28.7",
+    "kysely": "^0.28.14",
     "openapi-typescript": "^7.13.0",
     "pg": "^8.20.0",
     "pluralize-esm": "^9.0.5",

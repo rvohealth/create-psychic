@@ -1,3 +1,7 @@
+## 3.1.1
+
+- bump kysely to close vulnerabilities
+
 ## 3.1.0
 
 - prompt to install psychic-skill
