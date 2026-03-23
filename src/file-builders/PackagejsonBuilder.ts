@@ -21,17 +21,17 @@ export default class PackagejsonBuilder {
         break
 
       case 'nextjs':
-        // npm cannot invoke binaries directly, so it must run the "dev" script with `--` separator.
-        // yarn and pnpm can invoke `next` directly, which avoids `--` parsing issues.
+        // npm requires `--` to forward CLI arguments to scripts (e.g. `npm run dev -- --port 3001`)
+        // yarn and pnpm forward arguments automatically and can also invoke binaries like `next` directly.
         if (options.packageManager === 'npm') {
           // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-          packagejson.scripts['client'] = `{{PM_CWD}}=../client dev`
+          packagejson.scripts['client'] = `{{PM_CWD}}=../client dev -- --port 3000`
           // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
           packagejson.scripts['client:fspec'] =
             `BROWSER=none NEXT_PUBLIC_PSYCHIC_ENV=test NEXT_DIST_DIR=.next-fspec {{PM_CWD}}=../client dev -- --port 3050`
         } else {
           // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-          packagejson.scripts['client'] = `{{PM_CWD}}=../client next dev`
+          packagejson.scripts['client'] = `{{PM_CWD}}=../client next dev --port 3000`
           // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
           packagejson.scripts['client:fspec'] =
             `BROWSER=none NEXT_PUBLIC_PSYCHIC_ENV=test NEXT_DIST_DIR=.next-fspec {{PM_CWD}}=../client next dev --port 3050`
@@ -39,18 +39,35 @@ export default class PackagejsonBuilder {
         break
 
       case 'nuxt':
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        packagejson.scripts['client'] = `{{PM_CWD}}=../client dev`
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        packagejson.scripts['client:fspec'] =
-          `BROWSER=none NUXT_BUILD_DIR=.nuxt-fspec {{PM_CWD}}=../client dev --port 3050`
+        if (options.packageManager === 'npm') {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+          packagejson.scripts['client'] = `{{PM_CWD}}=../client dev -- --port 3000`
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+          packagejson.scripts['client:fspec'] =
+            `BROWSER=none NUXT_BUILD_DIR=.nuxt-fspec {{PM_CWD}}=../client dev -- --port 3050`
+        } else {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+          packagejson.scripts['client'] = `{{PM_CWD}}=../client dev --port 3000`
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+          packagejson.scripts['client:fspec'] =
+            `BROWSER=none NUXT_BUILD_DIR=.nuxt-fspec {{PM_CWD}}=../client dev --port 3050`
+        }
         break
 
       default:
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        packagejson.scripts['client'] = `{{PM_CWD}}=../client dev`
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        packagejson.scripts['client:fspec'] = `BROWSER=none VITE_PSYCHIC_ENV=test {{PM_CWD}}=../client dev`
+        if (options.packageManager === 'npm') {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+          packagejson.scripts['client'] = `{{PM_CWD}}=../client dev -- --port 3000`
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+          packagejson.scripts['client:fspec'] =
+            `BROWSER=none VITE_PSYCHIC_ENV=test {{PM_CWD}}=../client dev -- --port 3050`
+        } else {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+          packagejson.scripts['client'] = `{{PM_CWD}}=../client dev --port 3000`
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+          packagejson.scripts['client:fspec'] =
+            `BROWSER=none VITE_PSYCHIC_ENV=test {{PM_CWD}}=../client dev --port 3050`
+        }
     }
 
     switch (options.adminClient) {
@@ -62,13 +79,13 @@ export default class PackagejsonBuilder {
           case 'nextjs':
             if (options.packageManager === 'npm') {
               // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-              packagejson.scripts['admin'] = `{{PM_CWD}}=../admin dev`
+              packagejson.scripts['admin'] = `{{PM_CWD}}=../admin dev -- --port 3001`
               // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
               packagejson.scripts['admin:fspec'] =
                 `BROWSER=none NEXT_PUBLIC_PSYCHIC_ENV=test NEXT_DIST_DIR=.next-fspec {{PM_CWD}}=../admin dev -- --port 3051`
             } else {
               // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-              packagejson.scripts['admin'] = `{{PM_CWD}}=../admin next dev`
+              packagejson.scripts['admin'] = `{{PM_CWD}}=../admin next dev --port 3001`
               // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
               packagejson.scripts['admin:fspec'] =
                 `BROWSER=none NEXT_PUBLIC_PSYCHIC_ENV=test NEXT_DIST_DIR=.next-fspec {{PM_CWD}}=../admin next dev --port 3051`
@@ -76,19 +93,35 @@ export default class PackagejsonBuilder {
             break
 
           case 'nuxt':
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-            packagejson.scripts['admin'] = `{{PM_CWD}}=../admin dev`
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-            packagejson.scripts['admin:fspec'] =
-              `BROWSER=none NUXT_BUILD_DIR=.nuxt-fspec {{PM_CWD}}=../admin dev --port 3051`
+            if (options.packageManager === 'npm') {
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+              packagejson.scripts['admin'] = `{{PM_CWD}}=../admin dev -- --port 3001`
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+              packagejson.scripts['admin:fspec'] =
+                `BROWSER=none NUXT_BUILD_DIR=.nuxt-fspec {{PM_CWD}}=../admin dev -- --port 3051`
+            } else {
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+              packagejson.scripts['admin'] = `{{PM_CWD}}=../admin dev --port 3001`
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+              packagejson.scripts['admin:fspec'] =
+                `BROWSER=none NUXT_BUILD_DIR=.nuxt-fspec {{PM_CWD}}=../admin dev --port 3051`
+            }
             break
 
           default:
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-            packagejson.scripts['admin'] = `{{PM_CWD}}=../admin dev`
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-            packagejson.scripts['admin:fspec'] =
-              `BROWSER=none VITE_PSYCHIC_ENV=test {{PM_CWD}}=../admin dev --port 3051`
+            if (options.packageManager === 'npm') {
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+              packagejson.scripts['admin'] = `{{PM_CWD}}=../admin dev -- --port 3001`
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+              packagejson.scripts['admin:fspec'] =
+                `BROWSER=none VITE_PSYCHIC_ENV=test {{PM_CWD}}=../admin dev -- --port 3051`
+            } else {
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+              packagejson.scripts['admin'] = `{{PM_CWD}}=../admin dev --port 3001`
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+              packagejson.scripts['admin:fspec'] =
+                `BROWSER=none VITE_PSYCHIC_ENV=test {{PM_CWD}}=../admin dev --port 3051`
+            }
         }
     }
 
@@ -101,13 +134,13 @@ export default class PackagejsonBuilder {
           case 'nextjs':
             if (options.packageManager === 'npm') {
               // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-              packagejson.scripts['internal'] = `{{PM_CWD}}=../internal dev`
+              packagejson.scripts['internal'] = `{{PM_CWD}}=../internal dev -- --port 3002`
               // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
               packagejson.scripts['internal:fspec'] =
                 `BROWSER=none NEXT_PUBLIC_PSYCHIC_ENV=test NEXT_DIST_DIR=.next-fspec {{PM_CWD}}=../internal dev -- --port 3052`
             } else {
               // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-              packagejson.scripts['internal'] = `{{PM_CWD}}=../internal next dev`
+              packagejson.scripts['internal'] = `{{PM_CWD}}=../internal next dev --port 3002`
               // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
               packagejson.scripts['internal:fspec'] =
                 `BROWSER=none NEXT_PUBLIC_PSYCHIC_ENV=test NEXT_DIST_DIR=.next-fspec {{PM_CWD}}=../internal next dev --port 3052`
@@ -115,19 +148,35 @@ export default class PackagejsonBuilder {
             break
 
           case 'nuxt':
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-            packagejson.scripts['internal'] = `{{PM_CWD}}=../internal dev`
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-            packagejson.scripts['internal:fspec'] =
-              `BROWSER=none NUXT_BUILD_DIR=.nuxt-fspec {{PM_CWD}}=../internal dev --port 3052`
+            if (options.packageManager === 'npm') {
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+              packagejson.scripts['internal'] = `{{PM_CWD}}=../internal dev -- --port 3002`
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+              packagejson.scripts['internal:fspec'] =
+                `BROWSER=none NUXT_BUILD_DIR=.nuxt-fspec {{PM_CWD}}=../internal dev -- --port 3052`
+            } else {
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+              packagejson.scripts['internal'] = `{{PM_CWD}}=../internal dev --port 3002`
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+              packagejson.scripts['internal:fspec'] =
+                `BROWSER=none NUXT_BUILD_DIR=.nuxt-fspec {{PM_CWD}}=../internal dev --port 3052`
+            }
             break
 
           default:
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-            packagejson.scripts['internal'] = `{{PM_CWD}}=../internal dev`
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-            packagejson.scripts['internal:fspec'] =
-              `BROWSER=none VITE_PSYCHIC_ENV=test {{PM_CWD}}=../internal dev --port 3052`
+            if (options.packageManager === 'npm') {
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+              packagejson.scripts['internal'] = `{{PM_CWD}}=../internal dev -- --port 3002`
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+              packagejson.scripts['internal:fspec'] =
+                `BROWSER=none VITE_PSYCHIC_ENV=test {{PM_CWD}}=../internal dev -- --port 3052`
+            } else {
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+              packagejson.scripts['internal'] = `{{PM_CWD}}=../internal dev --port 3002`
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+              packagejson.scripts['internal:fspec'] =
+                `BROWSER=none VITE_PSYCHIC_ENV=test {{PM_CWD}}=../internal dev --port 3052`
+            }
         }
     }
 
