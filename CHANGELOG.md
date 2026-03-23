@@ -1,6 +1,7 @@
 ## 3.1.1
 
 - fix front end scripts in boilerplate package
+- remove unused expect-playwright from and bump minimum puppeteer in boilerplate package.json (fixes deprecation warnings)
 - better psychic-rules demarcation in AGENTS.md
 
 ## 3.1.0
