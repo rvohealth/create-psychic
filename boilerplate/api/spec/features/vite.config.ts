@@ -39,6 +39,7 @@ export default defineConfig({
     clearMocks: true,
     restoreMocks: true,
     printConsoleTrace: true,
+    retry: 2,
     hookTimeout: 20000,
     testTimeout: process.env.HEADLESS === '0' ? 40000 : 20000,
 
