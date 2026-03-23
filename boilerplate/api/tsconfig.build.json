@@ -21,7 +21,6 @@
     "target": "ES2022",
     "useUnknownInCatchVariables": true,
 
-    "baseUrl": "./",
     "paths": {
       "@conf/*": ["./src/conf/*"],
       "@controllers/*": ["./src/app/controllers/*"],
