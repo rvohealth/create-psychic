@@ -7,7 +7,6 @@ import { InitPsychicAppCliOptions } from '../helpers/newPsychicApp.js'
 
 interface TsConfigStub {
   compilerOptions?: {
-    baseUrl?: string
     paths?: Record<string, string[]>
   }
 }
@@ -33,8 +32,6 @@ export default class TsConfigBuilder {
 
     if (!json.compilerOptions) json.compilerOptions = {}
     const compilerOptions = json.compilerOptions
-
-    if (!compilerOptions.baseUrl) compilerOptions.baseUrl = './'
 
     if (!compilerOptions.paths) compilerOptions.paths = {}
     const paths = compilerOptions.paths
