@@ -33,18 +33,10 @@ program
     const originalCurrentFileContents = fs.existsSync(targetPath)
       ? fs.readFileSync(targetPath).toString()
       : ''
-    const currentFileContents = originalCurrentFileContents.split(`\
-//////////////////////////////////////////////
-// end:OFFICIAL PSYCHIC RULES DO NOT MODIFY //
-//////////////////////////////////////////////
-`)
+    const currentFileContents = originalCurrentFileContents.split('<!-- END:psychic-rules -->')
     const previousRules = currentFileContents.length > 1 ? currentFileContents.at(0)! : ''
     const customRules = currentFileContents.length > 1 ? currentFileContents.at(-1)! : ''
-    const previousRulesParts = previousRules.split(`\
-//////////////////////////////////////////
-// OFFICIAL PSYCHIC RULES DO NOT MODIFY //
-//////////////////////////////////////////
-`)
+    const previousRulesParts = previousRules.split('<!-- BEGIN:psychic-rules -->')
 
     const prefix = previousRulesParts.length > 1 ? previousRulesParts.at(0)! : ''
     fs.writeFileSync(targetPath, prefix + rules + customRules)
