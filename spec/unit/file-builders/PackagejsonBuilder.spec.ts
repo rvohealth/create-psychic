@@ -65,7 +65,7 @@ describe('PackagejsonBuilder', () => {
       it('includes client scripts using next binary directly', async () => {
         const options: NewPsychicAppCliOptions = { ...baseOptions, client: 'nextjs' }
         const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
-        expect(JSON.parse(res).scripts['client']).toEqual('yarn --cwd=../client next dev')
+        expect(JSON.parse(res).scripts['client']).toEqual('yarn --cwd=../client next dev --port 3000')
         expect(JSON.parse(res).scripts['client:fspec']).toEqual(
           'BROWSER=none NEXT_PUBLIC_PSYCHIC_ENV=test NEXT_DIST_DIR=.next-fspec yarn --cwd=../client next dev --port 3050',
         )
@@ -76,97 +76,209 @@ describe('PackagejsonBuilder', () => {
       it('includes client scripts using dev script with -- separator', async () => {
         const options: NewPsychicAppCliOptions = { ...baseOptions, client: 'nextjs', packageManager: 'npm' }
         const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
-        expect(JSON.parse(res).scripts['client']).toEqual('npm run --prefix=../client dev')
+        expect(JSON.parse(res).scripts['client']).toEqual('npm run --prefix=../client dev -- --port 3000')
         expect(JSON.parse(res).scripts['client:fspec']).toEqual(
           'BROWSER=none NEXT_PUBLIC_PSYCHIC_ENV=test NEXT_DIST_DIR=.next-fspec npm run --prefix=../client dev -- --port 3050',
         )
       })
     })
 
-    context('nuxt client', () => {
+    context('nuxt client (yarn)', () => {
       it('includes client scripts', async () => {
         const options: NewPsychicAppCliOptions = { ...baseOptions, client: 'nuxt' }
         const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
-        expect(JSON.parse(res).scripts['client']).toEqual('yarn --cwd=../client dev')
+        expect(JSON.parse(res).scripts['client']).toEqual('yarn --cwd=../client dev --port 3000')
         expect(JSON.parse(res).scripts['client:fspec']).toEqual(
           'BROWSER=none NUXT_BUILD_DIR=.nuxt-fspec yarn --cwd=../client dev --port 3050',
         )
       })
     })
 
-    context('react client', () => {
-      it('includes client scripts', async () => {
-        const options: NewPsychicAppCliOptions = { ...baseOptions, client: 'react' }
+    context('nuxt client (npm)', () => {
+      it('includes client scripts using dev script with -- separator', async () => {
+        const options: NewPsychicAppCliOptions = { ...baseOptions, client: 'nuxt', packageManager: 'npm' }
         const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
-        expect(JSON.parse(res).scripts['client']).toEqual('yarn --cwd=../client dev')
+        expect(JSON.parse(res).scripts['client']).toEqual('npm run --prefix=../client dev -- --port 3000')
         expect(JSON.parse(res).scripts['client:fspec']).toEqual(
-          'BROWSER=none VITE_PSYCHIC_ENV=test yarn --cwd=../client dev',
+          'BROWSER=none NUXT_BUILD_DIR=.nuxt-fspec npm run --prefix=../client dev -- --port 3050',
         )
       })
     })
 
-    context('nextjs adminClient', () => {
-      it('includes admin scripts', async () => {
+    context('react client (yarn)', () => {
+      it('includes client scripts', async () => {
+        const options: NewPsychicAppCliOptions = { ...baseOptions, client: 'react' }
+        const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
+        expect(JSON.parse(res).scripts['client']).toEqual('yarn --cwd=../client dev --port 3000')
+        expect(JSON.parse(res).scripts['client:fspec']).toEqual(
+          'BROWSER=none VITE_PSYCHIC_ENV=test yarn --cwd=../client dev --port 3050',
+        )
+      })
+    })
+
+    context('react client (npm)', () => {
+      it('includes client scripts using dev script with -- separator', async () => {
+        const options: NewPsychicAppCliOptions = { ...baseOptions, client: 'react', packageManager: 'npm' }
+        const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
+        expect(JSON.parse(res).scripts['client']).toEqual('npm run --prefix=../client dev -- --port 3000')
+        expect(JSON.parse(res).scripts['client:fspec']).toEqual(
+          'BROWSER=none VITE_PSYCHIC_ENV=test npm run --prefix=../client dev -- --port 3050',
+        )
+      })
+    })
+
+    context('nextjs adminClient (yarn)', () => {
+      it('includes admin scripts using next binary directly', async () => {
         const options: NewPsychicAppCliOptions = { ...baseOptions, adminClient: 'nextjs' }
         const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
-        expect(JSON.parse(res).scripts['admin']).toEqual('yarn --cwd=../admin next dev')
+        expect(JSON.parse(res).scripts['admin']).toEqual('yarn --cwd=../admin next dev --port 3001')
         expect(JSON.parse(res).scripts['admin:fspec']).toEqual(
           'BROWSER=none NEXT_PUBLIC_PSYCHIC_ENV=test NEXT_DIST_DIR=.next-fspec yarn --cwd=../admin next dev --port 3051',
         )
       })
     })
 
-    context('nuxt adminClient', () => {
+    context('nextjs adminClient (npm)', () => {
+      it('includes admin scripts using dev script with -- separator', async () => {
+        const options: NewPsychicAppCliOptions = {
+          ...baseOptions,
+          adminClient: 'nextjs',
+          packageManager: 'npm',
+        }
+        const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
+        expect(JSON.parse(res).scripts['admin']).toEqual('npm run --prefix=../admin dev -- --port 3001')
+        expect(JSON.parse(res).scripts['admin:fspec']).toEqual(
+          'BROWSER=none NEXT_PUBLIC_PSYCHIC_ENV=test NEXT_DIST_DIR=.next-fspec npm run --prefix=../admin dev -- --port 3051',
+        )
+      })
+    })
+
+    context('nuxt adminClient (yarn)', () => {
       it('includes admin scripts', async () => {
         const options: NewPsychicAppCliOptions = { ...baseOptions, adminClient: 'nuxt' }
         const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
-        expect(JSON.parse(res).scripts['admin']).toEqual('yarn --cwd=../admin dev')
+        expect(JSON.parse(res).scripts['admin']).toEqual('yarn --cwd=../admin dev --port 3001')
         expect(JSON.parse(res).scripts['admin:fspec']).toEqual(
           'BROWSER=none NUXT_BUILD_DIR=.nuxt-fspec yarn --cwd=../admin dev --port 3051',
         )
       })
     })
 
-    context('react adminClient', () => {
+    context('nuxt adminClient (npm)', () => {
+      it('includes admin scripts using dev script with -- separator', async () => {
+        const options: NewPsychicAppCliOptions = {
+          ...baseOptions,
+          adminClient: 'nuxt',
+          packageManager: 'npm',
+        }
+        const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
+        expect(JSON.parse(res).scripts['admin']).toEqual('npm run --prefix=../admin dev -- --port 3001')
+        expect(JSON.parse(res).scripts['admin:fspec']).toEqual(
+          'BROWSER=none NUXT_BUILD_DIR=.nuxt-fspec npm run --prefix=../admin dev -- --port 3051',
+        )
+      })
+    })
+
+    context('react adminClient (yarn)', () => {
       it('includes admin scripts', async () => {
         const options: NewPsychicAppCliOptions = { ...baseOptions, adminClient: 'react' }
         const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
-        expect(JSON.parse(res).scripts['admin']).toEqual('yarn --cwd=../admin dev')
+        expect(JSON.parse(res).scripts['admin']).toEqual('yarn --cwd=../admin dev --port 3001')
         expect(JSON.parse(res).scripts['admin:fspec']).toEqual(
           'BROWSER=none VITE_PSYCHIC_ENV=test yarn --cwd=../admin dev --port 3051',
         )
       })
     })
 
-    context('nextjs internalClient', () => {
-      it('includes internal scripts', async () => {
+    context('react adminClient (npm)', () => {
+      it('includes admin scripts using dev script with -- separator', async () => {
+        const options: NewPsychicAppCliOptions = {
+          ...baseOptions,
+          adminClient: 'react',
+          packageManager: 'npm',
+        }
+        const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
+        expect(JSON.parse(res).scripts['admin']).toEqual('npm run --prefix=../admin dev -- --port 3001')
+        expect(JSON.parse(res).scripts['admin:fspec']).toEqual(
+          'BROWSER=none VITE_PSYCHIC_ENV=test npm run --prefix=../admin dev -- --port 3051',
+        )
+      })
+    })
+
+    context('nextjs internalClient (yarn)', () => {
+      it('includes internal scripts using next binary directly', async () => {
         const options: NewPsychicAppCliOptions = { ...baseOptions, internalClient: 'nextjs' }
         const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
-        expect(JSON.parse(res).scripts['internal']).toEqual('yarn --cwd=../internal next dev')
+        expect(JSON.parse(res).scripts['internal']).toEqual('yarn --cwd=../internal next dev --port 3002')
         expect(JSON.parse(res).scripts['internal:fspec']).toEqual(
           'BROWSER=none NEXT_PUBLIC_PSYCHIC_ENV=test NEXT_DIST_DIR=.next-fspec yarn --cwd=../internal next dev --port 3052',
         )
       })
     })
 
-    context('nuxt internalClient', () => {
+    context('nextjs internalClient (npm)', () => {
+      it('includes internal scripts using dev script with -- separator', async () => {
+        const options: NewPsychicAppCliOptions = {
+          ...baseOptions,
+          internalClient: 'nextjs',
+          packageManager: 'npm',
+        }
+        const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
+        expect(JSON.parse(res).scripts['internal']).toEqual('npm run --prefix=../internal dev -- --port 3002')
+        expect(JSON.parse(res).scripts['internal:fspec']).toEqual(
+          'BROWSER=none NEXT_PUBLIC_PSYCHIC_ENV=test NEXT_DIST_DIR=.next-fspec npm run --prefix=../internal dev -- --port 3052',
+        )
+      })
+    })
+
+    context('nuxt internalClient (yarn)', () => {
       it('includes internal scripts', async () => {
         const options: NewPsychicAppCliOptions = { ...baseOptions, internalClient: 'nuxt' }
         const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
-        expect(JSON.parse(res).scripts['internal']).toEqual('yarn --cwd=../internal dev')
+        expect(JSON.parse(res).scripts['internal']).toEqual('yarn --cwd=../internal dev --port 3002')
         expect(JSON.parse(res).scripts['internal:fspec']).toEqual(
           'BROWSER=none NUXT_BUILD_DIR=.nuxt-fspec yarn --cwd=../internal dev --port 3052',
         )
       })
     })
 
-    context('react internalClient', () => {
+    context('nuxt internalClient (npm)', () => {
+      it('includes internal scripts using dev script with -- separator', async () => {
+        const options: NewPsychicAppCliOptions = {
+          ...baseOptions,
+          internalClient: 'nuxt',
+          packageManager: 'npm',
+        }
+        const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
+        expect(JSON.parse(res).scripts['internal']).toEqual('npm run --prefix=../internal dev -- --port 3002')
+        expect(JSON.parse(res).scripts['internal:fspec']).toEqual(
+          'BROWSER=none NUXT_BUILD_DIR=.nuxt-fspec npm run --prefix=../internal dev -- --port 3052',
+        )
+      })
+    })
+
+    context('react internalClient (yarn)', () => {
       it('includes internal scripts', async () => {
         const options: NewPsychicAppCliOptions = { ...baseOptions, internalClient: 'react' }
         const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
-        expect(JSON.parse(res).scripts['internal']).toEqual('yarn --cwd=../internal dev')
+        expect(JSON.parse(res).scripts['internal']).toEqual('yarn --cwd=../internal dev --port 3002')
         expect(JSON.parse(res).scripts['internal:fspec']).toEqual(
           'BROWSER=none VITE_PSYCHIC_ENV=test yarn --cwd=../internal dev --port 3052',
+        )
+      })
+    })
+
+    context('react internalClient (npm)', () => {
+      it('includes internal scripts using dev script with -- separator', async () => {
+        const options: NewPsychicAppCliOptions = {
+          ...baseOptions,
+          internalClient: 'react',
+          packageManager: 'npm',
+        }
+        const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
+        expect(JSON.parse(res).scripts['internal']).toEqual('npm run --prefix=../internal dev -- --port 3002')
+        expect(JSON.parse(res).scripts['internal:fspec']).toEqual(
+          'BROWSER=none VITE_PSYCHIC_ENV=test npm run --prefix=../internal dev -- --port 3052',
         )
       })
     })

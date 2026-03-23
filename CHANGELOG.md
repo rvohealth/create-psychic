@@ -1,6 +1,12 @@
+## 3.1.1
+
+- fix front end scripts in boilerplate package
+
 ## 3.1.0
 
+- fix for Vite 8
 - prompt to install psychic-skill
+- miscellaneous fixes
 
 ## 3.0.2
 
