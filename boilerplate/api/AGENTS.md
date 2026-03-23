@@ -1,11 +1,8 @@
 All of the CLI commands referenced in this documents will be run via `{{PM}}`, e.g., `{{PM}} psy sync`.
 
-//////////////////////////////////////////
-// OFFICIAL PSYCHIC RULES DO NOT MODIFY //
-//////////////////////////////////////////
-
-// Include any rule customizations rules below the OFFICIAL PSYCHIC RULES.
-// The OFFICIAL PSYCHIC RULES will be replaced whenever `{{PM}} psy sync:ai-rules` is run.
+<!-- BEGIN:psychic-rules -->
+<!-- Include any rule customizations below the END:psychic-rules marker. -->
+<!-- The psychic rules will be replaced whenever `{{PM}} psy sync:ai-rules` is run. -->
 
 # AGENTS.md
 
@@ -236,16 +233,9 @@ Dream and Psychic are large frameworks with many patterns, APIs, and conventions
 
 ## Customizing These Rules
 
-- **Any customizations to these rules must be added AFTER the following marker:**
-  ```
-  //////////////////////////////////////////////
-  // end:OFFICIAL PSYCHIC RULES DO NOT MODIFY //
-  //////////////////////////////////////////////
-  ```
-- **Do not modify any content above this marker** - it will be replaced when `{{PM}} psy sync:ai-rules` is run
+- **Any customizations to these rules must be added AFTER the `END:psychic-rules` marker**
+- **Do not modify any content above that marker** - it will be replaced when `{{PM}} psy sync:ai-rules` is run
 - **All project-specific customizations should be placed below the end marker**
 
-//////////////////////////////////////////////
-// end:OFFICIAL PSYCHIC RULES DO NOT MODIFY //
-//////////////////////////////////////////////
+<!-- END:psychic-rules -->
 

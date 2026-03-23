@@ -1,6 +1,7 @@
 ## 3.1.1
 
 - fix front end scripts in boilerplate package
+- better psychic-rules demarcation in AGENTS.md
 
 ## 3.1.0
 
