@@ -5,6 +5,7 @@ import newPsychicApp, {
   cliClientAppTypes,
   InitPsychicAppCliOptions,
   NewPsychicAppCliOptions,
+  psychicPackageManagers,
 } from './newPsychicApp.js'
 
 export default function createPsyCli() {
@@ -14,6 +15,10 @@ export default function createPsyCli() {
     .command('new')
     .description('create a new psychic app')
     .argument('<name>', 'name of the app you want to create')
+    .option(
+      '--package-manager <packageManager>',
+      `One of: ${psychicPackageManagers.join(', ')}. The package manager to use`,
+    )
     .option('--workers', 'include background workers in your application')
     .option('--websockets', 'include websockets in your application')
     .option('--claude-psychic-skill', 'install psychic-skill for Claude Code')
@@ -29,6 +34,14 @@ export default function createPsyCli() {
     .option(
       '--client <CLIENT_APP_TYPE>',
       `One of: ${cliClientAppTypes.join(', ')}. The type of client app to create`,
+    )
+    .option(
+      '--admin-client <CLIENT_APP_TYPE>',
+      `One of: ${cliClientAppTypes.join(', ')}. The type of admin client app to create`,
+    )
+    .option(
+      '--internal-client <CLIENT_APP_TYPE>',
+      `One of: ${cliClientAppTypes.join(', ')}. The type of internal client app to create`,
     )
 
     .action(async (name: string, options: NewPsychicAppCliOptions) => {
@@ -61,21 +74,20 @@ export default function createPsyCli() {
     .option('--template <template>', 'the template you would like to use (nextjs or none)')
     .option('--dream-only', 'if provided')
     .option(
-      '--import-style <style>',
-      'the import style you are using for your import suffixes (.js, .ts, or none)',
+      '--import-extension <extension>',
+      'the import extension you are using for your import suffixes (.js, .ts, or none)',
     )
     .option('--openapi-path <path>', 'the path to your openapi directory')
     .option('--utils-path <path>', 'the path to your utils directory')
     .option('--executables-path <path>', 'the path to your top-level executables')
     .option('--serializers-path <path>', 'the path to your serializers directory')
-    .option('--system-files-path <path>', 'the path to your system directory')
-    .option('--conf-path <path>', 'the path to your controllers directory')
+    .option('--conf-path <path>', 'the path to your conf directory')
     .option('--models-path <path>', 'the path to your models directory')
     .option('--controllers-path <path>', 'the path to your controllers directory')
     .option('--services-path <path>', 'the path to your services directory')
-    .option('--factories-path <path>', 'the path to your controllers directory')
-    .option('--model-specs-path <path>', 'the path to your controllers directory')
-    .option('--controller-specs-path <path>', 'the path to your controllers directory')
+    .option('--factories-path <path>', 'the path to your spec factories directory')
+    .option('--model-specs-path <path>', 'the path to your model specs directory')
+    .option('--controller-specs-path <path>', 'the path to your controller specs directory')
     .action(async (name: string, options: InitPsychicAppCliOptions) => {
       await initPsychicApp(name, options)
     })
