@@ -1,3 +1,7 @@
+## 3.2.0
+
+- MaybeAuthedController pattern to handle situation in which an authenticated user may or may not be present
+
 ## 3.1.1
 
 - fix front end scripts in boilerplate package
