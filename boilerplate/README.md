@@ -8,10 +8,12 @@ If you run into problems, ask questions on [Stack Overflow](https://stackoverflo
 
 ### AI
 
-Since Dream and Psychic are new, and not understood by the LLMs, there is a custom RAG (Retrieval-Augmented Generation) system for Dream and Psychic documentation. In Cursor: cmd-shift-p, select "View: Open MCP Settings", and add a "New MCP Server" named "dream-psychic-rag". Copy and paste the JSON from `./api/mcp.json.example`\* into the mcp.json file, editing the absolute path to the `mcp-http-bridge.mjs` file.
+This project ships with AI tooling for Dream and Psychic development.
 
-AI rules for developing a Dream and Psychic application are provided in `./api/AGENTS.md`\*. These rules may be customized by adding to the bottom of the file (a rule exists in the file to instruct AI to add new rules outside of the official Psychic rules).
+**MCP Server** — A `.mcp.json` file is included at the project root, providing a Dream/Psychic RAG (Retrieval-Augmented Generation) server. Claude Code and Codex read this file automatically. For other MCP-compatible tools (e.g. Cursor), add the server from `.mcp.json` to your editor's MCP settings.
 
-To fetch the current version of the AI rules, use `{{PM}} psy sync:ai-rules`.
+**Psychic-skill** — If you chose to install the psychic-skill during setup, it provides comprehensive rules and conventions for Dream and Psychic development. Claude Code loads it automatically; see `.claude/skills/psychic-skill`. For Codex, see `.codex/skills/psychic-skill`.
+
+**AI rules** — `./api/AGENTS.md`\* contains AI development rules for Dream and Psychic applications. These rules may be customized by adding to the bottom of the file. To update to the latest official rules, use `{{PM}} psy sync:ai-rules`.
 
 \* if this Psychic app was created without a front-end client, then these files are in the project root
