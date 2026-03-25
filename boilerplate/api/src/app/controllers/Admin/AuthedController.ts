@@ -1,6 +1,5 @@
-import AppEnv from '@conf/AppEnv.js'
 import ApplicationController from '@controllers/ApplicationController.js'
-import { Encrypt } from '@rvoh/dream/utils'
+import resolveCurrentAdminUser from '@controllers/helpers/resolveCurrentAdminUser.js'
 import { BeforeAction } from '@rvoh/psychic'
 import { PsychicOpenapiNames } from '@rvoh/psychic/openapi'
 /** uncomment after creating AdminUser model */
@@ -15,35 +14,10 @@ export default class AdminAuthedController extends ApplicationController {
   // protected currentAdminUser: AdminUser
 
   @BeforeAction()
-  // eslint-disable-next-line @typescript-eslint/require-await
   protected async authenticate() {
+    const adminUser = await resolveCurrentAdminUser(this)
+    if (!adminUser) return this.unauthorized()
     /** uncomment after creating AdminUser model */
-    //   const adminUserId = this.authedAdminUserId()
-    //   if (!adminUserId) return this.unauthorized()
-    //
-    //   const adminUser = await AdminUser.find(adminUserId)
-    //   if (!adminUser) return this.unauthorized()
-    //
-    //   this.currentAdminUser = adminUser
-  }
-
-  protected authedAdminUserId(): string | null {
-    if (!AppEnv.isTest)
-      throw new Error(
-        'The current authentication scheme is only for early development. Replace with a production grade authentication scheme.'
-      )
-
-    const token = (this.header('authorization') ?? '').split(' ').at(-1)!
-
-    const decrypted = Encrypt.decrypt(token, {
-      algorithm: 'aes-256-gcm',
-      key: AppEnv.string('APP_ENCRYPTION_KEY'),
-    })
-
-    return (
-      (typeof decrypted === 'string' &&
-        (JSON.parse(decrypted) as Record<'adminUserId', string>)?.adminUserId) ||
-      null
-    )
+    // this.currentAdminUser = adminUser
   }
 }

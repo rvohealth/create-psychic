@@ -46,7 +46,10 @@ export default async function copyInitApiBoilerplate(appName: string, options: I
 
   prependOrWriteFileSync(path.join('.', '.env'), EnvBuilder.build({ appName, env: 'development' }))
   prependOrWriteFileSync(path.join('.', '.env.test'), EnvBuilder.build({ appName, env: 'test' }))
-  prependOrWriteFileSync(path.join('.', '.env.example'), EnvBuilder.buildExample({ appName, env: 'development' }))
+  prependOrWriteFileSync(
+    path.join('.', '.env.example'),
+    EnvBuilder.buildExample({ appName, env: 'development' }),
+  )
   prependOrWriteFileSync(
     path.join('.', '.env.test.example'),
     EnvBuilder.buildExample({ appName, env: 'test' }),

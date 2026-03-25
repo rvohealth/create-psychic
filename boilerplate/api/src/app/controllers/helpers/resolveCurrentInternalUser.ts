@@ -1,13 +1,13 @@
 import AppEnv from '@conf/AppEnv.js'
 import { Encrypt } from '@rvoh/dream/utils'
 import { PsychicController } from '@rvoh/psychic'
-/** uncomment after creating User model */
-// import User from '@models/User.js'
+/** uncomment after creating InternalUser model */
+// import InternalUser from '@models/InternalUser.js'
 
 // eslint-disable-next-line @typescript-eslint/require-await
-export default async function resolveCurrentUser(controller: PsychicController): Promise<string | null> {
-  /** replace previous line with uncommented next line after creating User model */
-  // export default async function resolveCurrentUser(controller: PsychicController): Promise<User | null> {
+export default async function resolveCurrentInternalUser(controller: PsychicController): Promise<string | null> {
+  /** replace previous line with uncommented next line after creating InternalUser model */
+  // export default async function resolveCurrentInternalUser(controller: PsychicController): Promise<InternalUser | null> {
   if (!AppEnv.isTest)
     throw new Error(
       'The current authentication scheme is only for early development. Replace with a production grade authentication scheme.'
@@ -20,11 +20,11 @@ export default async function resolveCurrentUser(controller: PsychicController):
     key: AppEnv.string('APP_ENCRYPTION_KEY'),
   })
 
-  const userId =
+  const internalUserId =
     typeof decrypted === 'string' && (JSON.parse(decrypted) as Record<'userId', string>)?.userId
-  if (!userId) return null
+  if (!internalUserId) return null
 
-  /** uncomment after creating User model */
-  // return await User.find(userId)
-  return userId
+  /** uncomment after creating InternalUser model */
+  // return await InternalUser.find(internalUserId)
+  return internalUserId
 }
