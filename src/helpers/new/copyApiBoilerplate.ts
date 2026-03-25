@@ -46,8 +46,14 @@ export default async function copyApiBoilerplate(appName: string, options: NewPs
 
   await replacePackageManagerInFile(path.join(apiRoot, 'AGENTS.md'), options.packageManager)
   await replacePackageManagerInFile(path.join(apiRoot, 'src', 'conf', 'routes.ts'), options.packageManager)
-  await replacePackageManagerInFile(path.join(apiRoot, 'src', 'conf', 'routes.admin.ts'), options.packageManager)
-  await replacePackageManagerInFile(path.join(apiRoot, 'src', 'conf', 'routes.internal.ts'), options.packageManager)
+  await replacePackageManagerInFile(
+    path.join(apiRoot, 'src', 'conf', 'routes.admin.ts'),
+    options.packageManager,
+  )
+  await replacePackageManagerInFile(
+    path.join(apiRoot, 'src', 'conf', 'routes.internal.ts'),
+    options.packageManager,
+  )
   await replacePackageManagerInFile(path.join(appRoot, 'README.md'), options.packageManager)
   await replacePackageManagerInFile(path.join(appRoot, 'docker-compose.yml'), options.packageManager)
 
@@ -72,11 +78,11 @@ export default async function copyApiBoilerplate(appName: string, options: NewPs
 
   fs.writeFileSync(path.join(apiRoot, '.env'), EnvBuilder.build({ appName, env: 'development' }))
   fs.writeFileSync(path.join(apiRoot, '.env.test'), EnvBuilder.build({ appName, env: 'test' }))
-  fs.writeFileSync(path.join(apiRoot, '.env.example'), EnvBuilder.buildExample({ appName, env: 'development' }))
   fs.writeFileSync(
-    path.join(apiRoot, '.env.test.example'),
-    EnvBuilder.buildExample({ appName, env: 'test' }),
+    path.join(apiRoot, '.env.example'),
+    EnvBuilder.buildExample({ appName, env: 'development' }),
   )
+  fs.writeFileSync(path.join(apiRoot, '.env.test.example'), EnvBuilder.buildExample({ appName, env: 'test' }))
   fs.writeFileSync(path.join(apiRoot, 'package.json'), await PackagejsonBuilder.buildAPI(appName, options))
 
   fs.writeFileSync(
