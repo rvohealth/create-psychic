@@ -4,17 +4,68 @@ import defaultDbCredentials from '../helpers/defaultDbCredentials.js'
 export default class EnvBuilder {
   public static build({ env, appName }: { env: 'test' | 'development' | 'production'; appName: string }) {
     const creds = defaultDbCredentials(appName, env)
+    return this._build({
+      env,
+      user: creds.user,
+      name: creds.name,
+      port: creds.port,
+      host: creds.host,
+      password: creds.password,
+      appEncryptionKey: `"${generateKey()}"`,
+      columnEncryptionKey: `"${generateKey()}"`,
+    })
+  }
+
+  public static buildExample({
+    env,
+    appName,
+  }: {
+    env: 'test' | 'development' | 'production'
+    appName: string
+  }) {
+    const creds = defaultDbCredentials(appName, env)
+    return this._build({
+      env,
+      user: '<db-user>',
+      name: creds.name,
+      port: creds.port,
+      host: creds.host,
+      password: creds.password,
+      appEncryptionKey: '<paste the results of runnning: pnpm psy g:encryption-key>',
+      columnEncryptionKey: '<paste the results of runnning: pnpm psy g:encryption-key>',
+    })
+  }
+
+  private static _build({
+    env,
+    user,
+    name,
+    port,
+    host,
+    password,
+    appEncryptionKey,
+    columnEncryptionKey,
+  }: {
+    env: 'test' | 'development' | 'production'
+    user: string
+    name: string
+    port: number
+    host: string
+    password: string
+    appEncryptionKey: string
+    columnEncryptionKey: string
+  }) {
     const base = `\
-DB_USER=${creds.user}
-DB_NAME=${creds.name}
-DB_PORT=${creds.port}
-DB_HOST=${creds.host}
-DB_PASSWORD=${creds.password}
-REPLICA_DB_PORT=${creds.port}
-REPLICA_DB_HOST=${creds.host}
+DB_USER=${user}
+DB_NAME=${name}
+DB_PORT=${port}
+DB_HOST=${host}
+DB_PASSWORD=${password}
+REPLICA_DB_PORT=${port}
+REPLICA_DB_HOST=${host}
 DB_NO_SSL=1
-APP_ENCRYPTION_KEY="${generateKey()}"
-COLUMN_ENCRYPTION_KEY="${generateKey()}"
+APP_ENCRYPTION_KEY=${appEncryptionKey}
+COLUMN_ENCRYPTION_KEY=${columnEncryptionKey}
 WEB_SERVICE=1
 WORKER_SERVICE=${env === 'test' ? 0 : 1}
 CORS_HOSTS='${
