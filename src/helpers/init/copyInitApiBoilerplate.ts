@@ -8,6 +8,7 @@ import TsConfigBuilder from '../../file-builders/TsConfigBuilder.js'
 import copyRecursive from '../copyRecursive.js'
 import internalSrcPath from '../internalSrcPath.js'
 import { importExtensions, InitPsychicAppCliOptions } from '../newPsychicApp.js'
+import replacePackageManagerInFile from '../replacePackageManagerInFile.js'
 import rewriteEsmImports from '../rewriteEsmImports.js'
 import addRootPathForCoreSpecs from './addRootPathForCoreSpecs.js'
 
@@ -112,6 +113,21 @@ export default async function copyInitApiBoilerplate(appName: string, options: I
   }
 
   TsConfigBuilder.build({ options })
+
+  if (!options.dreamOnly) {
+    await replacePackageManagerInFile(
+      addRootPathForCoreSpecs(path.join(options.confPath, 'routes.ts')),
+      options.packageManager,
+    )
+    await replacePackageManagerInFile(
+      addRootPathForCoreSpecs(path.join(options.confPath, 'routes.admin.ts')),
+      options.packageManager,
+    )
+    await replacePackageManagerInFile(
+      addRootPathForCoreSpecs(path.join(options.confPath, 'routes.internal.ts')),
+      options.packageManager,
+    )
+  }
 
   if (!options.workers) {
     rmFileSync(path.join(options.confPath, 'initializers', 'workers.ts'))

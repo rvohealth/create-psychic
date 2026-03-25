@@ -45,6 +45,9 @@ export default async function copyApiBoilerplate(appName: string, options: NewPs
   fs.writeFileSync(path.join(apiRoot, 'Dockerfile.dev'), await PsychicDockerDevBuilder.build(options))
 
   await replacePackageManagerInFile(path.join(apiRoot, 'AGENTS.md'), options.packageManager)
+  await replacePackageManagerInFile(path.join(apiRoot, 'src', 'conf', 'routes.ts'), options.packageManager)
+  await replacePackageManagerInFile(path.join(apiRoot, 'src', 'conf', 'routes.admin.ts'), options.packageManager)
+  await replacePackageManagerInFile(path.join(apiRoot, 'src', 'conf', 'routes.internal.ts'), options.packageManager)
   await replacePackageManagerInFile(path.join(appRoot, 'README.md'), options.packageManager)
   await replacePackageManagerInFile(path.join(appRoot, 'docker-compose.yml'), options.packageManager)
 
