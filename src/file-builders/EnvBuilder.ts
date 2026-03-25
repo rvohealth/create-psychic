@@ -73,9 +73,9 @@ CORS_HOSTS='${
         ? '["http://localhost:3050", "http://localhost:3051", "http://localhost:3052"]'
         : '["http://localhost:3000", "http://localhost:3001", "http://localhost:3002"]'
     }'
-CLIENT_HOST='${env === 'test' ? 'http://localhost:3050' : 'http://localhost:3000'}'
-ADMIN_HOST='${env === 'test' ? 'http://localhost:3051' : 'http://localhost:3001'}'
-INTERNAL_HOST='${env === 'test' ? 'http://localhost:3052' : 'http://localhost:3002'}'
+CLIENT_APP_HOST='${env === 'test' ? 'http://localhost:3050' : 'http://localhost:3000'}'
+ADMIN_APP_HOST='${env === 'test' ? 'http://localhost:3051' : 'http://localhost:3001'}'
+INTERNAL_APP_HOST='${env === 'test' ? 'http://localhost:3052' : 'http://localhost:3002'}'
 TZ=UTC
 `
     return env === 'test'
