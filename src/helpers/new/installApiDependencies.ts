@@ -15,7 +15,7 @@ export default async function installApiDependencies(
   switch (options.packageManager) {
     case 'yarn':
       await sspawn(
-        `cd ${apiRoot} && touch ${lockfileName} && corepack enable yarn && yarn set version stable && yarn install && yarn up @rvoh/*`,
+        `cd ${apiRoot} && touch ${lockfileName} && corepack enable yarn && yarn set version stable && yarn install && yarn up "@rvoh/*"`,
         {
           onStdout: message => {
             logger.logContinueProgress(colorize('[api]', { color: 'cyan' }) + ' ' + message, {
@@ -27,7 +27,7 @@ export default async function installApiDependencies(
       break
 
     case 'pnpm':
-      await sspawn(`cd ${apiRoot} && corepack enable pnpm && pnpm install && pnpm up @rvoh/*`, {
+      await sspawn(`cd ${apiRoot} && corepack enable pnpm && pnpm install && pnpm up "@rvoh/*"`, {
         onStdout: message => {
           logger.logContinueProgress(colorize('[api]', { color: 'cyan' }) + ' ' + message, {
             logPrefixColor: 'cyan',
