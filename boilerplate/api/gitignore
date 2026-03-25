@@ -3,6 +3,7 @@ dist
 node_modules
 *.log
 .env*
+!.env*.example
 src/.psy/*
 .vscode
 
