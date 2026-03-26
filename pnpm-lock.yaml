@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@rvoh/dream':
-        specifier: ^2.4.0
-        version: 2.4.0(@types/node@22.13.0)(@types/pg@8.11.11)(commander@14.0.3)(dotenv@17.2.3)(kysely-codegen@0.19.0(kysely@0.28.14)(pg@8.13.3)(typescript@5.9.3))(kysely@0.28.14)(pg@8.13.3)(pluralize-esm@9.0.5)(typescript@5.9.3)
+        specifier: ^2.5.8
+        version: 2.5.8(@types/node@22.13.0)(@types/pg@8.11.11)(commander@14.0.3)(dotenv@17.3.1)(kysely-codegen@0.19.0(kysely@0.28.14)(pg@8.13.3)(typescript@5.9.3))(kysely@0.28.14)(pg@8.13.3)(pluralize-esm@9.0.5)(typescript@5.9.3)
       '@types/node':
         specifier: ^22.6.1
         version: 22.13.0
@@ -31,8 +31,8 @@ importers:
         specifier: ^9.39.1
         version: 9.39.1
       '@rvoh/dream-spec-helpers':
-        specifier: ^2.0.0
-        version: 2.0.0(@types/node@22.13.0)(@types/pg@8.11.11)(pg@8.13.3)
+        specifier: ^2.1.1
+        version: 2.1.1(@types/node@22.13.0)(@types/pg@8.11.11)(pg@8.13.3)
       '@types/pg':
         specifier: ^8
         version: 8.11.11
@@ -609,21 +609,21 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@rvoh/dream-spec-helpers@2.0.0':
-    resolution: {integrity: sha512-1Zjn2bt67y9ku/gA+BhJEsP48G+mDTy8O+lXHrY2ZuqoPufFJQqTEbgvIXPQswRgrpsosTv5IPeqXVIjCrL8rQ==}
+  '@rvoh/dream-spec-helpers@2.1.1':
+    resolution: {integrity: sha512-LtlgS0zlraYNLd1NSKwwLAxy6H66uAv0nlA+1L//WJ+IuWg1wXr6seMhe2VD7KChaCMNx6ZqaLDBkYcfFr3F2A==}
     peerDependencies:
       '@types/node': '*'
       '@types/pg': '*'
       pg: '*'
 
-  '@rvoh/dream@2.4.0':
-    resolution: {integrity: sha512-UzITVp/bvEmxi5K3DThrbRKrd8Q/1azs7KQzvAe9jYFAYOBu6yGYBhoEFJkb/zxct/hWR4aZSkY2EiqLDgyEOA==}
+  '@rvoh/dream@2.5.8':
+    resolution: {integrity: sha512-Ek6u8eMyAMVqd2pvautaXfPM2zLX6b54dPrvhBoDMDXlMryQjECWzlz1/JuLqmVym7/2LO1ebOxBmSn5zH88cg==}
     peerDependencies:
       '@types/node': '*'
       '@types/pg': '*'
       commander: ^14.0.3
       dotenv: '*'
-      kysely: ^0.28.5
+      kysely: ^0.28.14
       kysely-codegen: ~0.19.0
       pg: '*'
       pluralize-esm: ^9.0.5
@@ -1030,8 +1030,8 @@ packages:
     resolution: {integrity: sha512-uBq4egWHTcTt33a72vpSG0z3HnPuIl6NqYcTrKEg2azoEyl2hpW0zqlxysq2pK9HlDIHyHyakeYaYnSAwd8bow==}
     engines: {node: '>=12'}
 
-  dotenv@17.2.3:
-    resolution: {integrity: sha512-JVUnt+DUIzu87TABbhPmNfVdBDt18BLOWjMUFJMSi/Qqg7NTYtabbvSNJGOJ7afbRuv9D/lngizHtP7QyLQ+9w==}
+  dotenv@17.3.1:
+    resolution: {integrity: sha512-IO8C/dzEb6O3F9/twg6ZLXz164a2fhTnEWb95H23Dm4OuN+92NmEAlTrupP9VW6Jm3sO26tQlqyvyi4CsnY9GA==}
     engines: {node: '>=12'}
 
   dunder-proto@1.0.1:
@@ -2428,19 +2428,22 @@ snapshots:
   '@rollup/rollup-win32-x64-msvc@4.60.0':
     optional: true
 
-  '@rvoh/dream-spec-helpers@2.0.0(@types/node@22.13.0)(@types/pg@8.11.11)(pg@8.13.3)':
+  '@rvoh/dream-spec-helpers@2.1.1(@types/node@22.13.0)(@types/pg@8.11.11)(pg@8.13.3)':
     dependencies:
       '@types/node': 22.13.0
       '@types/pg': 8.11.11
+      commander: 14.0.3
+      dotenv: 17.3.1
       pg: 8.13.3
+      pluralize-esm: 9.0.5
 
-  '@rvoh/dream@2.4.0(@types/node@22.13.0)(@types/pg@8.11.11)(commander@14.0.3)(dotenv@17.2.3)(kysely-codegen@0.19.0(kysely@0.28.14)(pg@8.13.3)(typescript@5.9.3))(kysely@0.28.14)(pg@8.13.3)(pluralize-esm@9.0.5)(typescript@5.9.3)':
+  '@rvoh/dream@2.5.8(@types/node@22.13.0)(@types/pg@8.11.11)(commander@14.0.3)(dotenv@17.3.1)(kysely-codegen@0.19.0(kysely@0.28.14)(pg@8.13.3)(typescript@5.9.3))(kysely@0.28.14)(pg@8.13.3)(pluralize-esm@9.0.5)(typescript@5.9.3)':
     dependencies:
       '@types/node': 22.13.0
       '@types/pg': 8.11.11
       colorette: 2.0.20
       commander: 14.0.3
-      dotenv: 17.2.3
+      dotenv: 17.3.1
       kysely: 0.28.14
       kysely-codegen: 0.19.0(kysely@0.28.14)(pg@8.13.3)(typescript@5.9.3)
       luxon: 3.7.2
@@ -2876,7 +2879,7 @@ snapshots:
 
   dotenv@16.6.1: {}
 
-  dotenv@17.2.3: {}
+  dotenv@17.3.1: {}
 
   dunder-proto@1.0.1:
     dependencies:
@@ -3318,7 +3321,7 @@ snapshots:
     dependencies:
       chalk: 4.1.2
       cosmiconfig: 9.0.1(typescript@5.9.3)
-      dotenv: 17.2.3
+      dotenv: 17.3.1
       dotenv-expand: 12.0.3
       git-diff: 2.0.6
       kysely: 0.28.14

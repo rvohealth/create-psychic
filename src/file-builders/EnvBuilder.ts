@@ -1,4 +1,4 @@
-import * as crypto from 'crypto'
+import { Encrypt } from '@rvoh/dream/utils'
 import defaultDbCredentials from '../helpers/defaultDbCredentials.js'
 
 export default class EnvBuilder {
@@ -7,10 +7,10 @@ export default class EnvBuilder {
     return this._build({
       env,
       user: creds.user,
+      password: creds.password,
       name: creds.name,
       port: creds.port,
       host: creds.host,
-      password: creds.password,
       appEncryptionKey: `"${generateKey()}"`,
       columnEncryptionKey: `"${generateKey()}"`,
     })
@@ -27,10 +27,10 @@ export default class EnvBuilder {
     return this._build({
       env,
       user: '<db-user>',
+      password: '<db-password>',
       name: creds.name,
       port: creds.port,
       host: creds.host,
-      password: creds.password,
       appEncryptionKey: '<paste the results of runnning: pnpm psy g:encryption-key>',
       columnEncryptionKey: '<paste the results of runnning: pnpm psy g:encryption-key>',
     })
@@ -48,19 +48,19 @@ export default class EnvBuilder {
   }: {
     env: 'test' | 'development' | 'production'
     user: string
+    password: string
     name: string
     port: number
     host: string
-    password: string
     appEncryptionKey: string
     columnEncryptionKey: string
   }) {
     const base = `\
 DB_USER=${user}
+DB_PASSWORD=${password}
 DB_NAME=${name}
 DB_PORT=${port}
 DB_HOST=${host}
-DB_PASSWORD=${password}
 REPLICA_DB_PORT=${port}
 REPLICA_DB_HOST=${host}
 DB_NO_SSL=1
@@ -87,5 +87,5 @@ DREAM_PARALLEL_TESTS=4
 }
 
 function generateKey() {
-  return crypto.randomBytes(32).toString('base64')
+  return Encrypt.generateKey('aes-256-gcm')
 }
