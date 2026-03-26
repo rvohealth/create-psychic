@@ -11,8 +11,8 @@ export default class EnvBuilder {
       name: creds.name,
       port: creds.port,
       host: creds.host,
-      appEncryptionKey: `"${generateKey()}"`,
-      columnEncryptionKey: `"${generateKey()}"`,
+      appEncryptionKey: generateKey(),
+      columnEncryptionKey: generateKey(),
     })
   }
 
@@ -57,15 +57,15 @@ export default class EnvBuilder {
   }) {
     const base = `\
 DB_USER=${user}
-DB_PASSWORD=${password}
+DB_PASSWORD='${password}'
 DB_NAME=${name}
 DB_PORT=${port}
-DB_HOST=${host}
+DB_HOST='${host}'
 REPLICA_DB_PORT=${port}
-REPLICA_DB_HOST=${host}
+REPLICA_DB_HOST='${host}'
 DB_NO_SSL=1
-APP_ENCRYPTION_KEY=${appEncryptionKey}
-COLUMN_ENCRYPTION_KEY=${columnEncryptionKey}
+APP_ENCRYPTION_KEY='${appEncryptionKey}'
+COLUMN_ENCRYPTION_KEY='${columnEncryptionKey}'
 WEB_SERVICE=1
 WORKER_SERVICE=${env === 'test' ? 0 : 1}
 CORS_HOSTS='${
