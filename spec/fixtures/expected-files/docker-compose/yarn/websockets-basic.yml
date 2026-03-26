@@ -4,7 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile.dev
       target: "dev"
-    command: sh -c "yarn install && yarn psy db:migrate --skip-sync && yarn psy db:seed && yarn dev"
+    command: sh -c "yarn install && yarn psy db:migrate --skip-sync && yarn psy db:seed && yarn web:dev"
     environment:
       NODE_TLS_REJECT_UNAUTHORIZED: "${NODE_TLS_REJECT_UNAUTHORIZED:-0}"
       NPM_CONFIG_STRICT_SSL: "false"
@@ -38,7 +38,7 @@ services:
       context: .
       dockerfile: Dockerfile.dev
       target: "dev"
-    command: sh -c "yarn ws"
+    command: sh -c "yarn ws:dev"
     environment:
       NODE_TLS_REJECT_UNAUTHORIZED: "${NODE_TLS_REJECT_UNAUTHORIZED:-0}"
       NPM_CONFIG_STRICT_SSL: "false"

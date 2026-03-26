@@ -67,7 +67,7 @@ describe('PackagejsonBuilder', () => {
         const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
         expect(JSON.parse(res).scripts['client']).toEqual('yarn --cwd=../client next dev --port 3000')
         expect(JSON.parse(res).scripts['client:fspec']).toEqual(
-          'BROWSER=none NEXT_PUBLIC_PSYCHIC_ENV=test NEXT_DIST_DIR=.next-fspec yarn --cwd=../client next dev --port 3050',
+          'BROWSER=none NEXT_PUBLIC_PSYCHIC_ENV=test NEXT_PUBLIC_API_URL=http://localhost:7778 NEXT_DIST_DIR=.next-fspec yarn --cwd=../client next dev --webpack --port 3050',
         )
       })
     })
@@ -78,7 +78,7 @@ describe('PackagejsonBuilder', () => {
         const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
         expect(JSON.parse(res).scripts['client']).toEqual('npm run --prefix=../client dev -- --port 3000')
         expect(JSON.parse(res).scripts['client:fspec']).toEqual(
-          'BROWSER=none NEXT_PUBLIC_PSYCHIC_ENV=test NEXT_DIST_DIR=.next-fspec npm run --prefix=../client dev -- --port 3050',
+          'BROWSER=none NEXT_PUBLIC_PSYCHIC_ENV=test NEXT_PUBLIC_API_URL=http://localhost:7778 NEXT_DIST_DIR=.next-fspec npm run --prefix=../client dev -- --webpack --port 3050',
         )
       })
     })

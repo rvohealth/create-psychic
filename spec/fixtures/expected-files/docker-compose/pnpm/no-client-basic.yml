@@ -4,7 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile.dev
       target: "dev"
-    command: sh -c "pnpm install && pnpm psy db:migrate --skip-sync && pnpm psy db:seed && pnpm dev"
+    command: sh -c "pnpm install && pnpm psy db:migrate --skip-sync && pnpm psy db:seed && pnpm web:dev"
     environment:
       NODE_TLS_REJECT_UNAUTHORIZED: "${NODE_TLS_REJECT_UNAUTHORIZED:-0}"
       NPM_CONFIG_STRICT_SSL: "false"

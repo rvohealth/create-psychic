@@ -28,13 +28,13 @@ export default class PackagejsonBuilder {
           packagejson.scripts['client'] = `{{PM_CWD}}=../client dev -- --port 3000`
           // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
           packagejson.scripts['client:fspec'] =
-            `BROWSER=none NEXT_PUBLIC_PSYCHIC_ENV=test NEXT_DIST_DIR=.next-fspec {{PM_CWD}}=../client dev -- --port 3050`
+            `BROWSER=none NEXT_PUBLIC_PSYCHIC_ENV=test NEXT_PUBLIC_API_URL=http://localhost:7778 NEXT_DIST_DIR=.next-fspec {{PM_CWD}}=../client dev -- --webpack --port 3050`
         } else {
           // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
           packagejson.scripts['client'] = `{{PM_CWD}}=../client next dev --port 3000`
           // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
           packagejson.scripts['client:fspec'] =
-            `BROWSER=none NEXT_PUBLIC_PSYCHIC_ENV=test NEXT_DIST_DIR=.next-fspec {{PM_CWD}}=../client next dev --port 3050`
+            `BROWSER=none NEXT_PUBLIC_PSYCHIC_ENV=test NEXT_PUBLIC_API_URL=http://localhost:7778 NEXT_DIST_DIR=.next-fspec {{PM_CWD}}=../client next dev --webpack --port 3050`
         }
         break
 
@@ -181,12 +181,13 @@ export default class PackagejsonBuilder {
     }
 
     if (!options.workers) {
+      removeScript(packagejson, 'worker:dev')
       removeDependency(packagejson, '@rvoh/psychic-workers')
       removeDependency(packagejson, 'bullmq')
     }
 
     if (!options.websockets) {
-      removeScript(packagejson, 'ws')
+      removeScript(packagejson, 'ws:dev')
       removeScript(packagejson, 'ws:fspec')
       removeDependency(packagejson, '@rvoh/psychic-websockets')
       removeDependency(packagejson, '@socket.io/redis-adapter')
