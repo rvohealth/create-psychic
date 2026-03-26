@@ -118,7 +118,7 @@ networks:
       dockerfile: Dockerfile.dev
       target: "dev"
     user: "0"
-    command: sh -c "{{PM}} install && {{PM}} dev"
+    command: sh -c "{{PM}} install && {{PM}} web:dev"
     environment:
       NODE_ENV: "\${NODE_ENV:-development}"
       NODE_TLS_REJECT_UNAUTHORIZED: "\${NODE_TLS_REJECT_UNAUTHORIZED:-0}"
@@ -146,7 +146,7 @@ networks:
       context: <CONTEXT_VALUE>
       dockerfile: Dockerfile.dev
       target: "dev"
-    command: sh -c "{{PM}} ws"
+    command: sh -c "{{PM}} ws:dev"
     environment:
       NODE_TLS_REJECT_UNAUTHORIZED: "\${NODE_TLS_REJECT_UNAUTHORIZED:-0}"
       NPM_CONFIG_STRICT_SSL: "false"
@@ -173,7 +173,7 @@ networks:
       context: <CONTEXT_VALUE>
       dockerfile: Dockerfile.dev
       target: "dev"
-    command: sh -c "{{PM}} dev-worker"
+    command: sh -c "{{PM}} worker:dev"
     environment:
       NODE_TLS_REJECT_UNAUTHORIZED: "\${NODE_TLS_REJECT_UNAUTHORIZED:-0}"
       NPM_CONFIG_STRICT_SSL: "false"

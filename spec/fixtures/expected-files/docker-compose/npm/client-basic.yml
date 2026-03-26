@@ -4,7 +4,7 @@ services:
       context: ./api
       dockerfile: Dockerfile.dev
       target: "dev"
-    command: sh -c "npm run install && npm run psy db:migrate --skip-sync && npm run psy db:seed && npm run dev"
+    command: sh -c "npm run install && npm run psy db:migrate --skip-sync && npm run psy db:seed && npm run web:dev"
     environment:
       NODE_TLS_REJECT_UNAUTHORIZED: "${NODE_TLS_REJECT_UNAUTHORIZED:-0}"
       NPM_CONFIG_STRICT_SSL: "false"
@@ -38,7 +38,7 @@ services:
       dockerfile: Dockerfile.dev
       target: "dev"
     user: "0"
-    command: sh -c "npm run install && npm run dev"
+    command: sh -c "npm run install && npm run web:dev"
     environment:
       NODE_ENV: "${NODE_ENV:-development}"
       NODE_TLS_REJECT_UNAUTHORIZED: "${NODE_TLS_REJECT_UNAUTHORIZED:-0}"

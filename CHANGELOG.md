@@ -1,3 +1,7 @@
+## 3.3.0
+
+- improve out-of-the-box package.json script conventions
+
 ## 3.2.0
 
 - MaybeAuthedController pattern to handle situation in which an authenticated user may or may not be present
