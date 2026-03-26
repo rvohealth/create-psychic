@@ -20,9 +20,13 @@ export default function createPsyCli() {
       `One of: ${psychicPackageManagers.join(', ')}. The package manager to use`,
     )
     .option('--workers', 'include background workers in your application')
+    .option('--no-workers', 'exclude background workers from your application')
     .option('--websockets', 'include websockets in your application')
+    .option('--no-websockets', 'exclude websockets from your application')
     .option('--claude-psychic-skill', 'install psychic-skill for Claude Code')
+    .option('--no-claude-psychic-skill', 'exclude psychic-skill for Claude Code')
     .option('--codex-psychic-skill', 'install psychic-skill for Codex')
+    .option('--no-codex-psychic-skill', 'exclude psychic-skill for Codex')
 
     .option(
       '--primary-key-type <KEY_TYPE>',
@@ -56,9 +60,13 @@ export default function createPsyCli() {
       'name of the app you want to create. This will be used for naming db credentials, etc...',
     )
     .option('--workers', 'include background workers in your application')
+    .option('--no-workers', 'exclude background workers from your application')
     .option('--websockets', 'include websockets in your application')
+    .option('--no-websockets', 'exclude websockets from your application')
     .option('--claude-psychic-skill', 'install psychic-skill for Claude Code')
+    .option('--no-claude-psychic-skill', 'exclude psychic-skill for Claude Code')
     .option('--codex-psychic-skill', 'install psychic-skill for Codex')
+    .option('--no-codex-psychic-skill', 'exclude psychic-skill for Codex')
     .option(
       '--primary-key-type <KEY_TYPE>',
       `One of: ${primaryKeyTypes.join(
