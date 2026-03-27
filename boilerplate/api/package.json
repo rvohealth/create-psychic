@@ -14,7 +14,7 @@
     "fspec:js": "cross-env APP_NAME=$npm_package_name APP_VERSION=$npm_package_version {{PM}} build:spec && cd ./dist && vitest --config ./spec/features/vite.config.js",
     "fspec:visible": "{{PM}} psy db:integrity-check && cross-env HEADLESS=0 vitest run --config=./spec/features/vite.config.ts",
     "console": "{{PM}} psy db:integrity-check && APP_NAME=$npm_package_name APP_VERSION=$npm_package_version tsx ./src/conf/repl.ts",
-    "console:js": "cross-env APP_NAME=$npm_package_name APP_VERSION=$npm_package_version node ./dist/src/conf/repl.js",
+    "console:js": "APP_NAME=$npm_package_name APP_VERSION=$npm_package_version node ./dist/src/conf/repl.js",
     "format": "{{PM}} prettier . --write",
     "lint": "{{PM}} eslint --no-warn-ignored \"src/**/*.ts\" \"spec/**/*.ts\" && {{PM}} prettier . --check",
     "prettier": "prettier",
