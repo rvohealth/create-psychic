@@ -8,7 +8,6 @@
   "scripts": {
     "psy": "tsx src/conf/system/cli.ts",
     "psy:js": "node ./dist/src/conf/system/cli.js",
-    "sync": "cross-env APP_NAME=$npm_package_name APP_VERSION=$npm_package_version {{PM}} psy sync:all",
     "uspec": "{{PM}} psy db:integrity-check && cross-env APP_NAME=$npm_package_name APP_VERSION=$npm_package_version vitest --config ./spec/unit/vite.config.ts",
     "uspec:js": "cross-env APP_NAME=$npm_package_name APP_VERSION=$npm_package_version {{PM}} build:spec && cd ./dist && vitest --config ./spec/unit/vite.config.js",
     "fspec": "{{PM}} psy db:integrity-check && cross-env APP_NAME=$npm_package_name APP_VERSION=$npm_package_version vitest --config ./spec/features/vite.config.ts",
