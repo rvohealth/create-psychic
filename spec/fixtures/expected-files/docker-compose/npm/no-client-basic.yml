@@ -4,7 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile.dev
       target: "dev"
-    command: sh -c "npm run install && npm run psy db:migrate --skip-sync && npm run psy db:seed && npm run dev"
+    command: sh -c "npm run install && npm run psy db:migrate --skip-sync && npm run psy db:seed && npm run web:dev"
     environment:
       NODE_TLS_REJECT_UNAUTHORIZED: "${NODE_TLS_REJECT_UNAUTHORIZED:-0}"
       NPM_CONFIG_STRICT_SSL: "false"
