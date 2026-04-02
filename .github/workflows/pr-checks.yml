@@ -30,7 +30,7 @@ jobs:
       fail-fast: false
     services:
       postgres:
-        image: postgres:18
+        image: postgres:18-alpine
         env:
           POSTGRES_USER: psychic
           POSTGRES_DB: howyadoin_test
@@ -43,7 +43,7 @@ jobs:
         ports:
           - 5432:5432
       redis:
-        image: redis:6.2
+        image: redis:7-alpine
         options: >-
           --health-cmd "redis-cli ping"
           --health-interval 10s

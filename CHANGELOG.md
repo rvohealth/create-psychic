@@ -1,3 +1,7 @@
+## 3.3.1
+
+- docker-compose installs Postgres 18, which is required for uuid7, and Redis 7
+
 ## 3.3.0
 
 - improve out-of-the-box package.json script conventions

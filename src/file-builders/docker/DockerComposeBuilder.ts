@@ -91,7 +91,7 @@ networks:
 
     return `\
   redis:
-    image: redis:7.4.7-alpine
+    image: redis:7-alpine
     restart: always
     command: redis-server --save 20 1 --loglevel warning
     ports:
