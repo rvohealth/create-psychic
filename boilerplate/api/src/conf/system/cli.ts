@@ -9,8 +9,6 @@ import '../loadEnv.js'
 
 import { PsychicCLI } from '@rvoh/psychic/system'
 import { Command } from 'commander'
-import * as fs from 'node:fs'
-import * as path from 'node:path'
 import seedDb from '../../db/seed.js'
 import initializePsychicApp from './initializePsychicApp.js'
 
@@ -20,28 +18,5 @@ PsychicCLI.provide(program, {
   initializePsychicApp,
   seedDb,
 })
-
-const AI_RULES_URL =
-  'https://raw.githubusercontent.com/rvohealth/create-psychic/refs/heads/main/boilerplate/api/AGENTS.md'
-
-program
-  .command('sync:ai-rules')
-  .description('syncs the latest AGENTS.md, preserving custom rules added at the bottom of the local file')
-  .action(async () => {
-    const rules = await (await fetch(AI_RULES_URL)).text()
-    const targetPath = path.join(process.cwd(), 'AGENTS.md')
-    const originalCurrentFileContents = fs.existsSync(targetPath)
-      ? fs.readFileSync(targetPath).toString()
-      : ''
-    const currentFileContents = originalCurrentFileContents.split('<!-- END:psychic-rules -->')
-    const previousRules = currentFileContents.length > 1 ? currentFileContents.at(0)! : ''
-    const customRules = currentFileContents.length > 1 ? currentFileContents.at(-1)! : ''
-    const previousRulesParts = previousRules.split('<!-- BEGIN:psychic-rules -->')
-
-    const prefix = previousRulesParts.length > 1 ? previousRulesParts.at(0)! : ''
-    fs.writeFileSync(targetPath, prefix + rules + customRules)
-
-    process.exit()
-  })
 
 program.parse(process.argv)

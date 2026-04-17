@@ -1,5 +1,10 @@
 ## 3.3.1
 
+- strengthen root CLAUDE.md emphasis on the psychic-skill and project structure
+- make general-purpose AGENTS.md focus on the psychic-skill
+
+## 3.3.1
+
 - docker-compose installs Postgres 18, which is required for uuid7, and Redis 7
 
 ## 3.3.0
