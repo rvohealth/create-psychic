@@ -20,6 +20,7 @@ export default async function addMissingTsconfigRules() {
 
     userTsconfig.compilerOptions ||= {}
     userTsconfig.compilerOptions.strictPropertyInitialization = false
+    userTsconfig.compilerOptions.target = 'ES2022'
 
     await fs.writeFile(userTsconfigPath, JSON.stringify(userTsconfig, null, 2))
   } catch {
