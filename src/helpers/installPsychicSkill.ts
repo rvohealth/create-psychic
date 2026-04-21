@@ -1,4 +1,4 @@
-import { execSync } from 'node:child_process'
+import { execFileSync } from 'node:child_process'
 import * as fs from 'node:fs'
 import * as path from 'node:path'
 
@@ -12,11 +12,14 @@ export default function installPsychicSkill(appRoot: string, agentSkill: AgentSk
 
   fs.mkdirSync(path.join(appRoot, agentRoot, 'skills'), { recursive: true })
 
-  execSync(`git clone ${PSYCHIC_SKILL_REPO} ${skillDir}`, { stdio: 'ignore' })
+  // Argv form (R-016): `skillDir` derives from `appRoot`, which is developer
+  // CLI input. execFileSync does not spawn a shell, so shell meta-characters
+  // in the path are passed literally to git rather than interpreted.
+  execFileSync('git', ['clone', PSYCHIC_SKILL_REPO, skillDir], { stdio: 'ignore' })
 
   // Remove .git so it's committed as plain files (not a submodule)
   fs.rmSync(path.join(skillDir, '.git'), { recursive: true, force: true })
 
   // Run setup to create symlinks
-  execSync('./setup', { cwd: skillDir, stdio: 'ignore' })
+  execFileSync('./setup', [], { cwd: skillDir, stdio: 'ignore' })
 }
