@@ -35,11 +35,25 @@ function initializeWebsockets(wsApp: PsychicAppWebsockets) {
         }),
   )
 
+  const allowedOrigins = allowedCorsOrigins()
   wsApp.set('socketio', {
     // socketio server options here
     cors: {
       credentials: true,
-      origin: allowedCorsOrigins(),
+      origin: allowedOrigins,
+    },
+    // socket.io's `cors.origin` above only constrains HTTP long-polling —
+    // native WebSocket upgrades bypass CORS. `allowRequest` runs before every
+    // handshake on every transport, so we re-enforce the allowlist here.
+    // Replace the body with your own logic (e.g. auth-token inspection) to
+    // layer additional checks on top of the origin allowlist.
+    allowRequest: (req, callback) => {
+      const origin = req.headers.origin
+      if (origin !== undefined && allowedOrigins.includes(origin)) {
+        callback(null, true)
+      } else {
+        callback('origin not allowed', false)
+      }
     },
   })
 
