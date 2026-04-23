@@ -2,7 +2,7 @@ import AppEnv from '@conf/AppEnv.js'
 import allowedCorsOrigins from '@conf/system/allowedCorsOrigins.js'
 import resolveWebsocketUser from '@conf/system/resolveWebsocketUser.js'
 import { PsychicApp } from '@rvoh/psychic'
-import { PsychicAppWebsockets, Ws } from '@rvoh/psychic-websockets'
+import { allowRequestForOrigins, PsychicAppWebsockets, Ws } from '@rvoh/psychic-websockets'
 import { Redis } from 'ioredis'
 
 export default (psy: PsychicApp) => {
@@ -41,6 +41,12 @@ function initializeWebsockets(wsApp: PsychicAppWebsockets) {
       credentials: true,
       origin: allowedCorsOrigins(),
     },
+    // socket.io's `cors.origin` above only constrains HTTP long-polling —
+    // native WebSocket upgrades bypass CORS. `allowRequestForOrigins` wraps
+    // socket.io's `allowRequest` hook to enforce the same allowlist across
+    // every transport. Supply a function here to layer in your own logic
+    // (e.g. auth-token inspection) in addition to the origin check.
+    allowRequest: allowRequestForOrigins(allowedCorsOrigins()),
   })
 
   // ******
