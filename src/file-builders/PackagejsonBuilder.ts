@@ -200,8 +200,35 @@ export default class PackagejsonBuilder {
       removeDependency(packagejson, 'ioredis')
     }
 
+    pruneOverridesForPackageManager(packagejson, options.packageManager)
+
     return replacePackageManagerInFileContents(JSON.stringify(packagejson, null, 2), options.packageManager)
   }
+}
+
+// The boilerplate package.json carries override blocks for npm (`overrides`),
+// yarn (`resolutions`), and pnpm (`pnpm.overrides`) so a single source-controlled
+// file documents all three. At scaffold time we keep only the block the chosen
+// package manager will actually read, so the generated app has one canonical
+// spot to edit and there's no risk of the three drifting apart over time.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function pruneOverridesForPackageManager(packageJson: any, packageManager: 'npm' | 'yarn' | 'pnpm') {
+  /* eslint-disable @typescript-eslint/no-unsafe-member-access */
+  switch (packageManager) {
+    case 'npm':
+      delete packageJson.resolutions
+      delete packageJson.pnpm
+      break
+    case 'yarn':
+      delete packageJson.overrides
+      delete packageJson.pnpm
+      break
+    case 'pnpm':
+      delete packageJson.overrides
+      delete packageJson.resolutions
+      break
+  }
+  /* eslint-enable @typescript-eslint/no-unsafe-member-access */
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

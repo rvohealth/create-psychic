@@ -385,5 +385,31 @@ describe('PackagejsonBuilder', () => {
         )
       })
     })
+
+    context('dependency overrides', () => {
+      it('keeps only `overrides` for npm', async () => {
+        const res = await PackagejsonBuilder.buildAPI('howyadoin', { ...baseOptions, packageManager: 'npm' })
+        const parsed = JSON.parse(res) as Record<string, unknown>
+        expect(parsed.overrides).toEqual({ 'path-to-regexp': '>=8.4.0' })
+        expect(parsed.resolutions).toBeUndefined()
+        expect(parsed.pnpm).toBeUndefined()
+      })
+
+      it('keeps only `resolutions` for yarn', async () => {
+        const res = await PackagejsonBuilder.buildAPI('howyadoin', { ...baseOptions, packageManager: 'yarn' })
+        const parsed = JSON.parse(res) as Record<string, unknown>
+        expect(parsed.resolutions).toEqual({ 'path-to-regexp': '>=8.4.0' })
+        expect(parsed.overrides).toBeUndefined()
+        expect(parsed.pnpm).toBeUndefined()
+      })
+
+      it('keeps only `pnpm.overrides` for pnpm', async () => {
+        const res = await PackagejsonBuilder.buildAPI('howyadoin', { ...baseOptions, packageManager: 'pnpm' })
+        const parsed = JSON.parse(res) as Record<string, unknown>
+        expect(parsed.pnpm).toEqual({ overrides: { 'path-to-regexp': '>=8.4.0' } })
+        expect(parsed.overrides).toBeUndefined()
+        expect(parsed.resolutions).toBeUndefined()
+      })
+    })
   })
 })
