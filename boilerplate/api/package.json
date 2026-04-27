@@ -88,5 +88,16 @@
     "@rolldown/plugin-babel": "^0.2.0",
     "vite": "^8.0.0",
     "vitest": "^4.1.0"
+  },
+  "overrides": {
+    "path-to-regexp": ">=8.4.0"
+  },
+  "resolutions": {
+    "path-to-regexp": ">=8.4.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "path-to-regexp": ">=8.4.0"
+    }
   }
 }
