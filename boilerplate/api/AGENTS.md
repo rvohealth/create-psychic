@@ -1,31 +1,41 @@
-## CRITICAL: psychic-skill required
+## CRITICAL: load the psychic-skill before any work in this directory
 
-This is a Dream ORM / Psychic web framework application. You MUST use the **psychic-skill** for all development work. The psychic-skill contains comprehensive, actively-maintained rules, conventions, and patterns for Dream and Psychic that must be followed. It is the single source of truth — there are no inline rules in this file.
+This is the Dream ORM / Psychic back end. Before reading or editing any file here, you MUST load the **psychic-skill** (`name: dream-psychic`). It contains the rules for generators, migrations, STI, serializers, controllers, naming, testing, workers, and websockets — none of which can be safely guessed.
 
-### If psychic-skill is installed
+How to load it depends on your agent.
 
-Skill-aware agents (Claude Code, Codex) auto-load the skill when they detect Dream/Psychic imports or `psy` commands — no manual invocation needed.
+### Codex CLI
 
-Agents that do not auto-load skills must read the skill's markdown files directly as prescribed reading, starting with `SKILL.md` and following the linked topic files (`models.md`, `controllers.md`, `serializers.md`, `sti.md`, `migrations.md`, `querying.md`, `testing.md`, `workers.md`, `websockets.md`, etc.). The skill lives at `.claude/skills/psychic-skill/` or `.codex/skills/psychic-skill/` — whichever is present in this repo or your home directory.
+Codex auto-discovers skills from its skill directories. Confirm a `dream-psychic` skill is registered. If it is not, install it:
 
-To check for updates, run `/psychic-update-skill` (Claude Code or Codex). Any agent can update manually with `git fetch origin && git reset --hard origin/main && ./setup` inside the skill directory.
-
-### If psychic-skill is NOT installed
-
-**Stop and install it before doing any work.**
-
-Claude Code:
+Personal install:
 
 ```
-git clone https://github.com/daniel-nelson/psychic-skill.git .claude/skills/psychic-skill && cd .claude/skills/psychic-skill && ./setup
+git clone https://github.com/daniel-nelson/psychic-skill.git ~/.codex/skills/psychic-skill && cd ~/.codex/skills/psychic-skill && ./setup
 ```
 
-Codex:
+Project install (checked into this repo):
 
 ```
 git clone https://github.com/daniel-nelson/psychic-skill.git .codex/skills/psychic-skill && cd .codex/skills/psychic-skill && ./setup
 ```
 
-Any other agent: clone the repo somewhere your agent will read it (e.g. `.ai/psychic-skill`) and read `SKILL.md` plus the linked topic files as prescribed reading before touching the code.
+The psychic-skill installer targets `.codex/skills/` and `~/.codex/skills/`. Note that OpenAI's published Codex docs describe `.agents/skills/` and `$HOME/.agents/skills/` as the canonical skill locations <!-- source: https://developers.openai.com/codex/skills accessed 2026-04-25 -->; if your Codex build only reads `.agents/skills/`, symlink the install: `ln -s ~/.codex/skills/psychic-skill ~/.agents/skills/psychic-skill`.
 
-**Do not attempt to work on this codebase without the psychic-skill content available.** It contains critical rules about generators, migrations, testing, naming conventions, STI patterns, and framework APIs that cannot be safely guessed or assumed.
+To update: run `/psychic-update-skill`, or `cd ~/.codex/skills/psychic-skill && git fetch origin && git reset --hard origin/main && ./setup`.
+
+### Any other agent (Aider, Cursor, Cline, Windsurf, Gemini CLI, etc.)
+
+Skills are not a universal concept. <!-- source: https://agents.md/ accessed 2026-04-25 — AGENTS.md is the cross-agent open standard; tools that read it generally do not implement Claude/Codex-style skill loaders --> If your agent does not have a documented skill loader, treat the psychic-skill files as **prescribed reading**: read them with your normal file tools before doing any backend work.
+
+If the skill is not yet cloned anywhere your agent can read, install it:
+
+```
+git clone https://github.com/daniel-nelson/psychic-skill.git .ai/psychic-skill
+```
+
+Then, before writing or editing any code in `api/`, read `SKILL.md` from the cloned directory and follow every topic-file link it references (`models.md`, `controllers.md`, `serializers.md`, `sti.md`, `migrations.md`, `querying.md`, `testing.md`, `workers.md`, `websockets.md`, and any others). `SKILL.md` is the canonical index — its link list is kept current; do not rely on a list elsewhere.
+
+The skill is also typically already installed at `.claude/skills/psychic-skill/`, `~/.claude/skills/psychic-skill/`, `.codex/skills/psychic-skill/`, or `~/.codex/skills/psychic-skill/` — check those locations before re-cloning.
+
+To update: `cd <skill-dir> && git fetch origin && git reset --hard origin/main && ./setup`.

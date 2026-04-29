@@ -1,6 +1,12 @@
-## CRITICAL: psychic-skill required
+## CRITICAL: invoke the dream-psychic skill for backend work
 
-This is a Dream ORM / Psychic web framework application. You MUST use the **psychic-skill** for all development work in the `api` directory. The psychic-skill contains comprehensive rules, conventions, and patterns for Dream and Psychic that must be followed.
+This is a Dream ORM / Psychic web framework application. Before reading or editing **any** file under `api/`, you MUST invoke the **dream-psychic** skill (installed as `psychic-skill`). It is the single source of truth for Dream and Psychic conventions — generators, migrations, STI, serializers, controllers, naming, testing. There are no inline framework rules in this file.
+
+Do not skip this step because the skill's description is already in your context. The description is a stub. The actual rules live in the skill body, and they will not enter context until you invoke the skill.
+
+<!-- source: https://code.claude.com/docs/en/skills accessed 2026-04-25 — "skill descriptions are loaded into context so Claude knows what's available, but full skill content only loads when invoked" -->
+
+If the skill is not present in your session (`/` menu has no `psychic-skill` entry, or the model has no record of a `dream-psychic` skill), stop and follow the install steps in `api/CLAUDE.md` before doing any backend work.
 
 ## Project layout
 
@@ -29,22 +35,8 @@ Run `{{PM}} install` inside **each directory that has a `package.json`** — `ap
 
 Only the scripts defined in that directory's own `package.json` (e.g. `{{PM}} dev`, `{{PM}} build`, `{{PM}} lint`). Day-to-day work rarely needs these; the `api/` wrapper scripts above handle dev server startup.
 
-## Local services
+## Front-end datetime handling
 
-`docker-compose.yml` at the repo root provides Postgres and Redis for local development. Start them with `docker compose up -d` from the root before running specs or dev servers.
+Do not hand-roll date, time, or datetime handling in front-end code — no raw `Date` arithmetic, no manual string parsing or formatting, no ad-hoc timezone math. Use a well-maintained datetime library. **Luxon** (`DateTime`, `Duration`, `Interval`) is the recommended default; if the project already uses a different modern library consistently, match it. This applies to every front-end app in the repo (commonly `client/`, `admin/`, `internal/`, but anything outside `api/`).
 
-### If psychic-skill is installed
-
-It auto-loads when it detects Dream/Psychic imports or `psy` commands — no manual invocation needed. To check for updates, run `/psychic-update-skill`.
-
-### If psychic-skill is NOT installed
-
-**Stop and install it before doing any work.** Run:
-
-```
-git clone https://github.com/daniel-nelson/psychic-skill.git .claude/skills/psychic-skill && cd .claude/skills/psychic-skill && ./setup
-```
-
-Then restart Claude Code so the skill loads.
-
-**Do not attempt to work on this codebase without the psychic-skill installed.** It contains critical rules about generators, migrations, testing, naming conventions, STI patterns, and framework APIs that cannot be safely guessed or assumed.
+Backend datetime rules are different and live in the psychic-skill — do not apply this guidance to anything under `api/`.
