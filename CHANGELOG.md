@@ -1,3 +1,17 @@
+## 3.4.0
+
+Security audit hardening (Phases 8, 10, 16, 20 of the Dream/Psychic security audit):
+
+- **R-013**: scaffold websocket auth via a `resolveWebsocketUser` helper (test-only happy path; non-test envs throw on first connection — replace with a production scheme), wire socket.io's `allowRequest` hook inline in the boilerplate websockets initializer to enforce the HTTP CORS allowlist across every transport (closing the native-WebSocket-bypasses-CORS gap), and clarify the `CORS_HOSTS` parse error in `allowedCorsOrigins` so malformed values fail loudly instead of pushing developers toward unsafe workarounds
+- **R-016**: replace `execSync` with argv-form `execFileSync` in `installPsychicSkill` so shell metacharacters in developer-supplied paths are passed literally
+- **R-025**: pin `path-to-regexp >=8.4.0` in the boilerplate (carrying npm `overrides` / yarn `resolutions` / pnpm `overrides` together, then pruning to the chosen package manager at scaffold time so the values cannot drift) to close GHSA-j3q9-mxjg-w52f
+- **R-027**: migrate boilerplate Postgres TLS config from the deprecated `useSsl:` flag to `ssl:` so apps can opt into verified TLS (`ssl: { rejectUnauthorized: true, ca: ... }`) without the back-compat fallback to `rejectUnauthorized: false`
+
+Other:
+
+- improve CLAUDE.md and AGENTS.md guidance around the psychic-skill, and add front-end datetime handling guidance
+- disable pnpm 11 strict-dep-builds in the lint and check-build CI jobs (CI-only; no source-tree impact) so install proceeds when esbuild and puppeteer postinstalls are skipped — they're not needed for either job
+
 ## 3.3.1
 
 - strengthen root CLAUDE.md emphasis on the psychic-skill and project structure
