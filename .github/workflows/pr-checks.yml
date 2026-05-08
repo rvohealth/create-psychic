@@ -103,6 +103,15 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NODE_ENV: development
+      # corepack defaults to pnpm 11 here (no version pin), and pnpm 11
+      # hard-errors at install time on dependencies with ignored build
+      # scripts unless they're listed in pnpm-workspace.yaml's allowBuilds
+      # map. We deliberately don't ship that file at the repo root —
+      # adding it makes create-psychic a pnpm workspace root, which the
+      # spec runner's scaffolded test apps then escape into (breaking
+      # client installs with ERR_PNPM_LOCKFILE_CONFIG_MISMATCH). Disabling
+      # the strict check here is CI-scoped and leaves the source tree alone.
+      pnpm_config_strict_dep_builds: "false"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -120,6 +129,8 @@ jobs:
     env:
       NODE_ENV: development
       GITHUB_OAUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # See lint job for why this is set.
+      pnpm_config_strict_dep_builds: "false"
 
     steps:
       - uses: actions/checkout@v4
