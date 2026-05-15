@@ -32,6 +32,25 @@ export default async (app: DreamApp) => {
 
   app.set('parallelTests', AppEnv.integer('DREAM_PARALLEL_TESTS', { optional: true }) || 1)
 
+  // Verified TLS to Postgres via Node's system CA store. Works out of the box
+  // with managed providers that present a public-CA-signed certificate
+  // (Supabase, Neon, Render, Azure Database for PostgreSQL Flexible Server).
+  //
+  // If your provider uses a private CA, add its bundle:
+  //   - AWS RDS:       `ssl: { rejectUnauthorized: true, ca: readFileSync('rds-ca.pem') }`
+  //                    https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/UsingWithRDS.SSL.html
+  //   - GCP Cloud SQL: `ssl: { rejectUnauthorized: true, ca: readFileSync('server-ca.pem') }`
+  //                    https://cloud.google.com/sql/docs/postgres/connect-overview#secure
+  //
+  // For providers that present a self-signed certificate (Heroku Hobby tier
+  // and some local Docker images), drop verification:
+  //   `ssl: { rejectUnauthorized: false }` — encrypted but unauthenticated.
+  //
+  // Set `DB_NO_SSL=true` to disable TLS entirely (local dev only).
+  const dbSsl: { rejectUnauthorized: true } | false = AppEnv.boolean('DB_NO_SSL')
+    ? false
+    : { rejectUnauthorized: true }
+
   app.set('db', {
     primary: {
       user: AppEnv.string('DB_USER'),
@@ -39,8 +58,7 @@ export default async (app: DreamApp) => {
       host: AppEnv.string('DB_HOST'),
       name: AppEnv.string('DB_NAME'),
       port: AppEnv.integer('DB_PORT'),
-      // only connect to replica db insecurely if `DB_NO_SSL` is explicitly set
-      ssl: !AppEnv.boolean('DB_NO_SSL'),
+      ssl: dbSsl,
     },
     replica: AppEnv.string('REPLICA_DB_HOST', { optional: true })
       ? {
@@ -49,8 +67,7 @@ export default async (app: DreamApp) => {
           host: AppEnv.string('REPLICA_DB_HOST'),
           name: AppEnv.string('DB_NAME'),
           port: AppEnv.integer('REPLICA_DB_PORT', { optional: true }) || AppEnv.integer('DB_PORT'),
-          // only connect to replica db insecurely if `DB_NO_SSL` is explicitly set
-          ssl: !AppEnv.boolean('DB_NO_SSL'),
+          ssl: dbSsl,
         }
       : undefined,
   })
