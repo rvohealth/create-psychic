@@ -1,3 +1,7 @@
+## 3.4.2
+
+- Boilerplate `api/package.json` raises its `@rvoh/psychic` floor from `^3.0.5` to `^3.4.2`. psychic@3.4.2 fixes a `PsychicServer.stop()` graceful-shutdown hang: `stop()` now force-closes lingering keep-alive sockets before tearing down the database pool. The scaffolded feature-spec `afterAll` (`await server.stop()`) and the SIGTERM drain path both depend on this — without the floor, a lockfile resolving to a pre-3.4.2 psychic would hang the generated app's `pnpm fspec` teardown for the full hook timeout whenever the persistent Puppeteer page has in-flight requests.
+
 ## 3.4.1
 
 Refines the R-027 Postgres TLS migration shipped in 3.4.0. Pairs with dream@2.10.0, which narrows `SingleDbCredential.ssl` to `TlsConnectionOptions | false` and throws when the directive is omitted.

@@ -31,7 +31,7 @@
     "@koa/etag": "^5.0.2",
     "@koa/router": "^15.3.1",
     "@rvoh/dream": "^2.10.0",
-    "@rvoh/psychic": "^3.0.5",
+    "@rvoh/psychic": "^3.4.2",
     "@rvoh/psychic-websockets": "^3.1.0",
     "@rvoh/psychic-workers": "^2.3.0",
     "@socket.io/redis-adapter": "^8.3.0",
