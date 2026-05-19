@@ -1,6 +1,6 @@
 ## 3.4.2
 
-- Boilerplate `api/spec/features/setup/hooks.ts` now navigates the shared (cached) browser page to `about:blank` before `await server.stop()` in `afterAll`. `server.stop()` tears down the Dream connection pool (`pool.end()`), which only resolves once every pooled client is released; if the spec's final page is still live in the persistent headless browser, its in-flight requests can keep a pooled client checked out and the teardown hangs until the hook times out. Quiescing the page first releases the client. Interim guard for a Dream-level connection-lifecycle issue (reproduces with the stock `@rvoh/dream` `PostgresQueryDriver`); harmless to keep once the upstream fix lands.
+- Boilerplate `api/spec/features/setup/hooks.ts` now calls `resetBrowserState()` (from `@rvoh/psychic-spec-helpers` ≥ 3.0.2) in `afterEach`. The feature-spec browser is shared across spec files, so without per-spec cleanup `localStorage`/cookies leak between specs (incomplete isolation) and an in-flight request can keep a pooled DB client checked out across `server.stop()`. `resetBrowserState()` clears storage + cookies and navigates to `about:blank`, fixing both. The connection-lifecycle robustness itself is handled upstream in `@rvoh/dream` (bounded pool drain); this keeps per-spec teardown fast, clean, and properly isolated.
 
 ## 3.4.1
 

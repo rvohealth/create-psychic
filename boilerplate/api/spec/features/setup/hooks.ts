@@ -4,7 +4,7 @@ import initializePsychicApp from '@conf/system/initializePsychicApp.js'
 import { Dream, DreamApp } from '@rvoh/dream'
 import { provideDreamViteMatchers, truncate } from '@rvoh/dream-spec-helpers'
 import { PsychicServer } from '@rvoh/psychic'
-import { providePuppeteerViteMatchers } from '@rvoh/psychic-spec-helpers'
+import { providePuppeteerViteMatchers, resetBrowserState } from '@rvoh/psychic-spec-helpers'
 import getPage from '@spec/features/setup/getPage.js'
 
 provideDreamViteMatchers(Dream)
@@ -50,13 +50,13 @@ beforeEach(async () => {
   await truncate(DreamApp)
 })
 
-afterAll(async () => {
-  // Quiesce the shared page so its in-flight requests can't keep a pooled
-  // DB client checked out, which would slow server.stop()'s pool teardown.
-  // Navigate (not close) so the cached browser is reusable; best-effort.
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
-  const sharedPage = (global as any).page as { goto?: (url: string) => Promise<unknown> } | undefined
-  await sharedPage?.goto?.('about:blank').catch(() => {})
+afterEach(async () => {
+  // Reset the shared browser between specs: clears localStorage/cookies for
+  // real isolation, and the about:blank navigation releases any pooled DB
+  // client held by in-flight requests so server teardown isn't blocked.
+  await resetBrowserState()
+})
 
+afterAll(async () => {
   await server.stop()
 })
