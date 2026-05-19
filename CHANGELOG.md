@@ -1,6 +1,7 @@
 ## 3.4.2
 
 - Boilerplate `api/spec/features/setup/hooks.ts` now calls `resetBrowserState()` (from `@rvoh/psychic-spec-helpers` ≥ 3.1.0) in `afterEach`. The feature-spec browser is shared across spec files, so without per-spec cleanup `localStorage`/cookies leak between specs (incomplete isolation) and an in-flight request can keep a pooled DB client checked out across `server.stop()`. `resetBrowserState()` clears storage + cookies and navigates to `about:blank`, fixing both. The connection-lifecycle robustness itself is handled upstream in `@rvoh/dream` (bounded pool drain); this keeps per-spec teardown fast, clean, and properly isolated.
+- Boilerplate `api/src/conf/dream.ts` now sets a `connectionTimeoutMillis` (default `5000`, override via `DB_CONNECTION_TIMEOUT_MS`) on the primary/replica db credentials, using the pg timeout passthrough added in `@rvoh/dream` 2.11.2. node-postgres defaults `connectionTimeoutMillis` to `0` (wait forever on an exhausted pool), so a connection leak or DB stall would hang the process; bounding acquisition makes it fail fast. `statement_timeout`/`query_timeout` are intentionally left unset with an inline comment pointing to the Postgres-role approach (a blanket app-wide value would kill long migrations/reports). Generated apps get the sensible default; the library itself stays backward compatible (no timeout defaulted there).
 
 ## 3.4.1
 

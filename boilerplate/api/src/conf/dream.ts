@@ -42,6 +42,21 @@ export default async (app: DreamApp) => {<PROJECT_ROOT>
     ? false
     : { rejectUnauthorized: true }
 
+  // Connection-pool / query timeouts. node-postgres ships unprotective
+  // defaults: `connectionTimeoutMillis: 0` means a `pool.connect()` waits
+  // FOREVER when the pool is exhausted, so a connection leak or a stalled
+  // database hangs the process instead of failing fast. We bound pool
+  // acquisition (override via DB_CONNECTION_TIMEOUT_MS).
+  //
+  // `statement_timeout` / `query_timeout` are intentionally NOT set here: a
+  // blanket value would abort legitimate long migrations, reports, and
+  // backfills. Prefer setting it on the app's Postgres role
+  // (`ALTER ROLE myapp SET statement_timeout = '30s'`); or, if you want it
+  // app-wide, add `statement_timeout: <ms>` to the timeout block below.
+  const dbTimeouts = {
+    connectionTimeoutMillis: AppEnv.integer('DB_CONNECTION_TIMEOUT_MS', { optional: true }) || 5000,
+  }
+
   app.set('db', {
     primary: {
       user: AppEnv.string('DB_USER'),
@@ -50,6 +65,7 @@ export default async (app: DreamApp) => {<PROJECT_ROOT>
       name: AppEnv.string('DB_NAME'),
       port: AppEnv.integer('DB_PORT'),
       ssl: dbSsl,
+      ...dbTimeouts,
     },
     replica: AppEnv.string('REPLICA_DB_HOST', { optional: true })
       ? {
@@ -59,6 +75,7 @@ export default async (app: DreamApp) => {<PROJECT_ROOT>
           name: AppEnv.string('DB_NAME'),
           port: AppEnv.integer('REPLICA_DB_PORT', { optional: true }) || AppEnv.integer('DB_PORT'),
           ssl: dbSsl,
+          ...dbTimeouts,
         }
       : undefined,
   })
