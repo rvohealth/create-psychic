@@ -1,6 +1,6 @@
 ## 3.4.2
 
-- Boilerplate `api/spec/features/setup/hooks.ts` now calls `resetBrowserState()` (from `@rvoh/psychic-spec-helpers` ≥ 3.0.2) in `afterEach`. The feature-spec browser is shared across spec files, so without per-spec cleanup `localStorage`/cookies leak between specs (incomplete isolation) and an in-flight request can keep a pooled DB client checked out across `server.stop()`. `resetBrowserState()` clears storage + cookies and navigates to `about:blank`, fixing both. The connection-lifecycle robustness itself is handled upstream in `@rvoh/dream` (bounded pool drain); this keeps per-spec teardown fast, clean, and properly isolated.
+- Boilerplate `api/spec/features/setup/hooks.ts` now calls `resetBrowserState()` (from `@rvoh/psychic-spec-helpers` ≥ 3.1.0) in `afterEach`. The feature-spec browser is shared across spec files, so without per-spec cleanup `localStorage`/cookies leak between specs (incomplete isolation) and an in-flight request can keep a pooled DB client checked out across `server.stop()`. `resetBrowserState()` clears storage + cookies and navigates to `about:blank`, fixing both. The connection-lifecycle robustness itself is handled upstream in `@rvoh/dream` (bounded pool drain); this keeps per-spec teardown fast, clean, and properly isolated.
 
 ## 3.4.1
 
