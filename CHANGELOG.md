@@ -1,3 +1,7 @@
+## 3.4.2
+
+- Boilerplate `api/spec/features/setup/hooks.ts` now navigates the shared (cached) browser page to `about:blank` before `await server.stop()` in `afterAll`. `server.stop()` tears down the Dream connection pool (`pool.end()`), which only resolves once every pooled client is released; if the spec's final page is still live in the persistent headless browser, its in-flight requests can keep a pooled client checked out and the teardown hangs until the hook times out. Quiescing the page first releases the client. Interim guard for a Dream-level connection-lifecycle issue (reproduces with the stock `@rvoh/dream` `PostgresQueryDriver`); harmless to keep once the upstream fix lands.
+
 ## 3.4.1
 
 Refines the R-027 Postgres TLS migration shipped in 3.4.0. Pairs with dream@2.10.0, which narrows `SingleDbCredential.ssl` to `TlsConnectionOptions | false` and throws when the directive is omitted.

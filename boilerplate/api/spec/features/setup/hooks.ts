@@ -51,5 +51,22 @@ beforeEach(async () => {
 })
 
 afterAll(async () => {
+  /*
+   * Quiesce the shared browser page before stopping the API server.
+   *
+   * The page launched in beforeAll is cached on `global` and reused across
+   * every feature-spec file. PsychicServer.stop() tears down the database
+   * connection pool (pool.end()), which only resolves once every pooled
+   * client has been released. If the spec's final page is still live in the
+   * headless browser, its in-flight requests can keep a pooled client
+   * checked out, and pool.end() blocks until the hook times out. Navigating
+   * to about:blank cancels those requests so the client is released. We
+   * navigate (not close) so the cached browser stays reusable by the next
+   * spec file. Best-effort — a navigation failure must not block teardown.
+   */
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
+  const sharedPage = (global as any).page as { goto?: (url: string) => Promise<unknown> } | undefined
+  await sharedPage?.goto?.('about:blank').catch(() => {})
+
   await server.stop()
 })
