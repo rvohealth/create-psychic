@@ -42,19 +42,30 @@ export default async (app: DreamApp) => {<PROJECT_ROOT>
     ? false
     : { rejectUnauthorized: true }
 
-  // Connection-pool / query timeouts. node-postgres ships unprotective
-  // defaults: `connectionTimeoutMillis: 0` means a `pool.connect()` waits
-  // FOREVER when the pool is exhausted, so a connection leak or a stalled
-  // database hangs the process instead of failing fast. We bound pool
-  // acquisition (override via DB_CONNECTION_TIMEOUT_MS).
+  // Connection-pool defaults. node-postgres ships unprotective defaults, so
+  // these are set explicitly here (the @rvoh/dream library stays backward
+  // compatible by NOT defaulting them; new apps get sensible values):
   //
-  // `statement_timeout` / `query_timeout` are intentionally NOT set here: a
-  // blanket value would abort legitimate long migrations, reports, and
-  // backfills. Prefer setting it on the app's Postgres role
-  // (`ALTER ROLE myapp SET statement_timeout = '30s'`); or, if you want it
-  // app-wide, add `statement_timeout: <ms>` to the timeout block below.
-  const dbTimeouts = {
+  //  - connectionTimeoutMillis: pg default 0 = a `pool.connect()` waits
+  //    FOREVER when the pool is exhausted, so a connection leak or stalled
+  //    DB hangs the process instead of failing fast. Bounded here
+  //    (override via DB_CONNECTION_TIMEOUT_MS).
+  //  - application_name: pg default empty = connections are anonymous in
+  //    `pg_stat_activity` / server logs. Naming them makes incident
+  //    response (and "who is holding this connection?") tractable.
+  //  - keepAlive: pg default false. Enable TCP keepalive so dead
+  //    connections behind a load balancer / NAT are detected instead of
+  //    hanging.
+  //
+  // `statement_timeout` / `query_timeout` / `idle_in_transaction_session_timeout`
+  // are intentionally NOT set here: a blanket value would abort legitimate
+  // long migrations, reports, and backfills. Prefer the app's Postgres role
+  // (`ALTER ROLE myapp SET statement_timeout = '30s'`); or add them to this
+  // block if you want them app-wide.
+  const dbConnectionDefaults = {
     connectionTimeoutMillis: AppEnv.integer('DB_CONNECTION_TIMEOUT_MS', { optional: true }) || 5000,
+    application_name: AppEnv.string('APP_NAME', { optional: true }) || 'app',
+    keepAlive: true,
   }
 
   app.set('db', {
@@ -65,7 +76,7 @@ export default async (app: DreamApp) => {<PROJECT_ROOT>
       name: AppEnv.string('DB_NAME'),
       port: AppEnv.integer('DB_PORT'),
       ssl: dbSsl,
-      ...dbTimeouts,
+      ...dbConnectionDefaults,
     },
     replica: AppEnv.string('REPLICA_DB_HOST', { optional: true })
       ? {
@@ -75,7 +86,7 @@ export default async (app: DreamApp) => {<PROJECT_ROOT>
           name: AppEnv.string('DB_NAME'),
           port: AppEnv.integer('REPLICA_DB_PORT', { optional: true }) || AppEnv.integer('DB_PORT'),
           ssl: dbSsl,
-          ...dbTimeouts,
+          ...dbConnectionDefaults,
         }
       : undefined,
   })
