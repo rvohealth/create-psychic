@@ -227,7 +227,7 @@ export default async function copyInitApiBoilerplate(appName: string, options: I
 
 function pnpmWorkspaceYaml(options: InitPsychicAppCliOptions) {
   if (options.template === 'nextjs') {
-    return 'allowBuilds:\n  esbuild: true\n  sharp: true\n  unrs-resolver: true\n'
+    return 'allowBuilds:\n  esbuild: true\n  puppeteer: true\n  sharp: true\n  unrs-resolver: true\n'
   }
   if (options.dreamOnly) {
     return 'allowBuilds:\n  esbuild: true\n'
