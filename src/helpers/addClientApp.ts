@@ -183,7 +183,7 @@ function initilizePackageManagerCmd(packageManager: PsychicPackageManager) {
     case 'yarn':
       return `&& touch ${lockfile} && corepack enable && yarn set version stable`
     case 'pnpm':
-      return '&& corepack enable pnpm && corepack use pnpm@10'
+      return ''
     case 'npm':
       return ''
   }
