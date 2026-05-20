@@ -4,6 +4,6 @@ overrides:
   picomatch: '>=4.0.4'
   socks: '>=2.8.9'
 
-onlyBuiltDependencies:
-  - esbuild
-  - puppeteer
+allowBuilds:
+  esbuild: true
+  puppeteer: true
