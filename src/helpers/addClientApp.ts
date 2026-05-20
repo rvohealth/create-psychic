@@ -146,7 +146,7 @@ export default async function addClientApp({
   if (options.packageManager === 'yarn') {
     fs.writeFileSync(
       path.join(apiRoot, '..', clientRootFolderName, '.yarnrc.yml'),
-      'nodeLinker: node-modules\n',
+      'nodeLinker: node-modules\n\nnpmPreapprovedPackages:\n  - "@rvoh/*"\n',
     )
   }
 
