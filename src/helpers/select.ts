@@ -21,7 +21,7 @@ export default class Select<T extends readonly any[]> {
     this.init()
 
     return new Promise(accept => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any, @typescript-eslint/no-unnecessary-type-assertion
       this.cb = accept as any
     })
   }
