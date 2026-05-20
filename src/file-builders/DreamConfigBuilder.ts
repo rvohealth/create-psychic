@@ -5,7 +5,7 @@ import pathToArgs from '../helpers/pathToArgs.js'
 import rewriteEsmImports from '../helpers/rewriteEsmImports.js'
 
 export default class DreamConfigBuilder {
-  public static async build({ options }: { appName: string; options: NewPsychicAppCliOptions }) {
+  public static async build({ appName, options }: { appName: string; options: NewPsychicAppCliOptions }) {
     const contents = (
       await fs.readFile(internalSrcPath('..', 'boilerplate', 'api', 'src', 'conf', 'dream.ts'))
     ).toString()
@@ -19,6 +19,7 @@ export default class DreamConfigBuilder {
       .replace('<MODELS_PATH>', "srcPath('app', 'models')")
       .replace('<IMPORT_STYLE>', '')
       .replace('<PROJECT_ROOT>', '')
+      .replace('<PROJECT_NAME>', appName)
       .replace('<SERIALIZERS_PATH>', "srcPath('app', 'serializers')")
   }
 

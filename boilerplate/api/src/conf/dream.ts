@@ -48,7 +48,7 @@ export default async (app: DreamApp) => {<PROJECT_ROOT>
   // aren't aborted, or add them here for an app-wide default.
   const dbConnectionDefaults: NonNullable<SingleDbCredential['pg']> = {
     connectionTimeoutMillis: AppEnv.integer('DB_CONNECTION_TIMEOUT_MS', { optional: true }) || 5000, // pg default 0 = wait forever on an exhausted pool
-    application_name: AppEnv.string('APP_NAME', { optional: true }) || 'psychic-app', // visible in pg_stat_activity; aids incident response
+    application_name: AppEnv.string('APP_NAME', { optional: true }) || '<PROJECT_NAME>', // visible in pg_stat_activity; aids incident response
     keepAlive: true, // detects dead connections behind a load balancer or NAT
   }
 
