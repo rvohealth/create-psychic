@@ -150,6 +150,11 @@ export default async function addClientApp({
     )
   }
 
+  // Prevent pnpm from traversing up and merging with a parent workspace (e.g. create-psychic's own pnpm-workspace.yaml during specs).
+  if (options.packageManager === 'pnpm') {
+    fs.writeFileSync(path.join(apiRoot, '..', clientRootFolderName, 'pnpm-workspace.yaml'), '')
+  }
+
   // only bother installing packages if not in test env to save time
   await sspawn(
     `cd ${path.join(apiRoot, '..', clientRootFolderName)} && ${installCmd(options.packageManager)}`,

@@ -1,3 +1,4 @@
+import * as fs from 'node:fs'
 import DreamCliLogger from '../../logger/DreamCliLogger.js'
 import colorize from '../../logger/loggable/colorize.js'
 import getApiRoot from '../getApiRoot.js'
@@ -27,6 +28,8 @@ export default async function installApiDependencies(
       break
 
     case 'pnpm':
+      // Prevent pnpm from traversing up and merging with a parent workspace (e.g. create-psychic's own pnpm-workspace.yaml during specs).
+      fs.writeFileSync(`${apiRoot}/pnpm-workspace.yaml`, '')
       await sspawn(`cd ${apiRoot} && corepack enable pnpm && pnpm install && pnpm up "@rvoh/*"`, {
         onStdout: message => {
           logger.logContinueProgress(colorize('[api]', { color: 'cyan' }) + ' ' + message, {
