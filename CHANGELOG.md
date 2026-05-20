@@ -5,7 +5,7 @@
 
 ## 3.4.1
 
-Refines the R-027 Postgres TLS migration shipped in 3.4.0. Pairs with dream@2.10.0, which narrows `SingleDbCredential.ssl` to `TlsConnectionOptions | false` and throws when the directive is omitted.
+Refines the R-027 Postgres TLS migration shipped in 3.4.0. Pairs with dream@2.10.0, which narrows `DreamDbConfig.ssl` to `TlsConnectionOptions | false` and throws when the directive is omitted.
 
 - Boilerplate `api/src/conf/dream.ts` now defaults `ssl: { rejectUnauthorized: true }` — verified TLS via Node's system CA store. Works out of the box with managed providers that present a public-CA-signed certificate (Supabase, Neon, Render, Azure Database for PostgreSQL Flexible Server).
 - `DB_NO_SSL=true` escape hatch resolves to `ssl: false` (the new explicit TLS-off sentinel) rather than the previous boolean form.

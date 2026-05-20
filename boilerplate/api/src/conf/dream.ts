@@ -1,4 +1,5 @@
-import { DreamApp, type SingleDbCredential } from '@rvoh/dream'<PSYCHIC_IMPORT>
+import { DreamApp } from '@rvoh/dream'<PSYCHIC_IMPORT>
+import { type DreamDbConfig } from '@rvoh/dream/types'
 
 import AppEnv from '@conf/AppEnv.js'
 import inflections from '@conf/inflections.js'
@@ -46,7 +47,7 @@ export default async (app: DreamApp) => {<PROJECT_ROOT>
   // To add statement_timeout / query_timeout / idle_in_transaction_session_timeout,
   // prefer `ALTER ROLE myapp SET ...` on the Postgres role so long migrations
   // aren't aborted, or add them here for an app-wide default.
-  const dbConnectionDefaults: NonNullable<SingleDbCredential['pg']> = {
+  const dbConnectionDefaults: NonNullable<DreamDbConfig['pg']> = {
     connectionTimeoutMillis: AppEnv.integer('DB_CONNECTION_TIMEOUT_MS', { optional: true }) || 5000, // pg default 0 = wait forever on an exhausted pool
     application_name: AppEnv.string('APP_NAME', { optional: true }) || '<PROJECT_NAME>', // visible in pg_stat_activity; aids incident response
     keepAlive: true, // detects dead connections behind a load balancer or NAT
