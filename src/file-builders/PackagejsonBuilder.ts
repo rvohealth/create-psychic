@@ -226,6 +226,7 @@ function pruneOverridesForPackageManager(packageJson: any, packageManager: 'npm'
     case 'pnpm':
       delete packageJson.overrides
       delete packageJson.resolutions
+      delete packageJson.pnpm
       break
   }
   /* eslint-enable @typescript-eslint/no-unsafe-member-access */

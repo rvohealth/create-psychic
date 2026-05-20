@@ -403,10 +403,10 @@ describe('PackagejsonBuilder', () => {
         expect(parsed.pnpm).toBeUndefined()
       })
 
-      it('keeps only `pnpm.overrides` for pnpm', async () => {
+      it('strips all override fields for pnpm (overrides live in pnpm-workspace.yaml)', async () => {
         const res = await PackagejsonBuilder.buildAPI('howyadoin', { ...baseOptions, packageManager: 'pnpm' })
         const parsed = JSON.parse(res) as Record<string, unknown>
-        expect(parsed.pnpm).toEqual({ overrides: { 'path-to-regexp': '>=8.4.0' } })
+        expect(parsed.pnpm).toBeUndefined()
         expect(parsed.overrides).toBeUndefined()
         expect(parsed.resolutions).toBeUndefined()
       })
