@@ -27,13 +27,16 @@ export default async function installApiDependencies(
       break
 
     case 'pnpm':
-      await sspawn(`cd ${apiRoot} && corepack enable pnpm && pnpm install && pnpm up "@rvoh/*"`, {
-        onStdout: message => {
-          logger.logContinueProgress(colorize('[api]', { color: 'cyan' }) + ' ' + message, {
-            logPrefixColor: 'cyan',
-          })
+      await sspawn(
+        `cd ${apiRoot} && corepack enable pnpm && corepack use pnpm@10 && pnpm install && pnpm up "@rvoh/*"`,
+        {
+          onStdout: message => {
+            logger.logContinueProgress(colorize('[api]', { color: 'cyan' }) + ' ' + message, {
+              logPrefixColor: 'cyan',
+            })
+          },
         },
-      })
+      )
       break
 
     case 'npm':
