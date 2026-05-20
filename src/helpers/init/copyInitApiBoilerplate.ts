@@ -226,13 +226,28 @@ export default async function copyInitApiBoilerplate(appName: string, options: I
 }
 
 function pnpmWorkspaceYaml(options: InitPsychicAppCliOptions) {
+  // pnpm 11 introduced minimumReleaseAge (default: 1440 min = 24h), which prevents
+  // installing packages published less than 24h ago. @rvoh/* packages are excluded
+  // so that freshly-published releases are always available to generated apps.
+  const rvohExcludes =
+    'minimumReleaseAgeExclude:\n' +
+    "  - '@rvoh/dream'\n" +
+    "  - '@rvoh/dream-spec-helpers'\n" +
+    "  - '@rvoh/psychic'\n" +
+    "  - '@rvoh/psychic-spec-helpers'\n" +
+    "  - '@rvoh/psychic-workers'\n" +
+    "  - '@rvoh/psychic-websockets'\n"
+
   if (options.template === 'nextjs') {
-    return 'allowBuilds:\n  esbuild: true\n  puppeteer: true\n  sharp: true\n  unrs-resolver: true\n'
+    return (
+      'allowBuilds:\n  esbuild: true\n  puppeteer: true\n  sharp: true\n  unrs-resolver: true\n' +
+      rvohExcludes
+    )
   }
   if (options.dreamOnly) {
-    return 'allowBuilds:\n  esbuild: true\n'
+    return 'allowBuilds:\n  esbuild: true\n' + rvohExcludes
   }
-  return 'allowBuilds:\n  esbuild: true\n  puppeteer: true\n'
+  return 'allowBuilds:\n  esbuild: true\n  puppeteer: true\n' + rvohExcludes
 }
 
 function copyRecursiveSync(path: string, dest: string, importExtension: (typeof importExtensions)[number]) {
