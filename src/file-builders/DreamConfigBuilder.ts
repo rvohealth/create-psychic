@@ -11,6 +11,7 @@ export default class DreamConfigBuilder {
     ).toString()
 
     return contents
+      .replace('<PROJECT_NAME>', appName)
       .replace('<PRIMARY_KEY_TYPE>', `'${options.primaryKeyType}'`)
       .replace('<PSYCHIC_IMPORT>', "\nimport { PsychicApp } from '@rvoh/psychic'")
       .replace(/<PSYCHIC_OR_DREAM_APP>/g, 'PsychicApp')
@@ -19,16 +20,22 @@ export default class DreamConfigBuilder {
       .replace('<MODELS_PATH>', "srcPath('app', 'models')")
       .replace('<IMPORT_STYLE>', '')
       .replace('<PROJECT_ROOT>', '')
-      .replace('<PROJECT_NAME>', appName)
       .replace('<SERIALIZERS_PATH>', "srcPath('app', 'serializers')")
   }
 
-  public static async buildForInit({ options }: { appName: string; options: InitPsychicAppCliOptions }) {
+  public static async buildForInit({
+    appName,
+    options,
+  }: {
+    appName: string
+    options: InitPsychicAppCliOptions
+  }) {
     const boilerplateFilepath = internalSrcPath('..', 'boilerplate', 'api', 'src', 'conf', 'dream.ts')
 
     const contents = (await fs.readFile(boilerplateFilepath)).toString()
 
     const modifiedContents = contents
+      .replace('<PROJECT_NAME>', appName)
       .replace('<PRIMARY_KEY_TYPE>', `'${options.primaryKeyType}'`)
       .replace('<PSYCHIC_IMPORT>', '')
       .replace(/<PSYCHIC_OR_DREAM_APP>/g, 'DreamApp')
