@@ -1,0 +1,5 @@
+overrides:
+  basic-ftp: '>=5.3.1'
+  ip-address: '>=10.1.1'
+  picomatch: '>=4.0.4'
+  socks: '>=2.8.9'
