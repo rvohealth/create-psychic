@@ -1,4 +1,4 @@
-import { DreamApp } from '@rvoh/dream'<PSYCHIC_IMPORT>
+import { DreamApp, type SingleDbCredential } from '@rvoh/dream'<PSYCHIC_IMPORT>
 
 import AppEnv from '@conf/AppEnv.js'
 import inflections from '@conf/inflections.js'
@@ -62,7 +62,7 @@ export default async (app: DreamApp) => {<PROJECT_ROOT>
   // long migrations, reports, and backfills. Prefer the app's Postgres role
   // (`ALTER ROLE myapp SET statement_timeout = '30s'`); or add them to this
   // block if you want them app-wide.
-  const dbConnectionDefaults = {
+  const dbConnectionDefaults: NonNullable<SingleDbCredential['pg']> = {
     connectionTimeoutMillis: AppEnv.integer('DB_CONNECTION_TIMEOUT_MS', { optional: true }) || 5000,
     application_name: AppEnv.string('APP_NAME', { optional: true }) || 'app',
     keepAlive: true,
@@ -76,7 +76,7 @@ export default async (app: DreamApp) => {<PROJECT_ROOT>
       name: AppEnv.string('DB_NAME'),
       port: AppEnv.integer('DB_PORT'),
       ssl: dbSsl,
-      ...dbConnectionDefaults,
+      pg: dbConnectionDefaults,
     },
     replica: AppEnv.string('REPLICA_DB_HOST', { optional: true })
       ? {
@@ -86,7 +86,7 @@ export default async (app: DreamApp) => {<PROJECT_ROOT>
           name: AppEnv.string('DB_NAME'),
           port: AppEnv.integer('REPLICA_DB_PORT', { optional: true }) || AppEnv.integer('DB_PORT'),
           ssl: dbSsl,
-          ...dbConnectionDefaults,
+          pg: dbConnectionDefaults,
         }
       : undefined,
   })
