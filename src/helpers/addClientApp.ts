@@ -151,8 +151,12 @@ export default async function addClientApp({
   }
 
   // Prevent pnpm from traversing up and merging with a parent workspace (e.g. create-psychic's own pnpm-workspace.yaml during specs).
+  // Also pre-approve build scripts that pnpm 11 blocks by default.
   if (options.packageManager === 'pnpm') {
-    fs.writeFileSync(path.join(apiRoot, '..', clientRootFolderName, 'pnpm-workspace.yaml'), '')
+    fs.writeFileSync(
+      path.join(apiRoot, '..', clientRootFolderName, 'pnpm-workspace.yaml'),
+      pnpmClientWorkspaceYaml(client),
+    )
   }
 
   // only bother installing packages if not in test env to save time
@@ -205,6 +209,16 @@ function addFspecBuildDirToGitignore(gitignorePath: string, dirName: string) {
     if (!contents.includes(dirName)) {
       fs.writeFileSync(gitignorePath, `${contents}\n\n# fspec build directory\n${dirName}\n`)
     }
+  }
+}
+
+function pnpmClientWorkspaceYaml(client: (typeof cliClientAppTypes)[number]) {
+  switch (client) {
+    case 'nextjs':
+    case 'nuxt':
+      return 'allowBuilds:\n  esbuild: true\n  sharp: true\n  unrs-resolver: true\n'
+    default:
+      return 'allowBuilds:\n  esbuild: true\n'
   }
 }
 
