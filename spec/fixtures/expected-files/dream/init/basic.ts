@@ -51,30 +51,14 @@ export default async (app: DreamApp) => {
     ? false
     : { rejectUnauthorized: true }
 
-  // Connection-pool defaults. node-postgres ships unprotective defaults, so
-  // these are set explicitly here (the @rvoh/dream library stays backward
-  // compatible by NOT defaulting them; new apps get sensible values):
-  //
-  //  - connectionTimeoutMillis: pg default 0 = a `pool.connect()` waits
-  //    FOREVER when the pool is exhausted, so a connection leak or stalled
-  //    DB hangs the process instead of failing fast. Bounded here
-  //    (override via DB_CONNECTION_TIMEOUT_MS).
-  //  - application_name: pg default empty = connections are anonymous in
-  //    `pg_stat_activity` / server logs. Naming them makes incident
-  //    response (and "who is holding this connection?") tractable.
-  //  - keepAlive: pg default false. Enable TCP keepalive so dead
-  //    connections behind a load balancer / NAT are detected instead of
-  //    hanging.
-  //
-  // `statement_timeout` / `query_timeout` / `idle_in_transaction_session_timeout`
-  // are intentionally NOT set here: a blanket value would abort legitimate
-  // long migrations, reports, and backfills. Prefer the app's Postgres role
-  // (`ALTER ROLE myapp SET statement_timeout = '30s'`); or add them to this
-  // block if you want them app-wide.
+  // node-postgres defaults are unprotective; override the ones that matter.
+  // To add statement_timeout / query_timeout / idle_in_transaction_session_timeout,
+  // prefer `ALTER ROLE myapp SET ...` on the Postgres role so long migrations
+  // aren't aborted, or add them here for an app-wide default.
   const dbConnectionDefaults: NonNullable<SingleDbCredential['pg']> = {
-    connectionTimeoutMillis: AppEnv.integer('DB_CONNECTION_TIMEOUT_MS', { optional: true }) || 5000,
-    application_name: AppEnv.string('APP_NAME', { optional: true }) || 'app',
-    keepAlive: true,
+    connectionTimeoutMillis: AppEnv.integer('DB_CONNECTION_TIMEOUT_MS', { optional: true }) || 5000, // pg default 0 = wait forever on an exhausted pool
+    application_name: AppEnv.string('APP_NAME', { optional: true }) || 'app', // visible in pg_stat_activity; aids incident response
+    keepAlive: true, // detects dead connections behind a load balancer or NAT
   }
 
   app.set('db', {
