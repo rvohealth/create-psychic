@@ -6,11 +6,13 @@ import { PsychicAppWebsockets, Ws } from '@rvoh/psychic-websockets'
 import { Redis } from 'ioredis'
 
 export default (psy: PsychicApp) => {
-  // Run for the websocket server AND any worker process that calls Ws.emit().
-  // Each Node process has its own module cache — PsychicAppWebsockets is not
-  // shared across processes. The ws process owns Cable.start() and socket
-  // handling; workers only need the Redis connection used by Ws.emit().
-  if (!['websockets', 'worker'].includes(AppEnv.serviceRole) && !AppEnv.isTest) return
+  // Initialize for all three named service roles:
+  //   'websockets' — owns Cable.start() and socket connection handling
+  //   'web'        — controllers may call Ws.emit() directly in response to HTTP requests
+  //   'worker'     — background jobs may call Ws.emit() to push real-time notifications
+  // Skip only for 'unknown' (migrations, CLI, REPL, one-off scripts that never use websocket APIs).
+  // Each Node process has its own module cache — PsychicAppWebsockets is not shared across processes.
+  if (AppEnv.serviceRole === 'unknown' && !AppEnv.isTest) return
 
   psy.plugin(async () => {
     await PsychicAppWebsockets.init(psy, initializeWebsockets)
