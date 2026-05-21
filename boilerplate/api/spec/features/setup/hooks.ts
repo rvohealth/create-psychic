@@ -4,7 +4,7 @@ import initializePsychicApp from '@conf/system/initializePsychicApp.js'
 import { Dream, DreamApp } from '@rvoh/dream'
 import { provideDreamViteMatchers, truncate } from '@rvoh/dream-spec-helpers'
 import { PsychicServer } from '@rvoh/psychic'
-import { providePuppeteerViteMatchers } from '@rvoh/psychic-spec-helpers'
+import { providePuppeteerViteMatchers, resetBrowserState } from '@rvoh/psychic-spec-helpers'
 import getPage from '@spec/features/setup/getPage.js'
 
 provideDreamViteMatchers(Dream)
@@ -48,6 +48,13 @@ beforeAll(async () => {
 
 beforeEach(async () => {
   await truncate(DreamApp)
+})
+
+afterEach(async () => {
+  // Reset the shared browser between specs: clears localStorage/cookies for
+  // real isolation, and the about:blank navigation releases any pooled DB
+  // client held by in-flight requests so server teardown isn't blocked.
+  await resetBrowserState()
 })
 
 afterAll(async () => {

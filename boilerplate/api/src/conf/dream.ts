@@ -1,4 +1,5 @@
 import { DreamApp } from '@rvoh/dream'<PSYCHIC_IMPORT>
+import { type DreamDbConfig } from '@rvoh/dream/types'
 
 import AppEnv from '@conf/AppEnv.js'
 import inflections from '@conf/inflections.js'
@@ -42,6 +43,16 @@ export default async (app: DreamApp) => {<PROJECT_ROOT>
     ? false
     : { rejectUnauthorized: true }
 
+  // node-postgres defaults are unprotective; override the ones that matter.
+  // To add statement_timeout / query_timeout / idle_in_transaction_session_timeout,
+  // prefer `ALTER ROLE myapp SET ...` on the Postgres role so long migrations
+  // aren't aborted, or add them here for an app-wide default.
+  const dbConnectionDefaults: NonNullable<DreamDbConfig['pg']> = {
+    connectionTimeoutMillis: AppEnv.integer('DB_CONNECTION_TIMEOUT_MS', { optional: true }) || 5000, // pg default 0 = wait forever on an exhausted pool
+    application_name: AppEnv.string('APP_NAME', { optional: true }) || '<PROJECT_NAME>', // visible in pg_stat_activity; aids incident response
+    keepAlive: true, // detects dead connections behind a load balancer or NAT
+  }
+
   app.set('db', {
     primary: {
       user: AppEnv.string('DB_USER'),
@@ -50,6 +61,7 @@ export default async (app: DreamApp) => {<PROJECT_ROOT>
       name: AppEnv.string('DB_NAME'),
       port: AppEnv.integer('DB_PORT'),
       ssl: dbSsl,
+      pg: dbConnectionDefaults,
     },
     replica: AppEnv.string('REPLICA_DB_HOST', { optional: true })
       ? {
@@ -59,6 +71,7 @@ export default async (app: DreamApp) => {<PROJECT_ROOT>
           name: AppEnv.string('DB_NAME'),
           port: AppEnv.integer('REPLICA_DB_PORT', { optional: true }) || AppEnv.integer('DB_PORT'),
           ssl: dbSsl,
+          pg: dbConnectionDefaults,
         }
       : undefined,
   })

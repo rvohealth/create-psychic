@@ -67,6 +67,11 @@ export default async function copyApiBoilerplate(appName: string, options: NewPs
     fs.rmSync(path.join(apiRoot, 'yarnrc.yml'))
   }
 
+  // pnpm-workspace.yaml is pnpm-only; delete it for other package managers
+  if (options.packageManager !== 'pnpm') {
+    fs.rmSync(path.join(apiRoot, 'pnpm-workspace.yaml'))
+  }
+
   fs.renameSync(path.join(apiRoot, 'gitignore'), path.join(apiRoot, '.gitignore'))
   fs.writeFileSync(
     path.join(apiRoot, 'src', 'conf', 'system', 'srcPath.ts'),

@@ -1,0 +1,14 @@
+overrides:
+  path-to-regexp: '>=8.4.0'
+
+allowBuilds:
+  esbuild: true
+  puppeteer: true
+
+minimumReleaseAgeExclude:
+  - '@rvoh/dream'
+  - '@rvoh/dream-spec-helpers'
+  - '@rvoh/psychic'
+  - '@rvoh/psychic-spec-helpers'
+  - '@rvoh/psychic-workers'
+  - '@rvoh/psychic-websockets'

@@ -6,7 +6,7 @@ export default function sspawn(
 ) {
   return new Promise((accept, reject) => {
     ssspawn(command, opts).on('close', code => {
-      if (code !== 0) reject(code as unknown as Error)
+      if (code !== 0) reject(new Error(`process exited with code ${code}`))
       accept({})
     })
   })

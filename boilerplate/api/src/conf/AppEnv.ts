@@ -3,11 +3,19 @@ import { Env } from '@rvoh/dream'
 class AppEnvClass extends Env<{
   boolean: 'CONSOLE_SERVICE' | 'CLIENT' | 'DB_NO_SSL' | 'REQUEST_LOGGING' | 'WEB_SERVICE' | 'WS_SERVICE' | 'WORKER_SERVICE'
 
-  integer: 'BG_JOBS_REDIS_PORT' | 'DB_PORT' | 'WS_PORT' | 'DREAM_PARALLEL_TESTS' | 'REPLICA_DB_PORT' | 'WS_REDIS_PORT'
+  integer:
+    | 'BG_JOBS_REDIS_PORT'
+    | 'DB_CONNECTION_TIMEOUT_MS'
+    | 'DB_PORT'
+    | 'WS_PORT'
+    | 'DREAM_PARALLEL_TESTS'
+    | 'REPLICA_DB_PORT'
+    | 'WS_REDIS_PORT'
 
   string:
     | 'ADMIN_APP_HOST'
     | 'APP_ENCRYPTION_KEY'
+    | 'APP_NAME'
     | 'BG_JOBS_REDIS_HOST'
     | 'BG_JOBS_REDIS_PASSWORD'
     | 'BG_JOBS_REDIS_USERNAME'
