@@ -2,6 +2,7 @@ import sspawn from '../../../../../../src/helpers/sspawn.js'
 import expectNoWebsockets from '../../../../../helpers/assertions/expectNoWebsockets.js'
 import expectNoWorkers from '../../../../../helpers/assertions/expectNoWorkers.js'
 import expectFile from '../../../../../helpers/expectFile.js'
+import expectFileToContain from '../../../../../helpers/expectFileToContain.js'
 import temporarilyDisableEslintForNextjsBuild from '../../../../../helpers/init/temporarilyDisableEslintForNextjsBuild.js'
 import initPsychicAppDefaults from '../../../../../helpers/initPsychicAppDefaults.js'
 import initSpecPsychicApp from '../../../../../helpers/initSpecPsychicApp.js'
@@ -20,6 +21,7 @@ describe('initPsychicApp with --template=nextjs flag', () => {
 
     await expectFile('howyadoin/src/instrumentation.mts')
     await expectFile('howyadoin/src/instrumentation-node.mts')
+    await expectFileToContain('howyadoin/pnpm-workspace.yaml', 'strictDepBuilds: false')
 
     // swap out the default page.tsx file for one that calls to maybeInitializePsychicApp,
     // which will cause build to fail if anything crashes during psychic initialization.

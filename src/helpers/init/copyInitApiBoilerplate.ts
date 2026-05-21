@@ -212,7 +212,7 @@ export default async function copyInitApiBoilerplate(appName: string, options: I
   }
 
   if (options.packageManager === 'pnpm') {
-    writeFileSync('pnpm-workspace.yaml', pnpmWorkspaceYaml(options))
+    writeFileSync('pnpm-workspace.yaml', pnpmWorkspaceYaml())
   }
 
   writeFileSync(
@@ -225,10 +225,12 @@ export default async function copyInitApiBoilerplate(appName: string, options: I
   )
 }
 
-function pnpmWorkspaceYaml(options: InitPsychicAppCliOptions) {
+function pnpmWorkspaceYaml() {
   // pnpm 11 introduced minimumReleaseAge (default: 1440 min = 24h), which prevents
   // installing packages published less than 24h ago. @rvoh/* packages are excluded
   // so that freshly-published releases are always available to generated apps.
+  // Dependency build scripts stay blocked by default, but unreviewed optional native
+  // package build scripts should not make the scaffold unusable.
   const rvohExcludes =
     'minimumReleaseAgeExclude:\n' +
     "  - '@rvoh/dream'\n" +
@@ -238,16 +240,7 @@ function pnpmWorkspaceYaml(options: InitPsychicAppCliOptions) {
     "  - '@rvoh/psychic-workers'\n" +
     "  - '@rvoh/psychic-websockets'\n"
 
-  if (options.template === 'nextjs') {
-    return (
-      'allowBuilds:\n  esbuild: true\n  puppeteer: true\n  sharp: true\n  unrs-resolver: true\n' +
-      rvohExcludes
-    )
-  }
-  if (options.dreamOnly) {
-    return 'allowBuilds:\n  esbuild: true\n' + rvohExcludes
-  }
-  return 'allowBuilds:\n  esbuild: true\n  puppeteer: true\n' + rvohExcludes
+  return 'strictDepBuilds: false\n\n' + rvohExcludes
 }
 
 function copyRecursiveSync(path: string, dest: string, importExtension: (typeof importExtensions)[number]) {

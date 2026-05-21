@@ -1,6 +1,7 @@
 import * as fs from 'node:fs'
 import sspawn from '../../../../../src/helpers/sspawn.js'
 import expectFile from '../../../../helpers/expectFile.js'
+import expectFileToContain from '../../../../helpers/expectFileToContain.js'
 import expectToMatchFixture from '../../../../helpers/expectToMatchFixture.js'
 import newSpecPsychicApp from '../../../../helpers/newSpecPsychicApp.js'
 
@@ -19,6 +20,7 @@ describe('newPsychicApp with no client', () => {
     })
 
     await expectFile('./howyadoin/pnpm-lock.yaml')
+    await expectFileToContain('./howyadoin/pnpm-workspace.yaml', 'strictDepBuilds: false')
     await expectFile('./howyadoin/docker-compose.yml')
     await expectFile('./howyadoin/Dockerfile.dev')
 
