@@ -21,7 +21,7 @@ export type RequestQuery<HttpMethod extends 'get' | 'post' | 'patch' | 'delete',
 >
 
 // eslint-disable-next-line @typescript-eslint/require-await
-async function userJwt(user: User): Promise<string> {
+async function userBearerToken(user: User): Promise<string> {
   /**
    * The current authentication scheme is only for early development.
    * Replace with a production grade authentication scheme.
@@ -33,7 +33,7 @@ async function userJwt(user: User): Promise<string> {
 }
 
 // eslint-disable-next-line @typescript-eslint/require-await
-async function adminUserJwt(adminUser: Dream): Promise<string> {
+async function adminUserBearerToken(adminUser: Dream): Promise<string> {
   /**
    * The current authentication scheme is only for early development.
    * Replace with a production grade authentication scheme.
@@ -45,7 +45,7 @@ async function adminUserJwt(adminUser: Dream): Promise<string> {
 }
 
 // eslint-disable-next-line @typescript-eslint/require-await
-async function internalUserJwt(internalUser: Dream): Promise<string> {
+async function internalUserBearerToken(internalUser: Dream): Promise<string> {
   /**
    * The current authentication scheme is only for early development.
    * Replace with a production grade authentication scheme.
@@ -60,14 +60,14 @@ export async function session(user: Dream) {
   const request = new OpenapiSpecRequest<OpenapiPaths>()
   await request.init(PsychicServer)
 
-  /** if using JWT authentication*/
+  /** if using bearer-token authentication*/
   let bearerToken: string
   if (user instanceof User) {
-    bearerToken = await userJwt(user)
+    bearerToken = await userBearerToken(user)
   } else if (user.sanitizedConstructorName === 'InternalUser') {
-    bearerToken = await internalUserJwt(user)
+    bearerToken = await internalUserBearerToken(user)
   } else {
-    bearerToken = await adminUserJwt(user)
+    bearerToken = await adminUserBearerToken(user)
   }
   return request.setDefaultHeaders({ Authorization: `Bearer ${bearerToken}` })
 
