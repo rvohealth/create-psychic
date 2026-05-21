@@ -1,6 +1,6 @@
-## CRITICAL: load the psychic-skill before backend work
+## CRITICAL: load the dream-psychic skill before backend work
 
-This is a Dream ORM / Psychic web framework application. Before reading or editing **any** file under `api/`, you MUST load the **psychic-skill** (skill `name`: `dream-psychic`). It is the single source of truth for Dream and Psychic conventions — generators, migrations, STI, serializers, controllers, naming, testing. There are no inline framework rules in this file.
+This is a Dream ORM / Psychic web framework application. Before reading or editing **any** file under `api/`, you MUST load the **dream-psychic** skill (installed as `psychic-skill`). It is the single source of truth for Dream and Psychic conventions — generators, migrations, STI, serializers, controllers, naming, testing. There are no inline framework rules in this file.
 
 How to load it depends on your agent:
 
