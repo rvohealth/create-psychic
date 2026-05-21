@@ -1,12 +1,12 @@
-## CRITICAL: invoke the dream-psychic skill for backend work
+## CRITICAL: invoke psychic-skill for backend work
 
-This is a Dream ORM / Psychic web framework application. Before reading or editing **any** file under `api/`, you MUST invoke the **dream-psychic** skill (installed as `psychic-skill`). It is the single source of truth for Dream and Psychic conventions — generators, migrations, STI, serializers, controllers, naming, testing. There are no inline framework rules in this file.
+This is a Dream ORM / Psychic web framework application. Before reading or editing **any** file under `api/`, you MUST invoke **psychic-skill**. It is the single source of truth for Dream and Psychic conventions — generators, migrations, STI, serializers, controllers, naming, testing. There are no inline framework rules in this file.
 
 Do not skip this step because the skill's description is already in your context. The description is a stub. The actual rules live in the skill body, and they will not enter context until you invoke the skill.
 
 <!-- source: https://code.claude.com/docs/en/skills accessed 2026-04-25 — "skill descriptions are loaded into context so Claude knows what's available, but full skill content only loads when invoked" -->
 
-If the skill is not present in your session (`/` menu has no `psychic-skill` entry, or the model has no record of a `dream-psychic` skill), stop and follow the install steps in `api/CLAUDE.md` before doing any backend work.
+If **psychic-skill** is not present in your session (not in the `/` menu, or the model has no record of it), stop and follow the install steps in `api/CLAUDE.md` before doing any backend work.
 
 ## Project layout
 

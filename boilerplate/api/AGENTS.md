@@ -1,12 +1,12 @@
-## CRITICAL: load the psychic-skill before any work in this directory
+## CRITICAL: load psychic-skill before any work in this directory
 
-This is the Dream ORM / Psychic back end. Before reading or editing any file here, you MUST load the **psychic-skill** (`name: dream-psychic`). It contains the rules for generators, migrations, STI, serializers, controllers, naming, testing, workers, and websockets — none of which can be safely guessed.
+This is the Dream ORM / Psychic back end. Before reading or editing any file here, you MUST load **psychic-skill**. It contains the rules for generators, migrations, STI, serializers, controllers, naming, testing, workers, and websockets — none of which can be safely guessed.
 
 How to load it depends on your agent.
 
 ### Codex CLI
 
-Codex auto-discovers skills from its skill directories. Confirm a `dream-psychic` skill is registered. If it is not, install it:
+Codex auto-discovers skills from its skill directories. Confirm a `psychic-skill` skill is registered. If it is not, install it:
 
 Personal install:
 

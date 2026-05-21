@@ -6,7 +6,12 @@ import { PsychicAppWebsockets, Ws } from '@rvoh/psychic-websockets'
 import { Redis } from 'ioredis'
 
 export default (psy: PsychicApp) => {
-  if (AppEnv.serviceRole !== 'websockets' && !AppEnv.isTest) return
+  // PsychicAppWebsockets initializes in all processes by default. Any process —
+  // websocket server, web server, or worker — may call Ws.emit(), and skipping
+  // init in any of them causes a runtime cachePsychicAppWebsockets error that is
+  // hard to diagnose. To restrict which roles can push messages, uncomment:
+  //
+  // if (!['websockets', 'web', 'worker'].includes(AppEnv.serviceRole) && !AppEnv.isTest) return
 
   psy.plugin(async () => {
     await PsychicAppWebsockets.init(psy, initializeWebsockets)

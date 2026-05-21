@@ -1,3 +1,7 @@
+## 3.4.4
+
+- Boilerplate `api/src/conf/initializers/websockets.ts` no longer gates `PsychicAppWebsockets.init()` behind a service-role check. Any process — websocket server, web server, or worker — may call `Ws.emit()`, and skipping init in any of them causes a hard-to-diagnose `cachePsychicAppWebsockets` runtime error. The initializer now runs in all processes by default. A commented-out role-list guard (`['websockets', 'web', 'worker']`) is included for apps that want to restrict which roles can push messages.
+
 ## 3.4.3
 
 - Generated pnpm apps now set `strictDepBuilds: false` in `pnpm-workspace.yaml`. Dependency build scripts remain blocked by default, but newly introduced optional native package build scripts no longer make app creation fail.
