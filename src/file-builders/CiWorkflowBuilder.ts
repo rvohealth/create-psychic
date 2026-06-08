@@ -16,7 +16,7 @@ const ACTIONS = {
   uploadArtifact: '043fb46d1a93c77aae656e7c1c64a875d1fc6a0a', // v7.0.1
 }
 
-// The generated app targets Node 26 (Psychic's security baseline); CI runs on it.
+// The generated app targets Node 26 (Psychic's supported baseline / current LTS); CI runs on it.
 const CI_NODE_VERSION = '26'
 const GO_VERSION = '1.24'
 

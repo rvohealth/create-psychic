@@ -11,9 +11,13 @@
  *   into a `node_modules` directory, which the framework's `node:`/npm imports
  *   (pg, bullmq, ioredis, koa, …) expect.
  *
- * Per-context permission flags (`--allow-net=…`, `--allow-env=…`, scoped
- * read/write) live in the generated package.json run-commands (`deno run …`),
- * surfaced via `deno task`, so they sit next to the other runtimes' scripts.
+ * NOTE: the generated `deno task` run-commands use `deno run -A` (full
+ * permissions), NOT a scoped allowlist. Deno's permission flags are process-wide
+ * — they can't wall third-party node_modules off from application code — so they
+ * are deliberately not used as a security sandbox here. Egress/runtime lockdown
+ * belongs at the infrastructure layer (see the generated SECURITY.md). Deno is a
+ * supported runtime whose supply-chain posture (install-script blocking by
+ * default) matches pnpm; it is not more hardened than that.
  */
 export default class DenoJsonBuilder {
   public static build(): string {
