@@ -29,3 +29,13 @@ Run `/psychic-update-skill` (a slash command bundled with the skill). Or, manual
 ```
 git fetch origin && git reset --hard origin/main && ./setup
 ```
+
+## Security — don't weaken the supply-chain hardening
+
+This app ships install-time supply-chain hardening (dependency build-script
+blocking, a release-age cooldown, registry pinning, a Node floor, and hardened
+CI). **`SECURITY.md` is the source of truth** — read it before changing
+`.npmrc`, `pnpm-workspace.yaml`, `.yarnrc.yml`, `package.json` engines, or
+`.github/workflows/`. Do not relax these controls (re-enable dependency build
+scripts, add third-party packages to the cooldown exclude, unpin CI action SHAs,
+drop the frozen-lockfile install) without an explicit, reviewed reason.
