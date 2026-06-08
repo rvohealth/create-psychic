@@ -1,10 +1,24 @@
+import { execSync } from 'node:child_process'
 import * as fs from 'node:fs'
 import sspawn from '../../../../../src/helpers/sspawn.js'
 import expectFile from '../../../../helpers/expectFile.js'
 import expectFileToContain from '../../../../helpers/expectFileToContain.js'
 import newSpecPsychicApp from '../../../../helpers/newSpecPsychicApp.js'
 
-describe('newPsychicApp with the deno runtime', () => {
+// This integration spec generates + installs + boots a real Deno app, so it only
+// runs where the `deno` CLI is present. Environments without it (incl. CI runners
+// that don't set up deno) skip it. To exercise it in CI, add denoland/setup-deno
+// to the unit-test job.
+function denoAvailable(): boolean {
+  try {
+    execSync('deno --version', { stdio: 'ignore' })
+    return true
+  } catch {
+    return false
+  }
+}
+
+describe.skipIf(!denoAvailable())('newPsychicApp with the deno runtime', () => {
   it('provisions, installs, migrates, and specs a Deno api-only app', async () => {
     // Full stack (workers + websockets) pulls every @rvoh package, which is the
     // dependency set where Deno previously forked @rvoh/dream into two copies over

@@ -1,10 +1,24 @@
+import { execSync } from 'node:child_process'
 import * as fs from 'node:fs'
 import sspawn from '../../../../../src/helpers/sspawn.js'
 import expectFile from '../../../../helpers/expectFile.js'
 import expectFileToContain from '../../../../helpers/expectFileToContain.js'
 import newSpecPsychicApp from '../../../../helpers/newSpecPsychicApp.js'
 
-describe('newPsychicApp with the bun runtime', () => {
+// This integration spec generates + installs + boots a real Bun app, so it only
+// runs where the `bun` CLI is present. Environments without it (incl. CI runners
+// that don't set up bun) skip it. To exercise it in CI, add oven-sh/setup-bun to
+// the unit-test job.
+function bunAvailable(): boolean {
+  try {
+    execSync('bun --version', { stdio: 'ignore' })
+    return true
+  } catch {
+    return false
+  }
+}
+
+describe.skipIf(!bunAvailable())('newPsychicApp with the bun runtime', () => {
   it('provisions, installs, migrates, and specs a Bun api-only app', async () => {
     await newSpecPsychicApp('howyadoin', {
       packageManager: 'bun',
