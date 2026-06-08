@@ -46,6 +46,23 @@ export default class NpmrcBuilder {
           '# browser is installed explicitly via `npx puppeteer browsers install`.\n' +
           'ignore-scripts=true\n'
         )
+
+      case 'deno':
+        // Deno reads .npmrc for registry/scope config. It blocks dependency build
+        // scripts by default (run `deno approve-scripts` to allow specific ones),
+        // so no ignore-scripts flag is needed, and it has no release-age cooldown.
+        return (
+          registryPinning() +
+          '\n' +
+          '# Deno reads this for the npm registry/scopes. Deno blocks dependency build\n' +
+          '# scripts by default (the supply-chain default-deny posture) and has no\n' +
+          '# release-age cooldown knob.\n'
+        )
+
+      case 'bun':
+        // Bun takes its registry pin and the trustedDependencies build-script
+        // allowlist from bunfig.toml, so no .npmrc is emitted.
+        return null
     }
   }
 }

@@ -74,6 +74,11 @@ function installCmd(pm: PsychicPackageManager): string {
       return 'yarn install --immutable'
     case 'npm':
       return 'npm ci'
+    default:
+      // Hardened CI generation currently targets Node package managers; the
+      // generator gates CI emission to runtime === 'node' (bun/deno CI is a
+      // follow-up). This guards the invariant.
+      throw new Error(`hardened CI generation does not support package manager: ${pm}`)
   }
 }
 

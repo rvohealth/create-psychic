@@ -36,6 +36,13 @@ function cwdOption(packageManager: PsychicPackageManager) {
       return '--prefix'
     case 'pnpm':
       return '--dir'
+    // bun and deno both accept `--cwd <dir>` to run a script in another package
+    // (the front-end client wrappers). Cross-dir client running under bun/deno is
+    // only exercised by monorepo layouts; the api-only path the runtime spike
+    // covered never reaches this.
+    case 'bun':
+    case 'deno':
+      return '--cwd'
     default:
       throw new Error(`unexpected package manager: ${packageManager as unknown as 'yarn'}`)
   }

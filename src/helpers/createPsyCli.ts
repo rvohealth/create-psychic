@@ -6,6 +6,7 @@ import newPsychicApp, {
   InitPsychicAppCliOptions,
   NewPsychicAppCliOptions,
   psychicPackageManagers,
+  psychicRuntimes,
 } from './newPsychicApp.js'
 
 export default function createPsyCli() {
@@ -18,6 +19,10 @@ export default function createPsyCli() {
     .option(
       '--package-manager <packageManager>',
       `One of: ${psychicPackageManagers.join(', ')}. The package manager to use`,
+    )
+    .option(
+      '--runtime <runtime>',
+      `One of: ${psychicRuntimes.join(', ')}. The JS runtime to target (deno and bun also act as the package manager)`,
     )
     .option('--workers', 'include background workers in your application')
     .option('--no-workers', 'exclude background workers from your application')

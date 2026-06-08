@@ -16,9 +16,16 @@ import sleep from './sleep.js'
 export const cliClientAppTypes = ['nextjs', 'react', 'vue', 'nuxt', 'none'] as const
 
 export const psychicPackageManagers = ['pnpm', 'yarn', 'npm'] as const
+export const psychicRuntimes = ['node', 'deno', 'bun'] as const
 export const initTemplates = ['none', 'nextjs'] as const
 export const importExtensions = ['.js', '.ts', 'none'] as const
-export type PsychicPackageManager = (typeof psychicPackageManagers)[number]
+export type PsychicRuntime = (typeof psychicRuntimes)[number]
+// 'bun' and 'deno' are each their own runtime AND package manager. When chosen as
+// the runtime they also become the `packageManager` internally, so the existing
+// pm-keyed machinery (lockfile, install, run/tsc commands, app config) extends to
+// them with added switch cases. The package-manager PROMPT (psychicPackageManagers)
+// stays Node-only — for deno/bun the runtime choice subsumes it.
+export type PsychicPackageManager = (typeof psychicPackageManagers)[number] | 'bun' | 'deno'
 
 export interface NewPsychicAppCliOptions {
   packageManager: PsychicPackageManager
@@ -33,6 +40,11 @@ export interface NewPsychicAppCliOptions {
   // Optional: generate a hardened GitHub Actions CI workflow. Undefined =>
   // prompted in interactive runs, treated as false in the spec suite.
   githubActions?: boolean
+  // Optional: which JS runtime the generated app targets (node|deno|bun).
+  // Undefined => prompted interactively, defaults to 'node' in the spec suite.
+  // For 'deno'/'bun' the runtime also sets packageManager (each is its own
+  // toolchain), so the package-manager prompt is skipped.
+  runtime?: PsychicRuntime
 }
 
 export interface InitPsychicAppCliOptions {

@@ -1,4 +1,4 @@
-import { NewPsychicAppCliOptions } from '../helpers/newPsychicApp.js'
+import { NewPsychicAppCliOptions, PsychicPackageManager } from '../helpers/newPsychicApp.js'
 import { replacePackageManagerInFileContents } from '../helpers/replacePackageManagerInFile.js'
 import safelyImportJsonFile from '../helpers/safelyImportJsonFile.js'
 
@@ -202,8 +202,47 @@ export default class PackagejsonBuilder {
 
     pruneOverridesForPackageManager(packagejson, options.packageManager)
 
+    if (options.packageManager === 'bun' || options.packageManager === 'deno') {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
+      applyRuntimeRunners(packagejson.scripts, options.packageManager)
+    }
+
     return replacePackageManagerInFileContents(JSON.stringify(packagejson, null, 2), options.packageManager)
   }
+}
+
+// The boilerplate scripts call the Node toolchain by name — `tsx`, `node`,
+// `vitest`, `nodemon`, `cross-env`. Under Bun/Deno those bare names would resolve
+// to the node-shebang `.bin` shims and execute under Node, defeating the runtime
+// choice, so rewrite them to run under the target runtime. The {{PM}} / {{TSC_*}}
+// placeholders are handled separately by replacePackageManagerInFileContents.
+//
+// Verified shapes (runtime spike): `deno run -A` / `bun` for TS entrypoints,
+// `deno run -A npm:vitest` / `bunx vitest` for specs, `deno run -A npm:typescript/tsc`
+// / `bunx tsc` for builds. The watch (web:dev) and cross-env rewrites follow the
+// same form; full per-script behavior under bun/deno is confirmed by the
+// post-publish generated-app boot e2e.
+function applyRuntimeRunners(scripts: Record<string, string>, runtime: 'bun' | 'deno'): void {
+  // run a TS/JS entrypoint file
+  const run = runtime === 'bun' ? 'bun' : 'deno run -A'
+  // run an npm-published bin (vitest, cross-env, prettier, eslint)
+  const bin = (name: string) => (runtime === 'bun' ? `bunx ${name}` : `deno run -A npm:${name}`)
+  // hot-reloading dev server (replaces nodemon, whose nodemon.json exec is `tsx ./src/main.ts`)
+  const watch = runtime === 'bun' ? 'bun --watch src/main.ts' : 'deno run -A --watch src/main.ts'
+
+  for (const key of Object.keys(scripts)) {
+    scripts[key] = scripts[key]!.replace(/nodemon --quiet --no-stdin/g, watch)
+      .replace(/\bnode --version\b/g, `${runtime} --version`)
+      .replace(/\bcross-env\b/g, bin('cross-env'))
+      .replace(/\bvitest\b/g, bin('vitest'))
+      .replace(/\btsx /g, `${run} `)
+      .replace(/\bnode \.\//g, `${run} ./`)
+  }
+
+  // The bare `prettier` / `eslint` scripts are invoked via `{{PM}} <script>`; point
+  // them at the runtime-native bin so they don't fall through to the Node shim.
+  if (scripts['prettier'] === 'prettier') scripts['prettier'] = bin('prettier')
+  if (scripts['eslint'] === 'eslint') scripts['eslint'] = bin('eslint')
 }
 
 // The boilerplate package.json carries override blocks for npm (`overrides`),
@@ -212,10 +251,12 @@ export default class PackagejsonBuilder {
 // package manager will actually read, so the generated app has one canonical
 // spot to edit and there's no risk of the three drifting apart over time.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function pruneOverridesForPackageManager(packageJson: any, packageManager: 'npm' | 'yarn' | 'pnpm') {
+function pruneOverridesForPackageManager(packageJson: any, packageManager: PsychicPackageManager) {
   /* eslint-disable @typescript-eslint/no-unsafe-member-access */
   switch (packageManager) {
+    // bun reads the npm-style `overrides` block, so keep it like npm does.
     case 'npm':
+    case 'bun':
       delete packageJson.resolutions
       delete packageJson.pnpm
       break
@@ -223,7 +264,10 @@ function pruneOverridesForPackageManager(packageJson: any, packageManager: 'npm'
       delete packageJson.overrides
       delete packageJson.pnpm
       break
+    // deno honors neither `overrides` nor `resolutions` (and pnpm's block lives in
+    // pnpm-workspace.yaml), so drop all three — same as pnpm.
     case 'pnpm':
+    case 'deno':
       delete packageJson.overrides
       delete packageJson.resolutions
       delete packageJson.pnpm

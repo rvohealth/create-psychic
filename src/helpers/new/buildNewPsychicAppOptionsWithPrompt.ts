@@ -1,14 +1,42 @@
 import { primaryKeyTypes } from '@rvoh/dream/system'
-import { cliClientAppTypes, NewPsychicAppCliOptions, psychicPackageManagers } from '../newPsychicApp.js'
+import {
+  cliClientAppTypes,
+  NewPsychicAppCliOptions,
+  psychicPackageManagers,
+  psychicRuntimes,
+} from '../newPsychicApp.js'
 import Select from '../select.js'
 
 export default async function buildNewPsychicAppOptionsWithPrompt(options: NewPsychicAppCliOptions) {
-  if (!options.packageManager || !psychicPackageManagers.includes(options.packageManager)) {
-    const answer = await new Select(
-      'What package manager would you like to use? (pnpm recommended — strongest supply-chain defaults)',
-      psychicPackageManagers,
-    ).run()
-    options.packageManager = answer
+  // Runtime is chosen first; for deno/bun it subsumes the package-manager prompt
+  // (each is its own toolchain). Skip the prompt in the spec suite (no TTY) — a
+  // prompted-but-unset Select would hang the suite.
+  if (options.runtime === undefined || !psychicRuntimes.includes(options.runtime)) {
+    if (process.env.NODE_ENV === 'test') {
+      options.runtime = 'node'
+    } else {
+      options.runtime = await new Select(
+        'Which JavaScript runtime would you like to target?',
+        psychicRuntimes,
+      ).run()
+    }
+  }
+
+  if (options.runtime === 'node') {
+    if (
+      !options.packageManager ||
+      !(psychicPackageManagers as readonly string[]).includes(options.packageManager)
+    ) {
+      const answer = await new Select(
+        'What package manager would you like to use? (pnpm recommended — strongest supply-chain defaults)',
+        psychicPackageManagers,
+      ).run()
+      options.packageManager = answer
+    }
+  } else {
+    // deno and bun are their own package managers + runtimes; the runtime choice
+    // subsumes the pm prompt and drives the existing pm-keyed machinery.
+    options.packageManager = options.runtime
   }
 
   if (!options.primaryKeyType || !primaryKeyTypes.includes(options.primaryKeyType)) {

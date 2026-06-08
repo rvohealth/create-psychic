@@ -35,5 +35,24 @@ describe('NpmrcBuilder', () => {
         expect(res).toContain('ignore-scripts=true')
       })
     })
+
+    context('deno', () => {
+      it('pins the registry (Deno reads .npmrc for registry/scopes)', () => {
+        const res = NpmrcBuilder.build('deno') as string
+        expect(res).toContain('registry=https://registry.npmjs.org')
+        expect(res).toContain('@rvoh:registry=https://registry.npmjs.org')
+      })
+
+      it('does NOT set ignore-scripts (Deno blocks build scripts by default)', () => {
+        const res = NpmrcBuilder.build('deno') as string
+        expect(res).not.toContain('ignore-scripts')
+      })
+    })
+
+    context('bun', () => {
+      it('returns null (Bun reads bunfig.toml, not .npmrc)', () => {
+        expect(NpmrcBuilder.build('bun')).toBeNull()
+      })
+    })
   })
 })

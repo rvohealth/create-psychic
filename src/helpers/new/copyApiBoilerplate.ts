@@ -1,7 +1,9 @@
 import * as fs from 'node:fs'
 import * as path from 'node:path'
 import AppConfigBuilder from '../../file-builders/AppConfigBuilder.js'
+import BunfigBuilder from '../../file-builders/BunfigBuilder.js'
 import CiWorkflowBuilder from '../../file-builders/CiWorkflowBuilder.js'
+import DenoJsonBuilder from '../../file-builders/DenoJsonBuilder.js'
 import DockerComposeBuilder from '../../file-builders/docker/DockerComposeBuilder.js'
 import PsychicDockerDevBuilder from '../../file-builders/docker/PsychicDockerfileDevBuilder.js'
 import DreamConfigBuilder from '../../file-builders/DreamConfigBuilder.js'
@@ -83,8 +85,11 @@ export default async function copyApiBoilerplate(appName: string, options: NewPs
   }
 
   // Hardened GitHub Actions CI lives at the repo root (appRoot), with steps that
-  // run from the api directory. Opt-in via the generator prompt.
-  if (options.githubActions) {
+  // run from the api directory. Opt-in via the generator prompt. The generated
+  // workflow targets Node package managers (setup-node + corepack + frozen
+  // installs); Bun/Deno CI is a follow-up, so CI is emitted for the node runtime
+  // only — a bun/deno app opting into CI simply gets no workflow for now.
+  if (options.githubActions && options.runtime !== 'deno' && options.runtime !== 'bun') {
     const workflowsDir = path.join(appRoot, '.github', 'workflows')
     fs.mkdirSync(workflowsDir, { recursive: true })
     fs.writeFileSync(path.join(workflowsDir, 'ci.yml'), CiWorkflowBuilder.build(appName, options))
@@ -96,15 +101,24 @@ export default async function copyApiBoilerplate(appName: string, options: NewPs
     await SrcPathHelperBuilder.build(options),
   )
 
-  // Steer new apps toward Node 26 — Psychic's security target (the full Node
-  // permission model + `--allow-net` land in 26, and 25 is already EOL). This is
-  // ADVISORY: `engines.node` in package.json has no engine-strict, so the app still
-  // generates and installs on older Node with a warning. We write only `.nvmrc`
-  // (read by nvm/fnm) and intentionally NOT `.node-version`: nodenv and asdf treat
-  // `.node-version` as a hard requirement and refuse to run ANY command in the app
-  // if that exact version isn't installed — which would hard-block developers still
-  // on Node 24 LTS, defeating the advisory intent.
-  fs.writeFileSync(path.join(apiRoot, '.nvmrc'), '26\n')
+  // Runtime config. Deno and Bun get their own config files instead of `.nvmrc`:
+  //   - deno.json: import map for the path aliases + sloppy-imports + node_modules dir
+  //   - bunfig.toml: registry pin (+ default-deny lifecycle scripts)
+  if (options.runtime === 'deno') {
+    fs.writeFileSync(path.join(apiRoot, 'deno.json'), DenoJsonBuilder.build())
+  } else if (options.runtime === 'bun') {
+    fs.writeFileSync(path.join(apiRoot, 'bunfig.toml'), BunfigBuilder.build())
+  } else {
+    // Steer new Node apps toward Node 26 — Psychic's security target (the full Node
+    // permission model + `--allow-net` land in 26, and 25 is already EOL). This is
+    // ADVISORY: `engines.node` in package.json has no engine-strict, so the app still
+    // generates and installs on older Node with a warning. We write only `.nvmrc`
+    // (read by nvm/fnm) and intentionally NOT `.node-version`: nodenv and asdf treat
+    // `.node-version` as a hard requirement and refuse to run ANY command in the app
+    // if that exact version isn't installed — which would hard-block developers still
+    // on Node 24 LTS, defeating the advisory intent.
+    fs.writeFileSync(path.join(apiRoot, '.nvmrc'), '26\n')
+  }
 
   fs.writeFileSync(path.join(apiRoot, '.env'), EnvBuilder.build({ appName, env: 'development' }))
   fs.writeFileSync(path.join(apiRoot, '.env.test'), EnvBuilder.build({ appName, env: 'test' }))

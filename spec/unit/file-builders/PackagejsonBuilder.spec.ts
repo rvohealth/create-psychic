@@ -415,6 +415,76 @@ describe('PackagejsonBuilder', () => {
         expect(parsed.overrides).toBeUndefined()
         expect(parsed.resolutions).toBeUndefined()
       })
+
+      it('keeps `overrides` for bun (bun reads npm-style overrides)', async () => {
+        const res = await PackagejsonBuilder.buildAPI('howyadoin', {
+          ...baseOptions,
+          packageManager: 'bun',
+          runtime: 'bun',
+        })
+        const parsed = JSON.parse(res) as Record<string, unknown>
+        expect(parsed.overrides).toEqual({ 'path-to-regexp': '>=8.4.0' })
+        expect(parsed.resolutions).toBeUndefined()
+        expect(parsed.pnpm).toBeUndefined()
+      })
+
+      it('strips all override fields for deno (it honors neither overrides nor resolutions)', async () => {
+        const res = await PackagejsonBuilder.buildAPI('howyadoin', {
+          ...baseOptions,
+          packageManager: 'deno',
+          runtime: 'deno',
+        })
+        const parsed = JSON.parse(res) as Record<string, unknown>
+        expect(parsed.overrides).toBeUndefined()
+        expect(parsed.resolutions).toBeUndefined()
+        expect(parsed.pnpm).toBeUndefined()
+      })
+    })
+
+    context('deno runtime scripts', () => {
+      it('runs entrypoints/specs/builds under deno with no Node-toolchain runners', async () => {
+        const res = await PackagejsonBuilder.buildAPI('howyadoin', {
+          ...baseOptions,
+          packageManager: 'deno',
+          runtime: 'deno',
+          workers: true,
+          websockets: true,
+        })
+        const scripts = JSON.parse(res).scripts as Record<string, string>
+        expect(scripts['psy']).toBe('deno run -A src/conf/system/cli.ts')
+        expect(scripts['uspec']).toContain('deno task psy db:integrity-check')
+        expect(scripts['uspec']).toContain('deno run -A npm:vitest')
+        expect(scripts['worker:dev']).toContain('deno run -A ./src/worker.ts')
+        expect(scripts['web:dev']).toContain('deno run -A --watch src/main.ts')
+        expect(scripts['build']).toContain('deno run -A npm:typescript/tsc')
+
+        const all = Object.values(scripts).join('\n')
+        expect(all).not.toMatch(/\btsx /)
+        expect(all).not.toMatch(/\bnodemon\b/)
+      })
+    })
+
+    context('bun runtime scripts', () => {
+      it('runs entrypoints/specs/builds under bun with no Node-toolchain runners', async () => {
+        const res = await PackagejsonBuilder.buildAPI('howyadoin', {
+          ...baseOptions,
+          packageManager: 'bun',
+          runtime: 'bun',
+          workers: true,
+          websockets: true,
+        })
+        const scripts = JSON.parse(res).scripts as Record<string, string>
+        expect(scripts['psy']).toBe('bun src/conf/system/cli.ts')
+        expect(scripts['uspec']).toContain('bun run psy db:integrity-check')
+        expect(scripts['uspec']).toContain('bunx vitest')
+        expect(scripts['worker:dev']).toContain('bun ./src/worker.ts')
+        expect(scripts['web:dev']).toContain('bun --watch src/main.ts')
+        expect(scripts['build']).toContain('bunx tsc')
+
+        const all = Object.values(scripts).join('\n')
+        expect(all).not.toMatch(/\btsx /)
+        expect(all).not.toMatch(/\bnodemon\b/)
+      })
     })
   })
 })
