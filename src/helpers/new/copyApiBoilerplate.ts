@@ -87,14 +87,15 @@ export default async function copyApiBoilerplate(appName: string, options: NewPs
     await SrcPathHelperBuilder.build(options),
   )
 
-  // Pin new apps to Node 26 — Psychic's security target (the full Node permission
-  // model + `--allow-net` land in 26, and 25 is already EOL). `engines.node` in
-  // package.json stays advisory (no engine-strict), so the app still generates and
-  // installs on older Node with a warning; these files steer version-manager users
-  // (.nvmrc → nvm/fnm, .node-version → nodenv/fnm/asdf) onto 26.
-  const PINNED_NODE_VERSION = '26'
-  fs.writeFileSync(path.join(apiRoot, '.nvmrc'), `${PINNED_NODE_VERSION}\n`)
-  fs.writeFileSync(path.join(apiRoot, '.node-version'), `${PINNED_NODE_VERSION}\n`)
+  // Steer new apps toward Node 26 — Psychic's security target (the full Node
+  // permission model + `--allow-net` land in 26, and 25 is already EOL). This is
+  // ADVISORY: `engines.node` in package.json has no engine-strict, so the app still
+  // generates and installs on older Node with a warning. We write only `.nvmrc`
+  // (read by nvm/fnm) and intentionally NOT `.node-version`: nodenv and asdf treat
+  // `.node-version` as a hard requirement and refuse to run ANY command in the app
+  // if that exact version isn't installed — which would hard-block developers still
+  // on Node 24 LTS, defeating the advisory intent.
+  fs.writeFileSync(path.join(apiRoot, '.nvmrc'), '26\n')
 
   fs.writeFileSync(path.join(apiRoot, '.env'), EnvBuilder.build({ appName, env: 'development' }))
   fs.writeFileSync(path.join(apiRoot, '.env.test'), EnvBuilder.build({ appName, env: 'test' }))
