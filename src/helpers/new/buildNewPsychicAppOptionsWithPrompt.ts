@@ -83,4 +83,17 @@ export default async function buildNewPsychicAppOptionsWithPrompt(options: NewPs
     options.claudePsychicSkill ??= false
     options.codexPsychicSkill ??= false
   }
+
+  if (options.githubActions === undefined) {
+    // Skip the prompt in the spec suite (no TTY); specs opt in explicitly.
+    if (process.env.NODE_ENV === 'test') {
+      options.githubActions = false
+    } else {
+      const answer = await new Select('Generate a hardened GitHub Actions CI workflow?', [
+        'yes',
+        'no',
+      ] as const).run()
+      options.githubActions = answer === 'yes'
+    }
+  }
 }

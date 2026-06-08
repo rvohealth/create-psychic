@@ -30,6 +30,9 @@ export interface NewPsychicAppCliOptions {
   websockets: boolean
   claudePsychicSkill: boolean
   codexPsychicSkill: boolean
+  // Optional: generate a hardened GitHub Actions CI workflow. Undefined =>
+  // prompted in interactive runs, treated as false in the spec suite.
+  githubActions?: boolean
 }
 
 export interface InitPsychicAppCliOptions {

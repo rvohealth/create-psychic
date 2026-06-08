@@ -1,6 +1,7 @@
 import * as fs from 'node:fs'
 import * as path from 'node:path'
 import AppConfigBuilder from '../../file-builders/AppConfigBuilder.js'
+import CiWorkflowBuilder from '../../file-builders/CiWorkflowBuilder.js'
 import DockerComposeBuilder from '../../file-builders/docker/DockerComposeBuilder.js'
 import PsychicDockerDevBuilder from '../../file-builders/docker/PsychicDockerfileDevBuilder.js'
 import DreamConfigBuilder from '../../file-builders/DreamConfigBuilder.js'
@@ -79,6 +80,14 @@ export default async function copyApiBoilerplate(appName: string, options: NewPs
   const npmrc = NpmrcBuilder.build(options.packageManager)
   if (npmrc !== null) {
     fs.writeFileSync(path.join(apiRoot, '.npmrc'), npmrc)
+  }
+
+  // Hardened GitHub Actions CI lives at the repo root (appRoot), with steps that
+  // run from the api directory. Opt-in via the generator prompt.
+  if (options.githubActions) {
+    const workflowsDir = path.join(appRoot, '.github', 'workflows')
+    fs.mkdirSync(workflowsDir, { recursive: true })
+    fs.writeFileSync(path.join(workflowsDir, 'ci.yml'), CiWorkflowBuilder.build(appName, options))
   }
 
   fs.renameSync(path.join(apiRoot, 'gitignore'), path.join(apiRoot, '.gitignore'))
