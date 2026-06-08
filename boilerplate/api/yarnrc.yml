@@ -1,4 +1,26 @@
 nodeLinker: node-modules
 
+# SECURITY — pin the registry so installs can't be silently redirected to a
+# malicious mirror.
+npmRegistryServer: "https://registry.npmjs.org"
+
+# SECURITY — block ALL dependency build/postinstall scripts (the primary
+# install-time attack vector for Shai-Hulud-class npm worms). This app's
+# dependency tree needs none: esbuild ships prebuilt binaries and puppeteer's
+# browser is installed explicitly via `npx puppeteer browsers install`. If you
+# later add a dependency that genuinely needs to build, re-enable ONLY that
+# package via `dependenciesMeta.<pkg>.built: true` in package.json — keep it
+# minimal, since each entry re-opens script execution.
+enableScripts: false
+
+# SECURITY — don't install dependency versions published in the last 3 days
+# (4320 min). Most worm-injected releases are caught and unpublished inside that
+# window. Yarn 4.10+ ships a 24h gate by default; this raises it to 3 days, which
+# still sits under the typical critical-CVE patch SLA.
+npmMinimalAgeGate: 4320
+
+# @rvoh/* packages are exempt from the age gate: Psychic ships frequent releases
+# that generated apps should pick up immediately, and they come from the trusted
+# first-party publisher.
 npmPreapprovedPackages:
   - "@rvoh/*"

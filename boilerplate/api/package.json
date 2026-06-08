@@ -5,6 +5,9 @@
   "main": "src/index.ts",
   "author": "tbd",
   "private": true,
+  "engines": {
+    "node": ">=26"
+  },
   "scripts": {
     "psy": "tsx src/conf/system/cli.ts",
     "psy:js": "node ./dist/src/conf/system/cli.js",

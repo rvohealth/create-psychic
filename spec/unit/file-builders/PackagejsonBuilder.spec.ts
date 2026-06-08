@@ -22,6 +22,11 @@ describe('PackagejsonBuilder', () => {
       expect(JSON.parse(res).name).toEqual('howyadoin')
     })
 
+    it('pins engines.node to the Psychic security target (>=26)', async () => {
+      const res = await PackagejsonBuilder.buildAPI('howyadoin', baseOptions)
+      expect(JSON.parse(res).engines).toEqual({ node: '>=26' })
+    })
+
     context('with backgroundWorkers: false and ws: false', () => {
       it('returns the app with the specified options', async () => {
         const options: NewPsychicAppCliOptions = { ...baseOptions }

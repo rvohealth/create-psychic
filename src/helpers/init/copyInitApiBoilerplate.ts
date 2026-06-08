@@ -226,11 +226,16 @@ export default async function copyInitApiBoilerplate(appName: string, options: I
 }
 
 function pnpmWorkspaceYaml() {
-  // pnpm 11 introduced minimumReleaseAge (default: 1440 min = 24h), which prevents
-  // installing packages published less than 24h ago. @rvoh/* packages are excluded
-  // so that freshly-published releases are always available to generated apps.
-  // Dependency build scripts stay blocked by default, but unreviewed optional native
-  // package build scripts should not make the scaffold unusable.
+  // SECURITY — pnpm 10+ blocks ALL dependency build scripts by default (the
+  // primary install-time vector for Shai-Hulud-class npm worms); that default is
+  // left in place (no `allowBuilds` allowlist). `strictDepBuilds: false` keeps the
+  // blocked-script notice a warning, not a hard install error.
+  //
+  // minimumReleaseAge (4320 min = 3 days) won't install dependency versions
+  // published in the last 3 days — most worm-injected releases are caught and
+  // unpublished inside that window, and 3 days sits under the typical critical-CVE
+  // patch SLA. @rvoh/* packages are excluded so Psychic's frequent releases (from
+  // the trusted first-party publisher) are always available immediately.
   const rvohExcludes =
     'minimumReleaseAgeExclude:\n' +
     "  - '@rvoh/dream'\n" +
@@ -240,7 +245,7 @@ function pnpmWorkspaceYaml() {
     "  - '@rvoh/psychic-workers'\n" +
     "  - '@rvoh/psychic-websockets'\n"
 
-  return 'strictDepBuilds: false\n\n' + rvohExcludes
+  return 'strictDepBuilds: false\n\nminimumReleaseAge: 4320\n\n' + rvohExcludes
 }
 
 function copyRecursiveSync(path: string, dest: string, importExtension: (typeof importExtensions)[number]) {

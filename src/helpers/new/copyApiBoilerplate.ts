@@ -7,6 +7,7 @@ import DreamConfigBuilder from '../../file-builders/DreamConfigBuilder.js'
 import EnvBuilder from '../../file-builders/EnvBuilder.js'
 import FeatureSpecExampleBuilder from '../../file-builders/FeatureSpecExampleBuilder.js'
 import FeatureSpecGlobalBuilder from '../../file-builders/FeatureSpecGlobalBuilder.js'
+import NpmrcBuilder from '../../file-builders/NpmrcBuilder.js'
 import PackagejsonBuilder from '../../file-builders/PackagejsonBuilder.js'
 import SrcPathHelperBuilder from '../../file-builders/SrcPathHelperBuilder.js'
 import apiOnlyOptions from '../apiOnlyOptions.js'
@@ -72,16 +73,28 @@ export default async function copyApiBoilerplate(appName: string, options: NewPs
     fs.rmSync(path.join(apiRoot, 'pnpm-workspace.yaml'))
   }
 
+  // .npmrc carries registry pinning (+ npm's cooldown/script-block, which it
+  // can't express in a workspace file). yarn ignores .npmrc, so none is written
+  // for it; NpmrcBuilder returns null in that case.
+  const npmrc = NpmrcBuilder.build(options.packageManager)
+  if (npmrc !== null) {
+    fs.writeFileSync(path.join(apiRoot, '.npmrc'), npmrc)
+  }
+
   fs.renameSync(path.join(apiRoot, 'gitignore'), path.join(apiRoot, '.gitignore'))
   fs.writeFileSync(
     path.join(apiRoot, 'src', 'conf', 'system', 'srcPath.ts'),
     await SrcPathHelperBuilder.build(options),
   )
 
-  const nodeVersion = process.version.replace(/^v/, '')
-  if (!/^(0|1|20|21)/.test(nodeVersion)) {
-    fs.writeFileSync(path.join(apiRoot, '.node-version'), nodeVersion)
-  }
+  // Pin new apps to Node 26 — Psychic's security target (the full Node permission
+  // model + `--allow-net` land in 26, and 25 is already EOL). `engines.node` in
+  // package.json stays advisory (no engine-strict), so the app still generates and
+  // installs on older Node with a warning; these files steer version-manager users
+  // (.nvmrc → nvm/fnm, .node-version → nodenv/fnm/asdf) onto 26.
+  const PINNED_NODE_VERSION = '26'
+  fs.writeFileSync(path.join(apiRoot, '.nvmrc'), `${PINNED_NODE_VERSION}\n`)
+  fs.writeFileSync(path.join(apiRoot, '.node-version'), `${PINNED_NODE_VERSION}\n`)
 
   fs.writeFileSync(path.join(apiRoot, '.env'), EnvBuilder.build({ appName, env: 'development' }))
   fs.writeFileSync(path.join(apiRoot, '.env.test'), EnvBuilder.build({ appName, env: 'test' }))

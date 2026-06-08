@@ -42,7 +42,7 @@ export default async function buildInitPsychicAppOptionsWithPrompt(options: Init
 
   if (!options.packageManager || !psychicPackageManagers.includes(options.packageManager)) {
     const answer = await new Select(
-      'What package manager would you like to use?',
+      'What package manager would you like to use? (pnpm recommended — strongest supply-chain defaults)',
       psychicPackageManagers,
     ).run()
     options.packageManager = answer
