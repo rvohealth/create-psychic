@@ -1,3 +1,9 @@
+## 3.5.0
+
+- **Node/Deno/Bun runtime support.** New `runtime` prompt (and `--runtime` flag) that, for `deno`/`bun`, subsumes the package-manager prompt — each is its own toolchain. Per-runtime generation: `bun install`/`deno install`, lockfiles, run/tsc commands, `deno.json` (import map + sloppy-imports + nodeModulesDir) / `bunfig.toml` config (emitted instead of `.nvmrc`), rewritten package.json scripts (so app code runs on the chosen runtime, not the Node `.bin` shims), and runtime-aware hardened GitHub Actions CI (SHA-pinned `setup-bun`/`setup-deno`). Requires `@rvoh/dream` ≥ 2.12.0 and `@rvoh/psychic` ≥ 3.5.0 in generated apps. Node + pnpm remain the defaults.
+- Prompt options now show each runtime's / package manager's install-time supply-chain posture (lifecycle-script blocking + release-age cooldown). Deno/Bun are NOT positioned as more secure than pnpm: runtime permission flags are process-wide (they can't isolate dependency code from app code), so egress hardening belongs at the infrastructure layer (see the generated `SECURITY.md`), not the runtime.
+- Boilerplate: `node:os` import prefix in `workers.ts` (Deno rejects bare builtin specifiers); `dotenv` bumped to `^17.2.3` to align with the `@rvoh` packages so Deno resolves a single `@rvoh/dream` copy.
+
 ## 3.4.4
 
 - Boilerplate `api/src/conf/initializers/websockets.ts` no longer gates `PsychicAppWebsockets.init()` behind a service-role check. Any process — websocket server, web server, or worker — may call `Ws.emit()`, and skipping init in any of them causes a hard-to-diagnose `cachePsychicAppWebsockets` runtime error. The initializer now runs in all processes by default. A commented-out role-list guard (`['websockets', 'web', 'worker']`) is included for apps that want to restrict which roles can push messages.
