@@ -107,6 +107,89 @@ open the update PRs for you — review them, don't just merge.
   the generated CI are throwaway, test-only values for an ephemeral database. Real
   secrets belong in GitHub Actions encrypted secrets (`${{ secrets.NAME }}`).
 
+## Production container hardening (example to adapt — NOT a turnkey config)
+
+create-psychic generates a **dev** `Dockerfile.dev` only. It deliberately does
+**not** generate a production Dockerfile: a blessed prod image would rot (its
+pinned base goes stale and unpatched), carry a large blast radius across every
+generated app, and an implied "the generator vetted this" tends to reduce the
+scrutiny a production image actually deserves. The following is a **reference to
+read, understand, and adapt** — not a drop-in.
+
+Two things matter most, and neither is provided by Node's runtime `--permission`
+model (which can't restrict network egress, and whose value is undercut by the
+native-addon escape hatch most real apps need):
+
+1. **Run as a non-root user on a minimal, pinned, regularly-updated base.**
+2. **Restrict network egress at the orchestrator** — this is the control that
+   actually contains a compromised dependency trying to exfiltrate data or phone
+   home, and it lives in your platform (k8s/your cloud), not in Node.
+
+Example production Dockerfile to adapt:
+
+```dockerfile
+# Pin to a specific digest and KEEP IT UPDATED (rebuild on base-image CVEs).
+# `node:26-bookworm-slim` is an example; pin the digest you actually vet.
+FROM node:26-bookworm-slim AS build
+WORKDIR /app
+# Install with a frozen lockfile and dependency scripts blocked (matches this
+# app's .npmrc/pnpm-workspace.yaml posture).
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+RUN corepack enable && pnpm install --frozen-lockfile --prod=false
+COPY . .
+RUN pnpm build
+
+FROM node:26-bookworm-slim
+WORKDIR /app
+ENV NODE_ENV=production
+# Drop privileges: never run the app as root.
+USER node
+COPY --chown=node:node --from=build /app/dist ./dist
+COPY --chown=node:node --from=build /app/node_modules ./node_modules
+COPY --chown=node:node --from=build /app/package.json ./
+CMD ["node", "dist/src/index.js"]
+```
+
+Run it read-only with no privilege escalation (compose example; the k8s
+equivalents are `securityContext.readOnlyRootFilesystem`,
+`runAsNonRoot`, `allowPrivilegeEscalation: false`, and a writable `emptyDir` for
+any temp/log paths):
+
+```yaml
+services:
+  api:
+    read_only: true
+    tmpfs: ["/tmp"]
+    security_opt: ["no-new-privileges:true"]
+    cap_drop: ["ALL"]
+```
+
+Restrict egress with a Kubernetes NetworkPolicy so a compromised dependency can
+only reach the dependencies it legitimately needs (Postgres, Redis, DNS) — not
+the open internet:
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: api-egress
+spec:
+  podSelector:
+    matchLabels: { app: api }
+  policyTypes: ["Egress"]
+  egress:
+    - to: [{ podSelector: { matchLabels: { app: postgres } } }]
+    - to: [{ podSelector: { matchLabels: { app: redis } } }]
+    # DNS
+    - to: [{ namespaceSelector: {} }]
+      ports: [{ protocol: UDP, port: 53 }, { protocol: TCP, port: 53 }]
+    # Add explicit allow rules for any external host you genuinely call.
+    # Everything else is denied by default.
+```
+
+Adapt all of the above to your platform, pin and update the base image, and
+verify it yourself — treat it as a starting point, not a guarantee.
+
 ## Reporting a vulnerability in your app
 
 Add your team's security contact and disclosure process here.
