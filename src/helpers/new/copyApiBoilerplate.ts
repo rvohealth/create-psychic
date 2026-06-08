@@ -86,10 +86,9 @@ export default async function copyApiBoilerplate(appName: string, options: NewPs
 
   // Hardened GitHub Actions CI lives at the repo root (appRoot), with steps that
   // run from the api directory. Opt-in via the generator prompt. The generated
-  // workflow targets Node package managers (setup-node + corepack + frozen
-  // installs); Bun/Deno CI is a follow-up, so CI is emitted for the node runtime
-  // only — a bun/deno app opting into CI simply gets no workflow for now.
-  if (options.githubActions && options.runtime !== 'deno' && options.runtime !== 'bun') {
+  // workflow is runtime-aware (setup-node/corepack for node pms, setup-bun /
+  // setup-deno for those runtimes).
+  if (options.githubActions) {
     const workflowsDir = path.join(appRoot, '.github', 'workflows')
     fs.mkdirSync(workflowsDir, { recursive: true })
     fs.writeFileSync(path.join(workflowsDir, 'ci.yml'), CiWorkflowBuilder.build(appName, options))

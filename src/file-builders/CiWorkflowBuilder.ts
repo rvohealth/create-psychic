@@ -10,6 +10,8 @@ import snakeify from '../helpers/snakeify.js'
 const ACTIONS = {
   checkout: 'df4cb1c069e1874edd31b4311f1884172cec0e10', // v6.0.3
   setupNode: '48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e', // v6.4.0
+  setupBun: '0c5077e51419868618aeaa5fe8019c62421857d6', // v2.2.0
+  setupDeno: '667a34cdef165d8d2b2e98dde39547c9daac7282', // v2.0.4
   setupGo: '4a3601121dd01d1626a1e23e37211e3254c1c06c', // v6.4.0
   uploadArtifact: '043fb46d1a93c77aae656e7c1c64a875d1fc6a0a', // v7.0.1
 }
@@ -74,11 +76,10 @@ function installCmd(pm: PsychicPackageManager): string {
       return 'yarn install --immutable'
     case 'npm':
       return 'npm ci'
-    default:
-      // Hardened CI generation currently targets Node package managers; the
-      // generator gates CI emission to runtime === 'node' (bun/deno CI is a
-      // follow-up). This guards the invariant.
-      throw new Error(`hardened CI generation does not support package manager: ${pm}`)
+    case 'bun':
+      return 'bun install --frozen-lockfile'
+    case 'deno':
+      return 'deno install --frozen'
   }
 }
 
@@ -87,19 +88,46 @@ function corepackStep(pm: PsychicPackageManager): string {
   return pm === 'npm' ? '' : '      - run: corepack enable\n'
 }
 
-// Run an npm-script (e.g. uspec) with optional passthrough flags. npm needs `--`
-// to forward flags to the underlying script; pnpm/yarn forward them directly.
-function runScript(pm: PsychicPackageManager, script: string, flags = ''): string {
-  if (!flags) return pm === 'npm' ? `npm run ${script}` : `${pm} ${script}`
-  return pm === 'npm' ? `npm run ${script} -- ${flags}` : `${pm} ${script} ${flags}`
+// The token that runs a package.json script for each package manager.
+function runPrefix(pm: PsychicPackageManager): string {
+  switch (pm) {
+    case 'npm':
+      return 'npm run'
+    case 'bun':
+      return 'bun run' // bare `bun <script>` is file execution
+    case 'deno':
+      return 'deno task' // deno has no `<pm> <script>` shorthand
+    default:
+      return pm // pnpm / yarn
+  }
 }
 
-// Invoke a `psy` CLI command (itself an npm-script wrapping the CLI). `npm run psy
-// <cmd>` forwards the positional command; flags after it still need `--`.
-function psy(pm: PsychicPackageManager, command: string, flags = ''): string {
-  const base = pm === 'npm' ? `npm run psy ${command}` : `${pm} psy ${command}`
+// Run a package.json script (e.g. uspec) with optional passthrough flags. npm
+// needs `--` to forward flags to the underlying script; the others forward them
+// directly.
+function runScript(pm: PsychicPackageManager, script: string, flags = ''): string {
+  const base = `${runPrefix(pm)} ${script}`
   if (!flags) return base
   return pm === 'npm' ? `${base} -- ${flags}` : `${base} ${flags}`
+}
+
+// Invoke a `psy` CLI command (itself a package.json script wrapping the CLI).
+function psy(pm: PsychicPackageManager, command: string, flags = ''): string {
+  const base = `${runPrefix(pm)} psy ${command}`
+  if (!flags) return base
+  return pm === 'npm' ? `${base} -- ${flags}` : `${base} ${flags}`
+}
+
+// puppeteer's browser is installed explicitly (lifecycle scripts are blocked).
+function puppeteerInstall(pm: PsychicPackageManager): string {
+  switch (pm) {
+    case 'bun':
+      return 'bunx puppeteer browsers install firefox'
+    case 'deno':
+      return 'deno run -A npm:puppeteer browsers install firefox'
+    default:
+      return 'npx puppeteer browsers install firefox'
+  }
 }
 
 // ---- reusable yaml fragments --------------------------------------------------
@@ -209,10 +237,27 @@ function setupSteps(pm: PsychicPackageManager, fetchDepth = false): string {
 `
     : ''
   return `      - uses: actions/checkout@${ACTIONS.checkout} # v6.0.3
-${checkoutWith}      - uses: actions/setup-node@${ACTIONS.setupNode} # v6.4.0
+${checkoutWith}${runtimeSetup(pm)}`
+}
+
+// Provision the chosen runtime/toolchain. Node uses setup-node (+ corepack for
+// pnpm/yarn); Bun and Deno use their own setup actions and act as the installer.
+function runtimeSetup(pm: PsychicPackageManager): string {
+  switch (pm) {
+    case 'bun':
+      return `      - uses: oven-sh/setup-bun@${ACTIONS.setupBun} # v2.2.0
+`
+    case 'deno':
+      return `      - uses: denoland/setup-deno@${ACTIONS.setupDeno} # v2.0.4
+        with:
+          deno-version: v2.x
+`
+    default:
+      return `      - uses: actions/setup-node@${ACTIONS.setupNode} # v6.4.0
         with:
           node-version: "${CI_NODE_VERSION}"
 ${corepackStep(pm)}`
+  }
 }
 
 function uspecJob(ctx: BuildContext): string {
@@ -243,7 +288,7 @@ function fspecJob(ctx: BuildContext): string {
 ${shardMatrix()}${servicesBlock(ctx)}${ctx.env}${defaultsBlock(ctx.apiDir)}    steps:
 ${setupSteps(ctx.pm)}      - run: ${installCmd(ctx.pm)}
 ${clientInstalls}      - name: install puppeteer browser
-        run: npx puppeteer browsers install firefox
+        run: ${puppeteerInstall(ctx.pm)}
       - run: mkdir -p /tmp/screenshots
       - run: ${psy(ctx.pm, 'db:migrate', '--skip-sync')}
       - run: ${runScript(ctx.pm, 'fspec', '--shard=${{ matrix.shard }}')}

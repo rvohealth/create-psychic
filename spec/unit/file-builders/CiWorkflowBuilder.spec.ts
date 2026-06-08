@@ -128,5 +128,54 @@ describe('CiWorkflowBuilder', () => {
         expect(yml).toContain('yarn uspec --shard=${{ matrix.shard }}')
       })
     })
+
+    context('bun', () => {
+      const yml = CiWorkflowBuilder.build('howyadoin', {
+        ...baseOptions,
+        packageManager: 'bun',
+        runtime: 'bun',
+        workers: true,
+      })
+
+      it('provisions bun via setup-bun (SHA-pinned), not setup-node/corepack', () => {
+        expect(yml).toContain('oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6')
+        expect(yml).not.toContain('actions/setup-node@')
+        expect(yml).not.toContain('corepack enable')
+      })
+
+      it('installs frozen and runs via bun run / bunx', () => {
+        expect(yml).toContain('bun install --frozen-lockfile')
+        expect(yml).toContain('bun run uspec --shard=${{ matrix.shard }}')
+        expect(yml).toContain('bun run psy db:migrate --skip-sync')
+        expect(yml).toContain('bunx puppeteer browsers install firefox')
+      })
+    })
+
+    context('deno', () => {
+      const yml = CiWorkflowBuilder.build('howyadoin', {
+        ...baseOptions,
+        packageManager: 'deno',
+        runtime: 'deno',
+        workers: true,
+      })
+
+      it('provisions deno via setup-deno (SHA-pinned), not setup-node', () => {
+        expect(yml).toContain('denoland/setup-deno@667a34cdef165d8d2b2e98dde39547c9daac7282')
+        expect(yml).toContain('deno-version: v2.x')
+        expect(yml).not.toContain('actions/setup-node@')
+      })
+
+      it('installs frozen and runs via deno task / deno run -A npm:', () => {
+        expect(yml).toContain('deno install --frozen')
+        expect(yml).toContain('deno task uspec --shard=${{ matrix.shard }}')
+        expect(yml).toContain('deno task psy db:migrate --skip-sync')
+        expect(yml).toContain('deno run -A npm:puppeteer browsers install firefox')
+      })
+
+      it('still SHA-pins every action (no @vN tags in uses:)', () => {
+        const usesTags = yml.match(/uses: [^\n]*@v\d+(\.\d+)*(\s|$)/g)
+        expect(usesTags).toBeNull()
+      })
+    })
   })
 })
