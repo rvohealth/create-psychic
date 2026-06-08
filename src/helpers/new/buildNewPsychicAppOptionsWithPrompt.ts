@@ -7,6 +7,24 @@ import {
 } from '../newPsychicApp.js'
 import Select from '../select.js'
 
+// Per-option guidance shown in the prompts (parallel to psychicRuntimes /
+// psychicPackageManagers). The security framing is the INSTALL-TIME supply-chain
+// posture — lifecycle-script blocking + release-age cooldown — which is the control
+// that actually defends against Shai-Hulud-class compromised dependencies. Runtime
+// permission sandboxing is deliberately NOT claimed: it's process-wide (can't wall
+// third-party code off from app code) and egress control belongs at the
+// infrastructure layer (see the generated SECURITY.md).
+const runtimeDescriptions = [
+  '(most mature, widest ecosystem compatibility)',
+  '(newer toolchain; blocks dependency install scripts by default)',
+  '(fast; newer toolchain; blocks dependency install scripts by default)',
+] as const
+const packageManagerDescriptions = [
+  '(recommended — blocks dependency build scripts by default + release-age cooldown)',
+  '(blocks dependency build scripts by default + release-age cooldown)',
+  '(weakest defaults — script-blocking is all-or-nothing, no per-package cooldown exclude)',
+] as const
+
 export default async function buildNewPsychicAppOptionsWithPrompt(options: NewPsychicAppCliOptions) {
   // Runtime is chosen first; for deno/bun it subsumes the package-manager prompt
   // (each is its own toolchain). Skip the prompt in the spec suite (no TTY) — a
@@ -18,6 +36,7 @@ export default async function buildNewPsychicAppOptionsWithPrompt(options: NewPs
       options.runtime = await new Select(
         'Which JavaScript runtime would you like to target?',
         psychicRuntimes,
+        runtimeDescriptions,
       ).run()
     }
   }
@@ -28,8 +47,9 @@ export default async function buildNewPsychicAppOptionsWithPrompt(options: NewPs
       !(psychicPackageManagers as readonly string[]).includes(options.packageManager)
     ) {
       const answer = await new Select(
-        'What package manager would you like to use? (pnpm recommended — strongest supply-chain defaults)',
+        'What package manager would you like to use?',
         psychicPackageManagers,
+        packageManagerDescriptions,
       ).run()
       options.packageManager = answer
     }
