@@ -15,6 +15,7 @@ import PackagejsonBuilder from '../../file-builders/PackagejsonBuilder.js'
 import SrcPathHelperBuilder from '../../file-builders/SrcPathHelperBuilder.js'
 import apiOnlyOptions from '../apiOnlyOptions.js'
 import copyRecursive from '../copyRecursive.js'
+import frontEndPackageManager from '../frontEndPackageManager.js'
 import getApiRoot from '../getApiRoot.js'
 import internalSrcPath from '../internalSrcPath.js'
 import { NewPsychicAppCliOptions } from '../newPsychicApp.js'
@@ -23,14 +24,17 @@ import replacePackageManagerInFile from '../replacePackageManagerInFile.js'
 export default async function copyApiBoilerplate(appName: string, options: NewPsychicAppCliOptions) {
   const appRoot = path.join('.', appName)
   const apiRoot = getApiRoot(appName, options)
+  // AGENTS.md / CLAUDE.md document the front-end wrapper scripts via `{{PM_CWD}}`,
+  // which must resolve to the front-end PM (pnpm for a Deno API), not the runtime.
+  const fePm = frontEndPackageManager(options)
 
   if (!apiOnlyOptions(options)) {
     fs.mkdirSync(appRoot)
     fs.cpSync(internalSrcPath('..', 'boilerplate', 'gitignore'), path.join(appRoot, '.gitignore'))
     fs.cpSync(internalSrcPath('..', 'boilerplate', 'AGENTS.md'), path.join(appRoot, 'AGENTS.md'))
-    await replacePackageManagerInFile(path.join(appRoot, 'AGENTS.md'), options.packageManager)
+    await replacePackageManagerInFile(path.join(appRoot, 'AGENTS.md'), options.packageManager, fePm)
     fs.cpSync(internalSrcPath('..', 'boilerplate', 'CLAUDE.md'), path.join(appRoot, 'CLAUDE.md'))
-    await replacePackageManagerInFile(path.join(appRoot, 'CLAUDE.md'), options.packageManager)
+    await replacePackageManagerInFile(path.join(appRoot, 'CLAUDE.md'), options.packageManager, fePm)
     fs.cpSync(
       internalSrcPath('..', 'boilerplate', 'api', '.prettierignore'),
       path.join(appRoot, '.prettierignore'),
@@ -50,7 +54,7 @@ export default async function copyApiBoilerplate(appName: string, options: NewPs
   fs.writeFileSync(path.join(appRoot, 'docker-compose.yml'), await DockerComposeBuilder.build(options))
   fs.writeFileSync(path.join(apiRoot, 'Dockerfile.dev'), await PsychicDockerDevBuilder.build(options))
 
-  await replacePackageManagerInFile(path.join(apiRoot, 'AGENTS.md'), options.packageManager)
+  await replacePackageManagerInFile(path.join(apiRoot, 'AGENTS.md'), options.packageManager, fePm)
   await replacePackageManagerInFile(path.join(apiRoot, 'src', 'conf', 'routes.ts'), options.packageManager)
   await replacePackageManagerInFile(
     path.join(apiRoot, 'src', 'conf', 'routes.admin.ts'),

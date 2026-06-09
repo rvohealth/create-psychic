@@ -1,3 +1,4 @@
+import frontEndPackageManager from '../helpers/frontEndPackageManager.js'
 import { NewPsychicAppCliOptions, PsychicPackageManager } from '../helpers/newPsychicApp.js'
 import { replacePackageManagerInFileContents } from '../helpers/replacePackageManagerInFile.js'
 import safelyImportJsonFile from '../helpers/safelyImportJsonFile.js'
@@ -16,6 +17,12 @@ export default class PackagejsonBuilder {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     packagejson.name = appName
 
+    // The client/admin/internal wrapper scripts are FRONT-END concerns: whether to
+    // forward args with `--` (npm) vs. invoke the binary directly, and which PM the
+    // `{{PM_CWD}}` cross-dir command resolves to, are both properties of the
+    // front-end package manager, not the API runtime. For a Deno API that's pnpm.
+    const fePm = frontEndPackageManager(options)
+
     switch (options.client) {
       case 'none':
         break
@@ -23,7 +30,7 @@ export default class PackagejsonBuilder {
       case 'nextjs':
         // npm requires `--` to forward CLI arguments to scripts (e.g. `npm run dev -- --port 3001`)
         // yarn and pnpm forward arguments automatically and can also invoke binaries like `next` directly.
-        if (options.packageManager === 'npm') {
+        if (fePm === 'npm') {
           // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
           packagejson.scripts['client'] = `{{PM_CWD}}=../client dev -- --port 3000`
           // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -39,7 +46,7 @@ export default class PackagejsonBuilder {
         break
 
       case 'nuxt':
-        if (options.packageManager === 'npm') {
+        if (fePm === 'npm') {
           // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
           packagejson.scripts['client'] = `{{PM_CWD}}=../client dev -- --port 3000`
           // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -55,7 +62,7 @@ export default class PackagejsonBuilder {
         break
 
       default:
-        if (options.packageManager === 'npm') {
+        if (fePm === 'npm') {
           // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
           packagejson.scripts['client'] = `{{PM_CWD}}=../client dev -- --port 3000`
           // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -77,7 +84,7 @@ export default class PackagejsonBuilder {
       default:
         switch (options.adminClient) {
           case 'nextjs':
-            if (options.packageManager === 'npm') {
+            if (fePm === 'npm') {
               // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
               packagejson.scripts['admin'] = `{{PM_CWD}}=../admin dev -- --port 3001`
               // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -93,7 +100,7 @@ export default class PackagejsonBuilder {
             break
 
           case 'nuxt':
-            if (options.packageManager === 'npm') {
+            if (fePm === 'npm') {
               // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
               packagejson.scripts['admin'] = `{{PM_CWD}}=../admin dev -- --port 3001`
               // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -109,7 +116,7 @@ export default class PackagejsonBuilder {
             break
 
           default:
-            if (options.packageManager === 'npm') {
+            if (fePm === 'npm') {
               // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
               packagejson.scripts['admin'] = `{{PM_CWD}}=../admin dev -- --port 3001`
               // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -132,7 +139,7 @@ export default class PackagejsonBuilder {
       default:
         switch (options.internalClient) {
           case 'nextjs':
-            if (options.packageManager === 'npm') {
+            if (fePm === 'npm') {
               // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
               packagejson.scripts['internal'] = `{{PM_CWD}}=../internal dev -- --port 3002`
               // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -148,7 +155,7 @@ export default class PackagejsonBuilder {
             break
 
           case 'nuxt':
-            if (options.packageManager === 'npm') {
+            if (fePm === 'npm') {
               // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
               packagejson.scripts['internal'] = `{{PM_CWD}}=../internal dev -- --port 3002`
               // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -164,7 +171,7 @@ export default class PackagejsonBuilder {
             break
 
           default:
-            if (options.packageManager === 'npm') {
+            if (fePm === 'npm') {
               // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
               packagejson.scripts['internal'] = `{{PM_CWD}}=../internal dev -- --port 3002`
               // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -207,7 +214,13 @@ export default class PackagejsonBuilder {
       applyRuntimeRunners(packagejson.scripts, options.packageManager)
     }
 
-    return replacePackageManagerInFileContents(JSON.stringify(packagejson, null, 2), options.packageManager)
+    // `{{PM}}` resolves to the API runtime; `{{PM_CWD}}` (front-end client wrappers)
+    // resolves to the front-end PM — they diverge only for a Deno API (→ pnpm).
+    return replacePackageManagerInFileContents(
+      JSON.stringify(packagejson, null, 2),
+      options.packageManager,
+      fePm,
+    )
   }
 }
 
