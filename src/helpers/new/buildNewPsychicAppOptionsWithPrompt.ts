@@ -16,7 +16,7 @@ import Select from '../select.js'
 // infrastructure layer (see the generated SECURITY.md).
 const runtimeDescriptions = [
   '(most mature, widest ecosystem compatibility)',
-  '(newer toolchain; blocks dependency install scripts by default)',
+  '(back end; PNPM drives front-end clients; blocks install scripts by default)',
   '(fast; newer toolchain; blocks dependency install scripts by default)',
 ] as const
 const packageManagerDescriptions = [
