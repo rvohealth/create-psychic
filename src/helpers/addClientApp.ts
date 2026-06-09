@@ -6,6 +6,7 @@ import NuxtConfigBuilder from '../file-builders/NuxtConfigBuilder.js'
 import ViteConfBuilder from '../file-builders/ViteConfBuilder.js'
 import DreamCliLogger, { DreamCliForegroundColor } from '../logger/DreamCliLogger.js'
 import addMissingClientGitignoreStatements from './addMissingClientGitignoreStatements.js'
+import frontEndPackageManager from './frontEndPackageManager.js'
 import { cliClientAppTypes, NewPsychicAppCliOptions, PsychicPackageManager } from './newPsychicApp.js'
 import sspawn from './sspawn.js'
 import colorize from '../logger/loggable/colorize.js'
@@ -38,8 +39,14 @@ export default async function addClientApp({
 
   const apiRoot = getApiRoot(appName, options)
 
-  const initPackageManager = initilizePackageManagerCmd(options.packageManager)
-  const createCmd = viteCmd(options.packageManager, clientRootFolderName, `${client}-ts`)
+  // Clients are a Node-ecosystem concern, separate from the API runtime: a Deno
+  // API drives its clients with pnpm (Deno adds nothing on the front end). Bun
+  // drives its own; Node uses the chosen pm. So everything below keys off `fePm`,
+  // never `options.packageManager`.
+  const fePm = frontEndPackageManager(options)
+
+  const initPackageManager = initilizePackageManagerCmd(fePm)
+  const createCmd = viteCmd(fePm, clientRootFolderName, `${client}-ts`)
 
   switch (client) {
     case 'react':
@@ -89,7 +96,7 @@ export default async function addClientApp({
 
     case 'nextjs': {
       await sspawn(
-        `cd ${rootPath} && npx create-next-app@latest ${clientRootFolderName} --eslint --app --ts --skip-install --use-${options.packageManager} --yes --disable-git && cd ${clientRootFolderName} ${initPackageManager}`,
+        `cd ${rootPath} && ${fePm === 'bun' ? 'bunx' : 'npx'} create-next-app@latest ${clientRootFolderName} --eslint --app --ts --skip-install --use-${fePm} --yes --disable-git && cd ${clientRootFolderName} ${initPackageManager}`,
         {
           onStdout: message => {
             logger.logContinueProgress(
@@ -110,8 +117,12 @@ export default async function addClientApp({
     }
 
     case 'nuxt': {
+      // `nuxi init` directly (not the `create nuxt-app` wrapper), fully
+      // non-interactive: `--template minimal` skips the template picker and
+      // `-M ""` (empty modules) skips the "browse and install modules?" prompt
+      // that otherwise hangs CI. `--no-install` defers install to the shared step.
       await sspawn(
-        `cd ${rootPath} && ${options.packageManager} create nuxt-app ${clientRootFolderName} --packageManager ${options.packageManager} --no-install ${initPackageManager}`,
+        `cd ${rootPath} && ${fePm === 'bun' ? 'bunx' : 'npx'} nuxi@latest init ${clientRootFolderName} --template minimal --no-install --packageManager ${fePm} --no-gitInit -M "" && cd ${clientRootFolderName} ${initPackageManager}`,
         {
           onStdout: message => {
             logger.logContinueProgress(
@@ -143,7 +154,7 @@ export default async function addClientApp({
 
   // use node-modules linker for yarn client apps to ensure compatibility
   // with vite's rolldown bundler, which doesn't support yarn PnP
-  if (options.packageManager === 'yarn') {
+  if (fePm === 'yarn') {
     fs.writeFileSync(
       path.join(apiRoot, '..', clientRootFolderName, '.yarnrc.yml'),
       'nodeLinker: node-modules\n\nnpmPreapprovedPackages:\n  - "@rvoh/*"\n',
@@ -152,7 +163,7 @@ export default async function addClientApp({
 
   // Prevent pnpm from traversing up and merging with a parent workspace (e.g. create-psychic's own pnpm-workspace.yaml during specs).
   // Keep dependency build scripts blocked by default without failing when optional native packages request them.
-  if (options.packageManager === 'pnpm') {
+  if (fePm === 'pnpm') {
     fs.writeFileSync(
       path.join(apiRoot, '..', clientRootFolderName, 'pnpm-workspace.yaml'),
       'strictDepBuilds: false\n',
@@ -160,19 +171,16 @@ export default async function addClientApp({
   }
 
   // only bother installing packages if not in test env to save time
-  await sspawn(
-    `cd ${path.join(apiRoot, '..', clientRootFolderName)} && ${installCmd(options.packageManager)}`,
-    {
-      onStdout: message => {
-        logger.logContinueProgress(
-          colorize(`[${clientRootFolderName}]`, { color: sourceColor }) + ' ' + message,
-          {
-            logPrefixColor: sourceColor,
-          },
-        )
-      },
+  await sspawn(`cd ${path.join(apiRoot, '..', clientRootFolderName)} && ${installCmd(fePm)}`, {
+    onStdout: message => {
+      logger.logContinueProgress(
+        colorize(`[${clientRootFolderName}]`, { color: sourceColor }) + ' ' + message,
+        {
+          logPrefixColor: sourceColor,
+        },
+      )
     },
-  )
+  })
 
   logger.logEndProgress()
 }
@@ -187,9 +195,12 @@ function initilizePackageManagerCmd(packageManager: PsychicPackageManager) {
     case 'yarn':
       return `&& touch ${lockfile} && corepack enable && yarn set version stable`
     case 'pnpm':
-      return ''
     case 'npm':
+    case 'bun':
       return ''
+    default:
+      // deno never drives the front end (frontEndPackageManager maps deno → pnpm)
+      throw new Error(`front-end package manager cannot be: ${packageManager as string}`)
   }
 }
 
@@ -220,5 +231,10 @@ function viteCmd(packageManager: PsychicPackageManager, clientRootFolderName: st
       return `pnpm create vite ${clientRootFolderName} --template ${template}`
     case 'npm':
       return `npm create vite@latest ${clientRootFolderName} -- --template ${template}`
+    case 'bun':
+      return `bun create vite@latest ${clientRootFolderName} --template ${template}`
+    default:
+      // deno never drives the front end (frontEndPackageManager maps deno → pnpm)
+      throw new Error(`front-end package manager cannot be: ${packageManager as string}`)
   }
 }
