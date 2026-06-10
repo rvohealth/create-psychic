@@ -54,6 +54,17 @@ describe.skipIf(!denoAvailable())('newPsychicApp with the deno runtime', () => {
     // allowed-package-managers enum at boot).
     await expectFileToContain('./howyadoin/src/conf/app.ts', "psy.set('packageManager', 'deno')")
 
+    // No Node-only vestiges: nodemon.json is dead config under Deno (web:dev uses
+    // `deno run -A --watch`), and nodemon/tsx/engines.node don't belong in a Deno app.
+    expect(fs.existsSync('./howyadoin/nodemon.json')).toBe(false)
+    const pkg = JSON.parse(fs.readFileSync('./howyadoin/package.json').toString()) as {
+      devDependencies: Record<string, string>
+      engines?: unknown
+    }
+    expect(pkg.devDependencies.nodemon).toBeUndefined()
+    expect(pkg.devDependencies.tsx).toBeUndefined()
+    expect(pkg.engines).toBeUndefined()
+
     await sspawn(`cd howyadoin && deno task uspec`)
   }, 300_000)
 })

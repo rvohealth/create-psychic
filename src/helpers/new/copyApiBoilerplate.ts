@@ -123,6 +123,12 @@ export default async function copyApiBoilerplate(appName: string, options: NewPs
     fs.writeFileSync(path.join(apiRoot, '.nvmrc'), '26\n')
   }
 
+  // nodemon is a Node-only dev-server tool; Deno/Bun get a native `--watch` web:dev
+  // (rewritten in PackagejsonBuilder), so the copied nodemon.json is dead config there.
+  if (options.runtime === 'deno' || options.runtime === 'bun') {
+    fs.rmSync(path.join(apiRoot, 'nodemon.json'))
+  }
+
   fs.writeFileSync(path.join(apiRoot, '.env'), EnvBuilder.build({ appName, env: 'development' }))
   fs.writeFileSync(path.join(apiRoot, '.env.test'), EnvBuilder.build({ appName, env: 'test' }))
   fs.writeFileSync(

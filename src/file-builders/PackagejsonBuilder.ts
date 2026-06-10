@@ -212,6 +212,14 @@ export default class PackagejsonBuilder {
     if (options.packageManager === 'bun' || options.packageManager === 'deno') {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
       applyRuntimeRunners(packagejson.scripts, options.packageManager)
+      // Strip Node-only toolchain vestiges: nodemon (Deno/Bun use a native `--watch`)
+      // and tsx (their scripts run TS directly) are never invoked here, and engines.node
+      // is meaningless for an app that doesn't run on Node. The matching nodemon.json is
+      // removed in copyApiBoilerplate.
+      removeDevDependency(packagejson, 'nodemon')
+      removeDevDependency(packagejson, 'tsx')
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      delete packagejson.engines
     }
 
     // `{{PM}}` resolves to the API runtime; `{{PM_CWD}}` (front-end client wrappers)
@@ -293,6 +301,12 @@ function pruneOverridesForPackageManager(packageJson: any, packageManager: Psych
 function removeDependency(packageJson: any, key: string) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
   delete packageJson.dependencies[key]
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function removeDevDependency(packageJson: any, key: string) {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+  delete packageJson.devDependencies[key]
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
