@@ -55,7 +55,7 @@ export default async function buildInitPsychicAppOptionsWithPrompt(options: Init
     const answer = await new Select(
       'what primary key type would you like to use?',
       primaryKeyTypes,
-      primaryKeyTypes.map(keyType => (keyType === 'uuid7' ? '(sortable; requires Postgres 18)' : '')),
+      primaryKeyTypes.map(keyType => (keyType === 'uuid7' ? '(sortable; requires postgres 18)' : '')),
     ).run()
     options.primaryKeyType = answer
   }
@@ -71,7 +71,7 @@ export default async function buildInitPsychicAppOptionsWithPrompt(options: Init
   }
 
   if (options.claudePsychicSkill === undefined && options.codexPsychicSkill === undefined) {
-    const answer = await new Select('ai agent skills?', [
+    const answer = await new Select('AI agent skills?', [
       'Claude Code',
       'Codex',
       'both',

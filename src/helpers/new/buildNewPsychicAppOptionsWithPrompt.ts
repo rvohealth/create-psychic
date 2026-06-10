@@ -40,7 +40,7 @@ export default async function buildNewPsychicAppOptionsWithPrompt(options: NewPs
     const answer = await new Select(
       'what primary key type would you like to use?',
       primaryKeyTypes,
-      primaryKeyTypes.map(keyType => (keyType === 'uuid7' ? '(sortable; requires Postgres 18)' : '')),
+      primaryKeyTypes.map(keyType => (keyType === 'uuid7' ? '(sortable; requires postgres 18)' : '')),
     ).run()
     options.primaryKeyType = answer
   }
@@ -96,7 +96,7 @@ export default async function buildNewPsychicAppOptionsWithPrompt(options: NewPs
   }
 
   if (options.claudePsychicSkill === undefined && options.codexPsychicSkill === undefined) {
-    const answer = await new Select('ai agent skills?', [
+    const answer = await new Select('AI agent skills?', [
       'Claude Code',
       'Codex',
       'both',
@@ -115,7 +115,7 @@ export default async function buildNewPsychicAppOptionsWithPrompt(options: NewPs
     if (process.env.NODE_ENV === 'test') {
       options.githubActions = false
     } else {
-      const answer = await new Select('generate a hardened GitHub Actions CI workflow?', [
+      const answer = await new Select('generate a github actions workflow file?', [
         'yes',
         'no',
       ] as const).run()
