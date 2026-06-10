@@ -7,24 +7,6 @@ import {
 } from '../newPsychicApp.js'
 import Select from '../select.js'
 
-// Per-option guidance shown in the prompts (parallel to psychicRuntimes /
-// psychicPackageManagers). The security framing is the INSTALL-TIME supply-chain
-// posture — lifecycle-script blocking + release-age cooldown — which is the control
-// that actually defends against Shai-Hulud-class compromised dependencies. Runtime
-// permission sandboxing is deliberately NOT claimed: it's process-wide (can't wall
-// third-party code off from app code) and egress control belongs at the
-// infrastructure layer (see the generated SECURITY.md).
-const runtimeDescriptions = [
-  '(most mature, widest ecosystem compatibility)',
-  '(back end; PNPM drives front-end clients; blocks install scripts by default)',
-  '(fast; newer toolchain; blocks dependency install scripts by default)',
-] as const
-const packageManagerDescriptions = [
-  '(recommended — blocks dependency build scripts by default + release-age cooldown)',
-  '(blocks dependency build scripts by default + release-age cooldown)',
-  '(weakest defaults — script-blocking is all-or-nothing, no per-package cooldown exclude)',
-] as const
-
 export default async function buildNewPsychicAppOptionsWithPrompt(options: NewPsychicAppCliOptions) {
   // Runtime is chosen first; for deno/bun it subsumes the package-manager prompt
   // (each is its own toolchain). Skip the prompt in the spec suite (no TTY) — a
@@ -33,11 +15,7 @@ export default async function buildNewPsychicAppOptionsWithPrompt(options: NewPs
     if (process.env.NODE_ENV === 'test') {
       options.runtime = 'node'
     } else {
-      options.runtime = await new Select(
-        'Which JavaScript runtime would you like to target?',
-        psychicRuntimes,
-        runtimeDescriptions,
-      ).run()
+      options.runtime = await new Select('which runtime would you like to target?', psychicRuntimes).run()
     }
   }
 
@@ -47,9 +25,8 @@ export default async function buildNewPsychicAppOptionsWithPrompt(options: NewPs
       !(psychicPackageManagers as readonly string[]).includes(options.packageManager)
     ) {
       const answer = await new Select(
-        'What package manager would you like to use?',
+        'what package manager would you like to use?',
         psychicPackageManagers,
-        packageManagerDescriptions,
       ).run()
       options.packageManager = answer
     }
@@ -61,8 +38,9 @@ export default async function buildNewPsychicAppOptionsWithPrompt(options: NewPs
 
   if (!options.primaryKeyType || !primaryKeyTypes.includes(options.primaryKeyType)) {
     const answer = await new Select(
-      'What primary key type would you like to use? (uuid7 requires Postgres 18)',
+      'what primary key type would you like to use?',
       primaryKeyTypes,
+      primaryKeyTypes.map(keyType => (keyType === 'uuid7' ? '(sortable; requires Postgres 18)' : '')),
     ).run()
     options.primaryKeyType = answer
   }
@@ -70,7 +48,7 @@ export default async function buildNewPsychicAppOptionsWithPrompt(options: NewPs
   let monoRepo = false
   if (!options.client && !options.adminClient && !options.internalClient) {
     const answer = await new Select(
-      `Would you like a monorepo?\nFor more info, see https://psychicframework.com/docs/learn-more/monorepos`,
+      `would you like a monorepo?\nFor more info, see https://psychicframework.com/docs/learn-more/monorepos`,
       ['yes', 'no'] as const,
     ).run()
     monoRepo = answer === 'yes'
@@ -108,17 +86,17 @@ export default async function buildNewPsychicAppOptionsWithPrompt(options: NewPs
   }
 
   if (options.workers === undefined) {
-    const answer = await new Select('Background workers?', ['yes', 'no'] as const).run()
+    const answer = await new Select('background workers?', ['yes', 'no'] as const).run()
     options.workers = answer === 'yes'
   }
 
   if (options.websockets === undefined) {
-    const answer = await new Select('Websockets?', ['yes', 'no'] as const).run()
+    const answer = await new Select('websockets?', ['yes', 'no'] as const).run()
     options.websockets = answer === 'yes'
   }
 
   if (options.claudePsychicSkill === undefined && options.codexPsychicSkill === undefined) {
-    const answer = await new Select('AI agent skills?', [
+    const answer = await new Select('ai agent skills?', [
       'Claude Code',
       'Codex',
       'both',
@@ -137,7 +115,7 @@ export default async function buildNewPsychicAppOptionsWithPrompt(options: NewPs
     if (process.env.NODE_ENV === 'test') {
       options.githubActions = false
     } else {
-      const answer = await new Select('Generate a hardened GitHub Actions CI workflow?', [
+      const answer = await new Select('generate a hardened GitHub Actions CI workflow?', [
         'yes',
         'no',
       ] as const).run()
