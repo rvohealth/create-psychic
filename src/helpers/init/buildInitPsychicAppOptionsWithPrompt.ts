@@ -34,7 +34,7 @@ export default async function buildInitPsychicAppOptionsWithPrompt(options: Init
 
   if (options.importExtension === undefined) {
     const answer = await new Select(
-      'what import suffix would you like to use for your files?',
+      'which import suffix would you like to use for your files?',
       importExtensions,
     ).run()
     options.importExtension = answer
@@ -45,7 +45,7 @@ export default async function buildInitPsychicAppOptionsWithPrompt(options: Init
     !(psychicPackageManagers as readonly string[]).includes(options.packageManager)
   ) {
     const answer = await new Select(
-      'what package manager would you like to use?',
+      'which package manager would you like to use?',
       psychicPackageManagers,
     ).run()
     options.packageManager = answer
@@ -53,7 +53,7 @@ export default async function buildInitPsychicAppOptionsWithPrompt(options: Init
 
   if (!options.primaryKeyType || !primaryKeyTypes.includes(options.primaryKeyType)) {
     const answer = await new Select(
-      'what primary key type would you like to use?',
+      'which primary key type would you like to use?',
       primaryKeyTypes,
       primaryKeyTypes.map(keyType => (keyType === 'uuid7' ? '(sortable; requires postgres 18)' : '')),
     ).run()

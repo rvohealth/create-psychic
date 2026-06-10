@@ -25,7 +25,7 @@ export default async function buildNewPsychicAppOptionsWithPrompt(options: NewPs
       !(psychicPackageManagers as readonly string[]).includes(options.packageManager)
     ) {
       const answer = await new Select(
-        'what package manager would you like to use?',
+        'which package manager would you like to use?',
         psychicPackageManagers,
       ).run()
       options.packageManager = answer
@@ -38,7 +38,7 @@ export default async function buildNewPsychicAppOptionsWithPrompt(options: NewPs
 
   if (!options.primaryKeyType || !primaryKeyTypes.includes(options.primaryKeyType)) {
     const answer = await new Select(
-      'what primary key type would you like to use?',
+      'which primary key type would you like to use?',
       primaryKeyTypes,
       primaryKeyTypes.map(keyType => (keyType === 'uuid7' ? '(sortable; requires postgres 18)' : '')),
     ).run()
