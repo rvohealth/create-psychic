@@ -48,7 +48,7 @@ export default async function buildNewPsychicAppOptionsWithPrompt(options: NewPs
   let monoRepo = false
   if (!options.client && !options.adminClient && !options.internalClient) {
     const answer = await new Select(
-      `would you like a monorepo?\nFor more info, see https://psychicframework.com/docs/learn-more/monorepos`,
+      'would you like a monorepo? (https://psychicframework.com/docs/learn-more/monorepos)',
       ['yes', 'no'] as const,
     ).run()
     monoRepo = answer === 'yes'
