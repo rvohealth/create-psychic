@@ -3,7 +3,7 @@ import {
   cliClientAppTypes,
   NewPsychicAppCliOptions,
   psychicPackageManagers,
-  psychicRuntimes,
+  selectablePsychicRuntimes,
 } from '../newPsychicApp.js'
 import Select from '../select.js'
 
@@ -11,11 +11,17 @@ export default async function buildNewPsychicAppOptionsWithPrompt(options: NewPs
   // Runtime is chosen first; for deno/bun it subsumes the package-manager prompt
   // (each is its own toolchain). Skip the prompt in the spec suite (no TTY) — a
   // prompted-but-unset Select would hang the suite.
-  if (options.runtime === undefined || !psychicRuntimes.includes(options.runtime)) {
+  if (
+    options.runtime === undefined ||
+    !(selectablePsychicRuntimes as readonly string[]).includes(options.runtime)
+  ) {
     if (process.env.NODE_ENV === 'test') {
       options.runtime = 'node'
     } else {
-      options.runtime = await new Select('which runtime would you like to target?', psychicRuntimes).run()
+      options.runtime = await new Select(
+        'which runtime would you like to target?',
+        selectablePsychicRuntimes,
+      ).run()
     }
   }
 

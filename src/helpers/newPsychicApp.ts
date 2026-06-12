@@ -20,6 +20,13 @@ export const psychicRuntimes = ['node', 'deno', 'bun'] as const
 export const initTemplates = ['none', 'nextjs'] as const
 export const importExtensions = ['.js', '.ts', 'none'] as const
 export type PsychicRuntime = (typeof psychicRuntimes)[number]
+// The runtimes OFFERED to the user. Deno is fully built — it stays in `psychicRuntimes`
+// above and in all the pm-keyed machinery — but is intentionally not offered yet: Deno's
+// SWC `.ts` transpile drops field-decorator `addInitializer` callbacks (TC39 Stage 3
+// violation, SWC #9708), silently breaking Dream/Psychic's boot-time decorator metadata
+// (associations, @Encrypted columns, virtual attributes). To offer it again once a released
+// Deno fixes this, add 'deno' back to this list — see docs/deno-runtime-readiness.md.
+export const selectablePsychicRuntimes = ['node', 'bun'] as const satisfies readonly PsychicRuntime[]
 // 'bun' and 'deno' are each their own runtime AND package manager. When chosen as
 // the runtime they also become the `packageManager` internally, so the existing
 // pm-keyed machinery (lockfile, install, run/tsc commands, app config) extends to
