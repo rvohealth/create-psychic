@@ -43,7 +43,7 @@ describe.skipIf(!bunAvailable())('newPsychicApp with the bun runtime', () => {
     await expectFileToContain('./howyadoin/src/conf/app.ts', "psy.set('packageManager', 'bun')")
 
     // No Node-only vestiges: nodemon.json is dead config under Bun (web:dev uses
-    // `bun --watch`), and nodemon/tsx/engines.node don't belong in a Bun app.
+    // `bun --no-env-file --watch`), and nodemon/tsx/engines.node don't belong in a Bun app.
     expect(fs.existsSync('./howyadoin/nodemon.json')).toBe(false)
     const pkg = JSON.parse(fs.readFileSync('./howyadoin/package.json').toString()) as {
       devDependencies: Record<string, string>

@@ -244,12 +244,22 @@ export default class PackagejsonBuilder {
 // same form; full per-script behavior under bun/deno is confirmed by the
 // post-publish generated-app boot e2e.
 function applyRuntimeRunners(scripts: Record<string, string>, runtime: 'bun' | 'deno'): void {
-  // run a TS/JS entrypoint file
-  const run = runtime === 'bun' ? 'bun' : 'deno run -A'
+  // run a TS/JS entrypoint file.
+  //
+  // Bun auto-loads `.env` (and `.env.local` etc.) into the process before any
+  // app code runs. That breaks `src/conf/loadEnv.ts`, which is written for the
+  // node/tsx model where nothing pre-loads env: loadEnv defaults NODE_ENV to
+  // `test` when unset and then calls `dotenv.config({ ..., override: false })`,
+  // so the development values Bun already injected win and a bare `psy
+  // db:migrate` silently targets the development DB instead of test. `--no-env-file`
+  // disables Bun's auto-load so loadEnv is the single source of truth, identical
+  // to node. Deno does not auto-load `.env`, so it needs no equivalent.
+  const run = runtime === 'bun' ? 'bun --no-env-file' : 'deno run -A'
   // run an npm-published bin (vitest, cross-env, prettier, eslint)
   const bin = (name: string) => (runtime === 'bun' ? `bunx ${name}` : `deno run -A npm:${name}`)
   // hot-reloading dev server (replaces nodemon, whose nodemon.json exec is `tsx ./src/main.ts`)
-  const watch = runtime === 'bun' ? 'bun --watch src/main.ts' : 'deno run -A --watch src/main.ts'
+  const watch =
+    runtime === 'bun' ? 'bun --no-env-file --watch src/main.ts' : 'deno run -A --watch src/main.ts'
 
   for (const key of Object.keys(scripts)) {
     scripts[key] = scripts[key]!.replace(/nodemon --quiet --no-stdin/g, watch)

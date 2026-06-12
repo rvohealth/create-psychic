@@ -474,11 +474,14 @@ describe('PackagejsonBuilder', () => {
           websockets: true,
         })
         const scripts = JSON.parse(res).scripts as Record<string, string>
-        expect(scripts['psy']).toBe('bun src/conf/system/cli.ts')
+        // Bun entrypoints carry --no-env-file so Bun's auto-loading of `.env`
+        // does not pre-empt src/conf/loadEnv.ts (which expects the node/tsx
+        // model where nothing pre-loads env). See applyRuntimeRunners.
+        expect(scripts['psy']).toBe('bun --no-env-file src/conf/system/cli.ts')
         expect(scripts['uspec']).toContain('bun run psy db:integrity-check')
         expect(scripts['uspec']).toContain('bunx vitest')
-        expect(scripts['worker:dev']).toContain('bun ./src/worker.ts')
-        expect(scripts['web:dev']).toContain('bun --watch src/main.ts')
+        expect(scripts['worker:dev']).toContain('bun --no-env-file ./src/worker.ts')
+        expect(scripts['web:dev']).toContain('bun --no-env-file --watch src/main.ts')
         expect(scripts['build']).toContain('bunx tsc')
 
         const all = Object.values(scripts).join('\n')
