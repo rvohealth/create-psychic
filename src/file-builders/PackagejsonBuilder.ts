@@ -268,6 +268,20 @@ function applyRuntimeRunners(scripts: Record<string, string>, runtime: 'bun' | '
       .replace(/\bvitest\b/g, bin('vitest'))
       .replace(/\btsx /g, `${run} `)
       .replace(/\bnode \.\//g, `${run} ./`)
+
+    // The spec runners boot the app through src/conf/loadEnv.ts with NODE_ENV
+    // unset, relying on loadEnv's default-to-test. Under Bun that breaks the
+    // same way `psy` does: `bunx vitest` is a fresh Bun process that auto-loads
+    // `.env` (development) before loadEnv runs, and `override: false` keeps it,
+    // so specs bind to the development DB. `--no-env-file` can't help here — it
+    // does not propagate through `bunx` to the spawned process. Instead pin
+    // NODE_ENV=test on the vitest invocation: Bun then auto-loads `.env.test`,
+    // which matches what loadEnv resolves, so the two agree on the test DB.
+    // Specs are always test mode, so this is a correct declaration, not a patch.
+    // Deno does not auto-load `.env`, so its spec runners need no equivalent.
+    if (runtime === 'bun') {
+      scripts[key] = scripts[key]!.replace(/\bbunx vitest\b/g, 'NODE_ENV=test bunx vitest')
+    }
   }
 
   // The bare `prettier` / `eslint` scripts are invoked via `{{PM}} <script>`; point

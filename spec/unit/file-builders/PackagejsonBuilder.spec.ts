@@ -479,7 +479,13 @@ describe('PackagejsonBuilder', () => {
         // model where nothing pre-loads env). See applyRuntimeRunners.
         expect(scripts['psy']).toBe('bun --no-env-file src/conf/system/cli.ts')
         expect(scripts['uspec']).toContain('bun run psy db:integrity-check')
-        expect(scripts['uspec']).toContain('bunx vitest')
+        // Spec runners pin NODE_ENV=test so Bun auto-loads `.env.test` (matching
+        // loadEnv) instead of `.env`; `--no-env-file` can't reach them via bunx.
+        expect(scripts['uspec']).toContain('NODE_ENV=test bunx vitest')
+        expect(scripts['fspec']).toContain('NODE_ENV=test bunx vitest')
+        expect(scripts['fspec:visible']).toContain('NODE_ENV=test bunx vitest run')
+        expect(scripts['uspec:js']).toContain('NODE_ENV=test bunx vitest')
+        expect(scripts['fspec:js']).toContain('NODE_ENV=test bunx vitest')
         expect(scripts['worker:dev']).toContain('bun --no-env-file ./src/worker.ts')
         expect(scripts['web:dev']).toContain('bun --no-env-file --watch src/main.ts')
         expect(scripts['build']).toContain('bunx tsc')
