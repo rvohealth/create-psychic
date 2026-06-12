@@ -280,7 +280,7 @@ function applyRuntimeRunners(scripts: Record<string, string>, runtime: 'bun' | '
     // Specs are always test mode, so this is a correct declaration, not a patch.
     // Deno does not auto-load `.env`, so its spec runners need no equivalent.
     if (runtime === 'bun') {
-      scripts[key] = scripts[key]!.replace(/\bbunx vitest\b/g, 'NODE_ENV=test bunx vitest')
+      scripts[key] = scripts[key].replace(/\bbunx vitest\b/g, 'NODE_ENV=test bunx vitest')
     }
   }
 
