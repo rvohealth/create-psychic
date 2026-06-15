@@ -19,8 +19,7 @@ export default (psy: PsychicApp) => {
 }
 
 function initializeWebsockets(wsApp: PsychicAppWebsockets) {
-  // The websockets transport adapter is selected per environment, à la Rails'
-  // ActionCable cable.yml:
+  // The websockets transport adapter is selected per environment:
   //   - test:        in-process adapter (the default) — no Redis. Unit specs do
   //                  zero Redis I/O, and feature specs still get real end-to-end
   //                  delivery in-process via the running websocket server.
