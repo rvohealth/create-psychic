@@ -13,6 +13,7 @@ import FeatureSpecGlobalBuilder from '../../file-builders/FeatureSpecGlobalBuild
 import NpmrcBuilder from '../../file-builders/NpmrcBuilder.js'
 import PackagejsonBuilder from '../../file-builders/PackagejsonBuilder.js'
 import SrcPathHelperBuilder from '../../file-builders/SrcPathHelperBuilder.js'
+import VsCodeConfigBuilder from '../../file-builders/VsCodeConfigBuilder.js'
 import apiOnlyOptions from '../apiOnlyOptions.js'
 import copyRecursive from '../copyRecursive.js'
 import frontEndPackageManager from '../frontEndPackageManager.js'
@@ -109,6 +110,26 @@ export default async function copyApiBoilerplate(appName: string, options: NewPs
   //   - bunfig.toml: registry pin (+ default-deny lifecycle scripts)
   if (options.runtime === 'deno') {
     fs.writeFileSync(path.join(apiRoot, 'deno.json'), DenoJsonBuilder.build())
+
+    // Editor config so editors auto-import the `.ts` extension (the Deno language
+    // server's native behavior) instead of the `.js` the built-in TypeScript server
+    // would add for this app's nodenext tsconfig. Deno-only — see VsCodeConfigBuilder.
+    const vscodeDir = path.join(apiRoot, '.vscode')
+    fs.mkdirSync(vscodeDir, { recursive: true })
+    fs.writeFileSync(path.join(vscodeDir, 'settings.json'), VsCodeConfigBuilder.buildSettings())
+    fs.writeFileSync(path.join(vscodeDir, 'extensions.json'), VsCodeConfigBuilder.buildExtensions())
+
+    // The boilerplate .gitignore ignores `.vscode`; re-include the two shared editor
+    // files so the whole team gets the Deno setup (committed config, not just local),
+    // while user-specific .vscode files stay ignored. Negation requires ignoring the
+    // directory's contents (`.vscode/*`) rather than the directory itself.
+    const gitignorePath = path.join(apiRoot, '.gitignore')
+    fs.writeFileSync(
+      gitignorePath,
+      fs
+        .readFileSync(gitignorePath, 'utf8')
+        .replace(/^\.vscode\/?$/m, '.vscode/*\n!.vscode/settings.json\n!.vscode/extensions.json'),
+    )
   } else if (options.runtime === 'bun') {
     fs.writeFileSync(path.join(apiRoot, 'bunfig.toml'), BunfigBuilder.build())
   } else {
