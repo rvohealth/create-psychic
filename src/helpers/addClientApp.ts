@@ -96,7 +96,7 @@ export default async function addClientApp({
 
     case 'nextjs': {
       await sspawn(
-        `cd ${rootPath} && ${fePm === 'bun' ? 'bunx' : 'npx'} create-next-app@latest ${clientRootFolderName} --eslint --app --ts --skip-install --use-${fePm} --yes --disable-git && cd ${clientRootFolderName} ${initPackageManager}`,
+        `cd ${rootPath} && ${nextAppCmd(fePm, clientRootFolderName)} && cd ${clientRootFolderName} ${initPackageManager}`,
         {
           onStdout: message => {
             logger.logContinueProgress(
@@ -233,6 +233,25 @@ function viteCmd(packageManager: PsychicPackageManager, clientRootFolderName: st
       return `npm create vite@latest ${clientRootFolderName} -- --template ${template}`
     case 'bun':
       return `bun create vite@latest ${clientRootFolderName} --template ${template}`
+    default:
+      // deno never drives the front end (frontEndPackageManager maps deno → pnpm)
+      throw new Error(`front-end package manager cannot be: ${packageManager as string}`)
+  }
+}
+
+function nextAppCmd(packageManager: PsychicPackageManager, clientRootFolderName: string) {
+  const args = `${clientRootFolderName} --eslint --app --ts --skip-install --use-${packageManager} --yes --disable-git`
+  switch (packageManager) {
+    case 'yarn':
+      return `yarn create next-app ${args}`
+    case 'pnpm':
+      return `pnpm create next-app ${args}`
+    // npm/bun scaffold via the create-next-app package directly (npm keeps `npx` so
+    // the flags above forward without an extra `--` separator, as `npm create` needs).
+    case 'npm':
+      return `npx create-next-app@latest ${args}`
+    case 'bun':
+      return `bunx create-next-app@latest ${args}`
     default:
       // deno never drives the front end (frontEndPackageManager maps deno → pnpm)
       throw new Error(`front-end package manager cannot be: ${packageManager as string}`)

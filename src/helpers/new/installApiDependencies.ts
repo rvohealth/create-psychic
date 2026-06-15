@@ -3,6 +3,7 @@ import colorize from '../../logger/loggable/colorize.js'
 import getApiRoot from '../getApiRoot.js'
 import getLockfileName from '../getLockfileName.js'
 import { NewPsychicAppCliOptions } from '../newPsychicApp.js'
+import execCmdForPackageManager from '../packageManager/execCmdForPackageManager.js'
 import sspawn from '../sspawn.js'
 
 export default async function installApiDependencies(
@@ -75,12 +76,7 @@ export default async function installApiDependencies(
   }
   logger.logEndProgress()
 
-  const cmd =
-    options.packageManager === 'bun'
-      ? 'bunx puppeteer browsers install firefox'
-      : options.packageManager === 'deno'
-        ? 'deno run -A npm:puppeteer browsers install firefox'
-        : 'npx puppeteer browsers install firefox'
+  const cmd = execCmdForPackageManager(options.packageManager, 'puppeteer', 'browsers install firefox')
   logger.logStartProgress(`installing firefox using: "${cmd}"...`)
   await sspawn(`cd ${apiRoot} && ${cmd}`, {
     onStdout: message => {

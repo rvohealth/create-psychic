@@ -53,6 +53,11 @@ describe('CiWorkflowBuilder', () => {
         expect(yml).toContain('pnpm psy check:controller-hierarchy')
       })
 
+      it('installs the puppeteer browser with the selected package manager, not npx', () => {
+        expect(yml).toContain('pnpm puppeteer browsers install firefox')
+        expect(yml).not.toContain('npx puppeteer')
+      })
+
       it('gives diff:openapi git history + oasdiff', () => {
         expect(yml).toContain('fetch-depth: 0')
         expect(yml).toContain('oasdiff')
