@@ -21,8 +21,11 @@ export default (psy: PsychicApp) => {
 function initializeWebsockets(wsApp: PsychicAppWebsockets) {
   // The websockets transport adapter is selected per environment:
   //   - test:        in-process adapter (the default) — no Redis. Unit specs do
-  //                  zero Redis I/O, and feature specs still get real end-to-end
-  //                  delivery in-process via the running websocket server.
+  //                  zero Redis I/O; feature specs get real in-process delivery for
+  //                  broadcasts emitted within the websocket-server process (e.g.
+  //                  ws:start handlers). Delivery is single-process: cross-process
+  //                  fan-out (a web/worker emit reaching a socket on the ws server)
+  //                  still needs Redis, as in production.
   //   - development
   //   - production:  Redis adapter (the default) — distributes the socket
   //                  registry and broadcasts across a clustered websocket fleet,
