@@ -6,6 +6,7 @@ import NuxtConfigBuilder from '../file-builders/NuxtConfigBuilder.js'
 import ViteConfBuilder from '../file-builders/ViteConfBuilder.js'
 import DreamCliLogger, { DreamCliForegroundColor } from '../logger/DreamCliLogger.js'
 import addMissingClientGitignoreStatements from './addMissingClientGitignoreStatements.js'
+import dlxCmdForPackageManager from './packageManager/dlxCmdForPackageManager.js'
 import frontEndPackageManager from './frontEndPackageManager.js'
 import { cliClientAppTypes, NewPsychicAppCliOptions, PsychicPackageManager } from './newPsychicApp.js'
 import sspawn from './sspawn.js'
@@ -122,7 +123,7 @@ export default async function addClientApp({
       // `-M ""` (empty modules) skips the "browse and install modules?" prompt
       // that otherwise hangs CI. `--no-install` defers install to the shared step.
       await sspawn(
-        `cd ${rootPath} && ${fePm === 'bun' ? 'bunx' : 'npx'} nuxi@latest init ${clientRootFolderName} --template minimal --no-install --packageManager ${fePm} --no-gitInit -M "" && cd ${clientRootFolderName} ${initPackageManager}`,
+        `cd ${rootPath} && ${dlxCmdForPackageManager(fePm, 'nuxi@latest')} init ${clientRootFolderName} --template minimal --no-install --packageManager ${fePm} --no-gitInit -M "" && cd ${clientRootFolderName} ${initPackageManager}`,
         {
           onStdout: message => {
             logger.logContinueProgress(
