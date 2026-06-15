@@ -1,6 +1,7 @@
 import { Encrypt } from '@rvoh/dream/utils'
 import apiOnlyOptions from '../helpers/apiOnlyOptions.js'
 import { NewPsychicAppCliOptions, PsychicPackageManager } from '../helpers/newPsychicApp.js'
+import execCmdForPackageManager from '../helpers/packageManager/execCmdForPackageManager.js'
 import snakeify from '../helpers/snakeify.js'
 
 // SECURITY — actions are pinned to immutable commit SHAs, not mutable tags like
@@ -120,14 +121,7 @@ function psy(pm: PsychicPackageManager, command: string, flags = ''): string {
 
 // puppeteer's browser is installed explicitly (lifecycle scripts are blocked).
 function puppeteerInstall(pm: PsychicPackageManager): string {
-  switch (pm) {
-    case 'bun':
-      return 'bunx puppeteer browsers install firefox'
-    case 'deno':
-      return 'deno run -A npm:puppeteer browsers install firefox'
-    default:
-      return 'npx puppeteer browsers install firefox'
-  }
+  return execCmdForPackageManager(pm, 'puppeteer', 'browsers install firefox')
 }
 
 // ---- reusable yaml fragments --------------------------------------------------
