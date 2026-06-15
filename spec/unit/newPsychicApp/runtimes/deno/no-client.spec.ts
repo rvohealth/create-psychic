@@ -43,6 +43,13 @@ describe.skipIf(!denoAvailable())('newPsychicApp with the deno runtime', () => {
     expect(fs.existsSync('./howyadoin/.nvmrc')).toBe(false)
     expect(fs.existsSync('./howyadoin/bunfig.toml')).toBe(false)
 
+    // Deno apps get .vscode config so editors auto-import the .ts extension (the Deno
+    // LSP's native behavior) instead of the .js the built-in TypeScript server adds.
+    await expectFileToContain('./howyadoin/.vscode/settings.json', 'deno.enable')
+    await expectFileToContain('./howyadoin/.vscode/extensions.json', 'denoland.vscode-deno')
+    // ...and those two files are committed (re-included past the .vscode ignore).
+    await expectFileToContain('./howyadoin/.gitignore', '!.vscode/settings.json')
+
     // The dotenv alignment must keep Deno to a SINGLE @rvoh/dream copy. Two copies
     // (the pre-fix state) break Dream's model-class-identity check at boot.
     const dreamCopies = fs

@@ -42,6 +42,10 @@ describe.skipIf(!denoAvailable())('newPsychicApp with a deno api and a pnpm-driv
     await expectFile('./howyadoin/api/deno.json')
     await expectFile('./howyadoin/api/deno.lock')
 
+    // Deno api gets .vscode config so editors auto-import the .ts extension (Deno LSP).
+    await expectFileToContain('./howyadoin/api/.vscode/settings.json', 'deno.enable')
+    await expectFileToContain('./howyadoin/api/.vscode/extensions.json', 'denoland.vscode-deno')
+
     // The client is a pnpm artifact even under a Deno api.
     await expectFile('./howyadoin/client/Dockerfile.dev')
     await expectFile('./howyadoin/client/pnpm-lock.yaml')
