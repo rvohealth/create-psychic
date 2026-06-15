@@ -114,6 +114,12 @@ jobs:
       - name: install puppeteer browsers
         run: pnpm puppeteer browsers install firefox
 
+      # Install Bun so the bun-runtime generation specs (describe.skipIf(!bunAvailable()))
+      # actually run in CI instead of skipping. Deno is intentionally NOT installed: its
+      # generated apps hit the SWC field-decorator boot bug (see
+      # docs/deno-runtime-readiness.md), so the deno specs stay skipped until that clears.
+      - uses: oven-sh/setup-bun@v2
+
       - run: DEBUG=1 pnpm spec --shard=${{ matrix.shard }}/${{ strategy.job-total }}
 
   lint:
