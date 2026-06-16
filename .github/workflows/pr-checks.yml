@@ -114,13 +114,11 @@ jobs:
       - name: install puppeteer browsers
         run: pnpm puppeteer browsers install firefox
 
-      # NOTE: Bun is intentionally NOT installed here, so the bun-runtime generation
-      # specs (describe.skipIf(!bunAvailable())) skip. They currently fail in CI: bun
-      # runs puppeteer's Chrome-download postinstall (the boilerplate's default-deny
-      # script-block isn't taking effect under bun) and it fails ("All providers
-      # failed for chrome-headless-shell"). Re-add `oven-sh/setup-bun@v2` once the bun
-      # generated app blocks that postinstall (e.g. trustedDependencies: []). Deno is
-      # likewise omitted (SWC field-decorator boot bug — docs/deno-runtime-readiness.md).
+      # Install Bun so the bun-runtime generation specs (describe.skipIf(!bunAvailable()))
+      # run in CI instead of skipping. (Deno is intentionally NOT installed: its
+      # generated apps hit the SWC field-decorator boot bug — docs/deno-runtime-readiness.md.)
+      - uses: oven-sh/setup-bun@v2
+
       - run: DEBUG=1 pnpm spec --shard=${{ matrix.shard }}/${{ strategy.job-total }}
 
   lint:

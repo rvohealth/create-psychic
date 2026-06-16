@@ -222,6 +222,18 @@ export default class PackagejsonBuilder {
       delete packagejson.engines
     }
 
+    if (options.packageManager === 'bun') {
+      // Bun runs lifecycle/postinstall scripts for a built-in allowlist of popular
+      // packages (puppeteer among them) even when `trustedDependencies` is absent —
+      // so its "default-deny" is NOT actually deny-all. An empty `trustedDependencies`
+      // overrides that allowlist so NO dependency runs install scripts, matching the
+      // block-all posture of pnpm (strictDepBuilds) / npm (ignore-scripts) / yarn. The
+      // app ships no build scripts of its own; puppeteer's browser is installed
+      // explicitly via `bunx puppeteer browsers install firefox`.
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      packagejson.trustedDependencies = []
+    }
+
     // `{{PM}}` resolves to the API runtime; `{{PM_CWD}}` (front-end client wrappers)
     // resolves to the front-end PM — they diverge only for a Deno API (→ pnpm).
     return replacePackageManagerInFileContents(
