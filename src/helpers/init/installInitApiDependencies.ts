@@ -31,9 +31,7 @@ export default async function installInitApiDependencies(options: InitPsychicApp
     '@rvoh/psychic-spec-helpers',
     '@types/koa__cors',
     '@types/koa__router',
-    '@types/koa-bodyparser',
     '@types/koa-conditional-get',
-    '@types/koa-etag',
     '@types/koa-passport',
     '@types/koa',
     'nodemon',
@@ -56,12 +54,12 @@ export default async function installInitApiDependencies(options: InitPsychicApp
     'typescript',
   ]
   const psychicDeps = [
+    '@koa/bodyparser',
     '@koa/cors',
     '@koa/etag',
     '@koa/router',
     '@rvoh/psychic',
     'koa',
-    'koa-bodyparser',
     'koa-conditional-get',
     'openapi-typescript',
     'winston',
