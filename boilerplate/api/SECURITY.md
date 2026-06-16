@@ -17,9 +17,14 @@ most common install-time attack vector: installing the package runs the code.
 Your package manager is configured to block them:
 
 - **pnpm** — blocks **all** dependency build scripts by default. This app's
-  dependency tree needs none, so there is no `allowBuilds` allowlist in
-  `pnpm-workspace.yaml`. (esbuild ships prebuilt binaries; puppeteer's browser is
-  installed by an explicit step, not a postinstall.)
+  dependency tree needs none to run, so the build-script deps it ships (esbuild,
+  msgpackr-extract, puppeteer) are pinned to `false` (blocked) in the
+  `allowBuilds` map in `pnpm-workspace.yaml`. (esbuild/msgpackr-extract ship
+  prebuilt binaries; puppeteer's browser is installed by an explicit step, not a
+  postinstall.) They're listed explicitly rather than left to the block-by-default
+  because pnpm 11 otherwise rewrites `pnpm-workspace.yaml` on every install,
+  appending unlisted build-script deps as an invalid `set this to true or false`
+  placeholder ([pnpm/pnpm#11574](https://github.com/pnpm/pnpm/issues/11574)).
 - **Yarn** — `enableScripts: false` in `.yarnrc.yml` blocks all build scripts.
 - **npm** — `ignore-scripts=true` in `.npmrc`. npm's flag is all-or-nothing (no
   per-package carve-out), but this app ships no lifecycle scripts of its own.

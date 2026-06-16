@@ -228,14 +228,22 @@ export default async function copyInitApiBoilerplate(appName: string, options: I
 function pnpmWorkspaceYaml() {
   // SECURITY — pnpm 10+ blocks ALL dependency build scripts by default (the
   // primary install-time vector for Shai-Hulud-class npm worms); that default is
-  // left in place (no `allowBuilds` allowlist). `strictDepBuilds: false` keeps the
-  // blocked-script notice a warning, not a hard install error.
+  // left in place. The build-script deps this app ships (esbuild, msgpackr-extract,
+  // puppeteer) are pinned to `false` (blocked) — none needs to build to run
+  // (prebuilt binaries; puppeteer's browser is installed by an explicit step).
+  // Listing them explicitly also stops pnpm 11 from rewriting this file on every
+  // non-interactive install: it appends any unlisted build-script dep as
+  // `<pkg>: set this to true or false`, an invalid placeholder (pnpm/pnpm#11574).
+  // `strictDepBuilds: false` keeps the blocked-script notice a warning, not a hard
+  // install error.
   //
   // minimumReleaseAge (4320 min = 3 days) won't install dependency versions
   // published in the last 3 days — most worm-injected releases are caught and
   // unpublished inside that window, and 3 days sits under the typical critical-CVE
   // patch SLA. @rvoh/* packages are excluded so Psychic's frequent releases (from
   // the trusted first-party publisher) are always available immediately.
+  const allowBuilds = 'allowBuilds:\n  esbuild: false\n  msgpackr-extract: false\n  puppeteer: false\n'
+
   const rvohExcludes =
     'minimumReleaseAgeExclude:\n' +
     "  - '@rvoh/dream'\n" +
@@ -245,7 +253,7 @@ function pnpmWorkspaceYaml() {
     "  - '@rvoh/psychic-workers'\n" +
     "  - '@rvoh/psychic-websockets'\n"
 
-  return 'strictDepBuilds: false\n\nminimumReleaseAge: 4320\n\n' + rvohExcludes
+  return 'strictDepBuilds: false\n\n' + allowBuilds + '\nminimumReleaseAge: 4320\n\n' + rvohExcludes
 }
 
 function copyRecursiveSync(path: string, dest: string, importExtension: (typeof importExtensions)[number]) {

@@ -21,6 +21,18 @@ describe('newPsychicApp with no client', () => {
 
     await expectFile('./howyadoin/pnpm-lock.yaml')
     await expectFileToContain('./howyadoin/pnpm-workspace.yaml', 'strictDepBuilds: false')
+    // The build-script deps are pre-declared so `pnpm install` (run above) does not
+    // mutate the checked-in workspace file with `set this to true or false`
+    // placeholders (pnpm/pnpm#11574).
+    await expectFileToContain('./howyadoin/pnpm-workspace.yaml', 'allowBuilds:')
+    await expectFileToContain('./howyadoin/pnpm-workspace.yaml', 'esbuild: false')
+    const workspaceBody = fs
+      .readFileSync('./howyadoin/pnpm-workspace.yaml')
+      .toString()
+      .split('\n')
+      .filter(line => !line.trimStart().startsWith('#'))
+      .join('\n')
+    expect(workspaceBody).not.toContain('set this to true or false')
     await expectFile('./howyadoin/docker-compose.yml')
     await expectFile('./howyadoin/Dockerfile.dev')
 
