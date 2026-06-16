@@ -77,6 +77,21 @@ function initializeWebsockets(wsApp: PsychicAppWebsockets) {
     },
   })
 
+  // Connection limits (Redis adapter). Both already default to the values shown,
+  // so set them only to override:
+  //   - maxConnectionsPerUser caps how many sockets a single user may register at
+  //     once; registering past the cap evicts that user's oldest socket. This
+  //     bounds per-user resource use — a client reconnecting in a loop can't
+  //     accumulate unbounded registry entries.
+  //   - maxConnectionTtl is a garbage-collection backstop on the socket-id registry
+  //     key, NOT the live socket's lifetime (socket.io owns that via ping settings).
+  //     It cleans up entries left behind by ungraceful disconnects. Keep it
+  //     comfortably above your longest expected connection — if it expires while a
+  //     socket is still connected, emits to that user silently stop.
+  //
+  // wsApp.set('maxConnectionsPerUser', 3)
+  // wsApp.set('maxConnectionTtl', { days: 1 })
+
   // ******
   // HOOKS:
   // ******
