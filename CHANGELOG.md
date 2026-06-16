@@ -1,3 +1,7 @@
+## 3.5.1
+
+- Fix `create-psychic new <name>` (and `init <name>`) failing with `error: too many arguments for 'new'. Expected 1 argument but got 2`. The bin unconditionally injected the `new` subcommand even when the user had already typed it, so commander received the subcommand as a second positional argument. The bin now injects a default subcommand only when none was provided. The argv-massaging logic is extracted to `resolveCliArgv` and unit-tested — previously specs called `newPsychicApp()` directly and never exercised the bin's argv parsing, which is how this regression shipped.
+
 ## 3.5.0
 
 - **Node/Deno/Bun runtime support.** New `runtime` prompt (and `--runtime` flag) that, for `deno`/`bun`, subsumes the package-manager prompt — each is its own toolchain. Per-runtime generation: `bun install`/`deno install`, lockfiles, run/tsc commands, `deno.json` (import map + sloppy-imports + nodeModulesDir) / `bunfig.toml` config (emitted instead of `.nvmrc`), rewritten package.json scripts (so app code runs on the chosen runtime, not the Node `.bin` shims), and runtime-aware hardened GitHub Actions CI (SHA-pinned `setup-bun`/`setup-deno`). Requires `@rvoh/dream` ≥ 2.12.0 and `@rvoh/psychic` ≥ 3.5.0 in generated apps. Node + pnpm remain the defaults.
