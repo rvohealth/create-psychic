@@ -19,26 +19,41 @@ export default (psy: PsychicApp) => {
 }
 
 function initializeWebsockets(wsApp: PsychicAppWebsockets) {
-  wsApp.set(
-    'connection',
-    AppEnv.isProduction
-      ? new Redis({
-          host: AppEnv.string('WS_REDIS_HOST'),
-          port: AppEnv.integer('WS_REDIS_PORT', { optional: true }) || 6379,
-          username: AppEnv.string('WS_REDIS_USERNAME'),
-          password: AppEnv.string('WS_REDIS_PASSWORD'),
-          tls: {},
-          maxRetriesPerRequest: null,
-        })
-      : new Redis({
-          host: AppEnv.string('WS_REDIS_HOST', { optional: true }) || 'localhost',
-          port: AppEnv.integer('WS_REDIS_PORT', { optional: true }) || 6379,
-          username: AppEnv.string('WS_REDIS_USERNAME', { optional: true }),
-          password: AppEnv.string('WS_REDIS_PASSWORD', { optional: true }),
-          // tls:  {},
-          maxRetriesPerRequest: null,
-        }),
-  )
+  // The websockets transport adapter is selected per environment:
+  //   - test:        in-process adapter (the default) — no Redis. Unit specs do
+  //                  zero Redis I/O; feature specs get real in-process delivery for
+  //                  broadcasts emitted within the websocket-server process (e.g.
+  //                  ws:start handlers). Delivery is single-process: cross-process
+  //                  fan-out (a web/worker emit reaching a socket on the ws server)
+  //                  still needs Redis, as in production.
+  //   - development
+  //   - production:  Redis adapter (the default) — distributes the socket
+  //                  registry and broadcasts across a clustered websocket fleet,
+  //                  and needs the connection configured below.
+  // Override explicitly anywhere with wsApp.set('adapter', 'redis' | 'in_process')
+  // (or pass a custom adapter instance).
+  if (!AppEnv.isTest) {
+    wsApp.set(
+      'connection',
+      AppEnv.isProduction
+        ? new Redis({
+            host: AppEnv.string('WS_REDIS_HOST'),
+            port: AppEnv.integer('WS_REDIS_PORT', { optional: true }) || 6379,
+            username: AppEnv.string('WS_REDIS_USERNAME'),
+            password: AppEnv.string('WS_REDIS_PASSWORD'),
+            tls: {},
+            maxRetriesPerRequest: null,
+          })
+        : new Redis({
+            host: AppEnv.string('WS_REDIS_HOST', { optional: true }) || 'localhost',
+            port: AppEnv.integer('WS_REDIS_PORT', { optional: true }) || 6379,
+            username: AppEnv.string('WS_REDIS_USERNAME', { optional: true }),
+            password: AppEnv.string('WS_REDIS_PASSWORD', { optional: true }),
+            // tls:  {},
+            maxRetriesPerRequest: null,
+          }),
+    )
+  }
 
   const allowedOrigins = allowedCorsOrigins()
   wsApp.set('socketio', {
