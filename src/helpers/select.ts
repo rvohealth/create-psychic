@@ -117,7 +117,6 @@ export default class Select<T extends readonly any[]> {
 
     for (let i = 0; i < optionLength; i++) {
       const desc = this.descriptions?.[i]
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       const label = desc ? `${this.options[i]} ${colors.dim(desc)}` : `${this.options[i]}`
       const selectedOption =
         i === this.selectIndex ? `${cursor} ${label}` : `${cursor.replace(/.*/, ' ')} ${label}`
