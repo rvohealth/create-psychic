@@ -1,6 +1,7 @@
 ## 3.5.1
 
 - Fix `create-psychic new <name>` (and `init <name>`) failing with `error: too many arguments for 'new'. Expected 1 argument but got 2`. The bin unconditionally injected the `new` subcommand even when the user had already typed it, so commander received the subcommand as a second positional argument. The bin now injects a default subcommand only when none was provided. The argv-massaging logic is extracted to `resolveCliArgv` and unit-tested — previously specs called `newPsychicApp()` directly and never exercised the bin's argv parsing, which is how this regression shipped.
+- Remove the duplicate `openapi-typescript` entry from the boilerplate `api/package.json` (it was declared in both `dependencies` at `^7.13.0` and `devDependencies` at `^7.8.0`). npm/pnpm/yarn silently dedupe to the `dependencies` copy, but `bun install` warns on it, so it only surfaced once bun-runtime generation landed in 3.5.0. Generated apps keep the `^7.13.0` `dependencies` entry, so no resolved version changes. Added a unit spec asserting no boilerplate dependency appears in both sections.
 
 ## 3.5.0
 
