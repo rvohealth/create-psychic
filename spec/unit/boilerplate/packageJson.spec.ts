@@ -1,10 +1,15 @@
 import { readFileSync } from 'fs'
 import { join } from 'path'
 
+interface PackageJson {
+  dependencies?: Record<string, string>
+  devDependencies?: Record<string, string>
+}
+
 // Reads the static boilerplate package.json (copied verbatim into generated apps).
-function readBoilerplatePackageJson(): { dependencies?: Record<string, string>; devDependencies?: Record<string, string> } {
+function readBoilerplatePackageJson(): PackageJson {
   const path = join(process.cwd(), 'boilerplate', 'api', 'package.json')
-  return JSON.parse(readFileSync(path, 'utf8'))
+  return JSON.parse(readFileSync(path, 'utf8')) as PackageJson
 }
 
 describe('boilerplate/api/package.json', () => {

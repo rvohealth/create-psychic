@@ -4,6 +4,10 @@
 
 Always run `pnpm format` before committing to ensure code is properly formatted.
 
+## Opening a PR
+
+NEVER open a PR (or push the branch a PR is built from) without first running `pnpm lint` and confirming it passes with zero errors. `pnpm format` only rewrites formatting; it does NOT catch the type-safety and correctness rules that `pnpm lint` (eslint + prettier `--check`) enforces. CI runs lint, so a PR that skips it will fail. Run, in order: `pnpm lint`, fix every reported error, then `pnpm build` and the relevant specs, and only then push and open the PR.
+
 ## Running Specs
 
 ### All Specs
