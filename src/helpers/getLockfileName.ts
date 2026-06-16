@@ -8,6 +8,10 @@ export default function getLockfileName(packageManager: PsychicPackageManager) {
       return 'package-lock.json'
     case 'pnpm':
       return 'pnpm-lock.yaml'
+    case 'bun':
+      return 'bun.lock'
+    case 'deno':
+      return 'deno.lock'
     default:
       throw new Error(`unexpected package manager: ${packageManager as unknown as 'yarn'}`)
   }

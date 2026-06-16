@@ -11,10 +11,14 @@ export default class Select<T extends readonly any[]> {
   private selector: string = '>'
   private isFirstTimeShowMenu: boolean = true
   private cb: ((answer: T[number]) => void) | null = null
+  // Optional per-option descriptions, rendered dimmed next to each option. Parallel
+  // to `options`; `run()` still returns the bare option value.
+  private descriptions: readonly string[] | undefined
 
-  constructor(question: string, options: T) {
+  constructor(question: string, options: T, descriptions?: readonly string[]) {
     this.question = question
     this.options = options
+    this.descriptions = descriptions
   }
 
   public async run(): Promise<T[number]> {
@@ -112,10 +116,11 @@ export default class Select<T extends readonly any[]> {
     const cursor = colors.magenta(this.selector)
 
     for (let i = 0; i < optionLength; i++) {
+      const desc = this.descriptions?.[i]
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      const label = desc ? `${this.options[i]} ${colors.dim(desc)}` : `${this.options[i]}`
       const selectedOption =
-        i === this.selectIndex
-          ? `${cursor} ${this.options[i]}`
-          : `${cursor.replace(/.*/, ' ')} ${this.options[i]}`
+        i === this.selectIndex ? `${cursor} ${label}` : `${cursor.replace(/.*/, ' ')} ${label}`
       const ending = i !== optionLength - 1 ? '\n' : ''
       output.write(padding + selectedOption + ending)
     }

@@ -22,6 +22,11 @@ describe('PackagejsonBuilder', () => {
       expect(JSON.parse(res).name).toEqual('howyadoin')
     })
 
+    it('pins engines.node to the Psychic security target (>=26)', async () => {
+      const res = await PackagejsonBuilder.buildAPI('howyadoin', baseOptions)
+      expect(JSON.parse(res).engines).toEqual({ node: '>=26' })
+    })
+
     context('with backgroundWorkers: false and ws: false', () => {
       it('returns the app with the specified options', async () => {
         const options: NewPsychicAppCliOptions = { ...baseOptions }
@@ -409,6 +414,85 @@ describe('PackagejsonBuilder', () => {
         expect(parsed.pnpm).toBeUndefined()
         expect(parsed.overrides).toBeUndefined()
         expect(parsed.resolutions).toBeUndefined()
+      })
+
+      it('keeps `overrides` for bun (bun reads npm-style overrides)', async () => {
+        const res = await PackagejsonBuilder.buildAPI('howyadoin', {
+          ...baseOptions,
+          packageManager: 'bun',
+          runtime: 'bun',
+        })
+        const parsed = JSON.parse(res) as Record<string, unknown>
+        expect(parsed.overrides).toEqual({ 'path-to-regexp': '>=8.4.0' })
+        expect(parsed.resolutions).toBeUndefined()
+        expect(parsed.pnpm).toBeUndefined()
+      })
+
+      it('strips all override fields for deno (it honors neither overrides nor resolutions)', async () => {
+        const res = await PackagejsonBuilder.buildAPI('howyadoin', {
+          ...baseOptions,
+          packageManager: 'deno',
+          runtime: 'deno',
+        })
+        const parsed = JSON.parse(res) as Record<string, unknown>
+        expect(parsed.overrides).toBeUndefined()
+        expect(parsed.resolutions).toBeUndefined()
+        expect(parsed.pnpm).toBeUndefined()
+      })
+    })
+
+    context('deno runtime scripts', () => {
+      it('runs entrypoints/specs/builds under deno with no Node-toolchain runners', async () => {
+        const res = await PackagejsonBuilder.buildAPI('howyadoin', {
+          ...baseOptions,
+          packageManager: 'deno',
+          runtime: 'deno',
+          workers: true,
+          websockets: true,
+        })
+        const scripts = JSON.parse(res).scripts as Record<string, string>
+        expect(scripts['psy']).toBe('deno run -A src/conf/system/cli.ts')
+        expect(scripts['uspec']).toContain('deno task psy db:integrity-check')
+        expect(scripts['uspec']).toContain('deno run -A npm:vitest')
+        expect(scripts['worker:dev']).toContain('deno run -A ./src/worker.ts')
+        expect(scripts['web:dev']).toContain('deno run -A --watch src/main.ts')
+        expect(scripts['build']).toContain('deno run -A npm:typescript/tsc')
+
+        const all = Object.values(scripts).join('\n')
+        expect(all).not.toMatch(/\btsx /)
+        expect(all).not.toMatch(/\bnodemon\b/)
+      })
+    })
+
+    context('bun runtime scripts', () => {
+      it('runs entrypoints/specs/builds under bun with no Node-toolchain runners', async () => {
+        const res = await PackagejsonBuilder.buildAPI('howyadoin', {
+          ...baseOptions,
+          packageManager: 'bun',
+          runtime: 'bun',
+          workers: true,
+          websockets: true,
+        })
+        const scripts = JSON.parse(res).scripts as Record<string, string>
+        // Bun entrypoints carry --no-env-file so Bun's auto-loading of `.env`
+        // does not pre-empt src/conf/loadEnv.ts (which expects the node/tsx
+        // model where nothing pre-loads env). See applyRuntimeRunners.
+        expect(scripts['psy']).toBe('bun --no-env-file src/conf/system/cli.ts')
+        expect(scripts['uspec']).toContain('bun run psy db:integrity-check')
+        // Spec runners pin NODE_ENV=test so Bun auto-loads `.env.test` (matching
+        // loadEnv) instead of `.env`; `--no-env-file` can't reach them via bunx.
+        expect(scripts['uspec']).toContain('NODE_ENV=test bunx vitest')
+        expect(scripts['fspec']).toContain('NODE_ENV=test bunx vitest')
+        expect(scripts['fspec:visible']).toContain('NODE_ENV=test bunx vitest run')
+        expect(scripts['uspec:js']).toContain('NODE_ENV=test bunx vitest')
+        expect(scripts['fspec:js']).toContain('NODE_ENV=test bunx vitest')
+        expect(scripts['worker:dev']).toContain('bun --no-env-file ./src/worker.ts')
+        expect(scripts['web:dev']).toContain('bun --no-env-file --watch src/main.ts')
+        expect(scripts['build']).toContain('bunx tsc')
+
+        const all = Object.values(scripts).join('\n')
+        expect(all).not.toMatch(/\btsx /)
+        expect(all).not.toMatch(/\bnodemon\b/)
       })
     })
   })

@@ -1,0 +1,318 @@
+import { Encrypt } from '@rvoh/dream/utils'
+import apiOnlyOptions from '../helpers/apiOnlyOptions.js'
+import { NewPsychicAppCliOptions, PsychicPackageManager } from '../helpers/newPsychicApp.js'
+import execCmdForPackageManager from '../helpers/packageManager/execCmdForPackageManager.js'
+import snakeify from '../helpers/snakeify.js'
+
+// SECURITY — actions are pinned to immutable commit SHAs, not mutable tags like
+// `@v6`. A tag can be force-moved to point at malicious code (a real Shai-Hulud-class
+// vector); a SHA cannot. Bump the SHA and the trailing `# vX.Y.Z` comment together
+// (Dependabot/Renovate understand this exact format and will open update PRs).
+const ACTIONS = {
+  checkout: 'df4cb1c069e1874edd31b4311f1884172cec0e10', // v6.0.3
+  setupNode: '48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e', // v6.4.0
+  setupBun: '0c5077e51419868618aeaa5fe8019c62421857d6', // v2.2.0
+  setupDeno: '667a34cdef165d8d2b2e98dde39547c9daac7282', // v2.0.4
+  setupGo: '4a3601121dd01d1626a1e23e37211e3254c1c06c', // v6.4.0
+  uploadArtifact: '043fb46d1a93c77aae656e7c1c64a875d1fc6a0a', // v7.0.1
+}
+
+// The generated app targets Node 26 (Psychic's supported baseline / current LTS); CI runs on it.
+const CI_NODE_VERSION = '26'
+const GO_VERSION = '1.24'
+
+export default class CiWorkflowBuilder {
+  public static build(appName: string, options: NewPsychicAppCliOptions): string {
+    const apiOnly = apiOnlyOptions(options)
+    // Where the api package.json lives relative to the repo root (monorepo => ./api).
+    const apiDir = apiOnly ? '.' : './api'
+    const needsRedis = options.workers || options.websockets
+    const clientDirs = clientDirectories(options)
+    const dbName = `${snakeify(appName)}_test`
+    // uuid7 primary keys require Postgres 18+; other key types are happy on 16.
+    const pgImage = options.primaryKeyType === 'uuid7' ? 'postgres:18' : 'postgres:16'
+
+    // Test-only throwaway keys for the ephemeral CI database, generated per app.
+    const appKey = Encrypt.generateKey('aes-256-gcm')
+    const columnKey = Encrypt.generateKey('aes-256-gcm')
+    const ctx: BuildContext = {
+      pm: options.packageManager,
+      apiDir,
+      needsRedis,
+      clientDirs,
+      pgImage,
+      dbName,
+      env: envBlock(dbName, appKey, columnKey),
+    }
+
+    return [header(), uspecJob(ctx), fspecJob(ctx), checksJob(ctx)].join('')
+  }
+}
+
+interface BuildContext {
+  pm: PsychicPackageManager
+  apiDir: string
+  needsRedis: boolean
+  clientDirs: string[]
+  pgImage: string
+  dbName: string
+  env: string
+}
+
+function clientDirectories(options: NewPsychicAppCliOptions): string[] {
+  const dirs: string[] = []
+  if (options.client !== 'none') dirs.push('client')
+  if (options.adminClient !== 'none') dirs.push('admin')
+  if (options.internalClient !== 'none') dirs.push('internal')
+  return dirs
+}
+
+// ---- package-manager-specific command fragments -------------------------------
+
+function installCmd(pm: PsychicPackageManager): string {
+  switch (pm) {
+    case 'pnpm':
+      return 'pnpm install --frozen-lockfile'
+    case 'yarn':
+      return 'yarn install --immutable'
+    case 'npm':
+      return 'npm ci'
+    case 'bun':
+      return 'bun install --frozen-lockfile'
+    case 'deno':
+      return 'deno install --frozen'
+  }
+}
+
+// pnpm/yarn are provisioned through corepack; npm ships with Node.
+function corepackStep(pm: PsychicPackageManager): string {
+  return pm === 'npm' ? '' : '      - run: corepack enable\n'
+}
+
+// The token that runs a package.json script for each package manager.
+function runPrefix(pm: PsychicPackageManager): string {
+  switch (pm) {
+    case 'npm':
+      return 'npm run'
+    case 'bun':
+      return 'bun run' // bare `bun <script>` is file execution
+    case 'deno':
+      return 'deno task' // deno has no `<pm> <script>` shorthand
+    default:
+      return pm // pnpm / yarn
+  }
+}
+
+// Run a package.json script (e.g. uspec) with optional passthrough flags. npm
+// needs `--` to forward flags to the underlying script; the others forward them
+// directly.
+function runScript(pm: PsychicPackageManager, script: string, flags = ''): string {
+  const base = `${runPrefix(pm)} ${script}`
+  if (!flags) return base
+  return pm === 'npm' ? `${base} -- ${flags}` : `${base} ${flags}`
+}
+
+// Invoke a `psy` CLI command (itself a package.json script wrapping the CLI).
+function psy(pm: PsychicPackageManager, command: string, flags = ''): string {
+  const base = `${runPrefix(pm)} psy ${command}`
+  if (!flags) return base
+  return pm === 'npm' ? `${base} -- ${flags}` : `${base} ${flags}`
+}
+
+// puppeteer's browser is installed explicitly (lifecycle scripts are blocked).
+function puppeteerInstall(pm: PsychicPackageManager): string {
+  return execCmdForPackageManager(pm, 'puppeteer', 'browsers install firefox')
+}
+
+// ---- reusable yaml fragments --------------------------------------------------
+
+function header(): string {
+  return `# SECURITY-HARDENED CI generated by create-psychic.
+#
+# Hardening applied here (see SECURITY.md for the rationale):
+#   - Least-privilege GITHUB_TOKEN: the \`permissions:\` block grants only
+#     \`contents: read\`; every other scope defaults to none.
+#   - Every action is pinned to an immutable commit SHA, not a mutable tag.
+#   - Dependencies install with a frozen lockfile (no silent drift, and no
+#     resolution of newly-published — possibly compromised — versions).
+#
+# The \`env:\`/\`services:\` values below are TEST-ONLY (an ephemeral CI database
+# seeded with throwaway data). NEVER put production secrets in this file — use
+# GitHub Actions encrypted secrets (\`\${{ secrets.NAME }}\`) for anything real.
+name: CI
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+`
+}
+
+// A shard matrix that defaults to a single shard. vitest splits spec FILES across
+// shards; a freshly-generated app has too few files to split (vitest errors when
+// shards outnumber files), so 1/1 is the safe default. Bump as your suite grows.
+function shardMatrix(): string {
+  return `    strategy:
+      fail-fast: false
+      matrix:
+        # vitest splits spec FILES across these shards (one runner each). A new
+        # app has too few spec files to split, so we default to one shard. As the
+        # suite grows, parallelize via e.g. \`shard: ["1/2", "2/2"]\` (keep the
+        # denominators equal).
+        shard: ["1/1"]
+`
+}
+
+function servicesBlock(ctx: BuildContext): string {
+  const postgres = `      postgres:
+        image: ${ctx.pgImage}
+        env:
+          POSTGRES_USER: psychic
+          POSTGRES_DB: ${ctx.dbName}
+          POSTGRES_PASSWORD: "postgres"
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+`
+  const redis = `      redis:
+        image: redis:7
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+`
+  return `    services:\n${postgres}${ctx.needsRedis ? redis : ''}`
+}
+
+function envBlock(dbName: string, appKey: string, columnKey: string): string {
+  return `    env:
+      NODE_ENV: test
+      TZ: UTC
+      CI: "1"
+      DB_USER: psychic
+      DB_PASSWORD: postgres
+      DB_NAME: ${dbName}
+      DB_HOST: localhost
+      DB_PORT: "5432"
+      DB_NO_SSL: "1"
+      REPLICA_DB_HOST: localhost
+      REPLICA_DB_PORT: "5432"
+      DREAM_PARALLEL_TESTS: "2"
+      # TEST-ONLY throwaway encryption keys for the ephemeral CI database. Safe to
+      # commit (they protect nothing real). Do NOT reuse these in any other env.
+      APP_ENCRYPTION_KEY: "${appKey}"
+      COLUMN_ENCRYPTION_KEY: "${columnKey}"
+`
+}
+
+function defaultsBlock(apiDir: string): string {
+  // Run every step from the api directory (matters for monorepo layouts where the
+  // api lives in ./api). Per-step working-directory overrides handle client dirs.
+  return `    defaults:
+      run:
+        working-directory: ${apiDir}
+`
+}
+
+function setupSteps(pm: PsychicPackageManager, fetchDepth = false): string {
+  const checkoutWith = fetchDepth
+    ? `        with:
+          fetch-depth: 0
+`
+    : ''
+  return `      - uses: actions/checkout@${ACTIONS.checkout} # v6.0.3
+${checkoutWith}${runtimeSetup(pm)}`
+}
+
+// Provision the chosen runtime/toolchain. Node uses setup-node (+ corepack for
+// pnpm/yarn); Bun and Deno use their own setup actions and act as the installer.
+function runtimeSetup(pm: PsychicPackageManager): string {
+  switch (pm) {
+    case 'bun':
+      return `      - uses: oven-sh/setup-bun@${ACTIONS.setupBun} # v2.2.0
+`
+    case 'deno':
+      return `      - uses: denoland/setup-deno@${ACTIONS.setupDeno} # v2.0.4
+        with:
+          deno-version: v2.x
+`
+    default:
+      return `      - uses: actions/setup-node@${ACTIONS.setupNode} # v6.4.0
+        with:
+          node-version: "${CI_NODE_VERSION}"
+${corepackStep(pm)}`
+  }
+}
+
+function uspecJob(ctx: BuildContext): string {
+  return `  uspec:
+    name: Unit specs (shard \${{ matrix.shard }})
+    runs-on: ubuntu-latest
+${shardMatrix()}${servicesBlock(ctx)}${ctx.env}${defaultsBlock(ctx.apiDir)}    steps:
+${setupSteps(ctx.pm)}      - run: ${installCmd(ctx.pm)}
+      - run: ${psy(ctx.pm, 'db:migrate', '--skip-sync')}
+      - run: ${runScript(ctx.pm, 'uspec', '--shard=${{ matrix.shard }}')}
+`
+}
+
+function fspecJob(ctx: BuildContext): string {
+  const clientInstalls = ctx.clientDirs
+    .map(
+      dir => `      - name: install ${dir} packages
+        run: ${installCmd(ctx.pm)}
+        working-directory: ./${dir}
+`,
+    )
+    .join('')
+
+  return `
+  fspec:
+    name: Feature specs (shard \${{ matrix.shard }})
+    runs-on: ubuntu-latest
+${shardMatrix()}${servicesBlock(ctx)}${ctx.env}${defaultsBlock(ctx.apiDir)}    steps:
+${setupSteps(ctx.pm)}      - run: ${installCmd(ctx.pm)}
+${clientInstalls}      - name: install puppeteer browser
+        run: ${puppeteerInstall(ctx.pm)}
+      - run: mkdir -p /tmp/screenshots
+      - run: ${psy(ctx.pm, 'db:migrate', '--skip-sync')}
+      - run: ${runScript(ctx.pm, 'fspec', '--shard=${{ matrix.shard }}')}
+      - uses: actions/upload-artifact@${ACTIONS.uploadArtifact} # v7.0.1
+        if: \${{ failure() }}
+        with:
+          name: feature-spec-screenshots-\${{ matrix.shard }}
+          path: /tmp/screenshots
+`
+}
+
+function checksJob(ctx: BuildContext): string {
+  return `
+  checks:
+    name: Build, lint & API contract
+    runs-on: ubuntu-latest
+${servicesBlock(ctx)}${ctx.env}${defaultsBlock(ctx.apiDir)}    steps:
+${setupSteps(ctx.pm, true)}      - uses: actions/setup-go@${ACTIONS.setupGo} # v6.4.0
+        with:
+          go-version: "${GO_VERSION}"
+      # oasdiff powers \`psy diff:openapi\`.
+      - run: go install github.com/oasdiff/oasdiff@latest
+      - run: ${installCmd(ctx.pm)}
+      # These are all fast, so chain them on one runner in order — keeps parallel
+      # runners free for the long spec jobs above.
+      - run: ${runScript(ctx.pm, 'build:spec')}
+      - run: ${runScript(ctx.pm, 'lint')}
+      # Reports OpenAPI contract changes vs. the base branch. Add \`--fail-on-breaking\`
+      # (npm: append \`-- --fail-on-breaking\`) to make it a hard gate.
+      - run: ${psy(ctx.pm, 'diff:openapi')}
+      - run: ${psy(ctx.pm, 'check:controller-hierarchy')}
+`
+}

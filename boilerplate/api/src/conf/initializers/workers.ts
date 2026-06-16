@@ -3,7 +3,7 @@ import { PsychicApp } from '@rvoh/psychic'
 import { PsychicAppWorkers } from '@rvoh/psychic-workers'
 import { Queue, Worker } from 'bullmq'
 import { Cluster, Redis } from 'ioredis'
-import * as os from 'os'
+import * as os from 'node:os'
 
 export default (psy: PsychicApp) => {
   psy.plugin(async () => {

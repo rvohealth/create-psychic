@@ -1,4 +1,5 @@
-import { NewPsychicAppCliOptions } from '../helpers/newPsychicApp.js'
+import frontEndPackageManager from '../helpers/frontEndPackageManager.js'
+import { NewPsychicAppCliOptions, PsychicPackageManager } from '../helpers/newPsychicApp.js'
 import { replacePackageManagerInFileContents } from '../helpers/replacePackageManagerInFile.js'
 import safelyImportJsonFile from '../helpers/safelyImportJsonFile.js'
 
@@ -16,6 +17,12 @@ export default class PackagejsonBuilder {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     packagejson.name = appName
 
+    // The client/admin/internal wrapper scripts are FRONT-END concerns: whether to
+    // forward args with `--` (npm) vs. invoke the binary directly, and which PM the
+    // `{{PM_CWD}}` cross-dir command resolves to, are both properties of the
+    // front-end package manager, not the API runtime. For a Deno API that's pnpm.
+    const fePm = frontEndPackageManager(options)
+
     switch (options.client) {
       case 'none':
         break
@@ -23,7 +30,7 @@ export default class PackagejsonBuilder {
       case 'nextjs':
         // npm requires `--` to forward CLI arguments to scripts (e.g. `npm run dev -- --port 3001`)
         // yarn and pnpm forward arguments automatically and can also invoke binaries like `next` directly.
-        if (options.packageManager === 'npm') {
+        if (fePm === 'npm') {
           // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
           packagejson.scripts['client'] = `{{PM_CWD}}=../client dev -- --port 3000`
           // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -39,7 +46,7 @@ export default class PackagejsonBuilder {
         break
 
       case 'nuxt':
-        if (options.packageManager === 'npm') {
+        if (fePm === 'npm') {
           // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
           packagejson.scripts['client'] = `{{PM_CWD}}=../client dev -- --port 3000`
           // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -55,7 +62,7 @@ export default class PackagejsonBuilder {
         break
 
       default:
-        if (options.packageManager === 'npm') {
+        if (fePm === 'npm') {
           // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
           packagejson.scripts['client'] = `{{PM_CWD}}=../client dev -- --port 3000`
           // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -77,7 +84,7 @@ export default class PackagejsonBuilder {
       default:
         switch (options.adminClient) {
           case 'nextjs':
-            if (options.packageManager === 'npm') {
+            if (fePm === 'npm') {
               // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
               packagejson.scripts['admin'] = `{{PM_CWD}}=../admin dev -- --port 3001`
               // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -93,7 +100,7 @@ export default class PackagejsonBuilder {
             break
 
           case 'nuxt':
-            if (options.packageManager === 'npm') {
+            if (fePm === 'npm') {
               // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
               packagejson.scripts['admin'] = `{{PM_CWD}}=../admin dev -- --port 3001`
               // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -109,7 +116,7 @@ export default class PackagejsonBuilder {
             break
 
           default:
-            if (options.packageManager === 'npm') {
+            if (fePm === 'npm') {
               // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
               packagejson.scripts['admin'] = `{{PM_CWD}}=../admin dev -- --port 3001`
               // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -132,7 +139,7 @@ export default class PackagejsonBuilder {
       default:
         switch (options.internalClient) {
           case 'nextjs':
-            if (options.packageManager === 'npm') {
+            if (fePm === 'npm') {
               // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
               packagejson.scripts['internal'] = `{{PM_CWD}}=../internal dev -- --port 3002`
               // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -148,7 +155,7 @@ export default class PackagejsonBuilder {
             break
 
           case 'nuxt':
-            if (options.packageManager === 'npm') {
+            if (fePm === 'npm') {
               // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
               packagejson.scripts['internal'] = `{{PM_CWD}}=../internal dev -- --port 3002`
               // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -164,7 +171,7 @@ export default class PackagejsonBuilder {
             break
 
           default:
-            if (options.packageManager === 'npm') {
+            if (fePm === 'npm') {
               // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
               packagejson.scripts['internal'] = `{{PM_CWD}}=../internal dev -- --port 3002`
               // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -202,8 +209,97 @@ export default class PackagejsonBuilder {
 
     pruneOverridesForPackageManager(packagejson, options.packageManager)
 
-    return replacePackageManagerInFileContents(JSON.stringify(packagejson, null, 2), options.packageManager)
+    if (options.packageManager === 'bun' || options.packageManager === 'deno') {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
+      applyRuntimeRunners(packagejson.scripts, options.packageManager)
+      // Strip Node-only toolchain vestiges: nodemon (Deno/Bun use a native `--watch`)
+      // and tsx (their scripts run TS directly) are never invoked here, and engines.node
+      // is meaningless for an app that doesn't run on Node. The matching nodemon.json is
+      // removed in copyApiBoilerplate.
+      removeDevDependency(packagejson, 'nodemon')
+      removeDevDependency(packagejson, 'tsx')
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      delete packagejson.engines
+    }
+
+    if (options.packageManager === 'bun') {
+      // Bun runs lifecycle/postinstall scripts for a built-in allowlist of popular
+      // packages (puppeteer among them) even when `trustedDependencies` is absent —
+      // so its "default-deny" is NOT actually deny-all. An empty `trustedDependencies`
+      // overrides that allowlist so NO dependency runs install scripts, matching the
+      // block-all posture of pnpm (strictDepBuilds) / npm (ignore-scripts) / yarn. The
+      // app ships no build scripts of its own; puppeteer's browser is installed
+      // explicitly via `bunx puppeteer browsers install firefox`.
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      packagejson.trustedDependencies = []
+    }
+
+    // `{{PM}}` resolves to the API runtime; `{{PM_CWD}}` (front-end client wrappers)
+    // resolves to the front-end PM — they diverge only for a Deno API (→ pnpm).
+    return replacePackageManagerInFileContents(
+      JSON.stringify(packagejson, null, 2),
+      options.packageManager,
+      fePm,
+    )
   }
+}
+
+// The boilerplate scripts call the Node toolchain by name — `tsx`, `node`,
+// `vitest`, `nodemon`, `cross-env`. Under Bun/Deno those bare names would resolve
+// to the node-shebang `.bin` shims and execute under Node, defeating the runtime
+// choice, so rewrite them to run under the target runtime. The {{PM}} / {{TSC_*}}
+// placeholders are handled separately by replacePackageManagerInFileContents.
+//
+// Verified shapes (runtime spike): `deno run -A` / `bun` for TS entrypoints,
+// `deno run -A npm:vitest` / `bunx vitest` for specs, `deno run -A npm:typescript/tsc`
+// / `bunx tsc` for builds. The watch (web:dev) and cross-env rewrites follow the
+// same form; full per-script behavior under bun/deno is confirmed by the
+// post-publish generated-app boot e2e.
+function applyRuntimeRunners(scripts: Record<string, string>, runtime: 'bun' | 'deno'): void {
+  // run a TS/JS entrypoint file.
+  //
+  // Bun auto-loads `.env` (and `.env.local` etc.) into the process before any
+  // app code runs. That breaks `src/conf/loadEnv.ts`, which is written for the
+  // node/tsx model where nothing pre-loads env: loadEnv defaults NODE_ENV to
+  // `test` when unset and then calls `dotenv.config({ ..., override: false })`,
+  // so the development values Bun already injected win and a bare `psy
+  // db:migrate` silently targets the development DB instead of test. `--no-env-file`
+  // disables Bun's auto-load so loadEnv is the single source of truth, identical
+  // to node. Deno does not auto-load `.env`, so it needs no equivalent.
+  const run = runtime === 'bun' ? 'bun --no-env-file' : 'deno run -A'
+  // run an npm-published bin (vitest, cross-env, prettier, eslint)
+  const bin = (name: string) => (runtime === 'bun' ? `bunx ${name}` : `deno run -A npm:${name}`)
+  // hot-reloading dev server (replaces nodemon, whose nodemon.json exec is `tsx ./src/main.ts`)
+  const watch =
+    runtime === 'bun' ? 'bun --no-env-file --watch src/main.ts' : 'deno run -A --watch src/main.ts'
+
+  for (const key of Object.keys(scripts)) {
+    scripts[key] = scripts[key]!.replace(/nodemon --quiet --no-stdin/g, watch)
+      .replace(/\bnode --version\b/g, `${runtime} --version`)
+      .replace(/\bcross-env\b/g, bin('cross-env'))
+      .replace(/\bvitest\b/g, bin('vitest'))
+      .replace(/\btsx /g, `${run} `)
+      .replace(/\bnode \.\//g, `${run} ./`)
+
+    // The spec runners boot the app through src/conf/loadEnv.ts with NODE_ENV
+    // unset, relying on loadEnv's default-to-test. Under Bun that breaks the
+    // same way `psy` does: `bunx vitest` is a fresh Bun process that auto-loads
+    // `.env` (development) before loadEnv runs, and `override: false` keeps it,
+    // so specs bind to the development DB. `--no-env-file` can't help here — it
+    // does not propagate through `bunx` to the spawned process. Instead pin
+    // NODE_ENV=test on the vitest invocation: Bun then auto-loads `.env.test`,
+    // which matches what loadEnv resolves, so the two agree on the test DB.
+    // Specs are always test mode, so this is a correct declaration, not a patch.
+    // Deno does not auto-load `.env`, so its spec runners need no equivalent.
+    if (runtime === 'bun') {
+      scripts[key] = scripts[key].replace(/\bbunx vitest\b/g, 'NODE_ENV=test bunx vitest')
+    }
+  }
+
+  // The bare `prettier` / `eslint` scripts are invoked via `{{PM}} <script>`; point
+  // them at the runtime-native bin so they don't fall through to the Node shim.
+  if (scripts['prettier'] === 'prettier') scripts['prettier'] = bin('prettier')
+  if (scripts['eslint'] === 'eslint') scripts['eslint'] = bin('eslint')
 }
 
 // The boilerplate package.json carries override blocks for npm (`overrides`),
@@ -212,10 +308,12 @@ export default class PackagejsonBuilder {
 // package manager will actually read, so the generated app has one canonical
 // spot to edit and there's no risk of the three drifting apart over time.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function pruneOverridesForPackageManager(packageJson: any, packageManager: 'npm' | 'yarn' | 'pnpm') {
+function pruneOverridesForPackageManager(packageJson: any, packageManager: PsychicPackageManager) {
   /* eslint-disable @typescript-eslint/no-unsafe-member-access */
   switch (packageManager) {
+    // bun reads the npm-style `overrides` block, so keep it like npm does.
     case 'npm':
+    case 'bun':
       delete packageJson.resolutions
       delete packageJson.pnpm
       break
@@ -223,7 +321,10 @@ function pruneOverridesForPackageManager(packageJson: any, packageManager: 'npm'
       delete packageJson.overrides
       delete packageJson.pnpm
       break
+    // deno honors neither `overrides` nor `resolutions` (and pnpm's block lives in
+    // pnpm-workspace.yaml), so drop all three — same as pnpm.
     case 'pnpm':
+    case 'deno':
       delete packageJson.overrides
       delete packageJson.resolutions
       delete packageJson.pnpm
@@ -236,6 +337,12 @@ function pruneOverridesForPackageManager(packageJson: any, packageManager: 'npm'
 function removeDependency(packageJson: any, key: string) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
   delete packageJson.dependencies[key]
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function removeDevDependency(packageJson: any, key: string) {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+  delete packageJson.devDependencies[key]
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

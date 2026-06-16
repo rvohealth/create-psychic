@@ -1,20 +1,52 @@
 import { primaryKeyTypes } from '@rvoh/dream/system'
-import { cliClientAppTypes, NewPsychicAppCliOptions, psychicPackageManagers } from '../newPsychicApp.js'
+import {
+  cliClientAppTypes,
+  NewPsychicAppCliOptions,
+  psychicPackageManagers,
+  selectablePsychicRuntimes,
+} from '../newPsychicApp.js'
 import Select from '../select.js'
 
 export default async function buildNewPsychicAppOptionsWithPrompt(options: NewPsychicAppCliOptions) {
-  if (!options.packageManager || !psychicPackageManagers.includes(options.packageManager)) {
-    const answer = await new Select(
-      'What package manager would you like to use?',
-      psychicPackageManagers,
-    ).run()
-    options.packageManager = answer
+  // Runtime is chosen first; for deno/bun it subsumes the package-manager prompt
+  // (each is its own toolchain). Skip the prompt in the spec suite (no TTY) — a
+  // prompted-but-unset Select would hang the suite.
+  if (
+    options.runtime === undefined ||
+    !(selectablePsychicRuntimes as readonly string[]).includes(options.runtime)
+  ) {
+    if (process.env.NODE_ENV === 'test') {
+      options.runtime = 'node'
+    } else {
+      options.runtime = await new Select(
+        'which runtime would you like to target?',
+        selectablePsychicRuntimes,
+      ).run()
+    }
+  }
+
+  if (options.runtime === 'node') {
+    if (
+      !options.packageManager ||
+      !(psychicPackageManagers as readonly string[]).includes(options.packageManager)
+    ) {
+      const answer = await new Select(
+        'which package manager would you like to use?',
+        psychicPackageManagers,
+      ).run()
+      options.packageManager = answer
+    }
+  } else {
+    // deno and bun are their own package managers + runtimes; the runtime choice
+    // subsumes the pm prompt and drives the existing pm-keyed machinery.
+    options.packageManager = options.runtime
   }
 
   if (!options.primaryKeyType || !primaryKeyTypes.includes(options.primaryKeyType)) {
     const answer = await new Select(
-      'What primary key type would you like to use? (uuid7 requires Postgres 18)',
+      'which primary key type would you like to use?',
       primaryKeyTypes,
+      primaryKeyTypes.map(keyType => (keyType === 'uuid7' ? '(sortable; requires postgres 18)' : '')),
     ).run()
     options.primaryKeyType = answer
   }
@@ -22,7 +54,7 @@ export default async function buildNewPsychicAppOptionsWithPrompt(options: NewPs
   let monoRepo = false
   if (!options.client && !options.adminClient && !options.internalClient) {
     const answer = await new Select(
-      `Would you like a monorepo?\nFor more info, see https://psychicframework.com/docs/learn-more/monorepos`,
+      'would you like a monorepo? (https://psychicframework.com/docs/learn-more/monorepos)',
       ['yes', 'no'] as const,
     ).run()
     monoRepo = answer === 'yes'
@@ -60,12 +92,12 @@ export default async function buildNewPsychicAppOptionsWithPrompt(options: NewPs
   }
 
   if (options.workers === undefined) {
-    const answer = await new Select('Background workers?', ['yes', 'no'] as const).run()
+    const answer = await new Select('background workers?', ['yes', 'no'] as const).run()
     options.workers = answer === 'yes'
   }
 
   if (options.websockets === undefined) {
-    const answer = await new Select('Websockets?', ['yes', 'no'] as const).run()
+    const answer = await new Select('websockets?', ['yes', 'no'] as const).run()
     options.websockets = answer === 'yes'
   }
 
@@ -82,5 +114,18 @@ export default async function buildNewPsychicAppOptionsWithPrompt(options: NewPs
   } else {
     options.claudePsychicSkill ??= false
     options.codexPsychicSkill ??= false
+  }
+
+  if (options.githubActions === undefined) {
+    // Skip the prompt in the spec suite (no TTY); specs opt in explicitly.
+    if (process.env.NODE_ENV === 'test') {
+      options.githubActions = false
+    } else {
+      const answer = await new Select('generate a github actions workflow file?', [
+        'yes',
+        'no',
+      ] as const).run()
+      options.githubActions = answer === 'yes'
+    }
   }
 }

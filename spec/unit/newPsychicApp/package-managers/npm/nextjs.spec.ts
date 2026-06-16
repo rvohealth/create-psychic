@@ -1,10 +1,11 @@
 import * as fs from 'node:fs'
 import sspawn from '../../../../../src/helpers/sspawn.js'
+import { NPM_APP_GENERATION_SPECS_DISABLED } from './npmAppGenerationDisabled.js'
 import expectFile from '../../../../helpers/expectFile.js'
 import newSpecPsychicApp from '../../../../helpers/newSpecPsychicApp.js'
 import expectToMatchFixture from '../../../../helpers/expectToMatchFixture.js'
 
-describe('newPsychicApp with nextjs client', () => {
+describe.skipIf(NPM_APP_GENERATION_SPECS_DISABLED)('newPsychicApp with nextjs client', () => {
   it('correctly provisions a nextjs client', async () => {
     await newSpecPsychicApp('howyadoin', {
       packageManager: 'npm',
