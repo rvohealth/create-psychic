@@ -4,6 +4,9 @@
   "version": "3.5.6",
   "description": "creates a new psychic app",
   "author": "RVO Health",
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/rvohealth/create-psychic.git"
