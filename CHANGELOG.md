@@ -1,6 +1,7 @@
 ## 3.5.3
 
 - Bump the generated app's `@rvoh/dream` to `^2.14.0` and `@rvoh/dream-spec-helpers` to `^2.2.0`, which carry the per-live-worker test-database pool that fixes the intermittent unit-spec flakiness (a record created in a test's `beforeEach` vanishing before the request under test ran, surfacing as random 404s / empty lists). The fix is entirely internal to those two packages — each test worker now claims its own database from a pre-created pool via a Postgres advisory lock instead of keying off vitest's reusable `VITEST_POOL_ID` slot — so no boilerplate change is needed: the generated `spec/unit/vite.config.ts` keeps vitest's default `isolate: true`, the `db:reset` script already creates and drops the `<base>_<n>` range (now just wider), and `hooks.ts`' `beforeEach(truncate)` is unchanged because `truncate` resolves the claimed database internally.
+- Present `react` first in the front-end client picker (was `nextjs` first), making the Vite React client the default-highlighted choice. The standalone React client is the least-surprising general-purpose default for a Psychic API app: it keeps frontend routing/rendering separate from the backend, whereas Next.js brings full-stack server capabilities that can blur ownership of API routes, cookies, and deployment boundaries. The available choices are unchanged — only their order.
 
 ## 3.5.2
 

@@ -10,7 +10,7 @@ import installPsychicSkill from './installPsychicSkill.js'
 import logo from './logo.js'
 import { InitPsychicAppCliOptions } from './newPsychicApp.js'
 
-export const cliClientAppTypes = ['nextjs', 'react', 'vue', 'nuxt', 'none'] as const
+export const cliClientAppTypes = ['react', 'nextjs', 'vue', 'nuxt', 'none'] as const
 
 export const psychicPackageManagers = ['yarn', 'pnpm', 'npm'] as const
 export type PsychicPackageManager = (typeof psychicPackageManagers)[number]

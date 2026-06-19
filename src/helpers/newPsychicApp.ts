@@ -13,7 +13,7 @@ import installApiDependencies from './new/installApiDependencies.js'
 import welcomeMessage from './new/welcomeMessage.js'
 import sleep from './sleep.js'
 
-export const cliClientAppTypes = ['nextjs', 'react', 'vue', 'nuxt', 'none'] as const
+export const cliClientAppTypes = ['react', 'nextjs', 'vue', 'nuxt', 'none'] as const
 
 export const psychicPackageManagers = ['pnpm', 'yarn', 'npm'] as const
 export const psychicRuntimes = ['node', 'deno', 'bun'] as const
