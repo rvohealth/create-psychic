@@ -15,8 +15,11 @@ export default async function installApiDependencies(
 
   switch (options.packageManager) {
     case 'yarn':
+      // yarn resolves the ^-ranged @rvoh deps to highest-in-range on a clean
+      // install (no lockfile is shipped to pin them), so no explicit `yarn up`
+      // is needed — see the pnpm case for why only pnpm keeps a defensive one.
       await sspawn(
-        `cd ${apiRoot} && touch ${lockfileName} && corepack enable yarn && yarn set version stable && yarn install && yarn up "@rvoh/*"`,
+        `cd ${apiRoot} && touch ${lockfileName} && corepack enable yarn && yarn set version stable && yarn install`,
         {
           onStdout: message => {
             logger.logContinueProgress(colorize('[api]', { color: 'cyan' }) + ' ' + message, {
@@ -28,6 +31,14 @@ export default async function installApiDependencies(
       break
 
     case 'pnpm':
+      // `pnpm install` already resolves the ^-ranged @rvoh deps to their latest
+      // in-range publish: the boilerplate ships no lockfile to pin them and
+      // pnpm's default resolution-mode is `highest`. The trailing
+      // `pnpm up "@rvoh/*"` is insurance for the one manager that can resolve to
+      // the floor instead — if a user's .npmrc (or a future pnpm default) sets
+      // `resolution-mode=lowest-direct`, install would pin e.g. dream@2.13.0 and
+      // this re-floats every @rvoh package to latest-in-range, so a freshly
+      // scaffolded app always starts on the newest published Dream/Psychic.
       await sspawn(`cd ${apiRoot} && corepack enable pnpm && pnpm install && pnpm up "@rvoh/*"`, {
         onStdout: message => {
           logger.logContinueProgress(colorize('[api]', { color: 'cyan' }) + ' ' + message, {
@@ -38,16 +49,17 @@ export default async function installApiDependencies(
       break
 
     case 'npm':
-      await sspawn(
-        `cd ${apiRoot} && touch ${lockfileName} && npm install && npm update @rvoh/dream @rvoh/psychic @rvoh/psychic-workers @rvoh/psychic-websockets`,
-        {
-          onStdout: message => {
-            logger.logContinueProgress(colorize('[api]', { color: 'cyan' }) + ' ' + message, {
-              logPrefixColor: 'cyan',
-            })
-          },
+      // npm resolves the ^-ranged @rvoh deps to highest-in-range on a clean
+      // install (no lockfile is shipped to pin them), so no explicit
+      // `npm update` is needed — see the pnpm case for why only pnpm keeps a
+      // defensive one.
+      await sspawn(`cd ${apiRoot} && touch ${lockfileName} && npm install`, {
+        onStdout: message => {
+          logger.logContinueProgress(colorize('[api]', { color: 'cyan' }) + ' ' + message, {
+            logPrefixColor: 'cyan',
+          })
         },
-      )
+      })
       break
 
     case 'bun':
