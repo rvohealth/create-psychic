@@ -4,10 +4,6 @@ import { visit } from '@rvoh/psychic-spec-helpers'
 describe('puppeteer sample test', () => {
   it('my first puppeteer test', async () => {
     await visit('/', { baseUrl: AppEnv.string('CLIENT_APP_HOST') })
-    await expect
-      .poll(async () => (await page.$eval('body', body => body.textContent ?? '')).toLowerCase(), {
-        timeout: 10_000,
-      })
-      .toContain('get started')
+    await expect(page).toMatchTextContent(/get started/i)
   })
 })
