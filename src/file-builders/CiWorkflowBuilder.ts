@@ -19,7 +19,6 @@ const ACTIONS = {
 
 // The generated app targets Node 26 (Psychic's supported baseline / current LTS); CI runs on it.
 const CI_NODE_VERSION = '26'
-const GO_VERSION = '1.24'
 
 export default class CiWorkflowBuilder {
   public static build(appName: string, options: NewPsychicAppCliOptions): string {
@@ -212,6 +211,10 @@ function envBlock(dbName: string, appKey: string, columnKey: string): string {
       # commit (they protect nothing real). Do NOT reuse these in any other env.
       APP_ENCRYPTION_KEY: "${appKey}"
       COLUMN_ENCRYPTION_KEY: "${columnKey}"
+      # Required for browser-based feature specs: Psychic's CORS middleware reads this
+      # to allow requests from the Vite dev servers. Must match CLIENT_APP_HOST,
+      # ADMIN_APP_HOST, and INTERNAL_APP_HOST in .env.test.
+      CORS_HOSTS: '["http://localhost:3050", "http://localhost:3051", "http://localhost:3052"]'
 `
 }
 
@@ -302,7 +305,7 @@ function checksJob(ctx: BuildContext): string {
 ${servicesBlock(ctx)}${ctx.env}${defaultsBlock(ctx.apiDir)}    steps:
 ${setupSteps(ctx.pm, true)}      - uses: actions/setup-go@${ACTIONS.setupGo} # v6.4.0
         with:
-          go-version: "${GO_VERSION}"
+          go-version: 'stable'
       # oasdiff powers \`psy diff:openapi\`.
       - run: go install github.com/oasdiff/oasdiff@latest
       - run: ${installCmd(ctx.pm)}
