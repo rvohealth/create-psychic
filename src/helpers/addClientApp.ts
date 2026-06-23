@@ -15,6 +15,8 @@ import getLockfileName from './getLockfileName.js'
 import getApiRoot from './getApiRoot.js'
 import ClientDockerDevBuilder from '../file-builders/docker/ClientDockerfileDevBuilder.js'
 
+const CREATE_VITE_VERSION = '9.0.7'
+
 export default async function addClientApp({
   client,
   clientRootFolderName,
@@ -227,13 +229,13 @@ function addFspecBuildDirToGitignore(gitignorePath: string, dirName: string) {
 function viteCmd(packageManager: PsychicPackageManager, clientRootFolderName: string, template: string) {
   switch (packageManager) {
     case 'yarn':
-      return `yarn create vite ${clientRootFolderName} --template ${template}`
+      return `npx create-vite@${CREATE_VITE_VERSION} ${clientRootFolderName} --template ${template}`
     case 'pnpm':
-      return `pnpm create vite ${clientRootFolderName} --template ${template}`
+      return `pnpm create vite@${CREATE_VITE_VERSION} ${clientRootFolderName} --template ${template}`
     case 'npm':
-      return `npm create vite@latest ${clientRootFolderName} -- --template ${template}`
+      return `npm create vite@${CREATE_VITE_VERSION} ${clientRootFolderName} -- --template ${template}`
     case 'bun':
-      return `bun create vite@latest ${clientRootFolderName} --template ${template}`
+      return `bun create vite@${CREATE_VITE_VERSION} ${clientRootFolderName} --template ${template}`
     default:
       // deno never drives the front end (frontEndPackageManager maps deno → pnpm)
       throw new Error(`front-end package manager cannot be: ${packageManager as string}`)

@@ -23,6 +23,6 @@ function assertionText(options: NewPsychicAppCliOptions) {
       return 'get started'
 
     default:
-      return 'Get started'
+      return 'get started'
   }
 }
