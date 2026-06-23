@@ -6,7 +6,7 @@
   },
 
   "compilerOptions": {
-    "types": ["luxon-jest-matchers", "spec/global.d.ts"]
+    "types": ["luxon-jest-matchers"]
   },
   "include": ["src", "spec"]
 }
