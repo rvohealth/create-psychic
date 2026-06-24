@@ -1,3 +1,7 @@
+## 3.5.4
+
+- remove unnecessary typecasting from requestLogger.ts boilerplate
+
 ## 3.5.3
 
 - `resolveCurrentUser` now short-circuits with `null` when no Authorization header is present, instead of passing an empty string to `Encrypt.decrypt` (which throws). The bug was invisible while `MaybeAuthedController` was commented-out scaffolding, but surfaces as a 500 the moment an unauthenticated request hits an endpoint that extends `MaybeAuthedController`.
