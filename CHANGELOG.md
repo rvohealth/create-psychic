@@ -1,3 +1,7 @@
+## 3.5.5
+
+- Update Codex skill install paths from `.codex/skills/` to `.agents/skills/` in boilerplate `README.md` and `api/AGENTS.md`. Codex reads skills from `$HOME/.agents/skills/` per the official Codex docs.
+
 ## 3.5.4
 
 - remove unnecessary typecasting from requestLogger.ts boilerplate
