@@ -7,7 +7,7 @@ describe('newPsychicApp with uuid', () => {
       packageManager: 'yarn',
       websockets: false,
       claudePsychicSkill: false,
-      codexPsychicSkill: false,
+      agentsPsychicSkill: false,
       workers: false,
       client: 'none',
       adminClient: 'none',

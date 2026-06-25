@@ -11,7 +11,7 @@ describe.skipIf(NPM_APP_GENERATION_SPECS_DISABLED)('newPsychicApp with nextjs cl
       packageManager: 'npm',
       websockets: false,
       claudePsychicSkill: false,
-      codexPsychicSkill: false,
+      agentsPsychicSkill: false,
       workers: false,
       client: 'nextjs',
       adminClient: 'none',

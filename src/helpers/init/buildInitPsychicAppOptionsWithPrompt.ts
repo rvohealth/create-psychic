@@ -70,19 +70,19 @@ export default async function buildInitPsychicAppOptionsWithPrompt(options: Init
     options.websockets = answer === 'yes'
   }
 
-  if (options.claudePsychicSkill === undefined && options.codexPsychicSkill === undefined) {
+  if (options.claudePsychicSkill === undefined && options.agentsPsychicSkill === undefined) {
     const answer = await new Select('AI agent skills?', [
       'Claude Code',
-      'Codex',
+      'Codex (or any agent using .agents/)',
       'both',
       'none',
     ] as const).run()
 
     options.claudePsychicSkill = answer === 'Claude Code' || answer === 'both'
-    options.codexPsychicSkill = answer === 'Codex' || answer === 'both'
+    options.agentsPsychicSkill = answer === 'Codex (or any agent using .agents/)' || answer === 'both'
   } else {
     options.claudePsychicSkill ??= false
-    options.codexPsychicSkill ??= false
+    options.agentsPsychicSkill ??= false
   }
 
   if (options.confPath === undefined) {

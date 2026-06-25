@@ -30,8 +30,8 @@ export default function createPsyCli() {
     .option('--no-websockets', 'exclude websockets from your application')
     .option('--claude-psychic-skill', 'install psychic-skill for Claude Code')
     .option('--no-claude-psychic-skill', 'exclude psychic-skill for Claude Code')
-    .option('--codex-psychic-skill', 'install psychic-skill for Codex')
-    .option('--no-codex-psychic-skill', 'exclude psychic-skill for Codex')
+    .option('--agents-psychic-skill', 'install psychic-skill for Codex / .agents-compatible agents')
+    .option('--no-agents-psychic-skill', 'exclude psychic-skill for Codex / .agents-compatible agents')
 
     .option(
       '--primary-key-type <KEY_TYPE>',
@@ -70,8 +70,8 @@ export default function createPsyCli() {
     .option('--no-websockets', 'exclude websockets from your application')
     .option('--claude-psychic-skill', 'install psychic-skill for Claude Code')
     .option('--no-claude-psychic-skill', 'exclude psychic-skill for Claude Code')
-    .option('--codex-psychic-skill', 'install psychic-skill for Codex')
-    .option('--no-codex-psychic-skill', 'exclude psychic-skill for Codex')
+    .option('--agents-psychic-skill', 'install psychic-skill for Codex / .agents-compatible agents')
+    .option('--no-agents-psychic-skill', 'exclude psychic-skill for Codex / .agents-compatible agents')
     .option(
       '--primary-key-type <KEY_TYPE>',
       `One of: ${primaryKeyTypes.join(

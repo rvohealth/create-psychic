@@ -10,7 +10,7 @@ describe('newPsychicApp with nuxt client', () => {
       packageManager: 'pnpm',
       websockets: false,
       claudePsychicSkill: false,
-      codexPsychicSkill: false,
+      agentsPsychicSkill: false,
       workers: false,
       client: 'nuxt',
       adminClient: 'none',

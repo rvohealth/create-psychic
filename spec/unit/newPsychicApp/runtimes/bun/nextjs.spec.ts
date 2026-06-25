@@ -28,7 +28,7 @@ describe.skipIf(!bunAvailable())('newPsychicApp with a bun runtime and a nextjs 
       runtime: 'bun',
       websockets: false,
       claudePsychicSkill: false,
-      codexPsychicSkill: false,
+      agentsPsychicSkill: false,
       workers: false,
       client: 'nextjs',
       adminClient: 'none',

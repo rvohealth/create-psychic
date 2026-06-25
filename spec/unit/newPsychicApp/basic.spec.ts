@@ -11,7 +11,7 @@ describe('newPsychicApp without websockets or background jobs', () => {
       packageManager: 'yarn',
       websockets: false,
       claudePsychicSkill: false,
-      codexPsychicSkill: false,
+      agentsPsychicSkill: false,
       workers: false,
       client: 'none',
       adminClient: 'none',

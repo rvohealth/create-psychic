@@ -9,7 +9,7 @@ describe('newPsychicApp with react client', () => {
       packageManager: 'yarn',
       websockets: false,
       claudePsychicSkill: false,
-      codexPsychicSkill: false,
+      agentsPsychicSkill: false,
       workers: false,
       client: 'react',
       adminClient: 'react',

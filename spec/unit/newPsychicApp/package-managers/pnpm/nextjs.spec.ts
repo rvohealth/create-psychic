@@ -10,7 +10,7 @@ describe('newPsychicApp with nextjs client', () => {
       packageManager: 'pnpm',
       websockets: false,
       claudePsychicSkill: false,
-      codexPsychicSkill: false,
+      agentsPsychicSkill: false,
       workers: false,
       client: 'nextjs',
       adminClient: 'none',
