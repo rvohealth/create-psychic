@@ -1,4 +1,4 @@
-## 3.6.0
+## 3.5.7
 
 - switch to Github action publishing to npmjs.com
 
