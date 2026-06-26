@@ -63,9 +63,9 @@ export default async function initPsychicApp(appName: string, options: InitPsych
     if (!testEnv()) logger.logEndProgress()
   }
 
-  if (options.codexPsychicSkill) {
+  if (options.agentsPsychicSkill) {
     if (!testEnv()) logger.logStartProgress(`installing codex psychic-skill...`)
-    installPsychicSkill('.', 'codex')
+    installPsychicSkill('.', 'agents')
     if (!testEnv()) logger.logEndProgress()
   }
 

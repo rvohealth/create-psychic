@@ -8,7 +8,7 @@ describe('FeatureSpecExampleBuilder', () => {
     workers: false,
     websockets: false,
     claudePsychicSkill: false,
-    codexPsychicSkill: false,
+    agentsPsychicSkill: false,
     client: 'none',
     adminClient: 'none',
     internalClient: 'none',

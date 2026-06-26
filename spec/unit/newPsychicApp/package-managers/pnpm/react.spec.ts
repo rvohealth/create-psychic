@@ -11,7 +11,7 @@ describe('newPsychicApp with react client', () => {
       packageManager: 'pnpm',
       websockets: false,
       claudePsychicSkill: false,
-      codexPsychicSkill: false,
+      agentsPsychicSkill: false,
       workers: false,
       client: 'react',
       adminClient: 'none',

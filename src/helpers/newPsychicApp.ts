@@ -43,7 +43,7 @@ export interface NewPsychicAppCliOptions {
   workers: boolean
   websockets: boolean
   claudePsychicSkill: boolean
-  codexPsychicSkill: boolean
+  agentsPsychicSkill: boolean
   // Optional: generate a hardened GitHub Actions CI workflow. Undefined =>
   // prompted in interactive runs, treated as false in the spec suite.
   githubActions?: boolean
@@ -66,7 +66,7 @@ export interface InitPsychicAppCliOptions {
   workers: boolean
   websockets: boolean
   claudePsychicSkill: boolean
-  codexPsychicSkill: boolean
+  agentsPsychicSkill: boolean
   serializersPath: string
   typesPath: string
   modelsPath: string
@@ -128,9 +128,9 @@ export default async function newPsychicApp(appName: string, options: NewPsychic
     if (!testEnv()) logger.logEndProgress()
   }
 
-  if (options.codexPsychicSkill) {
+  if (options.agentsPsychicSkill) {
     if (!testEnv()) logger.logStartProgress(`installing codex psychic-skill...`)
-    installPsychicSkill(rootPath, 'codex')
+    installPsychicSkill(rootPath, 'agents')
     if (!testEnv()) logger.logEndProgress()
   }
 

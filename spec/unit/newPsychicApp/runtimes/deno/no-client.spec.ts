@@ -28,7 +28,7 @@ describe.skipIf(!denoAvailable())('newPsychicApp with the deno runtime', () => {
       runtime: 'deno',
       websockets: true,
       claudePsychicSkill: false,
-      codexPsychicSkill: false,
+      agentsPsychicSkill: false,
       workers: true,
       client: 'none',
       adminClient: 'none',

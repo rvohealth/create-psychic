@@ -30,7 +30,7 @@ describe.skipIf(!denoAvailable())('newPsychicApp with a deno api and a pnpm-driv
       runtime: 'deno',
       websockets: false,
       claudePsychicSkill: false,
-      codexPsychicSkill: false,
+      agentsPsychicSkill: false,
       workers: false,
       client: 'react',
       adminClient: 'none',

@@ -10,7 +10,7 @@ describe('newPsychicApp with vue client', () => {
       packageManager: 'pnpm',
       websockets: false,
       claudePsychicSkill: false,
-      codexPsychicSkill: false,
+      agentsPsychicSkill: false,
       workers: false,
       client: 'vue',
       adminClient: 'none',

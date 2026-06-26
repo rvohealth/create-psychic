@@ -1,3 +1,11 @@
+## 3.5.6
+
+- Rename `--codex-psychic-skill` / `--no-codex-psychic-skill` CLI flags to `--agents-psychic-skill` / `--no-agents-psychic-skill`. Rename `codexPsychicSkill` option to `agentsPsychicSkill` throughout. Install path for the non-Claude option changes from `.codex/skills/` to `.agents/skills/`. Update questionnaire label from `'Codex'` to `'Codex (or any agent using .agents/)'`. `AgentSkill` type value changes from `'codex'` to `'agents'`.
+
+## 3.5.5
+
+- Update Codex skill install paths from `.codex/skills/` to `.agents/skills/` in boilerplate `README.md` and `api/AGENTS.md`. Codex reads skills from `$HOME/.agents/skills/` per the official Codex docs.
+
 ## 3.5.4
 
 - remove unnecessary typecasting from requestLogger.ts boilerplate

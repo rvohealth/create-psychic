@@ -25,7 +25,7 @@ describe.skipIf(!bunAvailable())('newPsychicApp with the bun runtime', () => {
       runtime: 'bun',
       websockets: true,
       claudePsychicSkill: false,
-      codexPsychicSkill: false,
+      agentsPsychicSkill: false,
       workers: true,
       client: 'none',
       adminClient: 'none',

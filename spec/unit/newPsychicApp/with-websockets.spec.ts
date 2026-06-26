@@ -11,7 +11,7 @@ describe('newPsychicApp with websockets', () => {
       packageManager: 'yarn',
       websockets: true,
       claudePsychicSkill: false,
-      codexPsychicSkill: false,
+      agentsPsychicSkill: false,
       workers: false,
       client: 'none',
       adminClient: 'none',

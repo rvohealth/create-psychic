@@ -10,7 +10,7 @@ describe('newPsychicApp with no client', () => {
       packageManager: 'yarn',
       websockets: false,
       claudePsychicSkill: false,
-      codexPsychicSkill: false,
+      agentsPsychicSkill: false,
       workers: false,
       client: 'none',
       adminClient: 'none',

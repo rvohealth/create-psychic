@@ -28,7 +28,7 @@ describe.skipIf(!bunAvailable())('newPsychicApp with a bun runtime and a nuxt cl
       runtime: 'bun',
       websockets: false,
       claudePsychicSkill: false,
-      codexPsychicSkill: false,
+      agentsPsychicSkill: false,
       workers: false,
       client: 'nuxt',
       adminClient: 'none',
