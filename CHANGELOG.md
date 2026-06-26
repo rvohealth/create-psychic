@@ -1,3 +1,7 @@
+## 3.5.7
+
+- switch to Github action publishing to npmjs.com
+
 ## 3.5.6
 
 - Rename `--codex-psychic-skill` / `--no-codex-psychic-skill` CLI flags to `--agents-psychic-skill` / `--no-agents-psychic-skill`. Rename `codexPsychicSkill` option to `agentsPsychicSkill` throughout. Install path for the non-Claude option changes from `.codex/skills/` to `.agents/skills/`. Update questionnaire label from `'Codex'` to `'Codex (or any agent using .agents/)'`. `AgentSkill` type value changes from `'codex'` to `'agents'`.
