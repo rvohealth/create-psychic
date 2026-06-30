@@ -16,7 +16,7 @@ describe.skipIf(NPM_APP_GENERATION_SPECS_DISABLED)('newPsychicApp with nuxt clie
       client: 'nuxt',
       adminClient: 'none',
       internalClient: 'none',
-      primaryKeyType: 'bigserial',
+      primaryKeyType: 'bigint',
     })
 
     await expectFile('./howyadoin/api/package-lock.json')

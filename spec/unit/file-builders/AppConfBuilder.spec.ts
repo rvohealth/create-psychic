@@ -23,7 +23,7 @@ describe('AppConfBuilder', () => {
       client: 'none',
       adminClient: 'none',
       internalClient: 'none',
-      primaryKeyType: 'bigserial',
+      primaryKeyType: 'bigint',
     }
 
     context('with backgroundWorkers: false', () => {

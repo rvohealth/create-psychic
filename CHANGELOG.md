@@ -1,3 +1,8 @@
+## 3.5.8
+
+- Bump boilerplate `@rvoh/dream` to `^2.17.0`, `@rvoh/psychic` to `^3.8.6`, `@rvoh/dream-spec-helpers` to `^2.2.1`, `@rvoh/psychic-spec-helpers` to `^3.2.2`, `@rvoh/psychic-workers` to `^2.3.1`, `@rvoh/psychic-websockets` to `^3.3.1`.
+- Primary key prompt now offers exactly `uuid7, uuid4, bigint, integer` — `bigserial` and `serial` are removed from the selectable set (they remain accepted legacy aliases in Dream's migration engine). Spec defaults and fixtures updated to `bigint`.
+
 ## 3.5.7
 
 - switch to Github action publishing to npmjs.com

@@ -15,8 +15,8 @@ importers:
   .:
     dependencies:
       '@rvoh/dream':
-        specifier: ^2.10.0
-        version: 2.11.1(@types/node@22.19.19)(@types/pg@8.20.0)(commander@14.0.3)(dotenv@17.4.2)(kysely-codegen@0.20.0(kysely@0.29.2)(pg@8.21.0)(typescript@5.9.3))(kysely@0.29.2)(pg@8.21.0)(pluralize-esm@9.0.5)(typescript@5.9.3)
+        specifier: ^2.17.0
+        version: 2.17.0(@types/node@22.19.19)(@types/pg@8.20.0)(commander@14.0.3)(dotenv@17.4.2)(kysely-codegen@0.20.0(kysely@0.29.2)(pg@8.21.0)(typescript@5.9.3))(kysely@0.29.2)(pg@8.21.0)(pluralize-esm@9.0.5)(typescript@5.9.3)
       '@types/node':
         specifier: ^22.6.1
         version: 22.19.19
@@ -453,8 +453,8 @@ packages:
       '@types/pg': '*'
       pg: '*'
 
-  '@rvoh/dream@2.11.1':
-    resolution: {integrity: sha512-G8+H8Rvs00SEwjES/0IC+Fj7+pUFA2lBplep1dNUUBX8OxAExeNifeSK1gbGPzMV448rbnwYqK1VeZfPMO4YGw==}
+  '@rvoh/dream@2.17.0':
+    resolution: {integrity: sha512-2a1r+e3DUJ/qKMywRgpPri9GbOIUmsO39pYzrrvgj/nx4x7NW1/5Wl5VYOGQtv+8UTPpxE4HPcmNAdT1zpqu8A==}
     peerDependencies:
       '@types/node': '*'
       '@types/pg': '*'
@@ -2146,7 +2146,7 @@ snapshots:
       pg: 8.21.0
       pluralize-esm: 9.0.5
 
-  '@rvoh/dream@2.11.1(@types/node@22.19.19)(@types/pg@8.20.0)(commander@14.0.3)(dotenv@17.4.2)(kysely-codegen@0.20.0(kysely@0.29.2)(pg@8.21.0)(typescript@5.9.3))(kysely@0.29.2)(pg@8.21.0)(pluralize-esm@9.0.5)(typescript@5.9.3)':
+  '@rvoh/dream@2.17.0(@types/node@22.19.19)(@types/pg@8.20.0)(commander@14.0.3)(dotenv@17.4.2)(kysely-codegen@0.20.0(kysely@0.29.2)(pg@8.21.0)(typescript@5.9.3))(kysely@0.29.2)(pg@8.21.0)(pluralize-esm@9.0.5)(typescript@5.9.3)':
     dependencies:
       '@types/node': 22.19.19
       '@types/pg': 8.20.0

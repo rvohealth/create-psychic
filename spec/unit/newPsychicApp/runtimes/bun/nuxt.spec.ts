@@ -33,7 +33,7 @@ describe.skipIf(!bunAvailable())('newPsychicApp with a bun runtime and a nuxt cl
       client: 'nuxt',
       adminClient: 'none',
       internalClient: 'none',
-      primaryKeyType: 'bigserial',
+      primaryKeyType: 'bigint',
     })
 
     await expectFile('./howyadoin/api/bunfig.toml')

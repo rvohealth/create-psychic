@@ -33,7 +33,7 @@ describe.skipIf(!denoAvailable())('newPsychicApp with the deno runtime', () => {
       client: 'none',
       adminClient: 'none',
       internalClient: 'none',
-      primaryKeyType: 'bigserial',
+      primaryKeyType: 'bigint',
     })
 
     // Deno gets its own config; .nvmrc (node-only) and bunfig.toml are not emitted.

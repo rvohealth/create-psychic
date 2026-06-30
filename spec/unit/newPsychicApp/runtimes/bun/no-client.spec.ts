@@ -30,7 +30,7 @@ describe.skipIf(!bunAvailable())('newPsychicApp with the bun runtime', () => {
       client: 'none',
       adminClient: 'none',
       internalClient: 'none',
-      primaryKeyType: 'bigserial',
+      primaryKeyType: 'bigint',
     })
 
     // Bun gets bunfig.toml; .nvmrc (node-only) and deno.json are not emitted.

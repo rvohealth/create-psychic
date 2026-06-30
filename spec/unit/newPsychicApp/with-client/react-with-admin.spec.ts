@@ -14,7 +14,7 @@ describe('newPsychicApp with react client', () => {
       client: 'react',
       adminClient: 'react',
       internalClient: 'none',
-      primaryKeyType: 'bigserial',
+      primaryKeyType: 'bigint',
     })
 
     await expectFileToContain(

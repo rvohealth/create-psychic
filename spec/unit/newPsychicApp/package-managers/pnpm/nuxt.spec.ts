@@ -15,7 +15,7 @@ describe('newPsychicApp with nuxt client', () => {
       client: 'nuxt',
       adminClient: 'none',
       internalClient: 'none',
-      primaryKeyType: 'bigserial',
+      primaryKeyType: 'bigint',
     })
 
     await expectFile('./howyadoin/api/pnpm-lock.yaml')

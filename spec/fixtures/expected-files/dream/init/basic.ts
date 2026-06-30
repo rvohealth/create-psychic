@@ -13,7 +13,7 @@ const debugSql = debuglog('sql').enabled
 
 export default async (app: DreamApp) => {
   app.set('projectRoot', srcPath('..'))
-  app.set('primaryKeyType', 'bigserial')
+  app.set('primaryKeyType', 'bigint')
   app.set('inflections', inflections)
   app.set('packageManager', 'npm')
   await app.load('models', srcPath('..', 'src', 'api', 'app', 'models'), path => importDefault(path))
