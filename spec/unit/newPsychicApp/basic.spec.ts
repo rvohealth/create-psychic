@@ -23,10 +23,6 @@ describe('newPsychicApp without websockets or background jobs', () => {
     await expectNoWorkers()
 
     await expectToMatchFixture('expected-files/app/basic.ts', await readFile('howyadoin/src/conf/app.ts'))
-    await expectToMatchFixture(
-      'expected-files/mcpJson/atRootOfApiOnly.json',
-      await readFile('howyadoin/.mcp.json'),
-    )
 
     await sspawn(
       `\

@@ -43,12 +43,6 @@ export default async function copyApiBoilerplate(appName: string, options: NewPs
 
   copyRecursive(internalSrcPath('..', 'boilerplate', 'api'), apiRoot)
 
-  if (apiOnlyOptions(options)) {
-    fs.cpSync(internalSrcPath('..', 'boilerplate', 'api-only-mcp.json'), path.join(appRoot, '.mcp.json'))
-  } else {
-    fs.cpSync(internalSrcPath('..', 'boilerplate', 'non-api-only-mcp.json'), path.join(appRoot, '.mcp.json'))
-  }
-
   fs.cpSync(internalSrcPath('..', 'boilerplate', 'README.md'), path.join(appRoot, 'README.md'))
 
   fs.writeFileSync(path.join(appRoot, 'docker-compose.yml'), await DockerComposeBuilder.build(options))
