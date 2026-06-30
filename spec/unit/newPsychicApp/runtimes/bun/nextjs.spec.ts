@@ -33,7 +33,7 @@ describe.skipIf(!bunAvailable())('newPsychicApp with a bun runtime and a nextjs 
       client: 'nextjs',
       adminClient: 'none',
       internalClient: 'none',
-      primaryKeyType: 'bigserial',
+      primaryKeyType: 'bigint',
     })
 
     // Bun api gets bunfig.toml + bun.lock.

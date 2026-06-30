@@ -13,7 +13,7 @@ describe('PackagejsonBuilder', () => {
     client: 'none',
     adminClient: 'none',
     internalClient: 'none',
-    primaryKeyType: 'bigserial',
+    primaryKeyType: 'bigint',
   }
 
   describe('.buildAPI', () => {

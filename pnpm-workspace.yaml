@@ -12,3 +12,6 @@ overrides:
 allowBuilds:
   esbuild: true
   puppeteer: true
+
+minimumReleaseAgeExclude:
+  - '@rvoh/dream@2.17.0'

@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "@rvoh/create-psychic",
-  "version": "3.5.7",
+  "version": "3.5.8",
   "description": "creates a new psychic app",
   "author": "RVO Health",
   "publishConfig": {
@@ -35,7 +35,7 @@
     "format": "pnpm prettier . --write"
   },
   "dependencies": {
-    "@rvoh/dream": "^2.10.0",
+    "@rvoh/dream": "^2.17.0",
     "@types/node": "^22.6.1",
     "commander": "^14.0.3",
     "pino-std-serializers": "^4.0.0",

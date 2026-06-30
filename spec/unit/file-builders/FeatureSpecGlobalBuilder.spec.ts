@@ -12,7 +12,7 @@ describe('FeatureSpecGlobalBuilder', () => {
     client: 'none',
     adminClient: 'none',
     internalClient: 'none',
-    primaryKeyType: 'bigserial',
+    primaryKeyType: 'bigint',
   }
 
   describe('.build', () => {

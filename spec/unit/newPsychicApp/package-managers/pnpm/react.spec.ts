@@ -16,7 +16,7 @@ describe('newPsychicApp with react client', () => {
       client: 'react',
       adminClient: 'none',
       internalClient: 'none',
-      primaryKeyType: 'bigserial',
+      primaryKeyType: 'bigint',
     })
 
     await expectFile('./howyadoin/api/pnpm-lock.yaml')

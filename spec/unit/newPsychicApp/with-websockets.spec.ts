@@ -16,7 +16,7 @@ describe('newPsychicApp with websockets', () => {
       client: 'none',
       adminClient: 'none',
       internalClient: 'none',
-      primaryKeyType: 'bigserial',
+      primaryKeyType: 'bigint',
     })
 
     await expectNoFile('howyadoin/src/worker.ts')

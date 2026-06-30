@@ -16,7 +16,7 @@ describe.skipIf(NPM_APP_GENERATION_SPECS_DISABLED)('newPsychicApp with vue clien
       client: 'vue',
       adminClient: 'none',
       internalClient: 'none',
-      primaryKeyType: 'bigserial',
+      primaryKeyType: 'bigint',
     })
 
     await expectFile('./howyadoin/api/package-lock.json')

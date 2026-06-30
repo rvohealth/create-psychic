@@ -15,7 +15,7 @@ describe('newPsychicApp with nextjs client', () => {
       client: 'nextjs',
       adminClient: 'none',
       internalClient: 'none',
-      primaryKeyType: 'bigserial',
+      primaryKeyType: 'bigint',
     })
 
     await expectFile('./howyadoin/api/yarn.lock')

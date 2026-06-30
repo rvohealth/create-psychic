@@ -15,7 +15,7 @@ describe('newPsychicApp with vue client', () => {
       client: 'vue',
       adminClient: 'none',
       internalClient: 'none',
-      primaryKeyType: 'bigserial',
+      primaryKeyType: 'bigint',
     })
 
     await expectFile('./howyadoin/api/yarn.lock')

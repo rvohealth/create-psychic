@@ -10,7 +10,7 @@ const baseOptions: NewPsychicAppCliOptions = {
   client: 'none',
   adminClient: 'none',
   internalClient: 'none',
-  primaryKeyType: 'bigserial',
+  primaryKeyType: 'bigint',
 }
 
 describe('CiWorkflowBuilder', () => {

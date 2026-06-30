@@ -35,7 +35,7 @@ describe.skipIf(!denoAvailable())('newPsychicApp with a deno api and a pnpm-driv
       client: 'react',
       adminClient: 'none',
       internalClient: 'none',
-      primaryKeyType: 'bigserial',
+      primaryKeyType: 'bigint',
     })
 
     // Deno api gets its own config + lockfile.
