@@ -1,3 +1,7 @@
+## 3.6.0
+
+- Remove the generated AI retrieval server scaffolding and related README/spec fixtures.
+
 ## 3.5.8
 
 - Bump boilerplate `@rvoh/dream` to `^2.17.0`, `@rvoh/psychic` to `^3.8.6`, `@rvoh/dream-spec-helpers` to `^2.2.1`, `@rvoh/psychic-spec-helpers` to `^3.2.2`, `@rvoh/psychic-workers` to `^2.3.1`, `@rvoh/psychic-websockets` to `^3.3.1`.
@@ -122,13 +126,11 @@ Other:
 
 ## 3.0.2
 
-- custom .mcp.json based on whether API-only or not
 - update AGENTS.md
 
 ## 3.0.1
 
 - more idiomatic way of testing Dream constructor name
-- mcp.json immediately ready to use
 
 ## 3.0.0
 
@@ -172,10 +174,6 @@ Other:
 - fix broken init command when using --dream-only flag
 - don't write a node-version unless their node version is recent
 
-## 2.1.10
-
-- javascript mcp bridge so can simply run it with node
-
 ## 2.1.9
 
 - use specified package manager to build out sidechaining for client dev server
@@ -183,10 +181,6 @@ Other:
 ## 2.1.8
 
 - fix unexpected build regressions caused by new dotfiles
-
-## 2.1.7
-
-- mcp bridge comment cleanup
 
 ## 2.1.6
 
@@ -201,10 +195,6 @@ Other:
 ## 2.1.4
 
 - fix order of `declare public` in boilerplate
-
-## 2.1.3
-
-- fix mcp-http-bridge.ts
 
 ## 2.1.2
 
