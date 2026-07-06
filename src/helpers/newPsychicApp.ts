@@ -4,7 +4,7 @@ import DreamCliLogger from '../logger/DreamCliLogger.js'
 import addClientApp from './addClientApp.js'
 import apiOnlyOptions from './apiOnlyOptions.js'
 import gitInit from './gitInit.js'
-import installPsychicSkill from './installPsychicSkill.js'
+import { installPsychicSkills } from './installPsychicSkill.js'
 import logo from './logo.js'
 import buildNewPsychicAppOptionsWithPrompt from './new/buildNewPsychicAppOptionsWithPrompt.js'
 import copyApiBoilerplate from './new/copyApiBoilerplate.js'
@@ -122,15 +122,13 @@ export default async function newPsychicApp(appName: string, options: NewPsychic
   await installApiDependencies(appName, { options, logger })
   if (!testEnv()) logger.logEndProgress()
 
-  if (options.claudePsychicSkill) {
-    if (!testEnv()) logger.logStartProgress(`installing claude psychic-skill...`)
-    installPsychicSkill(rootPath, 'claude')
-    if (!testEnv()) logger.logEndProgress()
-  }
-
-  if (options.agentsPsychicSkill) {
-    if (!testEnv()) logger.logStartProgress(`installing codex psychic-skill...`)
-    installPsychicSkill(rootPath, 'agents')
+  if (options.claudePsychicSkill || options.agentsPsychicSkill) {
+    if (!testEnv()) logger.logStartProgress(`installing psychic-skill...`)
+    installPsychicSkills(rootPath, {
+      claude: options.claudePsychicSkill,
+      agents: options.agentsPsychicSkill,
+      packageManager: options.packageManager,
+    })
     if (!testEnv()) logger.logEndProgress()
   }
 

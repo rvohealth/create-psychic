@@ -6,7 +6,7 @@ import buildInitPsychicAppOptionsWithPrompt from './init/buildInitPsychicAppOpti
 import copyInitApiBoilerplate from './init/copyInitApiBoilerplate.js'
 import initMessage from './init/initMessage.js'
 import installInitApiDependencies from './init/installInitApiDependencies.js'
-import installPsychicSkill from './installPsychicSkill.js'
+import { installPsychicSkills } from './installPsychicSkill.js'
 import logo from './logo.js'
 import { InitPsychicAppCliOptions } from './newPsychicApp.js'
 
@@ -57,15 +57,13 @@ export default async function initPsychicApp(appName: string, options: InitPsych
   await addMissingTsconfigRules()
   if (!testEnv()) logger.logEndProgress()
 
-  if (options.claudePsychicSkill) {
-    if (!testEnv()) logger.logStartProgress(`installing claude psychic-skill...`)
-    installPsychicSkill('.', 'claude')
-    if (!testEnv()) logger.logEndProgress()
-  }
-
-  if (options.agentsPsychicSkill) {
-    if (!testEnv()) logger.logStartProgress(`installing codex psychic-skill...`)
-    installPsychicSkill('.', 'agents')
+  if (options.claudePsychicSkill || options.agentsPsychicSkill) {
+    if (!testEnv()) logger.logStartProgress(`installing psychic-skill...`)
+    installPsychicSkills('.', {
+      claude: options.claudePsychicSkill,
+      agents: options.agentsPsychicSkill,
+      packageManager: options.packageManager,
+    })
     if (!testEnv()) logger.logEndProgress()
   }
 

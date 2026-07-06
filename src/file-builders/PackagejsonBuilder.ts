@@ -234,6 +234,30 @@ export default class PackagejsonBuilder {
       packagejson.trustedDependencies = []
     }
 
+    // When BOTH the Claude skill and the .agents (Codex) skill are installed, the
+    // real tree lives at `.agents/skills/psychic-skill` and `.claude` references it.
+    // A committed POSIX symlink covers the pre-install window; the `postinstall`
+    // linker repairs it into a Windows junction on checkout and covers any OS where
+    // the symlink didn't materialize. pnpm/yarn/bun run the root `postinstall`; npm
+    // does not (its `.npmrc` `ignore-scripts=true` blocks it), so npm instead commits
+    // `.claude` as a real copy and gets no linker script here. `link:skill` is the
+    // manual re-run entry point. Deno's root-postinstall behavior isn't verified, so
+    // it is left out until deno is offered again.
+    if (
+      options.claudePsychicSkill &&
+      options.agentsPsychicSkill &&
+      (options.packageManager === 'pnpm' ||
+        options.packageManager === 'yarn' ||
+        options.packageManager === 'bun')
+    ) {
+      const runner = options.packageManager === 'bun' ? 'bun' : 'node'
+      const linkCmd = `${runner} scripts/link-psychic-skill.mjs`
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      packagejson.scripts['postinstall'] = linkCmd
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      packagejson.scripts['link:skill'] = linkCmd
+    }
+
     // `{{PM}}` resolves to the API runtime; `{{PM_CWD}}` (front-end client wrappers)
     // resolves to the front-end PM — they diverge only for a Deno API (→ pnpm).
     return replacePackageManagerInFileContents(

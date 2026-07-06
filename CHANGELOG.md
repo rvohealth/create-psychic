@@ -1,3 +1,8 @@
+## 3.7.0
+
+- When a generated app installs **both** the Claude skill and the `.agents` (Codex) skill, only one real `psychic-skill` tree is now committed — at `.agents/skills/psychic-skill` — and `.claude/skills/psychic-skill` references it instead of being a second full copy. For pnpm/yarn/bun the reference is a committed POSIX symlink, and a new root `postinstall` script (`node`/`bun scripts/link-psychic-skill.mjs`) recreates/repairs it on every install (Windows checkout materializes the symlink as a broken text file → the linker replaces it with a directory junction, needing no admin privilege; a recursive copy is the last-resort floor). For npm the `.claude` tree is committed as a real copy instead, because the generated app's `.npmrc` `ignore-scripts=true` (its supply-chain defense) blocks the root `postinstall` and a committed symlink breaks on a Windows checkout. A `link:skill` script is added alongside `postinstall` for pnpm/yarn/bun as the manual re-run entry point. The linker (`boilerplate/api/scripts/link-psychic-skill.mjs`) is cross-runtime (node and bun), cross-platform, and idempotent. When only one of the two skills is selected the previous single-full-clone behavior is unchanged, and no link scripts are injected.
+- Boilerplate `README.md`, `api/CLAUDE.md`, and `api/AGENTS.md` updated to describe the single-committed-copy shape.
+
 ## 3.6.0
 
 - Remove the generated AI retrieval server scaffolding and related README/spec fixtures.

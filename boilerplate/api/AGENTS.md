@@ -20,7 +20,7 @@ Project install (checked into this repo):
 git clone https://github.com/daniel-nelson/psychic-skill.git .agents/skills/psychic-skill && cd .agents/skills/psychic-skill && ./setup
 ```
 
-Codex reads skills from `$HOME/.agents/skills/` (personal) and `.agents/skills/` (project) per the [official Codex docs](https://developers.openai.com/codex/skills) <!-- source: https://developers.openai.com/codex/skills accessed 2026-06-24 -->.
+Codex reads skills from `$HOME/.agents/skills/` (personal) and `.agents/skills/` (project) per the [official Codex docs](https://developers.openai.com/codex/skills) <!-- source: https://developers.openai.com/codex/skills accessed 2026-06-24 -->. `.agents/skills/psychic-skill` is the single committed copy for this project; when Claude was also selected, `.claude/skills/psychic-skill` references this same tree rather than duplicating it.
 
 To update: run `/psychic-update-skill`, or `cd ~/.agents/skills/psychic-skill && git fetch origin && git reset --hard origin/main && ./setup`.
 
