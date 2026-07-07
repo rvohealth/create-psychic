@@ -441,6 +441,89 @@ describe('PackagejsonBuilder', () => {
       })
     })
 
+    context('psychic-skill link scripts', () => {
+      const bothSkills = { claudePsychicSkill: true, agentsPsychicSkill: true }
+
+      it('adds postinstall + link:skill (node runner) for pnpm', async () => {
+        const res = await PackagejsonBuilder.buildAPI('howyadoin', {
+          ...baseOptions,
+          ...bothSkills,
+          packageManager: 'pnpm',
+        })
+        const scripts = JSON.parse(res).scripts as Record<string, string>
+        expect(scripts['postinstall']).toBe('node scripts/link-psychic-skill.mjs')
+        expect(scripts['link:skill']).toBe('node scripts/link-psychic-skill.mjs')
+      })
+
+      it('adds postinstall + link:skill (node runner) for yarn', async () => {
+        const res = await PackagejsonBuilder.buildAPI('howyadoin', {
+          ...baseOptions,
+          ...bothSkills,
+          packageManager: 'yarn',
+        })
+        const scripts = JSON.parse(res).scripts as Record<string, string>
+        expect(scripts['postinstall']).toBe('node scripts/link-psychic-skill.mjs')
+        expect(scripts['link:skill']).toBe('node scripts/link-psychic-skill.mjs')
+      })
+
+      it('adds postinstall + link:skill (bun runner) for bun', async () => {
+        const res = await PackagejsonBuilder.buildAPI('howyadoin', {
+          ...baseOptions,
+          ...bothSkills,
+          packageManager: 'bun',
+          runtime: 'bun',
+        })
+        const scripts = JSON.parse(res).scripts as Record<string, string>
+        expect(scripts['postinstall']).toBe('bun scripts/link-psychic-skill.mjs')
+        expect(scripts['link:skill']).toBe('bun scripts/link-psychic-skill.mjs')
+      })
+
+      it('does NOT add link scripts for npm (real copy, ignore-scripts blocks postinstall)', async () => {
+        const res = await PackagejsonBuilder.buildAPI('howyadoin', {
+          ...baseOptions,
+          ...bothSkills,
+          packageManager: 'npm',
+        })
+        const scripts = JSON.parse(res).scripts as Record<string, string>
+        expect(scripts['postinstall']).toBeUndefined()
+        expect(scripts['link:skill']).toBeUndefined()
+      })
+
+      it('does NOT add link scripts when only the Claude skill is selected', async () => {
+        const res = await PackagejsonBuilder.buildAPI('howyadoin', {
+          ...baseOptions,
+          claudePsychicSkill: true,
+          agentsPsychicSkill: false,
+          packageManager: 'pnpm',
+        })
+        const scripts = JSON.parse(res).scripts as Record<string, string>
+        expect(scripts['postinstall']).toBeUndefined()
+        expect(scripts['link:skill']).toBeUndefined()
+      })
+
+      it('does NOT add link scripts when only the .agents skill is selected', async () => {
+        const res = await PackagejsonBuilder.buildAPI('howyadoin', {
+          ...baseOptions,
+          claudePsychicSkill: false,
+          agentsPsychicSkill: true,
+          packageManager: 'pnpm',
+        })
+        const scripts = JSON.parse(res).scripts as Record<string, string>
+        expect(scripts['postinstall']).toBeUndefined()
+        expect(scripts['link:skill']).toBeUndefined()
+      })
+
+      it('does NOT add link scripts when neither skill is selected', async () => {
+        const res = await PackagejsonBuilder.buildAPI('howyadoin', {
+          ...baseOptions,
+          packageManager: 'pnpm',
+        })
+        const scripts = JSON.parse(res).scripts as Record<string, string>
+        expect(scripts['postinstall']).toBeUndefined()
+        expect(scripts['link:skill']).toBeUndefined()
+      })
+    })
+
     context('deno runtime scripts', () => {
       it('runs entrypoints/specs/builds under deno with no Node-toolchain runners', async () => {
         const res = await PackagejsonBuilder.buildAPI('howyadoin', {

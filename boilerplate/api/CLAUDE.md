@@ -22,6 +22,8 @@ git clone https://github.com/daniel-nelson/psychic-skill.git .claude/skills/psyc
 
 Both `~/.claude/skills/<name>/SKILL.md` and `.claude/skills/<name>/SKILL.md` are documented Claude Code skill locations. Personal beats project when both define a skill with the same name. <!-- source: https://code.claude.com/docs/en/skills accessed 2026-04-25 — "Personal `~/.claude/skills/<skill-name>/SKILL.md`" and "Project `.claude/skills/<skill-name>/SKILL.md`" with precedence "enterprise > personal > project" -->
 
+When this project was scaffolded with **both** the Claude and Codex skills, the single committed copy lives at `.agents/skills/psychic-skill` and `.claude/skills/psychic-skill` references it — a symlink kept in repair by a root `postinstall` (runs on `install`), except under npm, where `.claude/skills/psychic-skill` is a committed real copy instead. Either way Claude Code loads it the same; there is no separate `.claude` tree to keep in sync.
+
 ## Updating
 
 Run `/psychic-update-skill` (a slash command bundled with the skill). Or, manually inside the skill directory:

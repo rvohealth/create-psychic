@@ -71,15 +71,10 @@ export default async function buildInitPsychicAppOptionsWithPrompt(options: Init
   }
 
   if (options.claudePsychicSkill === undefined && options.agentsPsychicSkill === undefined) {
-    const answer = await new Select('AI agent skills?', [
-      'Claude Code',
-      'Codex (or any agent using .agents/)',
-      'both',
-      'none',
-    ] as const).run()
+    const answer = await new Select('install psychic-skill?', ['yes (recommended)', 'no'] as const).run()
 
-    options.claudePsychicSkill = answer === 'Claude Code' || answer === 'both'
-    options.agentsPsychicSkill = answer === 'Codex (or any agent using .agents/)' || answer === 'both'
+    options.claudePsychicSkill = answer === 'yes (recommended)'
+    options.agentsPsychicSkill = answer === 'yes (recommended)'
   } else {
     options.claudePsychicSkill ??= false
     options.agentsPsychicSkill ??= false
