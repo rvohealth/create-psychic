@@ -286,14 +286,20 @@ ${shardMatrix()}${servicesBlock(ctx)}${ctx.env}${defaultsBlock(ctx.apiDir)}    s
 ${setupSteps(ctx.pm)}      - run: ${installCmd(ctx.pm)}
 ${clientInstalls}      - name: install puppeteer browser
         run: ${puppeteerInstall(ctx.pm)}
-      - run: mkdir -p /tmp/screenshots
       - run: ${psy(ctx.pm, 'db:migrate', '--skip-sync')}
       - run: ${runScript(ctx.pm, 'fspec', '--shard=${{ matrix.shard }}')}
+      # The feature-spec hooks (spec/features/setup/hooks.ts) write a full-page
+      # screenshot to /tmp/screenshots for each failed spec, creating the
+      # directory on demand.
       - uses: actions/upload-artifact@${ACTIONS.uploadArtifact} # v7.0.1
         if: \${{ failure() }}
         with:
-          name: feature-spec-screenshots-\${{ matrix.shard }}
+          # Shard labels like "1/1" contain "/", which is invalid in artifact
+          # names; strategy.job-index is the shard's position in the matrix.
+          name: feature-spec-screenshots-\${{ strategy.job-index }}
           path: /tmp/screenshots
+          # A failure before the browser launches produces no screenshots.
+          if-no-files-found: ignore
 `
 }
 
