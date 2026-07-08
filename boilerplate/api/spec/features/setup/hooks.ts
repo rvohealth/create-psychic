@@ -3,7 +3,7 @@ import '@conf/loadEnv.js'
 import * as fs from 'node:fs'
 import initializePsychicApp from '@conf/system/initializePsychicApp.js'
 import { Dream, DreamApp } from '@rvoh/dream'
-import { provideDreamViteMatchers, truncate } from '@rvoh/dream-spec-helpers'
+import { cleanTestDb, provideDreamViteMatchers } from '@rvoh/dream-spec-helpers'
 import { PsychicServer } from '@rvoh/psychic'
 import { providePuppeteerViteMatchers, resetBrowserState } from '@rvoh/psychic-spec-helpers'
 import getPage from '@spec/features/setup/getPage.js'
@@ -48,7 +48,7 @@ beforeAll(async () => {
 })
 
 beforeEach(async () => {
-  await truncate(DreamApp)
+  await cleanTestDb(DreamApp)
 })
 
 // CI uploads this directory as an artifact when a feature-spec job fails (see
