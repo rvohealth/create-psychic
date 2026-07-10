@@ -1,3 +1,7 @@
+## 3.7.2
+
+- The generated `src/main.ts`, `src/worker.ts`, and `src/ws.ts` entry points now share the same fatal-error shape: each calls its async start function with a `.catch` that logs (console, since the configured logger may not exist yet on the boot path) and exits nonzero, instead of `void start()` leaving a startup failure as an unhandled rejection. `main.ts` additionally installs `uncaughtException`/`unhandledRejection` handlers (the shape `ws.ts` already had) that log, gracefully stop the `PsychicServer`, and exit 1 — it does not install SIGINT/SIGTERM handlers, because `PsychicServer#start` installs its own. `worker.ts` intentionally adds only the `.catch`: psychic-workers' `background.work()` installs its own exiting fatal handlers, and duplicating them would race the framework's exit.
+
 ## 3.7.1
 
 - The generated feature-spec hooks (`api/spec/features/setup/hooks.ts`) now capture a full-page screenshot to `/tmp/screenshots` in `afterEach` when a spec fails, before `resetBrowserState` wipes the page. Previously the generated CI uploaded `/tmp/screenshots` as an artifact on feature-spec failure, but nothing ever wrote a screenshot there, so the artifact was always empty.
