@@ -191,8 +191,13 @@ export default async (psy: PsychicApp) => {
   // run a callback after routes are done processing
   psy.on('server:init:after-routes', () => {})
 
-  // this function will be run any time a server error is encountered
-  // that psychic isn't sure how to respond to (i.e. 500 internal server errors)
+  // this function will be run any time an error escalates to a 500: errors
+  // thrown from controller actions, as well as errors raised outside the
+  // router (e.g. in the body parser or custom middleware), which psychic's
+  // error boundary captures. 4xx-shaped errors (e.g. a body-parser 400)
+  // render as their status and never reach these hooks. NOTE: once any
+  // server:error hook is registered, psychic considers the error handled
+  // and does not re-throw it to Koa.
   psy.on('server:error', (err, ctx) => {
     if (!ctx.headerSent) ctx.status = 500
     else if (AppEnv.isDevelopmentOrTest) throw err
