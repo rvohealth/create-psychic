@@ -11,6 +11,10 @@ export default async function initSpecPsychicApp(appName: string, options: InitP
     `npx create-next-app@latest howyadoin --eslint --app --ts --skip-install --use-${options.packageManager} --yes --disable-git --webpack --no-tailwind --src-dir`,
   )
 
+  if (options.packageManager === 'yarn') {
+    await prepareYarnFixture('howyadoin')
+  }
+
   // `psy init` injects Psychic into a user's PRE-EXISTING Next app — it never
   // scaffolds Next itself (create-next-app runs only here, to fabricate that
   // stand-in app, and in the `new`-flow client provisioning). The injected
@@ -56,4 +60,12 @@ async function widenFixtureNextPinsForCooldown(appDir: string) {
   }
 
   await fs.writeFile(pkgPath, JSON.stringify(pkg, null, 2) + '\n')
+}
+
+async function prepareYarnFixture(appDir: string) {
+  await fs.writeFile(
+    path.join(appDir, '.yarnrc.yml'),
+    'nodeLinker: node-modules\n\nnpmPreapprovedPackages:\n  - "@rvoh/*"\n',
+  )
+  await sspawn(`cd ${appDir} && touch yarn.lock && corepack enable && yarn set version stable`)
 }
