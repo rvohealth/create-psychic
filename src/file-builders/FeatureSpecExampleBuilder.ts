@@ -20,7 +20,7 @@ function assertionText(options: NewPsychicAppCliOptions) {
       return '<TEXT_FROM_YOUR_CLIENT_APP_HERE>'
 
     case 'nextjs':
-      return 'get started'
+      return 'deploy now'
 
     default:
       return 'get started'

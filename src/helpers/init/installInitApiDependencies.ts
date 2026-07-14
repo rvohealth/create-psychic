@@ -1,6 +1,7 @@
 import { InitPsychicAppCliOptions } from '../newPsychicApp.js'
 import addCmdForPackageManager from '../packageManager/addCmdForPackageManager.js'
 import sspawn from '../sspawn.js'
+import { NEXT_COMPATIBLE_TYPESCRIPT_RANGE } from '../ensureNextCompatibleTypescript.js'
 
 export default async function installInitApiDependencies(options: InitPsychicAppCliOptions) {
   const baseDevDeps = [
@@ -40,6 +41,8 @@ export default async function installInitApiDependencies(options: InitPsychicApp
   const devDepsArr = options.dreamOnly ? baseDevDeps : [...baseDevDeps, ...psychicDevDeps]
   const devDeps = devDepsArr.join(' ')
 
+  const typescriptDependency =
+    options.template === 'nextjs' ? `typescript@${NEXT_COMPATIBLE_TYPESCRIPT_RANGE}` : 'typescript'
   const baseDeps = [
     '@rvoh/dream',
 
@@ -51,7 +54,7 @@ export default async function installInitApiDependencies(options: InitPsychicApp
     'kysely',
     'pg',
     'pluralize-esm',
-    'typescript',
+    typescriptDependency,
   ]
   const psychicDeps = [
     '@koa/bodyparser',

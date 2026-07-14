@@ -102,4 +102,12 @@ worker.id: ${worker.id}`,
   PsychicApp.log('FINISHED STARTING WORKERS')
 }
 
-void startBackgroundWorkers()
+// NOTE: no uncaughtException/unhandledRejection handlers here; background.work()
+// installs its own, which log, gracefully shut down, and exit nonzero.
+startBackgroundWorkers().catch((err: unknown) => {
+  // the configured logger may not exist yet when startup fails,
+  // so fall back to console
+  // eslint-disable-next-line no-console
+  console.error('Failed to start background workers:', err)
+  process.exit(1)
+})
