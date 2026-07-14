@@ -273,7 +273,17 @@ function yarnrcYaml() {
 
 function writeYarnrcYaml() {
   const path = addRootPathForCoreSpecs('.yarnrc.yml')
-  if (!fs.existsSync(path)) fs.writeFileSync(path, yarnrcYaml())
+  if (!fs.existsSync(path)) {
+    fs.writeFileSync(path, yarnrcYaml())
+    return
+  }
+
+  const contents = fs.readFileSync(path, 'utf8')
+  const additions = yarnrcYaml()
+    .split('\n\n')
+    .filter(block => !contents.includes(block.split(':')[0] + ':'))
+
+  if (additions.length) fs.writeFileSync(path, `${contents.trimEnd()}\n\n${additions.join('\n\n')}\n`)
 }
 
 function copyRecursiveSync(path: string, dest: string, importExtension: (typeof importExtensions)[number]) {
