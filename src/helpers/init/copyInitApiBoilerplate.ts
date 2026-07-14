@@ -215,6 +215,10 @@ export default async function copyInitApiBoilerplate(appName: string, options: I
     writeFileSync('pnpm-workspace.yaml', pnpmWorkspaceYaml())
   }
 
+  if (options.packageManager === 'yarn') {
+    writeYarnrcYaml()
+  }
+
   writeFileSync(
     path.join(options.confPath, 'dream.ts'),
     await DreamConfigBuilder.buildForInit({ appName, options }),
@@ -254,6 +258,22 @@ function pnpmWorkspaceYaml() {
     "  - '@rvoh/psychic-websockets'\n"
 
   return 'strictDepBuilds: false\n\n' + allowBuilds + '\nminimumReleaseAge: 4320\n\n' + rvohExcludes
+}
+
+function yarnrcYaml() {
+  return (
+    'nodeLinker: node-modules\n\n' +
+    'npmRegistryServer: "https://registry.npmjs.org"\n\n' +
+    'enableScripts: false\n\n' +
+    'npmMinimalAgeGate: 4320\n\n' +
+    'npmPreapprovedPackages:\n' +
+    '  - "@rvoh/*"\n'
+  )
+}
+
+function writeYarnrcYaml() {
+  const path = addRootPathForCoreSpecs('.yarnrc.yml')
+  if (!fs.existsSync(path)) fs.writeFileSync(path, yarnrcYaml())
 }
 
 function copyRecursiveSync(path: string, dest: string, importExtension: (typeof importExtensions)[number]) {
