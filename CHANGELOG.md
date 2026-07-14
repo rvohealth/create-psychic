@@ -1,3 +1,7 @@
+## 3.7.2
+
+- Update the generated `conf/app.ts` `server:error` comment to match what psychic ≥ 3.11.0 actually does: the hooks run for errors thrown from controller actions and for errors raised outside the router (body parser, custom middleware, etc.), which psychic's error-boundary middleware captures; 4xx-shaped errors render as their status and never reach the hooks. Also documents the swallow contract: once any `server:error` hook is registered, psychic considers the error handled and does not re-throw it to Koa. The previous comment promised coverage "any time a server error is encountered" while only action-origin errors ever reached the hooks.
+
 ## 3.7.1
 
 - The generated feature-spec hooks (`api/spec/features/setup/hooks.ts`) now capture a full-page screenshot to `/tmp/screenshots` in `afterEach` when a spec fails, before `resetBrowserState` wipes the page. Previously the generated CI uploaded `/tmp/screenshots` as an artifact on feature-spec failure, but nothing ever wrote a screenshot there, so the artifact was always empty.
