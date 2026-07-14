@@ -4,6 +4,7 @@ import psyCmdForInitOptions from '../../src/helpers/init/psyCmdForInitOptions.js
 import initPsychicApp from '../../src/helpers/initPsychicApp.js'
 import { InitPsychicAppCliOptions } from '../../src/helpers/newPsychicApp.js'
 import sspawn from '../../src/helpers/sspawn.js'
+import ensureNextCompatibleTypescript from '../../src/helpers/ensureNextCompatibleTypescript.js'
 import expectFile from './expectFile.js'
 
 export default async function initSpecPsychicApp(appName: string, options: InitPsychicAppCliOptions) {
@@ -27,6 +28,7 @@ export default async function initSpecPsychicApp(appName: string, options: InitP
   // cooldown installs the latest MATURE version. This is test-only — Psychic
   // provisions no Next app in the init flow, so nothing users receive changes.
   await widenFixtureNextPinsForCooldown('howyadoin')
+  ensureNextCompatibleTypescript(path.join('howyadoin', 'package.json'))
 
   await initPsychicApp(appName, options)
   await expectFile(path.join('howyadoin', options.confPath, 'dream.ts'))
