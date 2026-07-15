@@ -61,6 +61,26 @@ function initializeWebsockets(wsApp: PsychicAppWebsockets) {
             commandTimeout: 10000,
           }),
     )
+
+    // Redis adapter (pub/sub) error observability. The framework logs these
+    // errors internally but exposes no hook for them by design, so if you want
+    // them in your error service (e.g. Sentry) attach your own listeners here,
+    // right after set('connection') — subConnection is the duplicate created by
+    // that call. Two caveats:
+    //   - ioredis re-emits 'error' repeatedly for the duration of an outage (one
+    //     per reconnect attempt), so throttle/dedupe before reporting or a single
+    //     Redis blip will flood your error service.
+    //   - Configure the connection ONCE. Do NOT set('connection') again after the
+    //     websocket server has started: start captures these clients and hands
+    //     them to the socket.io Redis adapter, and a later set() disconnects the
+    //     old clients without rebinding the adapter, so replacement is broken.
+    //
+    // wsApp.connection.on('error', err => {
+    //   // report err to your error service (throttled/deduped)
+    // })
+    // wsApp.subConnection.on('error', err => {
+    //   // report err to your error service (throttled/deduped)
+    // })
   }
 
   const allowedOrigins = allowedCorsOrigins()
@@ -118,5 +138,24 @@ function initializeWebsockets(wsApp: PsychicAppWebsockets) {
 
   wsApp.on('ws:connect', () => {
     // do something upon websocket connection being established
+  })
+
+  wsApp.on('ws:error', (error, context) => {
+    // A framework-contained websocket failure. `context.phase` discriminates it:
+    //   - 'ws:connect'      — a ws:connect hook threw; context.socketId is the
+    //                         socket that was disconnected as a result.
+    //   - 'ws:health-check' — the ws server's own http handler threw;
+    //                         context.method / context.path describe the request.
+    // By the time this runs the socket is already disconnected / the process is
+    // already safe and the framework has already logged the error, so this hook
+    // is purely for reporting it onward. This is the idiomatic place to forward a
+    // websocket failure to your error service (e.g. Sentry), for example:
+    //
+    //   Sentry.captureException(error, {
+    //     tags: { phase: context.phase },
+    //     extra: { ...context },
+    //   })
+    void error
+    void context
   })
 }
