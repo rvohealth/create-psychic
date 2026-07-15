@@ -2,7 +2,7 @@ import '@conf/loadEnv.js'
 
 import initializePsychicApp from '@conf/system/initializePsychicApp.js'
 import { Dream, DreamApp } from '@rvoh/dream'
-import { provideDreamViteMatchers, truncate } from '@rvoh/dream-spec-helpers'
+import { cleanTestDb, provideDreamViteMatchers } from '@rvoh/dream-spec-helpers'
 
 provideDreamViteMatchers(Dream)
 
@@ -15,5 +15,5 @@ beforeAll(async () => {
 })
 
 beforeEach(async () => {
-  await truncate(DreamApp)
+  await cleanTestDb(DreamApp)
 })

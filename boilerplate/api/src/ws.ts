@@ -53,4 +53,10 @@ async function shutdown(shutdownReason: ShutdownReason) {
 
 type ShutdownReason = 'uncaughtException' | 'unhandledRejection' | 'SIGINT' | 'SIGTERM'
 
-void startWs()
+startWs().catch((err: unknown) => {
+  // the configured logger may not exist yet when startup fails,
+  // so fall back to console
+  // eslint-disable-next-line no-console
+  console.error('Failed to start websocket server:', err)
+  process.exit(1)
+})

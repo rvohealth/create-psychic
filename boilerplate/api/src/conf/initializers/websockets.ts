@@ -42,7 +42,14 @@ function initializeWebsockets(wsApp: PsychicAppWebsockets) {
             username: AppEnv.string('WS_REDIS_USERNAME'),
             password: AppEnv.string('WS_REDIS_PASSWORD'),
             tls: {},
-            maxRetriesPerRequest: null,
+            // Fail fast, don't hang. Unlike the BullMQ worker connection (which MUST
+            // use `maxRetriesPerRequest: null` for its blocking commands), the socket.io
+            // redis-adapter issues no blocking commands, so this connection must bound
+            // retries: with `null`, a broadcast or registry lookup (e.g. a worker emit)
+            // hangs forever when the WS Redis is unreachable. The adapter requires no
+            // special connection options — https://socket.io/docs/v4/redis-adapter/
+            maxRetriesPerRequest: 3,
+            commandTimeout: 10000,
           })
         : new Redis({
             host: AppEnv.string('WS_REDIS_HOST', { optional: true }) || 'localhost',
@@ -50,7 +57,8 @@ function initializeWebsockets(wsApp: PsychicAppWebsockets) {
             username: AppEnv.string('WS_REDIS_USERNAME', { optional: true }),
             password: AppEnv.string('WS_REDIS_PASSWORD', { optional: true }),
             // tls:  {},
-            maxRetriesPerRequest: null,
+            maxRetriesPerRequest: 3,
+            commandTimeout: 10000,
           }),
     )
   }

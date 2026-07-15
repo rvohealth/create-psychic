@@ -4,12 +4,17 @@ import psyCmdForInitOptions from '../../src/helpers/init/psyCmdForInitOptions.js
 import initPsychicApp from '../../src/helpers/initPsychicApp.js'
 import { InitPsychicAppCliOptions } from '../../src/helpers/newPsychicApp.js'
 import sspawn from '../../src/helpers/sspawn.js'
+import ensureNextCompatibleTypescript from '../../src/helpers/ensureNextCompatibleTypescript.js'
 import expectFile from './expectFile.js'
 
 export default async function initSpecPsychicApp(appName: string, options: InitPsychicAppCliOptions) {
   await sspawn(
     `npx create-next-app@latest howyadoin --eslint --app --ts --skip-install --use-${options.packageManager} --yes --disable-git --webpack --no-tailwind --src-dir`,
   )
+
+  if (options.packageManager === 'yarn') {
+    await prepareYarnFixture('howyadoin')
+  }
 
   // `psy init` injects Psychic into a user's PRE-EXISTING Next app — it never
   // scaffolds Next itself (create-next-app runs only here, to fabricate that
@@ -23,6 +28,7 @@ export default async function initSpecPsychicApp(appName: string, options: InitP
   // cooldown installs the latest MATURE version. This is test-only — Psychic
   // provisions no Next app in the init flow, so nothing users receive changes.
   await widenFixtureNextPinsForCooldown('howyadoin')
+  ensureNextCompatibleTypescript(path.join('howyadoin', 'package.json'))
 
   await initPsychicApp(appName, options)
   await expectFile(path.join('howyadoin', options.confPath, 'dream.ts'))
@@ -56,4 +62,12 @@ async function widenFixtureNextPinsForCooldown(appDir: string) {
   }
 
   await fs.writeFile(pkgPath, JSON.stringify(pkg, null, 2) + '\n')
+}
+
+async function prepareYarnFixture(appDir: string) {
+  await fs.writeFile(
+    path.join(appDir, '.yarnrc.yml'),
+    'nodeLinker: node-modules\n\nnpmPreapprovedPackages:\n  - "@rvoh/*"\n',
+  )
+  await sspawn(`cd ${appDir} && touch yarn.lock && corepack enable && yarn set version stable`)
 }

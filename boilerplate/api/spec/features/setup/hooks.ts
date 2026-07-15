@@ -1,8 +1,9 @@
 import '@conf/loadEnv.js'
 
+import * as fs from 'node:fs'
 import initializePsychicApp from '@conf/system/initializePsychicApp.js'
 import { Dream, DreamApp } from '@rvoh/dream'
-import { provideDreamViteMatchers, truncate } from '@rvoh/dream-spec-helpers'
+import { cleanTestDb, provideDreamViteMatchers } from '@rvoh/dream-spec-helpers'
 import { PsychicServer } from '@rvoh/psychic'
 import { providePuppeteerViteMatchers, resetBrowserState } from '@rvoh/psychic-spec-helpers'
 import getPage from '@spec/features/setup/getPage.js'
@@ -47,10 +48,22 @@ beforeAll(async () => {
 })
 
 beforeEach(async () => {
-  await truncate(DreamApp)
+  await cleanTestDb(DreamApp)
 })
 
-afterEach(async () => {
+// CI uploads this directory as an artifact when a feature-spec job fails (see
+// .github/workflows/ci.yml).
+const SCREENSHOT_DIR = '/tmp/screenshots'
+
+afterEach(async ctx => {
+  // Capture the page before resetBrowserState wipes it, so a red spec on CI
+  // comes with a picture of what the browser was showing.
+  if (ctx.task.result?.state === 'fail') {
+    const name = `${ctx.task.file.name}-${ctx.task.name}`.replace(/[^a-zA-Z0-9]+/g, '-')
+    fs.mkdirSync(SCREENSHOT_DIR, { recursive: true })
+    await page.screenshot({ path: `${SCREENSHOT_DIR}/${name}.png`, fullPage: true })
+  }
+
   // Reset the shared browser between specs: clears localStorage/cookies for
   // real isolation, and the about:blank navigation releases any pooled DB
   // client held by in-flight requests so server teardown isn't blocked.

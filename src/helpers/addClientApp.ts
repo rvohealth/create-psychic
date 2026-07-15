@@ -14,6 +14,7 @@ import colorize from '../logger/loggable/colorize.js'
 import getLockfileName from './getLockfileName.js'
 import getApiRoot from './getApiRoot.js'
 import ClientDockerDevBuilder from '../file-builders/docker/ClientDockerfileDevBuilder.js'
+import ensureNextCompatibleTypescript from './ensureNextCompatibleTypescript.js'
 
 const CREATE_VITE_VERSION = '9.0.7'
 
@@ -113,6 +114,7 @@ export default async function addClientApp({
       )
 
       const nextConfigPath = path.join(apiRoot, '..', clientRootFolderName, 'next.config.ts')
+      ensureNextCompatibleTypescript(path.join(apiRoot, '..', clientRootFolderName, 'package.json'))
       fs.writeFileSync(nextConfigPath, await NextConfigBuilder.build(nextConfigPath))
 
       addFspecBuildDirToGitignore(path.join(apiRoot, '..', clientRootFolderName, '.gitignore'), '.next-fspec')

@@ -70,6 +70,25 @@ describe('CiWorkflowBuilder', () => {
       })
     })
 
+    context('feature-spec failure screenshots', () => {
+      const yml = CiWorkflowBuilder.build('howyadoin', baseOptions)
+
+      it('names the artifact with strategy.job-index — shard labels like "1/1" contain "/", which is invalid in artifact names', () => {
+        expect(yml).toContain('name: feature-spec-screenshots-${{ strategy.job-index }}')
+        expect(yml).not.toContain('feature-spec-screenshots-${{ matrix.shard }}')
+      })
+
+      it('uploads /tmp/screenshots only on failure, tolerating an empty run (a failure before the browser launches produces no screenshots)', () => {
+        expect(yml).toContain('path: /tmp/screenshots')
+        expect(yml).toContain('if: ${{ failure() }}')
+        expect(yml).toContain('if-no-files-found: ignore')
+      })
+
+      it('does not pre-create the screenshots directory — the generated feature-spec hooks mkdir it on demand', () => {
+        expect(yml).not.toContain('mkdir -p /tmp/screenshots')
+      })
+    })
+
     context('api-only vs monorepo working directory', () => {
       it('runs from . when api-only', () => {
         expect(CiWorkflowBuilder.build('howyadoin', baseOptions)).toContain('working-directory: .\n')

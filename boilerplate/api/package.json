@@ -61,7 +61,7 @@
     "@pollyjs/adapter-node-http": "^6.0.6",
     "@pollyjs/core": "^6.0.6",
     "@pollyjs/persister-fs": "^6.0.6",
-    "@rvoh/dream-spec-helpers": "^2.2.1",
+    "@rvoh/dream-spec-helpers": "^2.3.0",
     "@rvoh/psychic-spec-helpers": "^3.2.2",
     "@types/koa": "^3.0.3",
     "@types/koa-conditional-get": "^2.0.3",

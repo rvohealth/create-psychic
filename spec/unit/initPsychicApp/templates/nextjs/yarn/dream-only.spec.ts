@@ -27,6 +27,7 @@ describe('initPsychicApp with --template=nextjs flag and dreamOnly: true', () =>
       await sspawn(
         `\
         cd howyadoin &&
+        yarn install &&
         yarn build`,
       )
     })
