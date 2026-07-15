@@ -1,3 +1,8 @@
+## 3.7.3
+
+- Bump the boilerplate `@rvoh/psychic-websockets` pin from `^3.3.1` to `^3.5.0`, which ships the public `ws:error` observability hook the generated websockets initializer now references.
+- The generated `conf/initializers/websockets.ts` now scaffolds websocket error observability. In the `HOOKS:` section it registers a `wsApp.on('ws:error', (error, context) => { ... })` stub documenting the request-aware, discriminated context — `context.phase` is `'ws:connect'` (carries `socketId`) or `'ws:health-check'` (carries `method`/`path`) — noting the socket is already disconnected / the process already safe and the error already logged, so this is the point to forward to an error service such as Sentry. After `wsApp.set('connection', ...)` it adds commented-out `wsApp.connection.on('error', ...)` / `wsApp.subConnection.on('error', ...)` examples for redis adapter errors, with the ioredis repeated-`'error'`-per-outage throttle caveat and the configure-once / do-not-replace-after-`start` caveat.
+
 ## 3.7.2
 
 - Update the generated `conf/app.ts` `server:error` comment to match what psychic ≥ 3.11.0 actually does: the hooks run for errors thrown from controller actions and for errors raised outside the router (body parser, custom middleware, etc.), which psychic's error-boundary middleware captures; 4xx-shaped errors render as their status and never reach the hooks. Also documents the swallow contract: once any `server:error` hook is registered, psychic considers the error handled and does not re-throw it to Koa. The previous comment promised coverage "any time a server error is encountered" while only action-origin errors ever reached the hooks.
