@@ -1,3 +1,7 @@
+## 3.7.4
+
+- The generated app now ships commented-out health-check starter code for both server processes, giving a consistent, discoverable place to wire the liveness endpoints an orchestrator probes. `conf/routes.ts` gains a commented inline `r.get('health_check', ctx => { ctx.status = 200; ctx.body = { ok: true } })` (the request logger already listed `/health_check` in `ignoredRoutes` but no route defined it); `conf/initializers/websockets.ts` gains a commented `wsApp.set('healthCheck', { path: '/health_check' })` noting the framework already serves one at the default `/healthcheck` and that setting the path aligns the two servers. Both are left commented for the app to enable and tailor to its infrastructure.
+
 ## 3.7.3
 
 - Bump the boilerplate `@rvoh/psychic-websockets` pin from `^3.3.1` to `^3.5.0`, which ships the public `ws:error` observability hook the generated websockets initializer now references. Also bump the other `@rvoh` framework pins to their current releases: `@rvoh/dream` `^2.17.0` → `^2.19.0`, `@rvoh/psychic` `^3.8.6` → `^3.11.0`, `@rvoh/psychic-workers` `^2.3.1` → `^2.4.0`. (TypeScript stays on the 5.x line — `^5.9.3` is the latest 5.x; the 7.0 native compiler is held back until the framework validates it and the typescript-eslint programmatic API stabilizes.)
