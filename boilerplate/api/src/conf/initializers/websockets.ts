@@ -105,6 +105,19 @@ function initializeWebsockets(wsApp: PsychicAppWebsockets) {
     },
   })
 
+  // Health check for the websocket server's own http listener. Orchestrators
+  // probe this for liveness of the ws process, separately from the web server.
+  // The framework already serves one at the default path `/healthcheck` (GET,
+  // empty 200). Uncomment to change it — set the path to `/health_check` to match
+  // the web server's route above and this app's `ignoredRoutes` config, change
+  // the method or body, or pass `null` to disable it entirely:
+  //
+  // wsApp.set('healthCheck', {
+  //   path: '/health_check',
+  //   // method: 'GET',
+  //   // body: null,
+  // })
+
   // Connection limits (Redis adapter). Both already default to the values shown,
   // so set them only to override:
   //   - maxConnectionsPerUser caps how many sockets a single user may register at
