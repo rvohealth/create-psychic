@@ -2,7 +2,7 @@
 
 ## Status
 
-- ✅ 1. Add a package-manager/runtime-aware `psy sync` cleanliness gate to generated CI, with regression coverage — done
+- ✅ 1. Add a package-manager/runtime-aware `psy sync` cleanliness gate to generated CI, with regression coverage — done (commit `0b3a1bf`)
 
 Status legend: ⬜ pending · 🟦 in progress · ✅ done · ⏸ deferred · 🚫 dropped
 
@@ -19,7 +19,9 @@ Status legend: ⬜ pending · 🟦 in progress · ✅ done · ⏸ deferred · �
 
 ## Verification
 
-- (not yet run)
+- PASS — `pnpm lint`
+- PASS — `pnpm build`
+- PASS — `DEBUG=1 pnpm spec spec/unit/file-builders/CiWorkflowBuilder.spec.ts` (32/32 tests)
 
 ## Spinoffs
 
@@ -32,6 +34,8 @@ Status legend: ⬜ pending · 🟦 in progress · ✅ done · ⏸ deferred · �
 ### 1. Generated CI sync cleanliness gate
 
 **Status:** done
+
+**Commit:** `0b3a1bf`
 
 **Intent:** Generated applications must prove in pull-request CI that committed Dream/Psychic generated artifacts are current. The generated `.github/workflows/ci.yml` must run `psy sync` through the application's selected package manager/runtime and fail if synchronization leaves the repository dirty.
 
