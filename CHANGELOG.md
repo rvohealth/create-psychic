@@ -1,6 +1,7 @@
 ## 3.7.5
 
 - Generated CI now prepares the test database with `psy db:migrate --skip-sync`, runs the selected package manager/runtime's standalone `psy sync`, and fails if synchronization leaves tracked or untracked changes—or if `git status` cannot verify repository cleanliness.
+- Yarn-backed Next.js clients now widen `create-next-app`'s exact `next` and `eslint-config-next` pins to their full major range before install, allowing Yarn's release-age gate to select a mature version when the newest release is still quarantined instead of making app generation fail.
 
 ## 3.7.4
 
