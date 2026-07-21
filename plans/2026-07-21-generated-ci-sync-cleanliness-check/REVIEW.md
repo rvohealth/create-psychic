@@ -5,6 +5,7 @@
 ## Finding 1 — fail-open `git status` command substitution
 
 - Status: fixed
+- Commit: `9c1a097`
 - Severity: informational
 - Confidence: 8/10
 - Lens: security & trust boundaries
@@ -16,6 +17,7 @@
 ## Finding 2 — cleanliness semantics are not executed by the spec
 
 - Status: fixed
+- Commit: `9c1a097`
 - Severity: informational
 - Confidence: 9/10
 - Lens: testing & coverage
@@ -26,7 +28,8 @@
 
 ## Red team
 
-- Pending post-fix review.
+- No findings after verifying both fixes against the full post-fix diff.
+- Recommendation: ship.
 
 ## PR follow-ups
 
@@ -35,4 +38,6 @@
 ## Verification
 
 - Baseline from `/pln`: `pnpm lint`, `pnpm build`, and the focused 32-test builder spec passed before review.
-- Final post-fix gauntlet: pending.
+- PASS — `pnpm lint`
+- PASS — `pnpm build`
+- PASS — `DEBUG=1 pnpm spec spec/unit/file-builders/CiWorkflowBuilder.spec.ts` (36/36 tests)
