@@ -321,7 +321,8 @@ ${setupSteps(ctx.pm, true)}      - uses: actions/setup-go@${ACTIONS.setupGo} # v
         run: |
           git status --short
           git diff --exit-code HEAD
-          test -z "$(git status --porcelain)"
+          generated_status="$(git status --porcelain)"
+          test -z "$generated_status"
       # These are all fast, so chain them on one runner in order — keeps parallel
       # runners free for the long spec jobs above.
       - run: ${runScript(ctx.pm, 'build:spec')}
