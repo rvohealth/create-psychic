@@ -89,6 +89,49 @@ describe('CiWorkflowBuilder', () => {
       })
     })
 
+    context('generated artifact synchronization', () => {
+      const yml = CiWorkflowBuilder.build('howyadoin', baseOptions)
+      const checksJob = yml.slice(yml.indexOf('\n  checks:'))
+
+      it('migrates without implicit sync, synchronizes, verifies cleanliness, then runs the existing checks', () => {
+        const commandsInOrder = [
+          'pnpm psy db:migrate --skip-sync',
+          'pnpm psy sync',
+          'git status --short',
+          'git diff --exit-code',
+          'test -z "$(git status --porcelain)"',
+          'pnpm build:spec',
+          'pnpm lint',
+          'pnpm psy diff:openapi',
+          'pnpm psy check:controller-hierarchy',
+        ]
+
+        commandsInOrder.reduce((previousIndex, command) => {
+          const commandIndex = checksJob.indexOf(command)
+          expect(commandIndex).toBeGreaterThan(previousIndex)
+          return commandIndex
+        }, -1)
+      })
+
+      it('shows tracked changes as a diff and fails for untracked generated files too', () => {
+        expect(checksJob).toContain('git status --short')
+        expect(checksJob).toContain('git diff --exit-code')
+        expect(checksJob).toContain('test -z "$(git status --porcelain)"')
+      })
+
+      it.each([
+        ['pnpm', {}, 'pnpm psy sync'],
+        ['yarn', { packageManager: 'yarn' as const }, 'yarn psy sync'],
+        ['npm', { packageManager: 'npm' as const }, 'npm run psy sync'],
+        ['bun', { packageManager: 'bun' as const, runtime: 'bun' as const }, 'bun run psy sync'],
+        ['deno', { packageManager: 'deno' as const, runtime: 'deno' as const }, 'deno task psy sync'],
+      ])('uses the %s command form', (_name, options, expectedCommand) => {
+        expect(CiWorkflowBuilder.build('howyadoin', { ...baseOptions, ...options })).toContain(
+          expectedCommand,
+        )
+      })
+    })
+
     context('api-only vs monorepo working directory', () => {
       it('runs from . when api-only', () => {
         expect(CiWorkflowBuilder.build('howyadoin', baseOptions)).toContain('working-directory: .\n')
