@@ -1,3 +1,8 @@
+## 3.7.5
+
+- Generated CI now prepares the test database with `psy db:migrate --skip-sync`, runs the selected package manager/runtime's standalone `psy sync`, and fails if synchronization leaves tracked or untracked changes—or if `git status` cannot verify repository cleanliness.
+- Yarn-backed Next.js clients now widen `create-next-app`'s exact `next` and `eslint-config-next` pins to their full major range before install, allowing Yarn's release-age gate to select a mature version when the newest release is still quarantined instead of making app generation fail.
+
 ## 3.7.4
 
 - The generated app now ships commented-out health-check starter code for both server processes, giving a consistent, discoverable place to wire the liveness endpoints an orchestrator probes. `conf/routes.ts` gains a commented inline `r.get('health_check', ctx => { ctx.status = 200; ctx.body = { ok: true } })` (the request logger already listed `/health_check` in `ignoredRoutes` but no route defined it); `conf/initializers/websockets.ts` gains a commented `wsApp.set('healthCheck', { path: '/health_check' })` noting the framework already serves one at the default `/healthcheck` and that setting the path aligns the two servers. Both are left commented for the app to enable and tailor to its infrastructure.

@@ -15,6 +15,7 @@ import getLockfileName from './getLockfileName.js'
 import getApiRoot from './getApiRoot.js'
 import ClientDockerDevBuilder from '../file-builders/docker/ClientDockerfileDevBuilder.js'
 import ensureNextCompatibleTypescript from './ensureNextCompatibleTypescript.js'
+import widenNextPinsForCooldown from './widenNextPinsForCooldown.js'
 
 const CREATE_VITE_VERSION = '9.0.7'
 
@@ -114,7 +115,9 @@ export default async function addClientApp({
       )
 
       const nextConfigPath = path.join(apiRoot, '..', clientRootFolderName, 'next.config.ts')
-      ensureNextCompatibleTypescript(path.join(apiRoot, '..', clientRootFolderName, 'package.json'))
+      const packageJsonPath = path.join(apiRoot, '..', clientRootFolderName, 'package.json')
+      ensureNextCompatibleTypescript(packageJsonPath)
+      if (fePm === 'yarn') widenNextPinsForCooldown(packageJsonPath)
       fs.writeFileSync(nextConfigPath, await NextConfigBuilder.build(nextConfigPath))
 
       addFspecBuildDirToGitignore(path.join(apiRoot, '..', clientRootFolderName, '.gitignore'), '.next-fspec')

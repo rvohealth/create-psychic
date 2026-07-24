@@ -315,6 +315,14 @@ ${setupSteps(ctx.pm, true)}      - uses: actions/setup-go@${ACTIONS.setupGo} # v
       # oasdiff powers \`psy diff:openapi\`.
       - run: go install github.com/oasdiff/oasdiff@latest
       - run: ${installCmd(ctx.pm)}
+      - run: ${psy(ctx.pm, 'db:migrate', '--skip-sync')}
+      - run: ${psy(ctx.pm, 'sync')}
+      - name: verify generated files are committed
+        run: |
+          git status --short
+          git diff --exit-code HEAD
+          generated_status="$(git status --porcelain)"
+          test -z "$generated_status"
       # These are all fast, so chain them on one runner in order — keeps parallel
       # runners free for the long spec jobs above.
       - run: ${runScript(ctx.pm, 'build:spec')}

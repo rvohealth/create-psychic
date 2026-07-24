@@ -1,3 +1,7 @@
+import { execFileSync, spawnSync } from 'node:child_process'
+import * as fs from 'node:fs'
+import * as os from 'node:os'
+import * as path from 'node:path'
 import CiWorkflowBuilder from '../../../src/file-builders/CiWorkflowBuilder.js'
 import { NewPsychicAppCliOptions } from '../../../src/helpers/newPsychicApp.js'
 
@@ -11,6 +15,55 @@ const baseOptions: NewPsychicAppCliOptions = {
   adminClient: 'none',
   internalClient: 'none',
   primaryKeyType: 'bigint',
+}
+
+const temporaryDirectories: string[] = []
+
+afterEach(() => {
+  temporaryDirectories.splice(0).forEach(directory => {
+    fs.rmSync(directory, { recursive: true, force: true })
+  })
+})
+
+function newCleanGitRepository(): string {
+  const repository = fs.mkdtempSync(path.join(os.tmpdir(), 'ci-cleanliness-gate-'))
+  temporaryDirectories.push(repository)
+
+  execFileSync('git', ['init', '--quiet'], { cwd: repository })
+  fs.writeFileSync(path.join(repository, 'generated.ts'), 'export const generated = true\n')
+  execFileSync('git', ['add', 'generated.ts'], { cwd: repository })
+  execFileSync(
+    'git',
+    [
+      '-c',
+      'user.name=Create Psychic Specs',
+      '-c',
+      'user.email=create-psychic-specs@example.com',
+      '-c',
+      'commit.gpgsign=false',
+      'commit',
+      '--quiet',
+      '-m',
+      'initial',
+    ],
+    { cwd: repository },
+  )
+
+  return repository
+}
+
+function generatedCleanlinessShell(yml: string): string {
+  const match = yml.match(/ {6}- name: verify generated files are committed\n {8}run: \|\n((?: {10}.*\n)+)/)
+  if (!match) throw new Error('Generated workflow is missing the cleanliness shell block')
+
+  return match[1].replace(/^ {10}/gm, '').trimEnd()
+}
+
+function runCleanlinessShell(shell: string, repository: string, env: NodeJS.ProcessEnv = process.env) {
+  return spawnSync('bash', ['--noprofile', '--norc', '-e', '-o', 'pipefail', '-c', shell], {
+    cwd: repository,
+    env,
+  })
 }
 
 describe('CiWorkflowBuilder', () => {
@@ -86,6 +139,96 @@ describe('CiWorkflowBuilder', () => {
 
       it('does not pre-create the screenshots directory — the generated feature-spec hooks mkdir it on demand', () => {
         expect(yml).not.toContain('mkdir -p /tmp/screenshots')
+      })
+    })
+
+    context('generated artifact synchronization', () => {
+      const yml = CiWorkflowBuilder.build('howyadoin', baseOptions)
+      const checksJob = yml.slice(yml.indexOf('\n  checks:'))
+      const cleanlinessShell = generatedCleanlinessShell(yml)
+
+      it('migrates without implicit sync, synchronizes, verifies cleanliness, then runs the existing checks', () => {
+        const commandsInOrder = [
+          'pnpm psy db:migrate --skip-sync',
+          'pnpm psy sync',
+          'git status --short',
+          'git diff --exit-code',
+          'generated_status="$(git status --porcelain)"',
+          'test -z "$generated_status"',
+          'pnpm build:spec',
+          'pnpm lint',
+          'pnpm psy diff:openapi',
+          'pnpm psy check:controller-hierarchy',
+        ]
+
+        commandsInOrder.reduce((previousIndex, command) => {
+          const commandIndex = checksJob.indexOf(command)
+          expect(commandIndex).toBeGreaterThan(previousIndex)
+          return commandIndex
+        }, -1)
+      })
+
+      it('shows tracked changes as a diff and checks porcelain status separately', () => {
+        expect(checksJob).toContain('git status --short')
+        expect(checksJob).toContain('git diff --exit-code')
+        expect(checksJob).toContain('generated_status="$(git status --porcelain)"')
+        expect(checksJob).toContain('test -z "$generated_status"')
+      })
+
+      it('passes when synchronization leaves the repository clean', () => {
+        const repository = newCleanGitRepository()
+
+        expect(runCleanlinessShell(cleanlinessShell, repository).status).toBe(0)
+      })
+
+      it('fails when synchronization modifies a tracked file', () => {
+        const repository = newCleanGitRepository()
+        fs.appendFileSync(path.join(repository, 'generated.ts'), 'export const changed = true\n')
+
+        expect(runCleanlinessShell(cleanlinessShell, repository).status).not.toBe(0)
+      })
+
+      it('fails when synchronization creates an untracked file', () => {
+        const repository = newCleanGitRepository()
+        fs.writeFileSync(path.join(repository, 'new-generated.ts'), 'export const created = true\n')
+
+        expect(runCleanlinessShell(cleanlinessShell, repository).status).not.toBe(0)
+      })
+
+      it('fails closed when the final porcelain status command fails', () => {
+        const repository = newCleanGitRepository()
+        const shimDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'ci-cleanliness-git-shim-'))
+        temporaryDirectories.push(shimDirectory)
+        const realGit = process.env.PATH?.split(path.delimiter)
+          .map(directory => path.join(directory, 'git'))
+          .find(candidate => fs.existsSync(candidate))
+        if (!realGit) throw new Error('Could not find git executable')
+
+        const gitShim = path.join(shimDirectory, 'git')
+        fs.writeFileSync(
+          gitShim,
+          `#!/bin/sh\nif [ "$1" = "status" ] && [ "$2" = "--porcelain" ]; then\n  exit 41\nfi\nexec "${realGit}" "$@"\n`,
+        )
+        fs.chmodSync(gitShim, 0o755)
+
+        const result = runCleanlinessShell(cleanlinessShell, repository, {
+          ...process.env,
+          PATH: `${shimDirectory}${path.delimiter}${process.env.PATH}`,
+        })
+
+        expect(result.status).not.toBe(0)
+      })
+
+      it.each([
+        ['pnpm', {}, 'pnpm psy sync'],
+        ['yarn', { packageManager: 'yarn' as const }, 'yarn psy sync'],
+        ['npm', { packageManager: 'npm' as const }, 'npm run psy sync'],
+        ['bun', { packageManager: 'bun' as const, runtime: 'bun' as const }, 'bun run psy sync'],
+        ['deno', { packageManager: 'deno' as const, runtime: 'deno' as const }, 'deno task psy sync'],
+      ])('uses the %s command form', (_name, options, expectedCommand) => {
+        expect(CiWorkflowBuilder.build('howyadoin', { ...baseOptions, ...options })).toContain(
+          expectedCommand,
+        )
       })
     })
 
