@@ -1,3 +1,7 @@
+## 3.7.6
+
+- The generated feature-spec hooks (`api/spec/features/setup/hooks.ts`) now ship a commented-out `Cable` start/stop block, mirroring how `src/ws.ts` starts its websocket server. The feature-spec harness starts only the web `PsychicServer`, so a feature spec asserting a live `Ws.emit`-driven UI change had no websocket server to deliver the push. Uncommenting the block starts a `Cable` on port `8889` alongside the API server in `beforeAll` and stops it in `afterAll`.
+
 ## 3.7.5
 
 - Generated CI now prepares the test database with `psy db:migrate --skip-sync`, runs the selected package manager/runtime's standalone `psy sync`, and fails if synchronization leaves tracked or untracked changes—or if `git status` cannot verify repository cleanliness.
