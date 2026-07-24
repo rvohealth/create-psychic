@@ -6,6 +6,8 @@ import { Dream, DreamApp } from '@rvoh/dream'
 import { cleanTestDb, provideDreamViteMatchers } from '@rvoh/dream-spec-helpers'
 import { PsychicServer } from '@rvoh/psychic'
 import { providePuppeteerViteMatchers, resetBrowserState } from '@rvoh/psychic-spec-helpers'
+/** uncomment if a feature spec needs a live Ws.emit push to reach the browser */
+// import { Cable } from '@rvoh/psychic-websockets'
 import getPage from '@spec/features/setup/getPage.js'
 
 provideDreamViteMatchers(Dream)
@@ -15,6 +17,8 @@ providePuppeteerViteMatchers()
 ;(global as any).context = describe
 
 let server: PsychicServer
+/** uncomment if a feature spec needs a live Ws.emit push to reach the browser */
+// let cable: Cable
 
 beforeAll(async () => {
   /*
@@ -33,6 +37,10 @@ beforeAll(async () => {
    */
   server = new PsychicServer()
   await server.start(parseInt(process.env.DEV_SERVER_PORT || '7778'))
+
+  /** uncomment if a feature spec needs a live Ws.emit push to reach the browser */
+  // cable = new Cable()
+  // await cable.start(8889)
 
   /*
    * Launch a web browser
@@ -72,4 +80,6 @@ afterEach(async ctx => {
 
 afterAll(async () => {
   await server.stop()
+  /** uncomment if a feature spec needs a live Ws.emit push to reach the browser */
+  // await cable?.stop()
 })
