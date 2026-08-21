@@ -1,3 +1,7 @@
+## 3.7.7
+
+- Newly scaffolded apps now pin `eslint` and `@eslint/js` to `^10.0.0` in `boilerplate/api/package.json`, instead of `^9.39.1`. ESLint has end-of-lifed every 9.x release, so a freshly generated app installing dependencies for the first time surfaced a `deprecated eslint@9.x` warning out of the box; it no longer does. `@typescript-eslint/eslint-plugin`/`@typescript-eslint/parser` already declare `eslint@^10.0.0` support in their peer ranges, so no other generator-side change was needed.
+
 ## 3.7.6
 
 - The generated feature-spec hooks (`api/spec/features/setup/hooks.ts`) now ship a commented-out `Cable` start/stop block, mirroring how `src/ws.ts` starts its websocket server. The feature-spec harness starts only the web `PsychicServer`, so a feature spec asserting a live `Ws.emit`-driven UI change had no websocket server to deliver the push. Uncommenting the block starts a `Cable` on port `8889` alongside the API server in `beforeAll` and stops it in `afterAll`.
