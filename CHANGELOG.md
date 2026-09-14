@@ -1,6 +1,6 @@
 ## 3.7.8
 
-- Lower the generated worker concurrency default from 100 to 10 per worker. The scaffold creates one worker per CPU, so this preserves useful I/O overlap without multiplying an aggressive per-worker value across every core before an app has measured its workload.
+- Generate one BullMQ worker with concurrency 10 by default. Psychic worker instances share a Node.js event loop, so CPU parallelism belongs at the process or container layer; this preserves useful I/O overlap without multiplying Redis connections or in-flight jobs by the host CPU count.
 - Update both repository and generated-app dependencies to current compatible releases, including every `@rvoh` package. The lockfile refresh moves vulnerable transitive packages to patched versions, while Puppeteer 25 removes the unpatched `extract-zip` dependency chain.
 
 ## 3.7.7

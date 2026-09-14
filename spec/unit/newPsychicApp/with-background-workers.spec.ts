@@ -26,6 +26,14 @@ describe('newPsychicApp without websockets or background jobs', () => {
     await expectFile('howyadoin/src/app/services/ApplicationBackgroundedService.ts')
     await expectFile('howyadoin/src/app/services/ApplicationScheduledService.ts')
 
+    const workerInitializer = await readFile('howyadoin/src/conf/initializers/workers.ts')
+    expect(workerInitializer).toContain(`defaultWorkstream: {
+      // https://docs.bullmq.io/guide/parallelism-and-concurrency
+      workerCount: 1,
+      concurrency: 10,
+    }`)
+    expect(workerInitializer).not.toContain("from 'node:os'")
+
     await expectToMatchFixture(
       'expected-files/app/with-workers.ts',
       await readFile('howyadoin/src/conf/app.ts'),
