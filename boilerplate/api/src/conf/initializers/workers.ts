@@ -16,7 +16,7 @@ function initializeWorkers(workersApp: PsychicAppWorkers) {
     defaultWorkstream: {
       // https://docs.bullmq.io/guide/parallelism-and-concurrency
       workerCount: os.cpus().length,
-      concurrency: 100,
+      concurrency: 10,
     },
 
     namedWorkstreams: [
@@ -30,7 +30,7 @@ function initializeWorkers(workersApp: PsychicAppWorkers) {
       //   name: 'RateLimitedWorkstream',
       //   // https://docs.bullmq.io/guide/parallelism-and-concurrency
       //   workerCount: 1,
-      //   concurrency: 100,
+      //   concurrency: 10,
       //   rateLimit: {
       //     max: 100,
       //     duration: 1000,
