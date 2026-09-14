@@ -392,10 +392,22 @@ describe('PackagejsonBuilder', () => {
     })
 
     context('dependency overrides', () => {
+      const dependencyOverrides = {
+        'brace-expansion': '>=5.0.7',
+        esbuild: '>=0.28.1',
+        'form-data': '>=4.0.6',
+        'ip-address': '>=10.3.1',
+        'js-yaml': '>=4.3.2',
+        'path-to-regexp': '>=8.4.0',
+        postcss: '>=8.5.23',
+        qs: '>=6.16.0',
+        vite: '>=8.0.16',
+      }
+
       it('keeps only `overrides` for npm', async () => {
         const res = await PackagejsonBuilder.buildAPI('howyadoin', { ...baseOptions, packageManager: 'npm' })
         const parsed = JSON.parse(res) as Record<string, unknown>
-        expect(parsed.overrides).toEqual({ 'path-to-regexp': '>=8.4.0' })
+        expect(parsed.overrides).toEqual(dependencyOverrides)
         expect(parsed.resolutions).toBeUndefined()
         expect(parsed.pnpm).toBeUndefined()
       })
@@ -403,7 +415,7 @@ describe('PackagejsonBuilder', () => {
       it('keeps only `resolutions` for yarn', async () => {
         const res = await PackagejsonBuilder.buildAPI('howyadoin', { ...baseOptions, packageManager: 'yarn' })
         const parsed = JSON.parse(res) as Record<string, unknown>
-        expect(parsed.resolutions).toEqual({ 'path-to-regexp': '>=8.4.0' })
+        expect(parsed.resolutions).toEqual(dependencyOverrides)
         expect(parsed.overrides).toBeUndefined()
         expect(parsed.pnpm).toBeUndefined()
       })
@@ -423,7 +435,7 @@ describe('PackagejsonBuilder', () => {
           runtime: 'bun',
         })
         const parsed = JSON.parse(res) as Record<string, unknown>
-        expect(parsed.overrides).toEqual({ 'path-to-regexp': '>=8.4.0' })
+        expect(parsed.overrides).toEqual(dependencyOverrides)
         expect(parsed.resolutions).toBeUndefined()
         expect(parsed.pnpm).toBeUndefined()
       })
