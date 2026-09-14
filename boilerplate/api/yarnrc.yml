@@ -19,8 +19,9 @@ enableScripts: false
 # still sits under the typical critical-CVE patch SLA.
 npmMinimalAgeGate: 4320
 
-# @rvoh/* packages are exempt from the age gate: Psychic ships frequent releases
-# that generated apps should pick up immediately, and they come from the trusted
-# first-party publisher.
+# Polly permits this exact Express patch, which updates its qs and path-to-regexp
+# dependencies to patched compatible releases. @rvoh/* packages are exempt because
+# Psychic ships frequent releases from the trusted first-party publisher.
 npmPreapprovedPackages:
+  - 'express@4.22.3'
   - "@rvoh/*"

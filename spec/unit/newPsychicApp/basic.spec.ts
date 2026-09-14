@@ -1,6 +1,7 @@
 import sspawn from '../../../src/helpers/sspawn.js'
 import expectNoWebsockets from '../../helpers/assertions/expectNoWebsockets.js'
 import expectNoWorkers from '../../helpers/assertions/expectNoWorkers.js'
+import expectFileToContain from '../../helpers/expectFileToContain.js'
 import expectToMatchFixture from '../../helpers/expectToMatchFixture.js'
 import newSpecPsychicApp from '../../helpers/newSpecPsychicApp.js'
 import readFile from '../../helpers/readFile.js'
@@ -21,6 +22,7 @@ describe('newPsychicApp without websockets or background jobs', () => {
 
     await expectNoWebsockets()
     await expectNoWorkers()
+    await expectFileToContain('./howyadoin/.yarnrc.yml', '- express@4.22.3')
 
     await expectToMatchFixture('expected-files/app/basic.ts', await readFile('howyadoin/src/conf/app.ts'))
 
