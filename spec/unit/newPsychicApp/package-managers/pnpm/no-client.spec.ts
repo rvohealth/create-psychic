@@ -33,6 +33,22 @@ describe('newPsychicApp with no client', () => {
       .filter(line => !line.trimStart().startsWith('#'))
       .join('\n')
     expect(workspaceBody).not.toContain('set this to true or false')
+    expect(workspaceBody).not.toContain('overrides:')
+    expect(workspaceBody).toContain("- 'express@4.22.3'")
+
+    const packageJson = JSON.parse(fs.readFileSync('./howyadoin/package.json', 'utf8')) as Record<
+      string,
+      unknown
+    >
+    expect(packageJson.overrides).toBeUndefined()
+    expect(packageJson.resolutions).toBeUndefined()
+
+    const lockfile = fs.readFileSync('./howyadoin/pnpm-lock.yaml', 'utf8')
+    expect(lockfile).toContain('express@4.22.3:')
+    expect(lockfile).toContain('js-yaml@4.3.2:')
+    expect(lockfile).toContain('path-to-regexp@0.1.13:')
+    expect(lockfile).toContain('path-to-regexp@8.4.2:')
+    expect(lockfile).toContain('qs@6.16.0:')
     await expectFile('./howyadoin/docker-compose.yml')
     await expectFile('./howyadoin/Dockerfile.dev')
 
@@ -44,6 +60,7 @@ describe('newPsychicApp with no client', () => {
     await sspawn(
       `\
         cd howyadoin &&
+        pnpm audit --audit-level moderate &&
         pnpm uspec &&
         pnpm uspec:js`,
     )

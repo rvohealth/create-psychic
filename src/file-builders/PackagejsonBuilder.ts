@@ -1,5 +1,5 @@
 import frontEndPackageManager from '../helpers/frontEndPackageManager.js'
-import { NewPsychicAppCliOptions, PsychicPackageManager } from '../helpers/newPsychicApp.js'
+import { NewPsychicAppCliOptions } from '../helpers/newPsychicApp.js'
 import { replacePackageManagerInFileContents } from '../helpers/replacePackageManagerInFile.js'
 import safelyImportJsonFile from '../helpers/safelyImportJsonFile.js'
 
@@ -207,8 +207,6 @@ export default class PackagejsonBuilder {
       removeDependency(packagejson, 'ioredis')
     }
 
-    pruneOverridesForPackageManager(packagejson, options.packageManager)
-
     if (options.packageManager === 'bun' || options.packageManager === 'deno') {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
       applyRuntimeRunners(packagejson.scripts, options.packageManager)
@@ -324,37 +322,6 @@ function applyRuntimeRunners(scripts: Record<string, string>, runtime: 'bun' | '
   // them at the runtime-native bin so they don't fall through to the Node shim.
   if (scripts['prettier'] === 'prettier') scripts['prettier'] = bin('prettier')
   if (scripts['eslint'] === 'eslint') scripts['eslint'] = bin('eslint')
-}
-
-// The boilerplate package.json carries override blocks for npm (`overrides`),
-// yarn (`resolutions`), and pnpm (`pnpm.overrides`) so a single source-controlled
-// file documents all three. At scaffold time we keep only the block the chosen
-// package manager will actually read, so the generated app has one canonical
-// spot to edit and there's no risk of the three drifting apart over time.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function pruneOverridesForPackageManager(packageJson: any, packageManager: PsychicPackageManager) {
-  /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-  switch (packageManager) {
-    // bun reads the npm-style `overrides` block, so keep it like npm does.
-    case 'npm':
-    case 'bun':
-      delete packageJson.resolutions
-      delete packageJson.pnpm
-      break
-    case 'yarn':
-      delete packageJson.overrides
-      delete packageJson.pnpm
-      break
-    // deno honors neither `overrides` nor `resolutions` (and pnpm's block lives in
-    // pnpm-workspace.yaml), so drop all three — same as pnpm.
-    case 'pnpm':
-    case 'deno':
-      delete packageJson.overrides
-      delete packageJson.resolutions
-      delete packageJson.pnpm
-      break
-  }
-  /* eslint-enable @typescript-eslint/no-unsafe-member-access */
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

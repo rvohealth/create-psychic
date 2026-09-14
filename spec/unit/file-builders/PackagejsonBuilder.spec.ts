@@ -392,65 +392,19 @@ describe('PackagejsonBuilder', () => {
     })
 
     context('dependency overrides', () => {
-      const dependencyOverrides = {
-        'brace-expansion': '>=5.0.7',
-        esbuild: '>=0.28.1',
-        'form-data': '>=4.0.6',
-        'ip-address': '>=10.3.1',
-        'js-yaml': '>=4.3.2',
-        'path-to-regexp': '>=8.4.0',
-        postcss: '>=8.5.23',
-        qs: '>=6.16.0',
-        vite: '>=8.0.16',
-      }
-
-      it('keeps only `overrides` for npm', async () => {
-        const res = await PackagejsonBuilder.buildAPI('howyadoin', { ...baseOptions, packageManager: 'npm' })
-        const parsed = JSON.parse(res) as Record<string, unknown>
-        expect(parsed.overrides).toEqual(dependencyOverrides)
-        expect(parsed.resolutions).toBeUndefined()
-        expect(parsed.pnpm).toBeUndefined()
-      })
-
-      it('keeps only `resolutions` for yarn', async () => {
-        const res = await PackagejsonBuilder.buildAPI('howyadoin', { ...baseOptions, packageManager: 'yarn' })
-        const parsed = JSON.parse(res) as Record<string, unknown>
-        expect(parsed.resolutions).toEqual(dependencyOverrides)
-        expect(parsed.overrides).toBeUndefined()
-        expect(parsed.pnpm).toBeUndefined()
-      })
-
-      it('strips all override fields for pnpm (overrides live in pnpm-workspace.yaml)', async () => {
-        const res = await PackagejsonBuilder.buildAPI('howyadoin', { ...baseOptions, packageManager: 'pnpm' })
-        const parsed = JSON.parse(res) as Record<string, unknown>
-        expect(parsed.pnpm).toBeUndefined()
-        expect(parsed.overrides).toBeUndefined()
-        expect(parsed.resolutions).toBeUndefined()
-      })
-
-      it('keeps `overrides` for bun (bun reads npm-style overrides)', async () => {
-        const res = await PackagejsonBuilder.buildAPI('howyadoin', {
-          ...baseOptions,
-          packageManager: 'bun',
-          runtime: 'bun',
-        })
-        const parsed = JSON.parse(res) as Record<string, unknown>
-        expect(parsed.overrides).toEqual(dependencyOverrides)
-        expect(parsed.resolutions).toBeUndefined()
-        expect(parsed.pnpm).toBeUndefined()
-      })
-
-      it('strips all override fields for deno (it honors neither overrides nor resolutions)', async () => {
-        const res = await PackagejsonBuilder.buildAPI('howyadoin', {
-          ...baseOptions,
-          packageManager: 'deno',
-          runtime: 'deno',
-        })
-        const parsed = JSON.parse(res) as Record<string, unknown>
-        expect(parsed.overrides).toBeUndefined()
-        expect(parsed.resolutions).toBeUndefined()
-        expect(parsed.pnpm).toBeUndefined()
-      })
+      it.each(['npm', 'yarn', 'pnpm', 'bun', 'deno'] as const)(
+        'does not emit custom overrides or resolutions for %s',
+        async packageManager => {
+          const res = await PackagejsonBuilder.buildAPI('howyadoin', {
+            ...baseOptions,
+            packageManager,
+          })
+          const parsed = JSON.parse(res) as Record<string, unknown>
+          expect(parsed.overrides).toBeUndefined()
+          expect(parsed.resolutions).toBeUndefined()
+          expect(parsed.pnpm).toBeUndefined()
+        },
+      )
     })
 
     context('psychic-skill link scripts', () => {

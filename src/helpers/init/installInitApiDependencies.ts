@@ -22,7 +22,7 @@ export default async function installInitApiDependencies(options: InitPsychicApp
     'tsx',
     'tsx',
     'typescript-eslint',
-    'vitest',
+    'vitest@^4.1.11',
   ]
   const psychicDevDeps = [
     '@pollyjs/adapter-fetch',
