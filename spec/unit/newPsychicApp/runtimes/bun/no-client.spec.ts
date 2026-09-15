@@ -48,10 +48,14 @@ describe.skipIf(!bunAvailable())('newPsychicApp with the bun runtime', () => {
     const pkg = JSON.parse(fs.readFileSync('./howyadoin/package.json').toString()) as {
       devDependencies: Record<string, string>
       engines?: unknown
+      overrides?: unknown
+      resolutions?: unknown
     }
     expect(pkg.devDependencies.nodemon).toBeUndefined()
     expect(pkg.devDependencies.tsx).toBeUndefined()
     expect(pkg.engines).toBeUndefined()
+    expect(pkg.overrides).toBeUndefined()
+    expect(pkg.resolutions).toBeUndefined()
 
     await sspawn(`cd howyadoin && bun run uspec`)
   }, 300_000)

@@ -1,3 +1,8 @@
+## 3.7.8
+
+- Generate one BullMQ worker with concurrency 10 by default. Psychic worker instances share a Node.js event loop, so CPU parallelism belongs at the process or container layer; this preserves useful I/O overlap without multiplying Redis connections or in-flight jobs by the host CPU count.
+- Update both repository and generated-app dependencies to current compatible releases, including every `@rvoh` package. The lockfile refresh moves vulnerable transitive packages to patched versions, while Puppeteer 25 removes the unpatched `extract-zip` dependency chain.
+
 ## 3.7.7
 
 - Newly scaffolded apps now pin `eslint` and `@eslint/js` to `^10.0.0` in `boilerplate/api/package.json`, instead of `^9.39.1`. ESLint has end-of-lifed every 9.x release, so a freshly generated app installing dependencies for the first time surfaced a `deprecated eslint@9.x` warning out of the box; it no longer does. `@typescript-eslint/eslint-plugin`/`@typescript-eslint/parser` already declare `eslint@^10.0.0` support in their peer ranges, so no other generator-side change was needed.

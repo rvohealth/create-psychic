@@ -34,10 +34,11 @@ allowBuilds:
 # immediately (and they come from the trusted first-party publisher).
 minimumReleaseAge: 4320
 
-overrides:
-  path-to-regexp: '>=8.4.0'
-
 minimumReleaseAgeExclude:
+  # Polly permits this Express patch, which updates its qs and path-to-regexp
+  # dependencies to patched compatible releases. Keep the exception exact so
+  # later Express releases still pass through the normal three-day cooldown.
+  - 'express@4.22.3'
   - '@rvoh/dream'
   - '@rvoh/dream-spec-helpers'
   - '@rvoh/psychic'

@@ -3,7 +3,6 @@ import { PsychicApp } from '@rvoh/psychic'
 import { PsychicAppWorkers } from '@rvoh/psychic-workers'
 import { Queue, Worker } from 'bullmq'
 import { Cluster, Redis } from 'ioredis'
-import * as os from 'node:os'
 
 export default (psy: PsychicApp) => {
   psy.plugin(async () => {
@@ -15,8 +14,8 @@ function initializeWorkers(workersApp: PsychicAppWorkers) {
   workersApp.set('background', {
     defaultWorkstream: {
       // https://docs.bullmq.io/guide/parallelism-and-concurrency
-      workerCount: os.cpus().length,
-      concurrency: 100,
+      workerCount: 1,
+      concurrency: 10,
     },
 
     namedWorkstreams: [
@@ -30,7 +29,7 @@ function initializeWorkers(workersApp: PsychicAppWorkers) {
       //   name: 'RateLimitedWorkstream',
       //   // https://docs.bullmq.io/guide/parallelism-and-concurrency
       //   workerCount: 1,
-      //   concurrency: 100,
+      //   concurrency: 10,
       //   rateLimit: {
       //     max: 100,
       //     duration: 1000,
