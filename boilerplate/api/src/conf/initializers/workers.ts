@@ -24,7 +24,10 @@ function initializeWorkers(workersApp: PsychicAppWorkers) {
         workerCount: 1,
       },
 
-      // Rate limited workstream (requires BullMQ Pro)
+      // Rate limited workstream: at most `max` jobs start per `duration` ms, counted per
+      // queue in Redis, so every worker and process on this workstream shares one counter.
+      // Works on open-source BullMQ; BullMQ Pro additionally applies it as a group rate limit.
+      // https://docs.bullmq.io/guide/rate-limiting
       // {
       //   name: 'RateLimitedWorkstream',
       //   // https://docs.bullmq.io/guide/parallelism-and-concurrency
