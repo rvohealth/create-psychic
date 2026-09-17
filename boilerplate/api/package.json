@@ -37,7 +37,7 @@
     "@rvoh/dream": "^2.30.1",
     "@rvoh/psychic": "^3.13.0",
     "@rvoh/psychic-websockets": "^3.5.0",
-    "@rvoh/psychic-workers": "^2.6.0",
+    "@rvoh/psychic-workers": "^2.7.0",
     "@socket.io/redis-adapter": "^8.3.0",
     "@socket.io/redis-emitter": "^5.1.0",
     "bullmq": "^5.78.0",
