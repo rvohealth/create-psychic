@@ -13,6 +13,16 @@ We merge pull requests through the GitHub UI, so the local working branch is
 often already merged into `origin/main`. Starting from a stale, already-merged
 branch is the default failure mode this rule prevents.
 
+## Public Error Exports
+
+Export an error only when a developer of a Psychic application needs to throw
+it or should reasonably be able to catch it as part of an expected,
+well-functioning application workflow. An error being useful for debugging,
+logging, or framework internals does not by itself justify a public export.
+Compatibility-only residue (an error kept exported only for backward
+compatibility, not because new code should throw or catch it) must be
+documented as such, not treated as proof it still belongs in the public API.
+
 ## Committing
 
 Always run `pnpm format` before committing to ensure code is properly formatted.
