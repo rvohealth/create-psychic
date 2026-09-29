@@ -22,9 +22,9 @@ describe('PackagejsonBuilder', () => {
       expect(JSON.parse(res).name).toEqual('howyadoin')
     })
 
-    it('pins engines.node to the Psychic security target (>=26)', async () => {
+    it('supports the Node 24 security baseline', async () => {
       const res = await PackagejsonBuilder.buildAPI('howyadoin', baseOptions)
-      expect(JSON.parse(res).engines).toEqual({ node: '>=26' })
+      expect(JSON.parse(res).engines).toEqual({ node: '>=24' })
     })
 
     context('with backgroundWorkers: false and ws: false', () => {

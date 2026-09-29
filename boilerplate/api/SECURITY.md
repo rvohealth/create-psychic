@@ -59,8 +59,8 @@ a malicious mirror by a stray environment variable or a tampered config.
 
 ### 4. Node version
 
-`engines.node` requires Node **≥ 26** (Psychic's supported baseline — 26 is the
-current LTS and 25 is already EOL). This is **advisory**: there is no
+`engines.node` requires Node **≥ 24**. Node 26 is the preferred version, and
+generated CI checks both Node 26 and Node 24. This is **advisory**: there is no
 `engine-strict`, so the app still installs on older Node with a warning. `.nvmrc`
 steers `nvm`/`fnm` users onto 26.
 

@@ -106,14 +106,14 @@ export default async function copyApiBoilerplate(appName: string, options: NewPs
   } else if (options.runtime === 'bun') {
     fs.writeFileSync(path.join(apiRoot, 'bunfig.toml'), BunfigBuilder.build())
   } else {
-    // Steer new Node apps toward Node 26 — Psychic's supported baseline (26 is the
-    // current LTS; 25 is already EOL). This is
+    // Steer new Node apps toward Node 26, the preferred version. Node 24 remains
+    // supported by engines.node and generated CI. This is
     // ADVISORY: `engines.node` in package.json has no engine-strict, so the app still
     // generates and installs on older Node with a warning. We write only `.nvmrc`
     // (read by nvm/fnm) and intentionally NOT `.node-version`: nodenv and asdf treat
     // `.node-version` as a hard requirement and refuse to run ANY command in the app
     // if that exact version isn't installed — which would hard-block developers still
-    // on Node 24 LTS, defeating the advisory intent.
+    // on older Node versions, defeating the advisory intent.
     fs.writeFileSync(path.join(apiRoot, '.nvmrc'), '26\n')
   }
 
