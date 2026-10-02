@@ -89,8 +89,9 @@ describe('CiWorkflowBuilder', () => {
         expect(yml).toContain('pnpm install --frozen-lockfile')
       })
 
-      it('runs CI on the Node version the app targets', () => {
-        expect(yml).toContain('node-version: "26"')
+      it('runs CI on Node 26 first and keeps a Node 24 compatibility lane', () => {
+        expect(yml).toContain('node-version: ["26", "24"]')
+        expect(yml).toContain('node-version: "${{ matrix.node-version }}"')
       })
 
       it('defaults to a single safe shard (a fresh app has too few spec files to split)', () => {

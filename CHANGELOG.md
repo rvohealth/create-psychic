@@ -1,3 +1,7 @@
+## 3.7.9
+
+- Generated Node apps now support Node 24 and Node 26, with Node 26 remaining the preferred `.nvmrc` version. Generated CI runs unit specs, feature specs, and build/lint/API-contract checks on both Node releases; Bun and Deno workflows remain single-runtime jobs.
+
 ## 3.7.8
 
 - Generate one BullMQ worker with concurrency 10 by default. Psychic worker instances share a Node.js event loop, so CPU parallelism belongs at the process or container layer; this preserves useful I/O overlap without multiplying Redis connections or in-flight jobs by the host CPU count.

@@ -17,8 +17,8 @@ const ACTIONS = {
   uploadArtifact: '043fb46d1a93c77aae656e7c1c64a875d1fc6a0a', // v7.0.1
 }
 
-// The generated app targets Node 26 (Psychic's supported baseline / current LTS); CI runs on it.
-const CI_NODE_VERSION = '26'
+// Node 26 is the primary generated-app runtime; Node 24 remains supported.
+const CI_NODE_VERSIONS = ['26', '24']
 
 export default class CiWorkflowBuilder {
   public static build(appName: string, options: NewPsychicAppCliOptions): string {
@@ -36,6 +36,7 @@ export default class CiWorkflowBuilder {
     const columnKey = Encrypt.generateKey('aes-256-gcm')
     const ctx: BuildContext = {
       pm: options.packageManager,
+      nodeVersions: options.runtime === 'bun' || options.runtime === 'deno' ? [] : CI_NODE_VERSIONS,
       apiDir,
       needsRedis,
       clientDirs,
@@ -50,6 +51,7 @@ export default class CiWorkflowBuilder {
 
 interface BuildContext {
   pm: PsychicPackageManager
+  nodeVersions: string[]
   apiDir: string
   needsRedis: boolean
   clientDirs: string[]
@@ -165,6 +167,16 @@ function shardMatrix(): string {
 `
 }
 
+function runtimeMatrix(ctx: BuildContext): string {
+  return ctx.nodeVersions.length
+    ? `        node-version: [${ctx.nodeVersions.map(version => `"${version}"`).join(', ')}]\n`
+    : ''
+}
+
+function nodeLabel(ctx: BuildContext): string {
+  return ctx.nodeVersions.length ? `Node \${{ matrix.node-version }}, ` : ''
+}
+
 function servicesBlock(ctx: BuildContext): string {
   const postgres = `      postgres:
         image: ${ctx.pgImage}
@@ -252,16 +264,16 @@ function runtimeSetup(pm: PsychicPackageManager): string {
     default:
       return `      - uses: actions/setup-node@${ACTIONS.setupNode} # v6.4.0
         with:
-          node-version: "${CI_NODE_VERSION}"
+          node-version: "\${{ matrix.node-version }}"
 ${corepackStep(pm)}`
   }
 }
 
 function uspecJob(ctx: BuildContext): string {
   return `  uspec:
-    name: Unit specs (shard \${{ matrix.shard }})
+    name: Unit specs (${nodeLabel(ctx)}shard \${{ matrix.shard }})
     runs-on: ubuntu-latest
-${shardMatrix()}${servicesBlock(ctx)}${ctx.env}${defaultsBlock(ctx.apiDir)}    steps:
+${shardMatrix()}${runtimeMatrix(ctx)}${servicesBlock(ctx)}${ctx.env}${defaultsBlock(ctx.apiDir)}    steps:
 ${setupSteps(ctx.pm)}      - run: ${installCmd(ctx.pm)}
       - run: ${psy(ctx.pm, 'db:migrate', '--skip-sync')}
       - run: ${runScript(ctx.pm, 'uspec', '--shard=${{ matrix.shard }}')}
@@ -280,9 +292,9 @@ function fspecJob(ctx: BuildContext): string {
 
   return `
   fspec:
-    name: Feature specs (shard \${{ matrix.shard }})
+    name: Feature specs (${nodeLabel(ctx)}shard \${{ matrix.shard }})
     runs-on: ubuntu-latest
-${shardMatrix()}${servicesBlock(ctx)}${ctx.env}${defaultsBlock(ctx.apiDir)}    steps:
+${shardMatrix()}${runtimeMatrix(ctx)}${servicesBlock(ctx)}${ctx.env}${defaultsBlock(ctx.apiDir)}    steps:
 ${setupSteps(ctx.pm)}      - run: ${installCmd(ctx.pm)}
 ${clientInstalls}      - name: install puppeteer browser
         run: ${puppeteerInstall(ctx.pm)}
@@ -306,9 +318,9 @@ ${clientInstalls}      - name: install puppeteer browser
 function checksJob(ctx: BuildContext): string {
   return `
   checks:
-    name: Build, lint & API contract
+    name: Build, lint & API contract${ctx.nodeVersions.length ? ` (Node \${{ matrix.node-version }})` : ''}
     runs-on: ubuntu-latest
-${servicesBlock(ctx)}${ctx.env}${defaultsBlock(ctx.apiDir)}    steps:
+${runtimeMatrix(ctx)}${servicesBlock(ctx)}${ctx.env}${defaultsBlock(ctx.apiDir)}    steps:
 ${setupSteps(ctx.pm, true)}      - uses: actions/setup-go@${ACTIONS.setupGo} # v6.4.0
         with:
           go-version: 'stable'

@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "@rvoh/dream": "^2.30.1",
-    "@types/node": "^22.6.1",
+    "@types/node": "^26.6.3",
     "commander": "^14.0.3",
     "pino-std-serializers": "^4.0.0",
     "typescript": "^5.9.3",
