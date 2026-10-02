@@ -1,4 +1,4 @@
-## 3.7.9
+## 3.7.10
 
 - Generated Node apps now support Node 24 and Node 26, with Node 26 remaining the preferred `.nvmrc` version. Generated CI runs unit specs, feature specs, and build/lint/API-contract checks on both Node releases; Bun and Deno workflows remain single-runtime jobs.
 
