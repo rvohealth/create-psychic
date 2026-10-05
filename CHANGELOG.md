@@ -1,3 +1,7 @@
+## 3.7.11
+
+- The JSON loader behind `init` and package.json generation no longer passes the Node 20-era `assert` import assertion alongside the standard `with` import attribute. Node 22 removed `assert`, so on Node 24 and 26 (the releases Psychic supports) the loader already relied on `with` alone, and behavior there is unchanged.
+
 ## 3.7.10
 
 - Generated Node apps now support Node 24 and Node 26, with Node 26 remaining the preferred `.nvmrc` version. Generated CI runs unit specs, feature specs, and build/lint/API-contract checks on both Node releases; Bun and Deno workflows remain single-runtime jobs.

@@ -13,6 +13,15 @@ We merge pull requests through the GitHub UI, so the local working branch is
 often already merged into `origin/main`. Starting from a stale, already-merged
 branch is the default failure mode this rule prevents.
 
+## Node.js Support
+
+Node.js 26 is the primary CI and release runtime; Node.js 24 is the oldest
+supported one. Keep `node-version: "26"` in `.github/workflows/release.yml` and
+the linting job, and keep both `"26"` and `"24"` in the `pr-checks.yml` matrix
+for the unit-spec and build jobs. Generated apps follow the same policy
+(`CI_NODE_VERSIONS` in `src/file-builders/CiWorkflowBuilder.ts`), so change the
+two together.
+
 ## Public Error Exports
 
 Export an error only when a developer of a Psychic application needs to throw

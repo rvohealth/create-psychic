@@ -25,7 +25,7 @@ jobs:
     name: Cooldown exclude allowlist
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: minimumReleaseAgeExclude must be @rvoh/* only
         run: |
           # SECURITY: the minimumReleaseAge cooldown bypass list must stay @rvoh/*
@@ -40,10 +40,12 @@ jobs:
           fi
 
   spec:
-    name: Unit tests
+    name: Unit tests (Node ${{ matrix.node-version }}, shard ${{ matrix.shard }})
     runs-on: ubuntu-latest
     strategy:
       matrix:
+        # 26 is the primary target; 24 is the oldest supported runtime
+        node-version: ["26", "24"]
         shard: [1, 2, 3, 4, 5]
       fail-fast: false
     services:
@@ -83,10 +85,10 @@ jobs:
       CI: 1
       YARN_ENABLE_IMMUTABLE_INSTALLS: false
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
         with:
-          node-version: "24"
+          node-version: ${{ matrix.node-version }}
 
       - name: Remove packageManager field from package.json
         run: |
@@ -100,7 +102,7 @@ jobs:
           "
 
       - name: Install pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v6
         with:
           version: 11
 
@@ -116,7 +118,10 @@ jobs:
       # generated apps hit the SWC field-decorator boot bug — docs/deno-runtime-readiness.md.)
       - uses: oven-sh/setup-bun@v2
 
-      - run: DEBUG=1 pnpm spec --shard=${{ matrix.shard }}/${{ strategy.job-total }}
+      # The denominator is the shard count, not strategy.job-total: the Node matrix
+      # multiplies job-total, which would leave half the specs unrun per Node version.
+      # Keep it equal to the length of matrix.shard.
+      - run: DEBUG=1 pnpm spec --shard=${{ matrix.shard }}/5
 
   lint:
     name: Linting
@@ -124,13 +129,13 @@ jobs:
     env:
       NODE_ENV: development
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
         with:
-          node-version: "24"
+          node-version: "26"
 
       - name: Install pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v6
         with:
           version: 11
 
@@ -140,20 +145,24 @@ jobs:
       - run: pnpm lint
 
   check-build:
-    name: Check build
+    name: Check build (Node ${{ matrix.node-version }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: ["26", "24"]
     env:
       NODE_ENV: development
       GITHUB_OAUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
         with:
-          node-version: "24"
+          node-version: ${{ matrix.node-version }}
 
       - name: Install pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v6
         with:
           version: 11
 
