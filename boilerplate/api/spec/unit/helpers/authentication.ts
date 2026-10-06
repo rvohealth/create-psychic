@@ -26,10 +26,13 @@ async function userBearerToken(user: User): Promise<string> {
    * The current authentication scheme is only for early development.
    * Replace with a production grade authentication scheme.
    */
-  return Encrypt.encrypt(JSON.stringify({ userId: user.primaryKeyValue() }), {
-    algorithm: 'aes-256-gcm',
-    key: AppEnv.string('APP_ENCRYPTION_KEY'),
-  })
+  return Encrypt.encrypt(
+    { userId: user.primaryKeyValue() },
+    {
+      algorithm: 'aes-256-gcm',
+      key: AppEnv.string('APP_ENCRYPTION_KEY'),
+    },
+  )
 }
 
 // eslint-disable-next-line @typescript-eslint/require-await
@@ -38,10 +41,13 @@ async function adminUserBearerToken(adminUser: Dream): Promise<string> {
    * The current authentication scheme is only for early development.
    * Replace with a production grade authentication scheme.
    */
-  return Encrypt.encrypt(JSON.stringify({ adminUserId: adminUser.primaryKeyValue() }), {
-    algorithm: 'aes-256-gcm',
-    key: AppEnv.string('APP_ENCRYPTION_KEY'),
-  })
+  return Encrypt.encrypt(
+    { adminUserId: adminUser.primaryKeyValue() },
+    {
+      algorithm: 'aes-256-gcm',
+      key: AppEnv.string('APP_ENCRYPTION_KEY'),
+    },
+  )
 }
 
 // eslint-disable-next-line @typescript-eslint/require-await
@@ -50,10 +56,13 @@ async function internalUserBearerToken(internalUser: Dream): Promise<string> {
    * The current authentication scheme is only for early development.
    * Replace with a production grade authentication scheme.
    */
-  return Encrypt.encrypt(JSON.stringify({ internalUserId: internalUser.primaryKeyValue() }), {
-    algorithm: 'aes-256-gcm',
-    key: AppEnv.string('APP_ENCRYPTION_KEY'),
-  })
+  return Encrypt.encrypt(
+    { internalUserId: internalUser.primaryKeyValue() },
+    {
+      algorithm: 'aes-256-gcm',
+      key: AppEnv.string('APP_ENCRYPTION_KEY'),
+    },
+  )
 }
 
 export async function session(user: Dream) {
