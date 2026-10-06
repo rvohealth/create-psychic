@@ -19,6 +19,7 @@ describe('initPsychicApp with --dream-only flag', () => {
     await expectNoWebsockets()
 
     await expectNoFile('howyadoin/src/api/conf/app.ts')
+    await expectNoFile('howyadoin/src/api/conf/system/redactForLog.ts')
     await expectToMatchFixture(
       'expected-files/dream/init/basic.ts',
       await readFile('howyadoin/src/api/conf/dream.ts'),

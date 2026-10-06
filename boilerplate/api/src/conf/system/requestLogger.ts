@@ -1,11 +1,15 @@
 import type Koa from 'koa'
 import winston from 'winston'
+import { redactBody, redactUrl } from './redactForLog.js'
 
 export interface RequestLoggerOptions {
   winstonInstance?: winston.Logger
   transports?: winston.transport[]
   format?: winston.Logform.Format
+  // headers left out of the log (whole name, ignoring case)
   headerBlocklist?: string[]
+  // body and query-string values masked in the log (any key containing a listed name,
+  // ignoring case, at any depth; see redactForLog.ts)
   bodyBlocklist?: string[]
   ignoredRoutes?: string[]
 }
@@ -51,7 +55,8 @@ export default function requestLogger(options: RequestLoggerOptions = {}): Koa.M
     const duration = Date.now() - start
 
     const status = ctx.status
-    const message = `${ctx.method} ${ctx.url} ${status} ${duration}ms`
+    const url = redactUrl(ctx.url, bodyBlocklist)
+    const message = `${ctx.method} ${url} ${status} ${duration}ms`
 
     let level: string
     if (status >= 500) level = 'error'
@@ -60,13 +65,12 @@ export default function requestLogger(options: RequestLoggerOptions = {}): Koa.M
 
     const logEntry: Record<string, unknown> = { message, level }
     const headers = filterObject(ctx.headers, headerBlocklist)
-    const rawBody = ctx.request.body as Record<string, unknown> | undefined
-    const body = rawBody ? filterObject(rawBody, bodyBlocklist) : undefined
+    const body = redactBody(ctx.request.body, bodyBlocklist)
 
     logEntry.meta = {
       req: {
         method: ctx.method,
-        url: ctx.url,
+        url,
         headers,
         body,
       },
