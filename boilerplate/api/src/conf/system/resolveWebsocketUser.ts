@@ -38,7 +38,15 @@ export default async function resolveWebsocketUser(socket: Socket): Promise<stri
     return null
   }
 
-  const userId = payload?.userId
+  // Token minting encrypts an object, so a token that opens to anything else means the minting and
+  // this helper disagree: a bug in the app's own token code, so fail loudly instead of signing out.
+  // Fixed text only: never put the token or its contents in the error.
+  if (payload === null || typeof payload !== 'object' || Array.isArray(payload))
+    throw new Error(
+      'resolveWebsocketUser: the auth token opened but does not hold an object; the token minting and this helper disagree',
+    )
+
+  const userId = payload.userId
   if (!userId) return null
 
   /** uncomment after creating User model */

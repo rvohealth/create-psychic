@@ -37,8 +37,16 @@ export default async function resolveCurrentAdminUser(controller: PsychicControl
     return null
   }
 
+  // Token minting encrypts an object, so a token that opens to anything else means the minting and
+  // this helper disagree: a bug in the app's own token code, so fail loudly instead of signing out.
+  // Fixed text only: never put the token or its contents in the error.
+  if (payload === null || typeof payload !== 'object' || Array.isArray(payload))
+    throw new Error(
+      'resolveCurrentAdminUser: the bearer token opened but does not hold an object; the token minting and this helper disagree',
+    )
+
   // a regular user's token carries userId, not adminUserId, so it does not sign in here
-  const adminUserId = payload?.adminUserId
+  const adminUserId = payload.adminUserId
   if (!adminUserId) return null
 
   /** uncomment after creating AdminUser model */
