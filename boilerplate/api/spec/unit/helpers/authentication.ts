@@ -42,7 +42,7 @@ async function adminUserBearerToken(adminUser: Dream): Promise<string> {
    * Replace with a production grade authentication scheme.
    */
   return Encrypt.encrypt(
-    { adminUserId: adminUser.primaryKeyValue() },
+    { adminUserId: adminUser.primaryKeyValue() as string },
     {
       algorithm: 'aes-256-gcm',
       key: AppEnv.string('APP_ENCRYPTION_KEY'),
@@ -57,7 +57,7 @@ async function internalUserBearerToken(internalUser: Dream): Promise<string> {
    * Replace with a production grade authentication scheme.
    */
   return Encrypt.encrypt(
-    { internalUserId: internalUser.primaryKeyValue() },
+    { internalUserId: internalUser.primaryKeyValue() as string },
     {
       algorithm: 'aes-256-gcm',
       key: AppEnv.string('APP_ENCRYPTION_KEY'),
