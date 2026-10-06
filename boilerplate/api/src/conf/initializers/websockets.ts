@@ -23,7 +23,7 @@ function initializeWebsockets(wsApp: PsychicAppWebsockets) {
   //   - test:        in-process adapter (the default) — no Redis. Unit specs do
   //                  zero Redis I/O; feature specs get real in-process delivery for
   //                  broadcasts emitted within the websocket-server process (e.g.
-  //                  ws:start handlers). Delivery is single-process: cross-process
+  //                  ws:connect hooks). Delivery is single-process: cross-process
   //                  fan-out (a web/worker emit reaching a socket on the ws server)
   //                  still needs Redis, as in production.
   //   - development
@@ -93,8 +93,10 @@ function initializeWebsockets(wsApp: PsychicAppWebsockets) {
     // socket.io's `cors.origin` above only constrains HTTP long-polling —
     // native WebSocket upgrades bypass CORS. `allowRequest` runs before every
     // handshake on every transport, so we re-enforce the allowlist here.
-    // Replace the body with your own logic (e.g. auth-token inspection) to
-    // layer additional checks on top of the origin allowlist.
+    // Keep it to checks on the raw HTTP request. Authenticate in the ws:connect
+    // hook below instead: the client's auth token (socket.handshake.auth) is not
+    // available here yet, and a throw here is not contained, so it would exit
+    // the websocket process.
     allowRequest: (req, callback) => {
       const origin = req.headers.origin
       if (origin !== undefined && allowedOrigins.includes(origin)) {
@@ -137,20 +139,21 @@ function initializeWebsockets(wsApp: PsychicAppWebsockets) {
   // HOOKS:
   // ******
 
-  wsApp.on('ws:start', io => {
-    io.of('/').on('connection', async socket => {
-      const user = await resolveWebsocketUser(socket)
-      if (!user) {
-        socket.disconnect(true)
-        return
-      }
-      // this automatically fires the /ops/connection-success message
-      await Ws.register(socket, user)
-    })
-  })
-
-  wsApp.on('ws:connect', () => {
-    // do something upon websocket connection being established
+  // Sign in each connecting socket. This must stay a ws:connect hook: the
+  // framework contains a throw from one (a database or Redis error, a bug in the
+  // auth code, the "replace before production" throw in resolveWebsocketUser) by
+  // logging it, disconnecting only this socket and firing ws:error below. Do not
+  // sign in from an io.on('connection') listener added in a ws:start hook: a
+  // throw there is not contained, so it becomes an unhandled rejection, and
+  // ws.ts exits the websocket process on those. Put any other per-connection
+  // work after Ws.register, so it never runs for a socket that is not signed in.
+  wsApp.on('ws:connect', async socket => {
+    const user = await resolveWebsocketUser(socket)
+    if (!user) {
+      socket.disconnect(true)
+      return
+    }
+    await Ws.register(socket, user)
   })
 
   wsApp.on('ws:error', (error, context) => {
