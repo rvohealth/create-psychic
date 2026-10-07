@@ -1,6 +1,6 @@
 import type Koa from 'koa'
 import winston from 'winston'
-import { redactBody, redactUrl } from './redactForLog.js'
+import { redactBody, redactHeaders, redactUrl } from './redactForLog.js'
 
 export interface RequestLoggerOptions {
   winstonInstance?: winston.Logger
@@ -8,21 +8,10 @@ export interface RequestLoggerOptions {
   format?: winston.Logform.Format
   // headers left out of the log (whole name, ignoring case)
   headerBlocklist?: string[]
-  // body and query-string values masked in the log (any key containing a listed name,
-  // ignoring case, at any depth; see redactForLog.ts)
+  // body, query-string and header values masked in the log (any key or header name containing
+  // a listed name, ignoring case, at any depth; also the referer's query string; see redactForLog.ts)
   bodyBlocklist?: string[]
   ignoredRoutes?: string[]
-}
-
-function filterObject(obj: Record<string, unknown>, Blocklist: string[]): Record<string, unknown> {
-  const lower = Blocklist.map(k => k.toLowerCase())
-  const filtered: Record<string, unknown> = {}
-  for (const key of Object.keys(obj)) {
-    if (!lower.includes(key.toLowerCase())) {
-      filtered[key] = obj[key]
-    }
-  }
-  return filtered
 }
 
 export default function requestLogger(options: RequestLoggerOptions = {}): Koa.Middleware {
@@ -64,7 +53,7 @@ export default function requestLogger(options: RequestLoggerOptions = {}): Koa.M
     else level = 'info'
 
     const logEntry: Record<string, unknown> = { message, level }
-    const headers = filterObject(ctx.headers, headerBlocklist)
+    const headers = redactHeaders(ctx.headers, headerBlocklist, bodyBlocklist)
     const body = redactBody(ctx.request.body, bodyBlocklist)
 
     logEntry.meta = {

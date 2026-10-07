@@ -4,6 +4,7 @@ import {
   FILTERED,
   MAX_LOGGED_DEPTH,
   redactBody,
+  redactHeaders,
   redactUrl,
   TRUNCATED,
 } from '../../../boilerplate/api/src/conf/system/redactForLog.js'
@@ -18,6 +19,13 @@ function scaffoldBodyBlocklist(): string[] {
     /const SENSITIVE_FIELDS = \[([^\]]*)\]/,
   )?.[1]
   if (list === undefined) throw new Error('SENSITIVE_FIELDS not found in conf/app.ts')
+  return [...list.matchAll(/'([^']*)'/g)].map(match => match[1] ?? '')
+}
+
+// The header blocklist the scaffold passes to requestLogger (`headerBlocklist` in conf/app.ts).
+function scaffoldHeaderBlocklist(): string[] {
+  const list = readBoilerplateFile('src', 'conf', 'app.ts').match(/headerBlocklist: \[([^\]]*)\]/)?.[1]
+  if (list === undefined) throw new Error('headerBlocklist not found in conf/app.ts')
   return [...list.matchAll(/'([^']*)'/g)].map(match => match[1] ?? '')
 }
 
@@ -252,15 +260,135 @@ describe('boilerplate/api/src/conf/system/redactForLog.ts', () => {
     })
   })
 
+  describe('redactHeaders', () => {
+    const headerBlocklist = scaffoldHeaderBlocklist()
+
+    it('is exercised with the scaffold header blocklist', () => {
+      expect(headerBlocklist).toEqual([
+        'authorization',
+        'content-length',
+        'connection',
+        'cookie',
+        'sec-ch-ua',
+        'sec-ch-ua-mobile',
+        'sec-ch-ua-platform',
+        'sec-fetch-dest',
+        'sec-fetch-mode',
+        'sec-fetch-site',
+        'user-agent',
+      ])
+    })
+
+    it('masks a header whose name contains a listed name and keeps its key', () => {
+      expect(
+        redactHeaders(
+          {
+            host: 'api.example.com',
+            accept: 'application/json',
+            'x-auth-token': 'tok-header',
+            'proxy-authorization': 'Basic cHJveHk6aHVudGVyMg==',
+            'x-api-secret': 'sec-header',
+            'x-csrf-token': 'csrf-header',
+          },
+          headerBlocklist,
+          blocklist,
+        ),
+      ).toEqual({
+        host: 'api.example.com',
+        accept: 'application/json',
+        'x-auth-token': FILTERED,
+        'proxy-authorization': FILTERED,
+        'x-api-secret': FILTERED,
+        'x-csrf-token': FILTERED,
+      })
+    })
+
+    it('matches header names ignoring case and masks a repeated header as a whole', () => {
+      expect(
+        redactHeaders({ 'X-Auth-Token': 't', 'X-Api-Secret': ['s1', 's2'] }, headerBlocklist, blocklist),
+      ).toEqual({ 'X-Auth-Token': FILTERED, 'X-Api-Secret': FILTERED })
+    })
+
+    it('still leaves out a header whose whole name is in the header blocklist, ignoring case', () => {
+      expect(
+        redactHeaders(
+          {
+            authorization: 'Bearer tok-bearer',
+            Cookie: 'session=s',
+            'user-agent': 'curl/8.7.1',
+            'content-length': '2',
+            accept: '*/*',
+          },
+          headerBlocklist,
+          blocklist,
+        ),
+      ).toEqual({ accept: '*/*' })
+    })
+
+    it('masks, instead of leaving out, a listed-name header that an app removes from the header blocklist', () => {
+      expect(redactHeaders({ authorization: 'Bearer tok-bearer' }, [], blocklist)).toEqual({
+        authorization: FILTERED,
+      })
+    })
+
+    // the scaffold's header blocklist leaves out user-agent; an app that removes it logs it in full
+    it('keeps a header that matches neither list exactly as sent', () => {
+      const headers = {
+        'user-agent': 'Mozilla/5.0',
+        'accept-language': 'en-US',
+        'x-forwarded-for': '203.0.113.7',
+        'x-request-id': 'req-1',
+      }
+      expect(redactHeaders(headers, [], blocklist)).toEqual(headers)
+    })
+
+    it('masks sensitive query-string values in the referer, as in the logged URL', () => {
+      expect(
+        redactHeaders(
+          { referer: 'https://app.example.com/reset-password?token=abc123&step=2' },
+          headerBlocklist,
+          blocklist,
+        ),
+      ).toEqual({ referer: `https://app.example.com/reset-password?token=${FILTERED}&step=2` })
+      expect(
+        redactHeaders({ Referer: 'https://app.example.com/x?accessToken=a&q=b' }, headerBlocklist, blocklist),
+      ).toEqual({ Referer: `https://app.example.com/x?accessToken=${FILTERED}&q=b` })
+    })
+
+    it('leaves a referer without a sensitive query-string value as sent', () => {
+      const headers = { referer: 'https://app.example.com/places?page=2&sort=name' }
+      expect(redactHeaders(headers, headerBlocklist, blocklist)).toEqual(headers)
+      expect(redactHeaders({ referer: 'https://app.example.com/' }, headerBlocklist, blocklist)).toEqual({
+        referer: 'https://app.example.com/',
+      })
+    })
+
+    it('does not modify the request headers', () => {
+      const headers = deepFreeze({
+        'x-auth-token': 't',
+        cookie: 'c',
+        referer: 'https://app.example.com/?token=t',
+      })
+      const before = structuredClone(headers)
+
+      const redacted = redactHeaders(headers, headerBlocklist, blocklist)
+
+      expect(headers).toEqual(before)
+      expect(redacted).not.toBe(headers)
+    })
+  })
+
   describe('use by requestLogger.ts', () => {
     const requestLogger = () => readBoilerplateFile('src', 'conf', 'system', 'requestLogger.ts')
 
-    it('logs the request body and URL only through the redaction helpers', () => {
+    it('logs the request headers, body and URL only through the redaction helpers', () => {
       const source = requestLogger()
 
-      expect(source).toContain("import { redactBody, redactUrl } from './redactForLog.js'")
+      expect(source).toContain("import { redactBody, redactHeaders, redactUrl } from './redactForLog.js'")
+      expect(source).toContain('redactHeaders(ctx.headers, headerBlocklist, bodyBlocklist)')
       expect(source).toContain('redactBody(ctx.request.body, bodyBlocklist)')
       expect(source).toContain('redactUrl(ctx.url, bodyBlocklist)')
+      expect(source.match(/ctx\.(?:request\.)?headers?\b/g)).toHaveLength(1)
       expect(source.match(/ctx\.request\.body/g)).toHaveLength(1)
       expect(source.match(/ctx\.url/g)).toHaveLength(1)
     })
