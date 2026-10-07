@@ -258,8 +258,9 @@ export default class PackagejsonBuilder {
 
     // `{{PM}}` resolves to the API runtime; `{{PM_CWD}}` (front-end client wrappers)
     // resolves to the front-end PM — they diverge only for a Deno API (→ pnpm).
+    // The final newline is what Prettier writes, so the app's own `prettier --check` passes.
     return replacePackageManagerInFileContents(
-      JSON.stringify(packagejson, null, 2),
+      JSON.stringify(packagejson, null, 2) + '\n',
       options.packageManager,
       fePm,
     )
