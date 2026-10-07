@@ -1,7 +1,14 @@
 import { Env } from '@rvoh/dream'
 
 class AppEnvClass extends Env<{
-  boolean: 'CONSOLE_SERVICE' | 'CLIENT' | 'DB_NO_SSL' | 'REQUEST_LOGGING' | 'WEB_SERVICE' | 'WS_SERVICE' | 'WORKER_SERVICE'
+  boolean:
+    | 'CONSOLE_SERVICE'
+    | 'CLIENT'
+    | 'DB_NO_SSL'
+    | 'REQUEST_LOGGING'
+    | 'WEB_SERVICE'
+    | 'WS_SERVICE'
+    | 'WORKER_SERVICE'
 
   integer:
     | 'BG_JOBS_REDIS_PORT'
