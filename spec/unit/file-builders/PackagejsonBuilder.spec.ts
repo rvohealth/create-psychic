@@ -490,6 +490,23 @@ describe('PackagejsonBuilder', () => {
       })
     })
 
+    context('node runtime web:dev', () => {
+      for (const packageManager of ['yarn', 'pnpm', 'npm'] as const) {
+        it(`watches src/ with Node's built-in watcher, without nodemon, for ${packageManager}`, async () => {
+          const res = await PackagejsonBuilder.buildAPI('howyadoin', { ...baseOptions, packageManager })
+          const pkg = JSON.parse(res) as {
+            scripts: Record<string, string>
+            devDependencies: Record<string, string>
+          }
+          expect(pkg.scripts['web:dev']).toBe(
+            'cross-env APP_NAME=$npm_package_name APP_VERSION=$npm_package_version NODE_ENV=development WORKER_COUNT=0 node --watch --watch-path=./src --watch-preserve-output --import tsx ./src/main.ts',
+          )
+          expect(pkg.devDependencies.tsx).toBeDefined()
+          expect(res).not.toMatch(/\bnodemon\b/)
+        })
+      }
+    })
+
     context('deno runtime scripts', () => {
       it('runs entrypoints/specs/builds under deno with no Node-toolchain runners', async () => {
         const res = await PackagejsonBuilder.buildAPI('howyadoin', {
@@ -509,7 +526,8 @@ describe('PackagejsonBuilder', () => {
 
         const all = Object.values(scripts).join('\n')
         expect(all).not.toMatch(/\btsx /)
-        expect(all).not.toMatch(/\bnodemon\b/)
+        expect(all).not.toContain('node --watch')
+        expect(all).not.toContain('--import')
       })
     })
 
@@ -541,7 +559,8 @@ describe('PackagejsonBuilder', () => {
 
         const all = Object.values(scripts).join('\n')
         expect(all).not.toMatch(/\btsx /)
-        expect(all).not.toMatch(/\bnodemon\b/)
+        expect(all).not.toContain('node --watch')
+        expect(all).not.toContain('--import')
       })
     })
   })
