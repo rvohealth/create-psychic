@@ -6,8 +6,10 @@ import { PsychicApp, PsychicController } from '@rvoh/psychic'
 // import InternalUser from '@models/InternalUser.js'
 
 // eslint-disable-next-line @typescript-eslint/require-await
-export default async function resolveCurrentInternalUser(controller: PsychicController): Promise<string | null> {
-  /** replace previous line with uncommented next line after creating InternalUser model */
+export default async function resolveCurrentInternalUser(
+  controller: PsychicController,
+): Promise<string | null> {
+  /** replace the signature above with uncommented next line after creating InternalUser model */
   // export default async function resolveCurrentInternalUser(controller: PsychicController): Promise<InternalUser | null> {
   if (!AppEnv.isTest)
     throw new Error(
