@@ -210,11 +210,9 @@ export default class PackagejsonBuilder {
     if (options.packageManager === 'bun' || options.packageManager === 'deno') {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
       applyRuntimeRunners(packagejson.scripts, options.packageManager)
-      // Strip Node-only toolchain vestiges: nodemon (Deno/Bun use a native `--watch`)
-      // and tsx (their scripts run TS directly) are never invoked here, and engines.node
-      // is meaningless for an app that doesn't run on Node. The matching nodemon.json is
-      // removed in copyApiBoilerplate.
-      removeDevDependency(packagejson, 'nodemon')
+      // Strip Node-only toolchain vestiges: tsx is never invoked here (their scripts run
+      // TS directly and web:dev uses the runtime's own `--watch`), and engines.node is
+      // meaningless for an app that doesn't run on Node.
       removeDevDependency(packagejson, 'tsx')
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       delete packagejson.engines
@@ -258,16 +256,25 @@ export default class PackagejsonBuilder {
 
     // `{{PM}}` resolves to the API runtime; `{{PM_CWD}}` (front-end client wrappers)
     // resolves to the front-end PM — they diverge only for a Deno API (→ pnpm).
+    // The final newline is what Prettier writes, so the app's own `prettier --check` passes.
     return replacePackageManagerInFileContents(
-      JSON.stringify(packagejson, null, 2),
+      JSON.stringify(packagejson, null, 2) + '\n',
       options.packageManager,
       fePm,
     )
   }
 }
 
+// The Node runtime's web:dev watcher, exactly as boilerplate/api/package.json writes it.
+// Node's built-in watch mode restarts `./src/main.ts` (loaded through tsx) on any change
+// under src/, new files included, and --watch-preserve-output keeps it from clearing the
+// terminal on each restart. applyRuntimeRunners swaps the whole command for the
+// runtime's own `--watch`.
+const NODE_WEB_DEV_WATCHER =
+  'node --watch --watch-path=./src --watch-preserve-output --import tsx ./src/main.ts'
+
 // The boilerplate scripts call the Node toolchain by name — `tsx`, `node`,
-// `vitest`, `nodemon`, `cross-env`. Under Bun/Deno those bare names would resolve
+// `vitest`, `cross-env`. Under Bun/Deno those bare names would resolve
 // to the node-shebang `.bin` shims and execute under Node, defeating the runtime
 // choice, so rewrite them to run under the target runtime. The {{PM}} / {{TSC_*}}
 // placeholders are handled separately by replacePackageManagerInFileContents.
@@ -291,12 +298,14 @@ function applyRuntimeRunners(scripts: Record<string, string>, runtime: 'bun' | '
   const run = runtime === 'bun' ? 'bun --no-env-file' : 'deno run -A'
   // run an npm-published bin (vitest, cross-env, prettier, eslint)
   const bin = (name: string) => (runtime === 'bun' ? `bunx ${name}` : `deno run -A npm:${name}`)
-  // hot-reloading dev server (replaces nodemon, whose nodemon.json exec is `tsx ./src/main.ts`)
+  // hot-reloading dev server (replaces NODE_WEB_DEV_WATCHER, which runs `./src/main.ts`)
   const watch =
     runtime === 'bun' ? 'bun --no-env-file --watch src/main.ts' : 'deno run -A --watch src/main.ts'
 
   for (const key of Object.keys(scripts)) {
-    scripts[key] = scripts[key]!.replace(/nodemon --quiet --no-stdin/g, watch)
+    // The watcher goes first: the `tsx` and `node` rewrites below would otherwise
+    // mangle it into a Node command that imports the runtime's name.
+    scripts[key] = scripts[key]!.replaceAll(NODE_WEB_DEV_WATCHER, watch)
       .replace(/\bnode --version\b/g, `${runtime} --version`)
       .replace(/\bcross-env\b/g, bin('cross-env'))
       .replace(/\bvitest\b/g, bin('vitest'))

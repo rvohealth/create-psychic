@@ -95,13 +95,13 @@ networks:
     restart: always
     command: redis-server --save 20 1 --loglevel warning
     ports:
-      - "6380:6379"
+      - '6380:6379'
     volumes:
       - redis:/data
     networks:
       - backend
     healthcheck:
-      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
+      test: ['CMD-SHELL', 'redis-cli ping | grep PONG']
       interval: 1s
       timeout: 3s
       retries: 5
@@ -116,15 +116,15 @@ networks:
     build:
       context: ./client
       dockerfile: Dockerfile.dev
-      target: "dev"
-    user: "0"
+      target: 'dev'
+    user: '0'
     command: sh -c "{{PM}} install && {{PM}} web:dev"
     environment:
-      NODE_ENV: "\${NODE_ENV:-development}"
-      NODE_TLS_REJECT_UNAUTHORIZED: "\${NODE_TLS_REJECT_UNAUTHORIZED:-0}"
-      NPM_CONFIG_STRICT_SSL: "false"
+      NODE_ENV: '\${NODE_ENV:-development}'
+      NODE_TLS_REJECT_UNAUTHORIZED: '\${NODE_TLS_REJECT_UNAUTHORIZED:-0}'
+      NPM_CONFIG_STRICT_SSL: 'false'
     ports:
-      - "3050:3050"
+      - '3050:3050'
     working_dir: /usr/src/app
     volumes:
       - ./client:/usr/src/app:cached
@@ -145,19 +145,19 @@ networks:
     build:
       context: <CONTEXT_VALUE>
       dockerfile: Dockerfile.dev
-      target: "dev"
+      target: 'dev'
     command: sh -c "{{PM}} ws:dev"
     environment:
-      NODE_TLS_REJECT_UNAUTHORIZED: "\${NODE_TLS_REJECT_UNAUTHORIZED:-0}"
-      NPM_CONFIG_STRICT_SSL: "false"
+      NODE_TLS_REJECT_UNAUTHORIZED: '\${NODE_TLS_REJECT_UNAUTHORIZED:-0}'
+      NPM_CONFIG_STRICT_SSL: 'false'
       DB_HOST: db
       WS_REDIS_HOST: redis
       BG_JOBS_REDIS_HOST: redis
-      NODE_ENV: "\${NODE_ENV:-development}"
+      NODE_ENV: '\${NODE_ENV:-development}'
       DB_USER: postgres
       DB_PASSWORD: postgres
     ports:
-      - "8888:8888"
+      - '8888:8888'
     working_dir: /usr/src/app
     volumes:
       - <CONTEXT_VALUE>:/usr/src/app:cached
@@ -172,17 +172,17 @@ networks:
     build:
       context: <CONTEXT_VALUE>
       dockerfile: Dockerfile.dev
-      target: "dev"
+      target: 'dev'
     command: sh -c "{{PM}} worker:dev"
     environment:
-      NODE_TLS_REJECT_UNAUTHORIZED: "\${NODE_TLS_REJECT_UNAUTHORIZED:-0}"
-      NPM_CONFIG_STRICT_SSL: "false"
-      GITHUB_OAUTH_TOKEN: "\${GITHUB_OAUTH_TOKEN}"
-      BULLMQ_PRO_NPM_TOKEN: "\${BULLMQ_PRO_NPM_TOKEN}"
+      NODE_TLS_REJECT_UNAUTHORIZED: '\${NODE_TLS_REJECT_UNAUTHORIZED:-0}'
+      NPM_CONFIG_STRICT_SSL: 'false'
+      GITHUB_OAUTH_TOKEN: '\${GITHUB_OAUTH_TOKEN}'
+      BULLMQ_PRO_NPM_TOKEN: '\${BULLMQ_PRO_NPM_TOKEN}'
       DB_HOST: db
       WS_REDIS_HOST: redis
       BG_JOBS_REDIS_HOST: redis
-      NODE_ENV: "\${NODE_ENV:-development}"
+      NODE_ENV: '\${NODE_ENV:-development}'
       DB_USER: postgres
       DB_PASSWORD: postgres
     working_dir: /usr/src/app

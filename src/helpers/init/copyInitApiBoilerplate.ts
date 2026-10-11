@@ -60,6 +60,7 @@ export default async function copyInitApiBoilerplate(appName: string, options: I
     // and swap out problematic files so that dream can drive the application instead
     rmFileSync(path.join(options.confPath, 'system', 'initializePsychicApp.ts'))
     rmFileSync(path.join(options.confPath, 'system', 'requestLogger.ts'))
+    rmFileSync(path.join(options.confPath, 'system', 'redactForLog.ts'))
     rmFileSync(path.join(options.confPath, 'app.ts'))
     rmFileSync(path.join(options.confPath, 'routes.ts'))
     rmFileSync(path.join(options.confPath, 'routes.admin.ts'))

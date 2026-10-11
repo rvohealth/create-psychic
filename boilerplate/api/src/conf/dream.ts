@@ -38,7 +38,7 @@ export default async (app: DreamApp) => {<PROJECT_ROOT>
   // and some local Docker images), drop verification:
   //   `ssl: { rejectUnauthorized: false }` — encrypted but unauthenticated.
   //
-  // Set `DB_NO_SSL=true` to disable TLS entirely (local dev only).
+  // Set `DB_NO_SSL=1` to disable TLS entirely (local dev and CI only). Any other value leaves TLS on.
   const dbSsl: { rejectUnauthorized: true } | false = AppEnv.boolean('DB_NO_SSL')
     ? false
     : { rejectUnauthorized: true }

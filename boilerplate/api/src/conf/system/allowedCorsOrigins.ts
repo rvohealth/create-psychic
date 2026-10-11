@@ -8,6 +8,7 @@ export default function allowedCorsOrigins() {
     throw new Error(
       `CORS_HOSTS must be a JSON-encoded array of origin URLs (e.g. ["https://app.example.com"]). ` +
         `Received: ${raw}. Original parse error: ${(err as Error).message}`,
+      { cause: err },
     )
   }
 }

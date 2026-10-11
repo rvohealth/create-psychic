@@ -15,7 +15,7 @@ async function start() {
     PsychicApp.logWithLevel(
       'error',
       'Uncaught server exception:',
-      JSON.stringify(util.inspect(err, { depth: 10 }))
+      JSON.stringify(util.inspect(err, { depth: 10 })),
     )
     void shutdown()
   })
@@ -26,7 +26,7 @@ async function start() {
       'Unhandled server promise rejection at',
       JSON.stringify(util.inspect(promise, { depth: 10 })),
       'reason:',
-      JSON.stringify(util.inspect(reason, { depth: 10 }))
+      JSON.stringify(util.inspect(reason, { depth: 10 })),
     )
     void shutdown()
   })
