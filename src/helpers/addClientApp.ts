@@ -7,6 +7,7 @@ import ViteConfBuilder from '../file-builders/ViteConfBuilder.js'
 import DreamCliLogger, { DreamCliForegroundColor } from '../logger/DreamCliLogger.js'
 import addMissingClientGitignoreStatements from './addMissingClientGitignoreStatements.js'
 import dlxCmdForPackageManager from './packageManager/dlxCmdForPackageManager.js'
+import enableCmdForPackageManager from './packageManager/enableCmdForPackageManager.js'
 import frontEndPackageManager from './frontEndPackageManager.js'
 import { cliClientAppTypes, NewPsychicAppCliOptions, PsychicPackageManager } from './newPsychicApp.js'
 import sspawn from './sspawn.js'
@@ -201,7 +202,7 @@ function initilizePackageManagerCmd(packageManager: PsychicPackageManager) {
   const lockfile = getLockfileName(packageManager)
   switch (packageManager) {
     case 'yarn':
-      return `&& touch ${lockfile} && corepack enable && yarn set version stable`
+      return `&& touch ${lockfile} && ${enableCmdForPackageManager('yarn')} && yarn set version stable`
     case 'pnpm':
     case 'npm':
     case 'bun':
