@@ -1,3 +1,7 @@
+## 3.7.12
+
+- Scaffolding a pnpm or yarn app no longer fails on Node 25 and later, which stopped bundling `corepack`. The generator ran `corepack enable` unconditionally before installing, so it exited with `corepack: command not found` even when `pnpm` or `yarn` was already installed. It now uses an installed `pnpm`/`yarn` as-is and falls back to `corepack enable` only when the package manager is missing.
+
 ## 3.7.11
 
 - The JSON loader behind `init` and package.json generation no longer passes the Node 20-era `assert` import assertion alongside the standard `with` import attribute. Node 22 removed `assert`, so on Node 24 and 26 (the releases Psychic supports) the loader already relied on `with` alone, and behavior there is unchanged.
