@@ -40,6 +40,16 @@ Always run `pnpm format` before committing to ensure code is properly formatted.
 
 NEVER open a PR (or push the branch a PR is built from) without first running `pnpm lint` and confirming it passes with zero errors. `pnpm format` only rewrites formatting; it does NOT catch the type-safety and correctness rules that `pnpm lint` (eslint + prettier `--check`) enforces. CI runs lint, so a PR that skips it will fail. Run, in order: `pnpm lint`, fix every reported error, then `pnpm build` and the relevant specs, and only then push and open the PR.
 
+## CI Tooling: Industry Standards Only
+
+Use the standard, documented mechanism a tool already provides, such as pnpm's
+`minimumReleaseAge` for dependency cooldowns. Never hand-write CI scripts,
+guards, or harnesses that re-verify a tool's own configuration. If a protection
+needs enforcing against edits to its configuration, use code review, CODEOWNERS,
+or branch protection on the configuration files, not a custom check. An agent
+that believes a custom CI check is needed must stop and ask the owner, naming
+the standard mechanism it could not find.
+
 ## Running Specs
 
 ### All Specs

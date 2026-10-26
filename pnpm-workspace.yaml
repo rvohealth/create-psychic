@@ -7,5 +7,10 @@ allowBuilds:
   esbuild: true
   puppeteer: true
 
+# SECURITY — release-age cooldown (3 days, in minutes); pnpm enforces it on
+# every install. Kept under the CVE-patch SLA so routine patching needs no bypass.
+minimumReleaseAge: 4320
+
+# Keep this list @rvoh/* only (reviewed like any other change).
 minimumReleaseAgeExclude:
-  - '@rvoh/dream@2.17.0'
+  - '@rvoh/*'
