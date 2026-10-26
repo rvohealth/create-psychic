@@ -24,7 +24,7 @@
     "eslint": "eslint",
     "build": "cross-env APP_NAME=$npm_package_name APP_VERSION=$npm_package_version echo \"building $npm_package_name...\" && rm -rf dist && echo \"node --version\" && node --version && echo \"{{TSC_COMMAND}} --version\" && {{TSC_COMMAND}} --version && {{TSC_COMMAND}} -p ./tsconfig.build.json && {{TSC_ALIAS_COMMAND}} -p ./tsconfig.build.json",
     "build:spec": "cross-env NODE_ENV=test APP_NAME=$npm_package_name APP_VERSION=$npm_package_version echo \"building $npm_package_name...\" && rm -rf dist && echo \"node --version\" && node --version && echo \"{{TSC_COMMAND}} --version\" && {{TSC_COMMAND}} --version && {{TSC_COMMAND}} --pretty -p ./tsconfig.build-spec.json && {{TSC_ALIAS_COMMAND}} -p ./tsconfig.build-spec.json && ( [ -d ./recordings ] && cp -r ./recordings ./dist/recordings || true ) && ( [ -e .env.test ] && cp .env.test ./dist/ || true )",
-    "web:dev": "cross-env APP_NAME=$npm_package_name APP_VERSION=$npm_package_version NODE_ENV=development WORKER_COUNT=0 node --watch --watch-path=./src --watch-preserve-output --import tsx ./src/main.ts",
+    "web:dev": "cross-env APP_NAME=$npm_package_name APP_VERSION=$npm_package_version NODE_ENV=development WORKER_COUNT=0 nodemon --quiet --no-stdin",
     "worker:dev": "cross-env APP_NAME=$npm_package_name APP_VERSION=$npm_package_version NODE_ENV=development WORKER_SERVICE=1 WORKER_COUNT=1 tsx ./src/worker.ts",
     "ws:dev": "cross-env APP_NAME=$npm_package_name APP_VERSION=$npm_package_version NODE_ENV=development tsx ./src/ws.ts",
     "ws:fspec": "NODE_ENV=test tsx ./src/ws.ts"
@@ -77,6 +77,7 @@
     "express": "4.22.3",
     "kysely-codegen": "~0.20.0",
     "luxon-jest-matchers": "^0.1.14",
+    "nodemon": "^3.1.14",
     "prettier": "^3.9.6",
     "puppeteer": "~25.10.0",
     "supertest": "^7.2.2",
