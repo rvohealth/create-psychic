@@ -14,7 +14,6 @@ export default async function installInitApiDependencies(options: InitPsychicApp
     '@typescript-eslint/parser',
     'cross-env',
     'eslint',
-    'kysely-codegen',
     'luxon-jest-matchers',
     'prettier',
     'supertest',
