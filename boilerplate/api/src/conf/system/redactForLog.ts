@@ -6,9 +6,10 @@
 // `x-auth-token` header are all masked, and so is a harmless name like `tokenCount`. The key
 // is kept, so the log still shows the field was sent. In the logged URL's path, the value of
 // a route parameter whose name contains a blocklisted name, such as `:token` or `:tokenId`, is
-// masked the same way. A path with no route parameters, such as one that matches no route, is
-// logged as received. The `referer` header keeps its URL with the same query-string masking as
-// the logged request URL, and its path is logged as received.
+// masked the same way, in the segment the matched route binds it to. A path with no route
+// parameters, such as one that matches no route, is logged as received. The `referer` header
+// keeps its URL with the same query-string masking as the logged request URL, and its path is
+// logged as received.
 //
 // Objects and arrays nested more than MAX_LOGGED_DEPTH levels deep are replaced with
 // TRUNCATED, so a deeply nested body cannot overflow the stack while it is being logged.
@@ -26,12 +27,18 @@ export function redactBody(body: unknown, blocklist: string[]): unknown {
 
 // masks the values of blocklisted query-string parameters, so
 // `/v1/session?token=abc&page=2` becomes `/v1/session?token=[FILTERED]&page=2`; given the
-// route parameters the router bound (`ctx.params`), it also masks the path segments that hold a
-// blocklisted one, so `/password-resets/abc` matched by `/password-resets/:token` becomes
-// `/password-resets/[FILTERED]`
-export function redactUrl(url: string, blocklist: string[], routeParams?: unknown): string {
+// route parameters the router bound (`ctx.params`) and the path of the route it matched
+// (`ctx.routerPath`), it also masks the path segments that hold a blocklisted one, so
+// `/v1/api-tokens/42/usages/7` matched by `/v1/api-tokens/:apiTokenId/usages/:id` becomes
+// `/v1/api-tokens/[FILTERED]/usages/7`
+export function redactUrl(
+  url: string,
+  blocklist: string[],
+  routeParams?: unknown,
+  routePath?: unknown,
+): string {
   const lowerBlocklist = lowercase(blocklist)
-  return redactQuery(redactPath(url, routeParams, lowerBlocklist), lowerBlocklist)
+  return redactQuery(redactPath(url, routeParams, routePath, lowerBlocklist), lowerBlocklist)
 }
 
 // returns a copy of the request headers for the log: a header whose whole name, ignoring
@@ -78,22 +85,32 @@ function redactQuery(url: string, lowerBlocklist: string[]): string {
   return `${url.slice(0, queryStart)}?${query}`
 }
 
-// The router does not say which segments hold a route parameter, so each blocklisted one's value
-// masks every segment that equals or contains it, decoded or as written, even one that holds it
-// by chance (`tokenId` `1` also masks `v1`), and every segment a value spanning several, such as a
-// splat's (`*path`), overlaps. A value not found in the path at all masks every segment.
-function redactPath(url: string, routeParams: unknown, lowerBlocklist: string[]): string {
-  const values = sensitiveParamValues(routeParams, lowerBlocklist)
-  if (values.length === 0) return url
+// A blocklisted route parameter masks the segments the matched route binds it to, so a `tokenId`
+// of `1` in `/v1/api-tokens/1/scopes/12`, matched by `/v1/api-tokens/:tokenId/scopes/:id`, masks
+// only its own segment, and one bound inside a segment (`confirm-:token`) masks that whole
+// segment. When the route does not line up with the path segment by segment (a splat such as
+// `*path`, an optional `{…}` group, two parameters in one segment, a path that splits differently,
+// such as an absolute URL, or no route at all), or the value is not in a segment the route binds
+// it to, the value masks every segment that equals or contains it instead, decoded or as written,
+// even one that holds it by chance (`v1` for a `tokenId` of `1`), and every segment a value
+// spanning several, such as a splat's, overlaps. A value not found in the path at all masks every
+// segment.
+function redactPath(url: string, routeParams: unknown, routePath: unknown, lowerBlocklist: string[]): string {
+  const params = sensitiveParams(routeParams, lowerBlocklist)
+  if (params.length === 0) return url
 
   const queryStart = url.indexOf('?')
   const pathEnd = queryStart === -1 ? url.length : queryStart
   const segments = url.slice(0, pathEnd).split('/')
   const decoded = segments.map(segment => decodeOrKeep(segment, segment))
+  const routeNames = routeParamNames(routePath, segments)
 
   const masked = new Set<number>()
-  for (const value of values) {
-    let holding = [...segmentsOverlapping(value, segments), ...segmentsOverlapping(value, decoded)]
+  for (const [name, value] of params) {
+    const bound = routeNames.flatMap((routeName, index) => (routeName === name ? [index] : []))
+    let holding = bound.some(index => segments[index]?.includes(value) || decoded[index]?.includes(value))
+      ? bound
+      : [...segmentsOverlapping(value, segments), ...segmentsOverlapping(value, decoded)]
     if (holding.length === 0) holding = segments.flatMap((segment, index) => (segment === '' ? [] : [index]))
     for (const index of holding) masked.add(index)
   }
@@ -102,14 +119,32 @@ function redactPath(url: string, routeParams: unknown, lowerBlocklist: string[])
   return path + url.slice(pathEnd)
 }
 
-function sensitiveParamValues(routeParams: unknown, lowerBlocklist: string[]): string[] {
+function sensitiveParams(routeParams: unknown, lowerBlocklist: string[]): [string, string][] {
   if (typeof routeParams !== 'object' || routeParams === null) return []
 
-  const values: string[] = []
+  const params: [string, string][] = []
   for (const [name, value] of Object.entries(routeParams) as [string, unknown][]) {
-    if (typeof value === 'string' && value !== '' && isSensitive(name, lowerBlocklist)) values.push(value)
+    if (typeof value !== 'string' || value === '' || !isSensitive(name, lowerBlocklist)) continue
+    params.push([name, value])
   }
-  return values
+  return params
+}
+
+// the name of the parameter in each segment of the matched route's path, or no names at all when
+// those segments do not line up one to one with the logged path's: the route path is not a string,
+// uses route syntax other than `:name` (`*`, `{`, `\`, a quoted name and the like), or has two
+// parameters in a segment, or the two paths split into different numbers of segments (the logged
+// path may add one empty segment, after a trailing slash)
+function routeParamNames(routePath: unknown, pathSegments: string[]): (string | undefined)[] {
+  if (typeof routePath !== 'string' || /[*?+!(){}[\]\\"]/.test(routePath)) return []
+
+  const routeSegments = routePath.split('/')
+  const trailingSlash = pathSegments.length === routeSegments.length + 1 && pathSegments.at(-1) === ''
+  if (pathSegments[0] !== '' || routeSegments[0] !== '') return []
+  if (pathSegments.length !== routeSegments.length && !trailingSlash) return []
+  if (routeSegments.some(segment => segment.indexOf(':') !== segment.lastIndexOf(':'))) return []
+
+  return routeSegments.map(segment => /:([\w$]+)/.exec(segment)?.[1])
 }
 
 // the indexes of the segments that any occurrence of `value` in `segments.join('/')` overlaps

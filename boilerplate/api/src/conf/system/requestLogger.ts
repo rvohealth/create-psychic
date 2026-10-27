@@ -49,15 +49,23 @@ export default function requestLogger(options: RequestLoggerOptions = {}): Koa.M
     // a `bodyBlocklist` name, ignoring case, such as `token` from `SENSITIVE_FIELDS` in
     // conf/app.ts (`?token=…`, `{ resetToken: … }`, `x-auth-token`, `:token`, `:tokenId`), is
     // logged as `[FILTERED]`, so a request to `/password-resets/:token` logs
-    // `/password-resets/[FILTERED]`. A header whose whole name is in `headerBlocklist`, such as
-    // `authorization` or `cookie`, is left out of the log instead. Under any other name a token is
-    // logged as sent. These paths are logged as received, with only their query string masked: a
-    // path that matches no route (a 404), a request with a method its route does not take (a 405,
-    // or an `OPTIONS` request) and the path in a `referer` header. For a link such as an emailed
-    // sign-in or reset link, the URL fragment (`/reset-password#token=…`), which browsers never
-    // send to the server, not even in a `referer`, is still the safest place for the token; have
-    // the page's JavaScript pass it on under a masked name.
-    const url = redactUrl(ctx.url, bodyBlocklist, ctx.params)
+    // `/password-resets/[FILTERED]`. In the path, only the segment the matched route binds such a
+    // parameter to is masked, so a request to `/v1/api-tokens/42/usages/1420` matched by
+    // `/v1/api-tokens/:apiTokenId/usages/:id` logs `/v1/api-tokens/[FILTERED]/usages/1420`. A
+    // header whose whole name is in `headerBlocklist`, such as `authorization` or `cookie`, is left
+    // out of the log instead. Under any other name a token is logged as sent. These paths are
+    // logged as received, with only their query string masked: a path that matches no route (a
+    // 404), a request with a method its route does not take (a 405, or an `OPTIONS` request), a
+    // request that middleware mounted after this logger answers before the router runs (such as a
+    // rate limiter's 429) and the path in a `referer` header. To keep such middleware's requests out
+    // of this log, mount it ahead of the logger: with `psy.use(…)` in conf/app.ts above the hook
+    // that mounts this logger, which keeps it after CORS, or with `psy.use('before-middleware', …)`,
+    // which also works from an initializer but runs before CORS, so a browser sees a CORS failure
+    // instead of the 429. For a link such as an emailed sign-in or reset link, the URL fragment
+    // (`/reset-password#token=…`), which browsers never send to the server, not even in a
+    // `referer`, is still the safest place for the token; have the page's JavaScript pass it on
+    // under a masked name.
+    const url = redactUrl(ctx.url, bodyBlocklist, ctx.params, ctx.routerPath)
     const message = `${ctx.method} ${url} ${status} ${duration}ms`
 
     let level: string

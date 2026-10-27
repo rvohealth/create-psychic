@@ -29,6 +29,7 @@ interface LoggedContext {
   path: string
   status: number
   params?: unknown
+  routerPath?: unknown
   headers: Record<string, unknown>
   request: { body?: unknown }
 }
@@ -37,12 +38,13 @@ type Middleware = (ctx: LoggedContext, next: () => Promise<void>) => Promise<voi
 
 // What the rest of the app leaves on the context by the time `next()` returns: the response
 // status and, when the path matched a route that takes the request's method, the route
-// parameters @koa/router bound in `ctx.params` (decoded). Koa, @koa/router and Psychic are not run
-// here; each case binds what a generated app's PsychicServer (psychic 3.18.1, Koa 3.2.1,
-// @koa/router 15.7.0) binds for that request.
+// parameters @koa/router bound in `ctx.params` (decoded) and the matched route's path in
+// `ctx.routerPath`. Koa, @koa/router and Psychic are not run here; each case binds what a
+// generated app's PsychicServer (psychic 3.18.1, Koa 3.2.1, @koa/router 15.7.0) binds for that
+// request.
 interface Outcome {
   status: number
-  params?: Record<string, string>
+  route?: { path: string; params: Record<string, string> }
   headers?: Record<string, unknown>
 }
 
@@ -62,7 +64,10 @@ async function logRequest(method: string, url: string, outcome: Outcome): Promis
     request: {},
   }
   await middleware(ctx, () => {
-    if (outcome.params) ctx.params = outcome.params
+    if (outcome.route) {
+      ctx.params = outcome.route.params
+      ctx.routerPath = outcome.route.path
+    }
     ctx.status = outcome.status
     return Promise.resolve()
   })
@@ -75,7 +80,7 @@ describe('boilerplate/api/src/conf/system/requestLogger.ts', () => {
   it('masks a path segment bound to a route parameter whose name contains a listed name', async () => {
     const entry = await logRequest('GET', '/password-resets/k3yV4lue?page=2', {
       status: 200,
-      params: { token: 'k3yV4lue' },
+      route: { path: '/password-resets/:token', params: { token: 'k3yV4lue' } },
     })
 
     expect(entry.message).toMatch(/^GET \/password-resets\/\[FILTERED\]\?page=2 200 \d+ms$/)
@@ -86,34 +91,67 @@ describe('boilerplate/api/src/conf/system/requestLogger.ts', () => {
   it('logs the values of other route parameters as sent, with the query string masked', async () => {
     const entry = await logRequest('GET', '/v1/places/42/bookings/7?token=q', {
       status: 200,
-      params: { placeId: '42', id: '7' },
+      route: { path: '/v1/places/:placeId/bookings/:id', params: { placeId: '42', id: '7' } },
     })
 
     expect(entry.meta.req.url).toBe(`/v1/places/42/bookings/7?token=${FILTERED}`)
   })
 
+  // psychic's `r.namespace('v1', r => r.resources('api-tokens', r => r.resources('usages')))` names
+  // the parent's key `:apiTokenId`
+  it("masks only the segment of a nested route's listed-name parameter, keeping the child id and `v1`", async () => {
+    const route = '/v1/api-tokens/:apiTokenId/usages/:id'
+
+    expect(
+      (
+        await logRequest('GET', '/v1/api-tokens/42/usages/1420', {
+          status: 200,
+          route: { path: route, params: { apiTokenId: '42', id: '1420' } },
+        })
+      ).meta.req.url,
+    ).toBe(`/v1/api-tokens/${FILTERED}/usages/1420`)
+    expect(
+      (
+        await logRequest('GET', '/v1/api-tokens/1/usages/7', {
+          status: 200,
+          route: { path: route, params: { apiTokenId: '1', id: '7' } },
+        })
+      ).meta.req.url,
+    ).toBe(`/v1/api-tokens/${FILTERED}/usages/7`)
+  })
+
   it('masks a route parameter named like `tokenId`', async () => {
-    const entry = await logRequest('DELETE', '/v1/api-tokens/12', { status: 204, params: { tokenId: '12' } })
+    const entry = await logRequest('DELETE', '/v1/api-tokens/12', {
+      status: 204,
+      route: { path: '/v1/api-tokens/:tokenId', params: { tokenId: '12' } },
+    })
 
     expect(entry.meta.req.url).toBe(`/v1/api-tokens/${FILTERED}`)
   })
 
   it('masks every segment a splat value spans', async () => {
-    // `/files/*secretPath`
-    const entry = await logRequest('GET', '/files/a/b%20c', { status: 200, params: { secretPath: 'a/b c' } })
+    const entry = await logRequest('GET', '/files/a/b%20c', {
+      status: 200,
+      route: { path: '/files/*secretPath', params: { secretPath: 'a/b c' } },
+    })
 
     expect(entry.meta.req.url).toBe(`/files/${FILTERED}/${FILTERED}`)
   })
 
   it('masks the whole segment when the value is only part of one', async () => {
-    // `/v/:a-:tokenPart`
-    const entry = await logRequest('GET', '/v/x-s3cret', { status: 200, params: { a: 'x', tokenPart: 's3cret' } })
+    const entry = await logRequest('GET', '/v/x-s3cret', {
+      status: 200,
+      route: { path: '/v/:a-:tokenPart', params: { a: 'x', tokenPart: 's3cret' } },
+    })
 
     expect(entry.meta.req.url).toBe(`/v/${FILTERED}`)
   })
 
   it('masks the path of a matched route that responds 404', async () => {
-    const entry = await logRequest('GET', '/password-resets/k3yV4lue', { status: 404, params: { token: 'k3yV4lue' } })
+    const entry = await logRequest('GET', '/password-resets/k3yV4lue', {
+      status: 404,
+      route: { path: '/password-resets/:token', params: { token: 'k3yV4lue' } },
+    })
 
     expect(entry.meta.req.url).toBe(`/password-resets/${FILTERED}`)
     expect(entry.level).toBe('warn')
@@ -122,7 +160,10 @@ describe('boilerplate/api/src/conf/system/requestLogger.ts', () => {
   it('masks the path of a request that ends in a 500', async () => {
     const entry = await logRequest('GET', '/v1/guests/9/invitations/s%2Fx', {
       status: 500,
-      params: { guestId: '9', invitationToken: 's/x' },
+      route: {
+        path: '/v1/guests/:guestId/invitations/:invitationToken',
+        params: { guestId: '9', invitationToken: 's/x' },
+      },
     })
 
     expect(entry.meta.req.url).toBe(`/v1/guests/9/invitations/${FILTERED}`)
@@ -146,10 +187,19 @@ describe('boilerplate/api/src/conf/system/requestLogger.ts', () => {
     )
   })
 
+  it('logs a request that middleware answers before the router runs (such as a 429) as received', async () => {
+    // a rate limiter mounted after the logger answers without calling `next()`, so the router
+    // binds neither `ctx.params` nor `ctx.routerPath`
+    const entry = await logRequest('GET', '/password-resets/k3yV4lue?token=q', { status: 429 })
+
+    expect(entry.meta.req.url).toBe(`/password-resets/k3yV4lue?token=${FILTERED}`)
+    expect(entry.level).toBe('warn')
+  })
+
   it("logs the referer's path as received, with its query string masked", async () => {
     const entry = await logRequest('GET', '/password-resets/k3yV4lue', {
       status: 200,
-      params: { token: 'k3yV4lue' },
+      route: { path: '/password-resets/:token', params: { token: 'k3yV4lue' } },
       headers: { referer: 'https://app.example.com/reset-password/k3yV4lue?token=k3yV4lue&step=2' },
     })
 

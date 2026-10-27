@@ -324,8 +324,9 @@ describe('boilerplate/api/src/conf/system/redactForLog.ts', () => {
         )
       })
 
-      // fails closed: it cannot tell where the router bound the value, so `v1` is masked too
-      it('masks every segment that contains the value, even one that holds it by chance', () => {
+      // fails closed: without the route it cannot tell where the router bound the value, so `v1`
+      // and `12` are masked too
+      it('without the matched route, masks every segment that contains the value, even one that holds it by chance', () => {
         expect(redactUrl('/v1/api-tokens/1/scopes/12', blocklist, { tokenId: '1', id: '12' })).toBe(
           `/${FILTERED}/api-tokens/${FILTERED}/scopes/${FILTERED}`,
         )
@@ -377,6 +378,136 @@ describe('boilerplate/api/src/conf/system/redactForLog.ts', () => {
 
         expect(redactUrl('/x/1/abc', blocklist, params)).toBe(`/x/1/${FILTERED}`)
         expect(params).toEqual({ token: 'abc', id: '1' })
+      })
+
+      // The fourth argument is what @koa/router leaves in `ctx.routerPath`: the path of the route it
+      // matched, such as `/v1/api-tokens/:apiTokenId/usages/:id` for psychic's
+      // `r.namespace('v1', r => r.resources('api-tokens', r => r.resources('usages')))`.
+      describe('and the route the router matched', () => {
+        it('masks only the segment the route binds a listed-name parameter to', () => {
+          expect(
+            redactUrl(
+              '/v1/api-tokens/42/usages/1420',
+              blocklist,
+              { apiTokenId: '42', id: '1420' },
+              '/v1/api-tokens/:apiTokenId/usages/:id',
+            ),
+          ).toBe(`/v1/api-tokens/${FILTERED}/usages/1420`)
+          expect(
+            redactUrl(
+              '/v1/api-tokens/1/scopes/12',
+              blocklist,
+              { tokenId: '1', id: '12' },
+              '/v1/api-tokens/:tokenId/scopes/:id',
+            ),
+          ).toBe(`/v1/api-tokens/${FILTERED}/scopes/12`)
+        })
+
+        it('lines up a path with a trailing slash, and still masks the query string by name', () => {
+          expect(
+            redactUrl(
+              '/v1/api-tokens/1/usages/1420/?token=q&page=2',
+              blocklist,
+              { apiTokenId: '1', id: '1420' },
+              '/v1/api-tokens/:apiTokenId/usages/:id',
+            ),
+          ).toBe(`/v1/api-tokens/${FILTERED}/usages/1420/?token=${FILTERED}&page=2`)
+        })
+
+        it('masks a percent-encoded or malformed segment the route binds a listed-name parameter to', () => {
+          expect(
+            redactUrl(
+              '/v1/guests/9/invitations/s%2Fx',
+              blocklist,
+              { guestId: '9', invitationToken: 's/x' },
+              '/v1/guests/:guestId/invitations/:invitationToken',
+            ),
+          ).toBe(`/v1/guests/9/invitations/${FILTERED}`)
+          expect(
+            redactUrl('/password-resets/%E0%A4%A', blocklist, { token: '%E0%A4%A' }, '/password-resets/:token'),
+          ).toBe(`/password-resets/${FILTERED}`)
+        })
+
+        // `abc` in the second segment is bound to `:id`, which is not a listed name
+        it('masks the whole segment when the parameter is only part of it', () => {
+          expect(
+            redactUrl('/tokens/7/confirm-s3cret', blocklist, { id: '7', token: 's3cret' }, '/tokens/:id/confirm-:token'),
+          ).toBe(`/tokens/7/${FILTERED}`)
+          expect(
+            redactUrl('/tokens/abc/confirm-abc', blocklist, { id: 'abc', token: 'abc' }, '/tokens/:id/confirm-:token'),
+          ).toBe(`/tokens/abc/${FILTERED}`)
+        })
+
+        it('masks every segment the route binds a repeated listed-name parameter to', () => {
+          expect(redactUrl('/t/a/b/c', blocklist, { token: 'c' }, '/t/:token/b/:token')).toBe(
+            `/t/${FILTERED}/b/${FILTERED}`,
+          )
+        })
+
+        // the route cannot say which segment holds the value, so each segment that contains it is masked
+        it('falls back to masking every segment that contains the value for a splat, an optional group or two parameters in one segment', () => {
+          expect(
+            redactUrl('/files/a/b%20c/edit?page=2', blocklist, { secretPath: 'a/b c' }, '/files/*secretPath/edit'),
+          ).toBe(`/files/${FILTERED}/${FILTERED}/edit?page=2`)
+          expect(
+            redactUrl('/opt/12/s3cret12', blocklist, { id: '12', tokenPart: 's3cret12' }, '/opt/:id{/:tokenPart}'),
+          ).toBe(`/opt/12/${FILTERED}`)
+          expect(redactUrl('/v1/v/1-1', blocklist, { a: '1', tokenPart: '1' }, '/v1/v/:a-:tokenPart')).toBe(
+            `/${FILTERED}/v/${FILTERED}`,
+          )
+          expect(redactUrl('/v/x-s3cret', blocklist, { a: 'x', tokenPart: 's3cret' }, '/v/:a-:tokenPart')).toBe(
+            `/v/${FILTERED}`,
+          )
+        })
+
+        it('falls back to masking every segment that contains the value when the path does not split like the route', () => {
+          // an absolute-form request target
+          expect(
+            redactUrl(
+              'http://example.test/password-resets/k3yV4lue',
+              blocklist,
+              { token: 'k3yV4lue' },
+              '/password-resets/:token',
+            ),
+          ).toBe(`http://example.test/password-resets/${FILTERED}`)
+          // a route a `router.use()` prefix matched, with more segments after it
+          expect(
+            redactUrl('/v1/api-tokens/1/scopes/12', blocklist, { tokenId: '1', id: '12' }, '/v1/api-tokens/:tokenId'),
+          ).toBe(`/${FILTERED}/api-tokens/${FILTERED}/scopes/${FILTERED}`)
+        })
+
+        // Koa routes `/a\k3yV4lue#/` as `/a/k3yV4lue`, so the route's `:token` lines up with the
+        // logged path's empty last segment, not with the one that holds the value
+        it('falls back to masking every segment that contains the value when it is not in the segment the route binds it to', () => {
+          expect(redactUrl('/a\\k3yV4lue#/', blocklist, { x: 'a', token: 'k3yV4lue' }, '/:x/:token')).toBe(
+            `/${FILTERED}/`,
+          )
+          expect(redactUrl('/a\\k3yV4lue/#', blocklist, { x: 'a', token: 'k3yV4lue' }, '/:x/:token')).toBe(
+            `/${FILTERED}/#`,
+          )
+          // a listed-name parameter the route does not name, such as one an earlier layer bound
+          expect(redactUrl('/password-resets/k3yV4lue', blocklist, { token: 'k3yV4lue' }, '/password-resets/:id')).toBe(
+            `/password-resets/${FILTERED}`,
+          )
+        })
+
+        it('falls back to masking every segment that contains the value when the route is not a string', () => {
+          expect(
+            redactUrl('/v1/api-tokens/1/scopes/12', blocklist, { tokenId: '1', id: '12' }, /^\/v1\/api-tokens\/(\d+)/),
+          ).toBe(`/${FILTERED}/api-tokens/${FILTERED}/scopes/${FILTERED}`)
+          expect(redactUrl('/v1/api-tokens/1/scopes/12', blocklist, { tokenId: '1', id: '12' }, undefined)).toBe(
+            `/${FILTERED}/api-tokens/${FILTERED}/scopes/${FILTERED}`,
+          )
+        })
+
+        it('leaves the path as sent when no listed-name parameter was bound', () => {
+          expect(redactUrl('/v1/places/42/bookings/7', blocklist, { placeId: '42', id: '7' }, '/v1/places/:placeId/bookings/:id')).toBe(
+            '/v1/places/42/bookings/7',
+          )
+          expect(redactUrl('/password-resets/k3yV4lue', blocklist, undefined, '/password-resets/:token')).toBe(
+            '/password-resets/k3yV4lue',
+          )
+        })
       })
     })
   })
@@ -508,11 +639,12 @@ describe('boilerplate/api/src/conf/system/redactForLog.ts', () => {
       expect(source).toContain("import { redactBody, redactHeaders, redactUrl } from './redactForLog.js'")
       expect(source).toContain('redactHeaders(ctx.headers, headerBlocklist, bodyBlocklist)')
       expect(source).toContain('redactBody(ctx.request.body, bodyBlocklist)')
-      expect(source).toContain('redactUrl(ctx.url, bodyBlocklist, ctx.params)')
+      expect(source).toContain('redactUrl(ctx.url, bodyBlocklist, ctx.params, ctx.routerPath)')
       expect(source.match(/ctx\.(?:request\.)?headers?\b/g)).toHaveLength(1)
       expect(source.match(/ctx\.request\.body/g)).toHaveLength(1)
       expect(source.match(/ctx\.url/g)).toHaveLength(1)
       expect(source.match(/ctx\.params/g)).toHaveLength(1)
+      expect(source.match(/ctx\.routerPath/g)).toHaveLength(1)
     })
 
     it('stays free of imports, so this suite can load it without winston or koa', () => {
