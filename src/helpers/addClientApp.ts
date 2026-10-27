@@ -51,21 +51,29 @@ export default async function addClientApp({
   // never `options.packageManager`.
   const fePm = frontEndPackageManager(options)
 
-  const initPackageManager = initilizePackageManagerCmd(fePm)
   const createCmd = viteCmd(fePm, clientRootFolderName, `${client}-ts`)
+  const clientRoot = path.join(apiRoot, '..', clientRootFolderName)
+  const onStdout = (message: string) => {
+    logger.logContinueProgress(
+      colorize(`[${clientRootFolderName}]`, { color: sourceColor }) + ' ' + message,
+      {
+        logPrefixColor: sourceColor,
+      },
+    )
+  }
+
+  // Each folder goes to sspawn as `cwd`, never into the command text (see
+  // sspawn): the client is scaffolded from the app folder, then its package
+  // manager is readied inside the new client folder.
+  const scaffoldClient = async (scaffoldCmd: string) => {
+    await sspawn(scaffoldCmd, { cwd: rootPath, onStdout })
+    const initCmd = initializePackageManagerCmd(fePm)
+    if (initCmd) await sspawn(initCmd, { cwd: clientRoot, onStdout })
+  }
 
   switch (client) {
     case 'react':
-      await sspawn(`cd ${rootPath} && ${createCmd} && cd ${clientRootFolderName} ${initPackageManager}`, {
-        onStdout: message => {
-          logger.logContinueProgress(
-            colorize(`[${clientRootFolderName}]`, { color: sourceColor }) + ' ' + message,
-            {
-              logPrefixColor: sourceColor,
-            },
-          )
-        },
-      })
+      await scaffoldClient(createCmd)
 
       fs.writeFileSync(
         path.join(apiRoot, '..', clientRootFolderName, 'vite.config.ts'),
@@ -81,16 +89,7 @@ export default async function addClientApp({
       break
 
     case 'vue':
-      await sspawn(`cd ${rootPath} && ${createCmd} && cd ${clientRootFolderName} ${initPackageManager}`, {
-        onStdout: message => {
-          logger.logContinueProgress(
-            colorize(`[${clientRootFolderName}]`, { color: sourceColor }) + ' ' + message,
-            {
-              logPrefixColor: sourceColor,
-            },
-          )
-        },
-      })
+      await scaffoldClient(createCmd)
 
       fs.writeFileSync(
         path.join(apiRoot, '..', clientRootFolderName, 'vite.config.ts'),
@@ -101,19 +100,7 @@ export default async function addClientApp({
       break
 
     case 'nextjs': {
-      await sspawn(
-        `cd ${rootPath} && ${nextAppCmd(fePm, clientRootFolderName)} && cd ${clientRootFolderName} ${initPackageManager}`,
-        {
-          onStdout: message => {
-            logger.logContinueProgress(
-              colorize(`[${clientRootFolderName}]`, { color: sourceColor }) + ' ' + message,
-              {
-                logPrefixColor: sourceColor,
-              },
-            )
-          },
-        },
-      )
+      await scaffoldClient(nextAppCmd(fePm, clientRootFolderName))
 
       const nextConfigPath = path.join(apiRoot, '..', clientRootFolderName, 'next.config.ts')
       const packageJsonPath = path.join(apiRoot, '..', clientRootFolderName, 'package.json')
@@ -133,18 +120,8 @@ export default async function addClientApp({
       // non-interactive: `--template minimal` skips the template picker and
       // `-M ""` (empty modules) skips the "browse and install modules?" prompt
       // that otherwise hangs CI. `--no-install` defers install to the shared step.
-      await sspawn(
-        `cd ${rootPath} && ${dlxCmdForPackageManager(fePm, 'nuxi@latest')} init ${clientRootFolderName} --template minimal --no-install --packageManager ${fePm} --no-gitInit -M "" && cd ${clientRootFolderName} ${initPackageManager}`,
-        {
-          onStdout: message => {
-            logger.logContinueProgress(
-              colorize(`[${clientRootFolderName}]`, { color: sourceColor }) + ' ' + message,
-              {
-                logPrefixColor: sourceColor,
-              },
-            )
-          },
-        },
+      await scaffoldClient(
+        `${dlxCmdForPackageManager(fePm, 'nuxi@latest')} init ${clientRootFolderName} --template minimal --no-install --packageManager ${fePm} --no-gitInit -M ""`,
       )
 
       const nuxtConfigPath = path.join(apiRoot, '..', clientRootFolderName, 'nuxt.config.ts')
@@ -180,16 +157,7 @@ export default async function addClientApp({
   }
 
   // only bother installing packages if not in test env to save time
-  await sspawn(`cd ${path.join(apiRoot, '..', clientRootFolderName)} && ${installCmd(fePm)}`, {
-    onStdout: message => {
-      logger.logContinueProgress(
-        colorize(`[${clientRootFolderName}]`, { color: sourceColor }) + ' ' + message,
-        {
-          logPrefixColor: sourceColor,
-        },
-      )
-    },
-  })
+  await sspawn(installCmd(fePm), { cwd: clientRoot, onStdout })
 
   logger.logEndProgress()
 }
@@ -231,15 +199,17 @@ function clientYarnrcYml() {
   )
 }
 
-function initilizePackageManagerCmd(packageManager: PsychicPackageManager) {
+// Run inside the new client folder, right after it is scaffolded; null when the
+// package manager needs no setup there.
+function initializePackageManagerCmd(packageManager: PsychicPackageManager): string | null {
   const lockfile = getLockfileName(packageManager)
   switch (packageManager) {
     case 'yarn':
-      return `&& touch ${lockfile} && ${enableCmdForPackageManager('yarn')} && yarn set version stable`
+      return `touch ${lockfile} && ${enableCmdForPackageManager('yarn')} && yarn set version stable`
     case 'pnpm':
     case 'npm':
     case 'bun':
-      return ''
+      return null
     default:
       // deno never drives the front end (frontEndPackageManager maps deno → pnpm)
       throw new Error(`front-end package manager cannot be: ${packageManager as string}`)

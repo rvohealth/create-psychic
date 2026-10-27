@@ -22,6 +22,14 @@ describe('PackagejsonBuilder', () => {
       expect(JSON.parse(res).name).toEqual('howyadoin')
     })
 
+    // npm's lowercase rule covers names published to the registry; pnpm, npm,
+    // yarn and bun install, run and audit a private app named `MyApp` without a
+    // warning, so the name is kept as typed
+    it('keeps a capitalized appName as typed', async () => {
+      const res = await PackagejsonBuilder.buildAPI('MyApp', baseOptions)
+      expect(JSON.parse(res).name).toEqual('MyApp')
+    })
+
     it('supports the Node 24 security baseline', async () => {
       const res = await PackagejsonBuilder.buildAPI('howyadoin', baseOptions)
       expect(JSON.parse(res).engines).toEqual({ node: '>=24' })

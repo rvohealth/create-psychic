@@ -8,6 +8,7 @@ import newPsychicApp, {
   psychicPackageManagers,
   selectablePsychicRuntimes,
 } from './newPsychicApp.js'
+import validateAppName from './validateAppName.js'
 
 export default function createPsyCli() {
   const program = new Command()
@@ -15,7 +16,11 @@ export default function createPsyCli() {
   program
     .command('new')
     .description('create a new psychic app')
-    .argument('<name>', 'name of the app you want to create')
+    .argument(
+      '<name>',
+      'name of the app you want to create: a letter, then letters, digits, dashes (-) or underscores (_)',
+      validateAppName,
+    )
     .option(
       '--package-manager <packageManager>',
       `One of: ${psychicPackageManagers.join(', ')}. The package manager to use`,
