@@ -195,7 +195,6 @@ export default class PackagejsonBuilder {
 
     if (!options.websockets) {
       removeScript(packagejson, 'ws:dev')
-      removeScript(packagejson, 'ws:fspec')
       removeDependency(packagejson, '@rvoh/psychic-websockets')
       removeDependency(packagejson, '@socket.io/redis-adapter')
       removeDependency(packagejson, '@socket.io/redis-emitter')

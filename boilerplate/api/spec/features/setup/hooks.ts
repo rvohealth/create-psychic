@@ -38,6 +38,18 @@ beforeAll(async () => {
   server = new PsychicServer()
   await server.start(parseInt(process.env.DEV_SERVER_PORT || '7778'))
 
+  /*
+   * start websocket server
+   *
+   * a feature spec that needs a live Ws.emit push starts the websocket server
+   * here, in the spec worker beside the api server, and never as a separate
+   * process (such as a server launched from globalSetup.ts), for two reasons:
+   *   - Dream gives each spec worker its own test database, so a separate
+   *     process can read a different one and miss the rows a spec creates
+   *   - in test, websockets use the in-process adapter (see
+   *     conf/initializers/websockets.ts), so a separate process never
+   *     receives a Ws.emit made in the spec worker
+   */
   /** uncomment if a feature spec needs a live Ws.emit push to reach the browser */
   // cable = new Cable()
   // await cable.start(8889)
@@ -79,7 +91,9 @@ afterEach(async ctx => {
 })
 
 afterAll(async () => {
-  await server.stop()
+  // the websocket server stops first, so a failing server.stop() cannot leave
+  // its fixed port taken when the next spec file starts one
   /** uncomment if a feature spec needs a live Ws.emit push to reach the browser */
   // await cable?.stop()
+  await server.stop()
 })

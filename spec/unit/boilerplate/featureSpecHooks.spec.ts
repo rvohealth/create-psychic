@@ -28,4 +28,16 @@ describe('boilerplate/api/spec/features/setup/hooks.ts', () => {
     expect(resetIndex).toBeGreaterThan(-1)
     expect(screenshotIndex).toBeLessThan(resetIndex)
   })
+
+  // The commented-out websocket server listens on a fixed port. Stopping it before
+  // the api server means a failing `server.stop()` cannot leave that port taken
+  // when the next spec file starts its own.
+  it('stops the commented-out websocket server before the api server', () => {
+    const hooks = readBoilerplateFeatureSpecHooks()
+    const cableStopIndex = hooks.indexOf('// await cable?.stop()')
+    const serverStopIndex = hooks.indexOf('await server.stop()')
+    expect(cableStopIndex).toBeGreaterThan(-1)
+    expect(serverStopIndex).toBeGreaterThan(-1)
+    expect(cableStopIndex).toBeLessThan(serverStopIndex)
+  })
 })

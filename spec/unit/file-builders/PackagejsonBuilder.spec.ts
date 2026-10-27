@@ -71,6 +71,7 @@ describe('PackagejsonBuilder', () => {
 
         expect(JSON.parse(res).scripts['client']).toBeUndefined()
         expect(JSON.parse(res).scripts['client:fspec']).toBeUndefined()
+        expect(JSON.parse(res).scripts['ws:dev']).toBeUndefined()
       })
     })
 
@@ -363,6 +364,18 @@ describe('PackagejsonBuilder', () => {
         )
 
         expect(Object.keys(JSON.parse(res).dependencies)).not.toEqual(expect.arrayContaining(['bullmq']))
+      })
+
+      // Feature specs start the websocket server inside the spec worker
+      // (spec/features/setup/hooks.ts), never as a separate process, so the app
+      // gets no script for running one under test.
+      it('runs the websocket server with ws:dev and has no ws:fspec script', async () => {
+        const options: NewPsychicAppCliOptions = { ...baseOptions, websockets: true }
+        const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
+        const scripts = (JSON.parse(res) as { scripts: Record<string, string | undefined> }).scripts
+
+        expect(scripts['ws:dev']).toContain('NODE_ENV=development tsx ./src/ws.ts')
+        expect(scripts['ws:fspec']).toBeUndefined()
       })
     })
 
