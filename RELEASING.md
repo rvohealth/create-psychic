@@ -36,7 +36,10 @@ trusted publisher on npm:
 
 - The workflow runs on `release: published`, so a _draft_ release does not
   publish anything until you click **Publish release**.
-- Never add `NODE_AUTH_TOKEN` to the release workflow; its presence forces the
-  legacy token path and disables OIDC trusted publishing.
+- Never give the release workflow a real npm token as `NODE_AUTH_TOKEN`. npm
+  tries OIDC trusted publishing first, but if that exchange fails it publishes
+  with the token in `NODE_AUTH_TOKEN` instead, without a provenance attestation.
+  The workflow leaves `NODE_AUTH_TOKEN` at the placeholder `actions/setup-node`
+  sets, which is not a valid token, so a failed exchange fails the release.
 - Publishing still runs the package's `prepack`/`build`, so a broken build
   blocks the release.

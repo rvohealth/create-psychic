@@ -21,18 +21,20 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
+      # This job publishes with the npm that Node 26 bundles (11.12.1 or later;
+      # trusted publishing needs 11.5.1 or later). Installing npm@latest here
+      # would run npm's newest release, which no cooldown covers, in the job
+      # that can publish.
       - uses: actions/setup-node@v6
         with:
           node-version: "26"
           registry-url: "https://registry.npmjs.org"
           package-manager-cache: false # never cache dependencies in release builds
 
-      - name: Enable corepack
-        run: corepack enable
-
-      # Trusted publishing requires npm >= 11.5.1; Node 24 bundles an older npm.
-      - name: Upgrade npm to a trusted-publishing-capable version
-        run: npm install --global npm@latest
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          version: 12.14.0
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -49,7 +51,10 @@ jobs:
       - name: Build
         run: pnpm build
 
-      # Do NOT set NODE_AUTH_TOKEN — its presence forces the legacy token path
-      # and disables OIDC trusted publishing. npm publish emits provenance.
+      # npm publish tries OIDC trusted publishing first and, when that works,
+      # adds the provenance attestation. If the OIDC exchange fails, npm falls
+      # back to the token in NODE_AUTH_TOKEN. setup-node sets that variable to a
+      # placeholder, which is not a valid token, so the publish fails instead.
+      # Never set NODE_AUTH_TOKEN to a real npm token.
       - name: Publish to npm
         run: npm publish
