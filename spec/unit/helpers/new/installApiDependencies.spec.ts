@@ -75,7 +75,7 @@ describe('installApiDependencies', () => {
       })
 
       expect(vi.mocked(sspawn).mock.calls[0]?.[0]).toContain(
-        `(command -v ${packageManager} >/dev/null 2>&1 || corepack enable ${packageManager})`,
+        `(${packageManager} --version >/dev/null 2>&1 || corepack enable ${packageManager})`,
       )
     },
   )

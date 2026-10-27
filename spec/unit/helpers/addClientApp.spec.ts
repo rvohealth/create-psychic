@@ -77,11 +77,32 @@ describe('addClientApp', () => {
     expect(calls.map(([command, spawnOptions]) => [command, (spawnOptions as { cwd: string }).cwd])).toEqual([
       ['npx create-vite@9.0.7 client --template react-ts', './howyadoin'],
       [
-        'touch yarn.lock && (command -v yarn >/dev/null 2>&1 || corepack enable yarn) && yarn set version stable',
+        'touch yarn.lock && (yarn --version >/dev/null 2>&1 || corepack enable yarn) && yarn set version stable',
         clientRoot,
       ],
       ['touch yarn.lock && yarn install', clientRoot],
     ])
     expectNoPathInCommands(calls)
+  })
+
+  // Outside corepack, `yarn set version stable` records the release it fetched as
+  // `yarnPath` in .yarnrc.yml, and a global Yarn 1 hands the install to that
+  // release only while the key is still there.
+  it('keeps the yarnPath that `yarn set version stable` adds to the client .yarnrc.yml until the install', async () => {
+    let yarnrcAtInstall: string | undefined
+    vi.mocked(sspawn).mockImplementation((command, spawnOptions) => {
+      const yarnrcPath = path.join(spawnOptions?.cwd ?? '', '.yarnrc.yml')
+      if (command.includes('yarn set version stable')) {
+        fs.appendFileSync(yarnrcPath, 'yarnPath: .yarn/releases/yarn-4.18.1.cjs\n')
+      }
+      if (command.includes('yarn install')) yarnrcAtInstall = fs.readFileSync(yarnrcPath, 'utf8')
+      return Promise.resolve({})
+    })
+
+    await addReactClient('yarn')
+
+    expect(yarnrcAtInstall).toContain('yarnPath: .yarn/releases/yarn-4.18.1.cjs')
+    expect(yarnrcAtInstall).toContain('nodeLinker: node-modules')
+    expect(yarnrcAtInstall).toContain('npmMinimalAgeGate: 4320')
   })
 })

@@ -67,6 +67,14 @@ export default async function addClientApp({
   // manager is readied inside the new client folder.
   const scaffoldClient = async (scaffoldCmd: string) => {
     await sspawn(scaffoldCmd, { cwd: rootPath, onStdout })
+
+    // Written before `yarn set version stable`, never after it: outside corepack
+    // that command records the release it fetched as `yarnPath` in this file,
+    // and a global Yarn 1 runs the install through that release only while the
+    // key is still there. The node-modules linker keeps vite's rolldown bundler
+    // working, since it doesn't support yarn PnP.
+    if (fePm === 'yarn') fs.writeFileSync(path.join(clientRoot, '.yarnrc.yml'), clientYarnrcYml())
+
     const initCmd = initializePackageManagerCmd(fePm)
     if (initCmd) await sspawn(initCmd, { cwd: clientRoot, onStdout })
   }
@@ -140,12 +148,6 @@ export default async function addClientApp({
     path.join(apiRoot, '..', clientRootFolderName, 'Dockerfile.dev'),
     await ClientDockerDevBuilder.build(options),
   )
-
-  // use node-modules linker for yarn client apps to ensure compatibility
-  // with vite's rolldown bundler, which doesn't support yarn PnP
-  if (fePm === 'yarn') {
-    fs.writeFileSync(path.join(apiRoot, '..', clientRootFolderName, '.yarnrc.yml'), clientYarnrcYml())
-  }
 
   // Prevent pnpm from traversing up and merging with a parent workspace (e.g. create-psychic's own pnpm-workspace.yaml during specs).
   // Keep dependency build scripts blocked by default without failing when optional native packages request them.
