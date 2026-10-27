@@ -99,7 +99,7 @@ export default async function copyApiBoilerplate(appName: string, options: NewPs
   )
 
   // Runtime config. Deno and Bun get their own config files instead of `.nvmrc`:
-  //   - deno.json: import map for the path aliases + sloppy-imports + node_modules dir
+  //   - deno.json: import map for the `#` import names + sloppy-imports + node_modules dir
   //   - bunfig.toml: registry pin (+ default-deny lifecycle scripts)
   if (options.runtime === 'deno') {
     fs.writeFileSync(path.join(apiRoot, 'deno.json'), DenoJsonBuilder.build())

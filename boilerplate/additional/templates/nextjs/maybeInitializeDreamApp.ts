@@ -1,4 +1,4 @@
-import initializeDreamApp from '@conf/system/initializeDreamApp.js'
+import initializeDreamApp from '#conf/system/initializeDreamApp.js'
 import { DreamApp } from '@rvoh/dream'
 
 export default async function maybeInitializeDreamApp() {

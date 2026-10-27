@@ -1,4 +1,4 @@
-import '@conf/loadEnv.js'
+import '#conf/loadEnv.js'
 
 export async function setup() {
   // global setup here...

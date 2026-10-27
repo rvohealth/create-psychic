@@ -1,4 +1,4 @@
-import AppEnv from '@conf/AppEnv.js'
+import AppEnv from '#conf/AppEnv.js'
 import { PsychicApp } from '@rvoh/psychic'
 import { PsychicAppWorkers } from '@rvoh/psychic-workers'
 import { Queue, Worker } from 'bullmq'

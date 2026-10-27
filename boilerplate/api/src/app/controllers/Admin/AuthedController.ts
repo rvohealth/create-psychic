@@ -1,9 +1,9 @@
-import ApplicationController from '@controllers/ApplicationController.js'
-import resolveCurrentAdminUser from '@controllers/helpers/resolveCurrentAdminUser.js'
+import ApplicationController from '#controllers/ApplicationController.js'
+import resolveCurrentAdminUser from '#controllers/helpers/resolveCurrentAdminUser.js'
 import { BeforeAction } from '@rvoh/psychic'
 import { PsychicOpenapiNames } from '@rvoh/psychic/openapi'
 /** uncomment after creating AdminUser model */
-// import AdminUser from '@models/AdminUser.js'
+// import AdminUser from '#models/AdminUser.js'
 
 export default class AdminAuthedController extends ApplicationController {
   public static override get openapiNames(): PsychicOpenapiNames<ApplicationController> {

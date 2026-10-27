@@ -1,4 +1,4 @@
-import AppEnv from '@conf/AppEnv.js'
+import AppEnv from '#conf/AppEnv.js'
 
 export default function allowedCorsOrigins() {
   const raw = AppEnv.string('CORS_HOSTS', { optional: true }) || '[]'

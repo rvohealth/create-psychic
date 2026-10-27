@@ -450,6 +450,80 @@ describe('PackagejsonBuilder', () => {
       })
     })
 
+    context('# subpath imports', () => {
+      const steps = (script: string | undefined) => (script ?? '').split('&&').map(step => step.trim())
+      const runtimeOptions = (packageManager: NewPsychicAppCliOptions['packageManager']) =>
+        packageManager === 'bun' || packageManager === 'deno' ? { runtime: packageManager } : {}
+
+      it.each(['npm', 'yarn', 'pnpm', 'bun', 'deno'] as const)(
+        'maps each # name to its source folder and copies package.json into dist after each compile for %s',
+        async packageManager => {
+          const res = await PackagejsonBuilder.buildAPI('howyadoin', {
+            ...baseOptions,
+            packageManager,
+            ...runtimeOptions(packageManager),
+          })
+          const parsed = JSON.parse(res) as { imports: unknown; scripts: Record<string, string> }
+
+          expect(parsed.imports).toEqual({
+            '#conf/*': './src/conf/*',
+            '#controllers/*': './src/app/controllers/*',
+            '#models/*': './src/app/models/*',
+            '#serializers/*': './src/app/serializers/*',
+            '#services/*': './src/app/services/*',
+            '#spec/*': './spec/*',
+            '#src/*': './src/*',
+          })
+
+          // the built app resolves its # imports through dist/package.json, so the copy follows the compile
+          for (const script of ['build', 'build:spec']) {
+            const scriptSteps = steps(parsed.scripts[script])
+            const compileStep = scriptSteps.findIndex(step => / -p \.\/tsconfig\./.test(step))
+            expect(compileStep).toBeGreaterThan(-1)
+            expect(scriptSteps[compileStep + 1]).toEqual('cp package.json dist/package.json')
+          }
+        },
+      )
+
+      // dist/package.json carries the app's scripts too, so a client:fspec started from inside dist would
+      // resolve `../client` against dist
+      it.each(['npm', 'yarn', 'pnpm', 'bun', 'deno'] as const)(
+        'runs fspec:js from the app folder against dist for %s',
+        async packageManager => {
+          const res = await PackagejsonBuilder.buildAPI('howyadoin', {
+            ...baseOptions,
+            packageManager,
+            client: 'react',
+            ...runtimeOptions(packageManager),
+          })
+          const scripts = (JSON.parse(res) as { scripts: Record<string, string> }).scripts
+
+          expect(scripts['fspec:js']).toContain(
+            'vitest --root ./dist --config ./spec/features/vite.config.js',
+          )
+          expect(scripts['fspec:js']).not.toContain('cd ./dist')
+        },
+      )
+
+      it('declares Bun 1.4.0 or later for a Bun app, the first Bun that loads # imports from source', async () => {
+        const res = await PackagejsonBuilder.buildAPI('howyadoin', {
+          ...baseOptions,
+          packageManager: 'bun',
+          runtime: 'bun',
+        })
+        expect(JSON.parse(res).engines).toEqual({ bun: '>=1.4.0' })
+      })
+
+      it('declares no engines for a Deno app', async () => {
+        const res = await PackagejsonBuilder.buildAPI('howyadoin', {
+          ...baseOptions,
+          packageManager: 'deno',
+          runtime: 'deno',
+        })
+        expect(JSON.parse(res).engines).toBeUndefined()
+      })
+    })
+
     context('psychic-skill link scripts', () => {
       const bothSkills = { claudePsychicSkill: true, agentsPsychicSkill: true }
 

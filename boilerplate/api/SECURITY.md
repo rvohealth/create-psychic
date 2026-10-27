@@ -157,10 +157,12 @@ WORKDIR /app
 ENV NODE_ENV=production
 # Drop privileges: never run the app as root.
 USER node
+# `pnpm build` copies package.json into dist/, and Node resolves the built
+# app's `#` imports through that copy, so ship dist/ whole.
 COPY --chown=node:node --from=build /app/dist ./dist
 COPY --chown=node:node --from=build /app/node_modules ./node_modules
 COPY --chown=node:node --from=build /app/package.json ./
-CMD ["node", "dist/src/index.js"]
+CMD ["node", "dist/src/main.js"]
 ```
 
 Run it read-only with no privilege escalation (compose example; the k8s

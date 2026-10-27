@@ -50,13 +50,17 @@ export default class TsConfigBuilder {
     if (!compilerOptions.paths) compilerOptions.paths = {}
     const paths = compilerOptions.paths
 
-    paths['@conf/*'] = [`./${options.confPath}/*`]
-    paths['@controllers/*'] = [`./${options.controllersPath}/*`]
-    paths['@models/*'] = [`./${options.modelsPath}/*`]
-    paths['@serializers/*'] = [`./${options.serializersPath}/*`]
-    paths['@services/*'] = [`./${options.servicesPath}/*`]
-    paths['@spec/*'] = [`./${options.modelSpecsPath.replace(/\/models/, '')}/*`]
-    paths['@src/*'] = [`./src/*`]
+    // The copied template files import each other through `#` names, and the
+    // app's conf declares `importAliasPrefix '#'`, so the generators write them
+    // too. init maps those names here, in the host's tsconfig `paths`, which
+    // tsc, tsx and Next.js all read, and leaves the host's package.json alone.
+    paths['#conf/*'] = [`./${options.confPath}/*`]
+    paths['#controllers/*'] = [`./${options.controllersPath}/*`]
+    paths['#models/*'] = [`./${options.modelsPath}/*`]
+    paths['#serializers/*'] = [`./${options.serializersPath}/*`]
+    paths['#services/*'] = [`./${options.servicesPath}/*`]
+    paths['#spec/*'] = [`./${options.modelSpecsPath.replace(/\/models/, '')}/*`]
+    paths['#src/*'] = [`./src/*`]
 
     if (isPreexistingTsconfig) {
       const types = compilerOptions.types ?? []

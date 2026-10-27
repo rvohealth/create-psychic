@@ -1,9 +1,9 @@
-import AppEnv from '@conf/AppEnv.js'
+import AppEnv from '#conf/AppEnv.js'
 import { DecryptionError, DecryptionRotationError } from '@rvoh/dream/errors'
 import { Encrypt } from '@rvoh/dream/utils'
 import { PsychicController } from '@rvoh/psychic'
 /** uncomment after creating InternalUser model */
-// import InternalUser from '@models/InternalUser.js'
+// import InternalUser from '#models/InternalUser.js'
 
 // eslint-disable-next-line @typescript-eslint/require-await
 export default async function resolveCurrentInternalUser(

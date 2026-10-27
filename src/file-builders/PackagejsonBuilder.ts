@@ -216,8 +216,17 @@ export default class PackagejsonBuilder {
       // removed in copyApiBoilerplate.
       removeDevDependency(packagejson, 'nodemon')
       removeDevDependency(packagejson, 'tsx')
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      delete packagejson.engines
+      if (options.packageManager === 'bun') {
+        // Bun loads the `.ts` file behind a `#` import (package.json `imports`,
+        // whose targets carry no extension) only from 1.4.0; Bun 1.3 cannot start
+        // the app from source. Bun itself ignores `engines.bun`; the generated CI's
+        // setup-bun reads it to pick the Bun version.
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        packagejson.engines = { bun: '>=1.4.0' }
+      } else {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        delete packagejson.engines
+      }
     }
 
     if (options.packageManager === 'bun') {

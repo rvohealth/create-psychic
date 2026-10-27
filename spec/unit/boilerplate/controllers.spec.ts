@@ -54,7 +54,7 @@ describe('boilerplate controller templates', () => {
     const source = readFileSync(join(controllersDir, 'MaybeAuthedController.ts'), 'utf8')
 
     expect(source).toContain(
-      "/** uncomment after creating User model */\n// import resolveCurrentUser from '@controllers/helpers/resolveCurrentUser.js'\n",
+      "/** uncomment after creating User model */\n// import resolveCurrentUser from '#controllers/helpers/resolveCurrentUser.js'\n",
     )
     expect(source).toContain('// this.currentUser = await resolveCurrentUser(this)')
   })

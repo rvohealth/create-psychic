@@ -1,4 +1,4 @@
-import AppEnv from '@conf/AppEnv.js'
+import AppEnv from '#conf/AppEnv.js'
 import * as path from 'node:path'
 import * as winston from 'winston'
 

@@ -1,15 +1,15 @@
 import { PsychicApp } from '@rvoh/psychic'
 
-import AppEnv from '@conf/AppEnv.js'
-import inflections from '@conf/inflections.js'
-import routesCb from '@conf/routes.js'
-import importDefault from '@conf/system/importDefault.js'
-import srcPath from '@conf/system/srcPath.js'
+import AppEnv from '#conf/AppEnv.js'
+import inflections from '#conf/inflections.js'
+import routesCb from '#conf/routes.js'
+import importDefault from '#conf/system/importDefault.js'
+import srcPath from '#conf/system/srcPath.js'
 import * as path from 'node:path'
 
-import allowedCorsOrigins from '@conf/system/allowedCorsOrigins.js'
-import requestLogger from '@conf/system/requestLogger.js'
-import winstonLogger from '@conf/winstonLogger.js'
+import allowedCorsOrigins from '#conf/system/allowedCorsOrigins.js'
+import requestLogger from '#conf/system/requestLogger.js'
+import winstonLogger from '#conf/winstonLogger.js'
 import type Koa from 'koa'
 import winston from 'winston'
 

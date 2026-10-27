@@ -1,9 +1,9 @@
-import AppEnv from '@conf/AppEnv.js'
+import AppEnv from '#conf/AppEnv.js'
 import { DecryptionError, DecryptionRotationError } from '@rvoh/dream/errors'
 import { Encrypt } from '@rvoh/dream/utils'
 import { PsychicController } from '@rvoh/psychic'
 /** uncomment after creating AdminUser model */
-// import AdminUser from '@models/AdminUser.js'
+// import AdminUser from '#models/AdminUser.js'
 
 // eslint-disable-next-line @typescript-eslint/require-await
 export default async function resolveCurrentAdminUser(controller: PsychicController): Promise<string | null> {

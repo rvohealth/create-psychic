@@ -1,6 +1,6 @@
-import '@conf/loadEnv.js'
+import '#conf/loadEnv.js'
 
-import initializePsychicApp from '@conf/system/initializePsychicApp.js'
+import initializePsychicApp from '#conf/system/initializePsychicApp.js'
 import { PsychicApp } from '@rvoh/psychic'
 import { background } from '@rvoh/psychic-workers'
 

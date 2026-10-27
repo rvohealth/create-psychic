@@ -1,14 +1,14 @@
-import '@conf/loadEnv.js'
+import '#conf/loadEnv.js'
 
 import * as fs from 'node:fs'
-import initializePsychicApp from '@conf/system/initializePsychicApp.js'
+import initializePsychicApp from '#conf/system/initializePsychicApp.js'
 import { Dream, DreamApp } from '@rvoh/dream'
 import { cleanTestDb, provideDreamViteMatchers } from '@rvoh/dream-spec-helpers'
 import { PsychicServer } from '@rvoh/psychic'
 import { providePuppeteerViteMatchers, resetBrowserState } from '@rvoh/psychic-spec-helpers'
 /** uncomment if a feature spec needs a live Ws.emit push to reach the browser */
 // import { Cable } from '@rvoh/psychic-websockets'
-import getPage from '@spec/features/setup/getPage.js'
+import getPage from '#spec/features/setup/getPage.js'
 
 provideDreamViteMatchers(Dream)
 providePuppeteerViteMatchers()

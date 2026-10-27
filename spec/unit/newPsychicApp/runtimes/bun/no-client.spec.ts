@@ -44,6 +44,7 @@ describe.skipIf(!bunAvailable())('newPsychicApp with the bun runtime', () => {
 
     // No Node-only vestiges: nodemon.json is dead config under Bun (web:dev uses
     // `bun --no-env-file --watch`), and nodemon/tsx/engines.node don't belong in a Bun app.
+    // engines.bun says Bun 1.4.0, the first that loads `#` imports from source.
     expect(fs.existsSync('./howyadoin/nodemon.json')).toBe(false)
     const pkg = JSON.parse(fs.readFileSync('./howyadoin/package.json').toString()) as {
       devDependencies: Record<string, string>
@@ -53,10 +54,12 @@ describe.skipIf(!bunAvailable())('newPsychicApp with the bun runtime', () => {
     }
     expect(pkg.devDependencies.nodemon).toBeUndefined()
     expect(pkg.devDependencies.tsx).toBeUndefined()
-    expect(pkg.engines).toBeUndefined()
+    expect(pkg.engines).toEqual({ bun: '>=1.4.0' })
     expect(pkg.overrides).toBeUndefined()
     expect(pkg.resolutions).toBeUndefined()
 
-    await sspawn(`cd howyadoin && bun run uspec`)
+    // `psy:js --help` boots the built app from dist/, which resolves its `#` imports through
+    // dist/package.json
+    await sspawn(`cd howyadoin && bun run uspec && bun run build && bun run psy:js --help`)
   }, 300_000)
 })

@@ -1,9 +1,9 @@
-import '@conf/loadEnv.js'
+import '#conf/loadEnv.js'
 
 import * as util from 'node:util'
 import { Cable } from '@rvoh/psychic-websockets'
-import AppEnv from '@conf/AppEnv.js'
-import initializePsychicApp from '@conf/system/initializePsychicApp.js'
+import AppEnv from '#conf/AppEnv.js'
+import initializePsychicApp from '#conf/system/initializePsychicApp.js'
 import { PsychicApp } from '@rvoh/psychic'
 
 let cable: Cable | null = null

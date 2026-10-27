@@ -72,12 +72,23 @@ describe('newPsychicApp with no client', () => {
       fs.readFileSync('./howyadoin/docker-compose.yml').toString(),
     )
 
+    // the generators write # imports, which package.json `imports` resolves
+    await expectFileToContain(
+      './howyadoin/src/app/models/User.ts',
+      "import ApplicationModel from '#models/ApplicationModel.js'",
+    )
+
+    // `psy:js --help` boots the built app's conf graph from dist/ with no database, so it fails
+    // unless the built app resolves its # imports through dist/package.json
     await sspawn(
       `\
         cd howyadoin &&
         pnpm audit --audit-level moderate &&
         pnpm uspec &&
-        pnpm uspec:js`,
+        pnpm uspec:js &&
+        pnpm build &&
+        pnpm psy:js --help`,
     )
+    await expectFile('./howyadoin/dist/package.json')
   }, 120_000)
 })

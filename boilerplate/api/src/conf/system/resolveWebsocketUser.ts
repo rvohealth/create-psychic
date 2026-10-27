@@ -1,9 +1,9 @@
-import AppEnv from '@conf/AppEnv.js'
+import AppEnv from '#conf/AppEnv.js'
 import { DecryptionError, DecryptionRotationError } from '@rvoh/dream/errors'
 import { Encrypt } from '@rvoh/dream/utils'
 import { Socket } from 'socket.io'
 /** uncomment after creating User model */
-// import User from '@models/User.js'
+// import User from '#models/User.js'
 
 // eslint-disable-next-line @typescript-eslint/require-await
 export default async function resolveWebsocketUser(socket: Socket): Promise<string | null> {

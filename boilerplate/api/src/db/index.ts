@@ -1,4 +1,4 @@
-import ApplicationModel from '@models/ApplicationModel.js'
+import ApplicationModel from '#models/ApplicationModel.js'
 import { untypedDb } from '@rvoh/dream/db'
 import { DbConnectionType } from '@rvoh/dream/types'
 

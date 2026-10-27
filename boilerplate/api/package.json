@@ -8,13 +8,22 @@
   "engines": {
     "node": ">=24"
   },
+  "imports": {
+    "#conf/*": "./src/conf/*",
+    "#controllers/*": "./src/app/controllers/*",
+    "#models/*": "./src/app/models/*",
+    "#serializers/*": "./src/app/serializers/*",
+    "#services/*": "./src/app/services/*",
+    "#spec/*": "./spec/*",
+    "#src/*": "./src/*"
+  },
   "scripts": {
     "psy": "tsx src/conf/system/cli.ts",
     "psy:js": "node ./dist/src/conf/system/cli.js",
     "uspec": "{{PM}} psy db:integrity-check && cross-env APP_NAME=$npm_package_name APP_VERSION=$npm_package_version vitest --config ./spec/unit/vite.config.ts",
     "uspec:js": "cross-env APP_NAME=$npm_package_name APP_VERSION=$npm_package_version {{PM}} build:spec && cd ./dist && vitest --config ./spec/unit/vite.config.js",
     "fspec": "{{PM}} psy db:integrity-check && cross-env APP_NAME=$npm_package_name APP_VERSION=$npm_package_version vitest --config ./spec/features/vite.config.ts",
-    "fspec:js": "cross-env APP_NAME=$npm_package_name APP_VERSION=$npm_package_version {{PM}} build:spec && cd ./dist && vitest --config ./spec/features/vite.config.js",
+    "fspec:js": "cross-env APP_NAME=$npm_package_name APP_VERSION=$npm_package_version {{PM}} build:spec && vitest --root ./dist --config ./spec/features/vite.config.js",
     "fspec:visible": "{{PM}} psy db:integrity-check && cross-env HEADLESS=0 vitest run --config=./spec/features/vite.config.ts",
     "console": "{{PM}} psy db:integrity-check && APP_NAME=$npm_package_name APP_VERSION=$npm_package_version tsx ./src/conf/repl.ts",
     "console:js": "APP_NAME=$npm_package_name APP_VERSION=$npm_package_version node ./dist/src/conf/repl.js",
@@ -22,8 +31,8 @@
     "lint": "{{PM}} eslint --no-warn-ignored \"src/**/*.ts\" \"spec/**/*.ts\" && {{PM}} prettier . --check",
     "prettier": "prettier",
     "eslint": "eslint",
-    "build": "cross-env APP_NAME=$npm_package_name APP_VERSION=$npm_package_version echo \"building $npm_package_name...\" && rm -rf dist && echo \"node --version\" && node --version && echo \"tsc --version\" && tsc --version && tsc -p ./tsconfig.build.json",
-    "build:spec": "cross-env NODE_ENV=test APP_NAME=$npm_package_name APP_VERSION=$npm_package_version echo \"building $npm_package_name...\" && rm -rf dist && echo \"node --version\" && node --version && echo \"tsc --version\" && tsc --version && tsc --pretty -p ./tsconfig.build-spec.json && ( [ -d ./recordings ] && cp -r ./recordings ./dist/recordings || true ) && ( [ -e .env.test ] && cp .env.test ./dist/ || true )",
+    "build": "cross-env APP_NAME=$npm_package_name APP_VERSION=$npm_package_version echo \"building $npm_package_name...\" && rm -rf dist && echo \"node --version\" && node --version && echo \"tsc --version\" && tsc --version && tsc -p ./tsconfig.build.json && cp package.json dist/package.json",
+    "build:spec": "cross-env NODE_ENV=test APP_NAME=$npm_package_name APP_VERSION=$npm_package_version echo \"building $npm_package_name...\" && rm -rf dist && echo \"node --version\" && node --version && echo \"tsc --version\" && tsc --version && tsc --pretty -p ./tsconfig.build-spec.json && cp package.json dist/package.json && ( [ -d ./recordings ] && cp -r ./recordings ./dist/recordings || true ) && ( [ -e .env.test ] && cp .env.test ./dist/ || true )",
     "web:dev": "cross-env APP_NAME=$npm_package_name APP_VERSION=$npm_package_version NODE_ENV=development WORKER_COUNT=0 nodemon --quiet --no-stdin",
     "worker:dev": "cross-env APP_NAME=$npm_package_name APP_VERSION=$npm_package_version NODE_ENV=development WORKER_SERVICE=1 WORKER_COUNT=1 tsx ./src/worker.ts",
     "ws:dev": "cross-env APP_NAME=$npm_package_name APP_VERSION=$npm_package_version NODE_ENV=development tsx ./src/ws.ts",

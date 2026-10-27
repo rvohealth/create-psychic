@@ -8,16 +8,16 @@ describe('DenoJsonBuilder', () => {
       }).not.toThrow()
     })
 
-    it('maps the path aliases to an import map (Deno ignores tsconfig paths)', () => {
+    it('maps the # import names to an import map', () => {
       const denoJson = JSON.parse(DenoJsonBuilder.build()) as { imports: Record<string, string> }
       expect(denoJson.imports).toMatchObject({
-        '@conf/': './src/conf/',
-        '@models/': './src/app/models/',
-        '@controllers/': './src/app/controllers/',
-        '@serializers/': './src/app/serializers/',
-        '@services/': './src/app/services/',
-        '@spec/': './spec/',
-        '@src/': './src/',
+        '#conf/': './src/conf/',
+        '#models/': './src/app/models/',
+        '#controllers/': './src/app/controllers/',
+        '#serializers/': './src/app/serializers/',
+        '#services/': './src/app/services/',
+        '#spec/': './spec/',
+        '#src/': './src/',
       })
     })
 

@@ -1,7 +1,7 @@
-import '@conf/loadEnv.js'
+import '#conf/loadEnv.js'
 
 import * as util from 'node:util'
-import initializePsychicApp from '@conf/system/initializePsychicApp.js'
+import initializePsychicApp from '#conf/system/initializePsychicApp.js'
 import { PsychicApp, PsychicServer } from '@rvoh/psychic'
 
 let server: PsychicServer | null = null
