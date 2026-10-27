@@ -6,8 +6,8 @@ export async function setup() {
   // worker: Dream gives each spec worker its own test database, so that process can
   // read a different one and miss the rows a spec creates; and in test, websockets
   // use the in-process adapter, so it never receives a Ws.emit made in the spec
-  // worker. The api server, and the websocket server when a spec needs one, start
-  // in hooks.ts instead.
+  // worker. The api server, and in an app with websockets the websocket server,
+  // start in hooks.ts instead.
 <DEV_TOOLS_SETUP>
 }
 

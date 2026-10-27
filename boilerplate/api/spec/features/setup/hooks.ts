@@ -5,9 +5,7 @@ import initializePsychicApp from '#conf/system/initializePsychicApp.js'
 import { Dream, DreamApp } from '@rvoh/dream'
 import { cleanTestDb, provideDreamViteMatchers } from '@rvoh/dream-spec-helpers'
 import { PsychicServer } from '@rvoh/psychic'
-import { providePuppeteerViteMatchers, resetBrowserState } from '@rvoh/psychic-spec-helpers'
-/** uncomment if a feature spec needs a live Ws.emit push to reach the browser */
-// import { Cable } from '@rvoh/psychic-websockets'
+import { providePuppeteerViteMatchers, resetBrowserState } from '@rvoh/psychic-spec-helpers'<WEBSOCKETS_IMPORTS>
 import getPage from '#spec/features/setup/getPage.js'
 
 provideDreamViteMatchers(Dream)
@@ -16,9 +14,7 @@ providePuppeteerViteMatchers()
 // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
 ;(global as any).context = describe
 
-let server: PsychicServer
-/** uncomment if a feature spec needs a live Ws.emit push to reach the browser */
-// let cable: Cable
+let server: PsychicServer<WEBSOCKETS_DECLARATION>
 
 beforeAll(async () => {
   /*
@@ -36,23 +32,7 @@ beforeAll(async () => {
    * it at http://localhost:7778
    */
   server = new PsychicServer()
-  await server.start(parseInt(process.env.DEV_SERVER_PORT || '7778'))
-
-  /*
-   * start websocket server
-   *
-   * a feature spec that needs a live Ws.emit push starts the websocket server
-   * here, in the spec worker beside the api server, and never as a separate
-   * process (such as a server launched from globalSetup.ts), for two reasons:
-   *   - Dream gives each spec worker its own test database, so a separate
-   *     process can read a different one and miss the rows a spec creates
-   *   - in test, websockets use the in-process adapter (see
-   *     conf/initializers/websockets.ts), so a separate process never
-   *     receives a Ws.emit made in the spec worker
-   */
-  /** uncomment if a feature spec needs a live Ws.emit push to reach the browser */
-  // cable = new Cable()
-  // await cable.start(8889)
+  await server.start(parseInt(process.env.DEV_SERVER_PORT || '7778'))<WEBSOCKETS_START>
 
   /*
    * Launch a web browser
@@ -91,9 +71,5 @@ afterEach(async ctx => {
 })
 
 afterAll(async () => {
-  // the websocket server stops first, so a failing server.stop() cannot leave
-  // its fixed port taken when the next spec file starts one
-  /** uncomment if a feature spec needs a live Ws.emit push to reach the browser */
-  // await cable?.stop()
-  await server.stop()
+<STOP_SERVERS>
 })

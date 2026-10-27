@@ -10,6 +10,7 @@ import DreamConfigBuilder from '../../file-builders/DreamConfigBuilder.js'
 import EnvBuilder from '../../file-builders/EnvBuilder.js'
 import FeatureSpecExampleBuilder from '../../file-builders/FeatureSpecExampleBuilder.js'
 import FeatureSpecGlobalBuilder from '../../file-builders/FeatureSpecGlobalBuilder.js'
+import FeatureSpecHooksBuilder from '../../file-builders/FeatureSpecHooksBuilder.js'
 import NpmrcBuilder from '../../file-builders/NpmrcBuilder.js'
 import PackagejsonBuilder from '../../file-builders/PackagejsonBuilder.js'
 import SrcPathHelperBuilder from '../../file-builders/SrcPathHelperBuilder.js'
@@ -148,6 +149,11 @@ export default async function copyApiBoilerplate(appName: string, options: NewPs
   fs.writeFileSync(
     path.join(apiRoot, 'spec', 'features', 'setup', 'globalSetup.ts'),
     await FeatureSpecGlobalBuilder.build({ appName, options }),
+  )
+
+  fs.writeFileSync(
+    path.join(apiRoot, 'spec', 'features', 'setup', 'hooks.ts'),
+    await FeatureSpecHooksBuilder.build(options),
   )
 
   fs.writeFileSync(

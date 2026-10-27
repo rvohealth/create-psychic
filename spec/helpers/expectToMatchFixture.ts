@@ -27,6 +27,9 @@ const FIXTURE_PATHS = [
   'expected-files/spec/features/setup/globalSetup-with-internal.ts',
   'expected-files/spec/features/setup/globalSetup-with-client-and-internal.ts',
 
+  'expected-files/spec/features/setup/hooks-basic.ts',
+  'expected-files/spec/features/setup/hooks-with-websockets.ts',
+
   'expected-files/spec/features/example-feature-spec/with-none.spec.ts',
   'expected-files/spec/features/example-feature-spec/with-react.spec.ts',
 
@@ -36,9 +39,11 @@ const FIXTURE_PATHS = [
   'expected-files/cli/dream-only.ts',
 
   // docker-compose: client-basic.yml for a Vite (react, vue) or Nuxt client,
-  // client-nextjs.yml for a Next.js one, whose dev server takes `--hostname`, not `--host`
+  // client-nextjs.yml for a Next.js one, whose dev server takes `--hostname`, not `--host`,
+  // and client-websockets.yml for a Vite client with websockets
   'expected-files/docker-compose/pnpm/client-basic.yml',
   'expected-files/docker-compose/pnpm/client-nextjs.yml',
+  'expected-files/docker-compose/pnpm/client-websockets.yml',
   'expected-files/docker-compose/pnpm/no-client-basic.yml',
   'expected-files/docker-compose/npm/client-basic.yml',
   'expected-files/docker-compose/npm/client-nextjs.yml',
