@@ -1,6 +1,5 @@
 import * as fs from 'node:fs'
 import * as path from 'node:path'
-import ESLintConfBuilder from '../file-builders/EslintConfBuilder.js'
 import NextConfigBuilder from '../file-builders/NextConfigBuilder.js'
 import NuxtConfigBuilder from '../file-builders/NuxtConfigBuilder.js'
 import { PNPM_COOLDOWN_ENGINE_RANGE } from '../file-builders/PackagejsonBuilder.js'
@@ -89,10 +88,6 @@ export default async function addClientApp({
         await ViteConfBuilder.build(path.join(apiRoot, '..', clientRootFolderName, 'vite.config.ts'), {
           port,
         }),
-      )
-      fs.writeFileSync(
-        path.join(apiRoot, '..', clientRootFolderName, '.eslintrc.cjs'),
-        ESLintConfBuilder.buildForViteReact(),
       )
 
       break

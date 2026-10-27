@@ -37,6 +37,10 @@ describe('newPsychicApp with react client', () => {
       fs.readFileSync('./howyadoin/docker-compose.yml').toString(),
     )
 
+    // The client's own lint (`eslint .`, configured by the scaffold's eslint.config.js) passes,
+    // so a file the generator writes into the client that breaks it fails this spec
+    await sspawn('pnpm lint', { cwd: './howyadoin/client' })
+
     await sspawn(
       `\
         cd howyadoin/api &&
