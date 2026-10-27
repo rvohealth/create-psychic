@@ -44,6 +44,16 @@ export default function requestLogger(options: RequestLoggerOptions = {}): Koa.M
     const duration = Date.now() - start
 
     const status = ctx.status
+    // Only the query string is masked here. The path is logged exactly as received, and so is the
+    // path in a `referer` header, so a route must never carry a secret in a path segment (such as
+    // `/password-resets/:token`). Send a token in the query string, a request-body field or a
+    // header, under a name the logger masks: one containing a `bodyBlocklist` name, ignoring case,
+    // such as `token` from `SENSITIVE_FIELDS` in conf/app.ts (`?token=…`, `{ resetToken: … }`,
+    // `x-auth-token`). A header whose whole name is in `headerBlocklist`, such as `authorization`
+    // or `cookie`, is left out of the log instead. Under any other name a token is logged as sent.
+    // For a link such as an emailed sign-in or reset link, put the token in the URL fragment
+    // (`/reset-password#token=…`), which browsers never send to the server, not even in a
+    // `referer`, and have the page's JavaScript pass it on the same way, under a masked name.
     const url = redactUrl(ctx.url, bodyBlocklist)
     const message = `${ctx.method} ${url} ${status} ${duration}ms`
 
