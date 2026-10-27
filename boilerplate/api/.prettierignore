@@ -20,3 +20,7 @@ api/.yarnrc.yml
 
 pnpm-lock.yaml
 package-lock.json
+
+# The cloned psychic-skill keeps its upstream formatting, which its updater restores
+.agents/skills/psychic-skill/**/*
+.claude/skills/psychic-skill/**/*

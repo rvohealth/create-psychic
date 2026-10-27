@@ -81,6 +81,19 @@ describe('newPsychicApp with no client', () => {
       "import ApplicationModel from '#models/ApplicationModel.js'",
     )
 
+    // The app's own lint (ESLint, then `prettier . --check`) passes on the generated template.
+    // Generator output need not be Prettier-clean, because the app's `format` script fixes it,
+    // so only the files `g:model User` wrote are formatted first: a whole-app `format` would
+    // also rewrite a mis-formatted template file before the check could see it. This runs
+    // before the locale spec below is copied into the app.
+    await sspawn(
+      `\
+        pnpm prettier --write src/app/models/User.ts src/app/serializers/UserSerializer.ts \
+          "src/db/migrations/*-create-user.ts" spec/unit/models/User.spec.ts spec/factories/UserFactory.ts &&
+        pnpm lint`,
+      { cwd: './howyadoin' },
+    )
+
     // The template's ApplicationController#locale getter needs Psychic and Koa, which
     // create-psychic does not install, so its spec runs in this app (and ships in none):
     // give the app a second supported locale and copy the spec in for the uspec below
