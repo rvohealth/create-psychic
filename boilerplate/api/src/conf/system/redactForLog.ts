@@ -4,8 +4,11 @@
 // depth of the body, in the query string and in the request headers. With the default
 // `bodyBlocklist`, `password`, `passwordConfirmation`, `accessToken`, `user[token]` and an
 // `x-auth-token` header are all masked, and so is a harmless name like `tokenCount`. The key
-// is kept, so the log still shows the field was sent. The `referer` header keeps its URL with
-// the same query-string masking as the logged request URL. URL paths are logged as sent.
+// is kept, so the log still shows the field was sent. In the logged URL's path, the value of
+// a route parameter whose name contains a blocklisted name, such as `:token` or `:tokenId`, is
+// masked the same way. A path with no route parameters, such as one that matches no route, is
+// logged as received. The `referer` header keeps its URL with the same query-string masking as
+// the logged request URL, and its path is logged as received.
 //
 // Objects and arrays nested more than MAX_LOGGED_DEPTH levels deep are replaced with
 // TRUNCATED, so a deeply nested body cannot overflow the stack while it is being logged.
@@ -22,9 +25,13 @@ export function redactBody(body: unknown, blocklist: string[]): unknown {
 }
 
 // masks the values of blocklisted query-string parameters, so
-// `/v1/session?token=abc&page=2` becomes `/v1/session?token=[FILTERED]&page=2`
-export function redactUrl(url: string, blocklist: string[]): string {
-  return redactQuery(url, lowercase(blocklist))
+// `/v1/session?token=abc&page=2` becomes `/v1/session?token=[FILTERED]&page=2`; given the
+// route parameters the router bound (`ctx.params`), it also masks the path segments that hold a
+// blocklisted one, so `/password-resets/abc` matched by `/password-resets/:token` becomes
+// `/password-resets/[FILTERED]`
+export function redactUrl(url: string, blocklist: string[], routeParams?: unknown): string {
+  const lowerBlocklist = lowercase(blocklist)
+  return redactQuery(redactPath(url, routeParams, lowerBlocklist), lowerBlocklist)
 }
 
 // returns a copy of the request headers for the log: a header whose whole name, ignoring
@@ -71,6 +78,59 @@ function redactQuery(url: string, lowerBlocklist: string[]): string {
   return `${url.slice(0, queryStart)}?${query}`
 }
 
+// The router does not say which segments hold a route parameter, so each blocklisted one's value
+// masks every segment that equals or contains it, decoded or as written, even one that holds it
+// by chance (`tokenId` `1` also masks `v1`), and every segment a value spanning several, such as a
+// splat's (`*path`), overlaps. A value not found in the path at all masks every segment.
+function redactPath(url: string, routeParams: unknown, lowerBlocklist: string[]): string {
+  const values = sensitiveParamValues(routeParams, lowerBlocklist)
+  if (values.length === 0) return url
+
+  const queryStart = url.indexOf('?')
+  const pathEnd = queryStart === -1 ? url.length : queryStart
+  const segments = url.slice(0, pathEnd).split('/')
+  const decoded = segments.map(segment => decodeOrKeep(segment, segment))
+
+  const masked = new Set<number>()
+  for (const value of values) {
+    let holding = [...segmentsOverlapping(value, segments), ...segmentsOverlapping(value, decoded)]
+    if (holding.length === 0) holding = segments.flatMap((segment, index) => (segment === '' ? [] : [index]))
+    for (const index of holding) masked.add(index)
+  }
+
+  const path = segments.map((segment, index) => (masked.has(index) ? FILTERED : segment)).join('/')
+  return path + url.slice(pathEnd)
+}
+
+function sensitiveParamValues(routeParams: unknown, lowerBlocklist: string[]): string[] {
+  if (typeof routeParams !== 'object' || routeParams === null) return []
+
+  const values: string[] = []
+  for (const [name, value] of Object.entries(routeParams) as [string, unknown][]) {
+    if (typeof value === 'string' && value !== '' && isSensitive(name, lowerBlocklist)) values.push(value)
+  }
+  return values
+}
+
+// the indexes of the segments that any occurrence of `value` in `segments.join('/')` overlaps
+function segmentsOverlapping(value: string, segments: string[]): number[] {
+  const path = segments.join('/')
+  const starts: number[] = []
+  for (let at = path.indexOf(value); at !== -1; at = path.indexOf(value, at + 1)) starts.push(at)
+
+  const overlapping: number[] = []
+  let next = 0
+  let segmentStart = 0
+  segments.forEach((segment, index) => {
+    const segmentEnd = segmentStart + segment.length
+    // an occurrence that ends before this segment starts overlaps no later segment either
+    while ((starts[next] ?? Infinity) + value.length <= segmentStart) next++
+    if ((starts[next] ?? Infinity) < segmentEnd) overlapping.push(index)
+    segmentStart = segmentEnd + 1
+  })
+  return overlapping
+}
+
 function redactValue(value: unknown, lowerBlocklist: string[], depth: number): unknown {
   if (typeof value !== 'object' || value === null) return value
   if (depth > MAX_LOGGED_DEPTH) return TRUNCATED
@@ -96,11 +156,15 @@ function lowercase(names: string[]): string[] {
 }
 
 function decodeQueryKey(key: string): string {
+  return decodeOrKeep(key.replace(/\+/g, ' '), key)
+}
+
+// a malformed percent-escape is matched as written
+function decodeOrKeep(text: string, asWritten: string): string {
   try {
-    return decodeURIComponent(key.replace(/\+/g, ' '))
+    return decodeURIComponent(text)
   } catch (error) {
-    // a malformed percent-escape is matched as written
-    if (error instanceof URIError) return key
+    if (error instanceof URIError) return asWritten
     throw error
   }
 }

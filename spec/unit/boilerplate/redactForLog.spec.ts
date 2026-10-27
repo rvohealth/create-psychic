@@ -258,6 +258,127 @@ describe('boilerplate/api/src/conf/system/redactForLog.ts', () => {
         `/x?token%E0%A4%A=${FILTERED}&q%E0%A4%A=b`,
       )
     })
+
+    // The third argument is what @koa/router leaves in `ctx.params`: each route parameter's
+    // value, percent-decoded, or as written when it holds a malformed percent-escape.
+    describe('given the route parameters', () => {
+      it('masks the path segment bound to a parameter whose name contains a listed name', () => {
+        expect(redactUrl('/password-resets/k3yV4lue', blocklist, { token: 'k3yV4lue' })).toBe(
+          `/password-resets/${FILTERED}`,
+        )
+        expect(
+          redactUrl('/v1/guests/9/invitations/inv-s3cret?page=2', blocklist, {
+            guestId: '9',
+            invitationToken: 'inv-s3cret',
+          }),
+        ).toBe(`/v1/guests/9/invitations/${FILTERED}?page=2`)
+      })
+
+      it('masks a parameter named like `tokenId`, and matches names ignoring case', () => {
+        expect(redactUrl('/v1/api-tokens/12/scopes', blocklist, { tokenId: '12' })).toBe(
+          `/v1/api-tokens/${FILTERED}/scopes`,
+        )
+        expect(redactUrl('/v1/resets/abc', blocklist, { ResetTOKEN: 'abc' })).toBe(`/v1/resets/${FILTERED}`)
+      })
+
+      it('leaves the values of the other parameters as sent', () => {
+        expect(redactUrl('/v1/places/42/bookings/7', blocklist, { placeId: '42', id: '7' })).toBe(
+          '/v1/places/42/bookings/7',
+        )
+      })
+
+      it('still masks the query string by name, and only there', () => {
+        expect(redactUrl('/v1/places/42?token=q&page=2', blocklist, { placeId: '42' })).toBe(
+          `/v1/places/42?token=${FILTERED}&page=2`,
+        )
+        expect(redactUrl('/password-resets/abc?token=abc&next=/abc', blocklist, { token: 'abc' })).toBe(
+          `/password-resets/${FILTERED}?token=${FILTERED}&next=/abc`,
+        )
+      })
+
+      it('masks a value the router decoded from a percent-encoded segment', () => {
+        expect(redactUrl('/password-resets/abc%20123', blocklist, { token: 'abc 123' })).toBe(
+          `/password-resets/${FILTERED}`,
+        )
+        expect(
+          redactUrl('/v1/guests/9/invitations/s%2Fx', blocklist, { guestId: '9', invitationToken: 's/x' }),
+        ).toBe(`/v1/guests/9/invitations/${FILTERED}`)
+      })
+
+      it('masks a value the router kept as written, because of a malformed percent-escape, without throwing', () => {
+        expect(redactUrl('/password-resets/%E0%A4%A', blocklist, { token: '%E0%A4%A' })).toBe(
+          `/password-resets/${FILTERED}`,
+        )
+      })
+
+      it('masks every segment equal to the value', () => {
+        expect(redactUrl('/tokens/abc/confirm/abc', blocklist, { token: 'abc' })).toBe(
+          `/tokens/${FILTERED}/confirm/${FILTERED}`,
+        )
+      })
+
+      // `/tokens/:id/confirm-:token` binds both `id` and `token` to `abc` for `/tokens/abc/confirm-abc`
+      it('also masks a segment that contains the value when another segment equals it', () => {
+        expect(redactUrl('/tokens/abc/confirm-abc', blocklist, { id: 'abc', token: 'abc' })).toBe(
+          `/tokens/${FILTERED}/${FILTERED}`,
+        )
+      })
+
+      // fails closed: it cannot tell where the router bound the value, so `v1` is masked too
+      it('masks every segment that contains the value, even one that holds it by chance', () => {
+        expect(redactUrl('/v1/api-tokens/1/scopes/12', blocklist, { tokenId: '1', id: '12' })).toBe(
+          `/${FILTERED}/api-tokens/${FILTERED}/scopes/${FILTERED}`,
+        )
+      })
+
+      // `/files/*secretPath/edit` binds `secretPath` to `a/b c` for `/files/a/b%20c/edit`, and
+      // `/files/pre-*secretPath` binds it to `a/b` for `/files/pre-a/b`
+      it('masks every segment a splat value spans', () => {
+        expect(redactUrl('/files/a/b%20c/edit?page=2', blocklist, { secretPath: 'a/b c' })).toBe(
+          `/files/${FILTERED}/${FILTERED}/edit?page=2`,
+        )
+        expect(redactUrl('/files/pre-a/b', blocklist, { secretPath: 'a/b' })).toBe(
+          `/files/${FILTERED}/${FILTERED}`,
+        )
+      })
+
+      // `/v/:a-:tokenPart` binds `tokenPart` to `s3cret` for `/v/x-s3cret`
+      it('masks the whole segment when the value is only part of one', () => {
+        expect(redactUrl('/v/x-s3cret', blocklist, { a: 'x', tokenPart: 's3cret' })).toBe(`/v/${FILTERED}`)
+        expect(redactUrl('/v/x-s%33cret', blocklist, { a: 'x', tokenPart: 's3cret' })).toBe(`/v/${FILTERED}`)
+      })
+
+      // `/v/:tokenPart-:b` binds `tokenPart` to `Abc` for `/v/%41bc-%E0%A4%A`, but the segment as a
+      // whole does not decode
+      it('masks every segment when it cannot find the value in the path', () => {
+        expect(redactUrl('/v/%41bc-%E0%A4%A?page=2', blocklist, { tokenPart: 'Abc', b: '%E0%A4%A' })).toBe(
+          `/${FILTERED}/${FILTERED}?page=2`,
+        )
+      })
+
+      // a path that matches no route (a 404) or a method its route does not take (a 405 or OPTIONS)
+      it('leaves the path as sent when no route parameters were bound', () => {
+        expect(redactUrl('/password-reset/k3yV4lue?token=q', blocklist, undefined)).toBe(
+          `/password-reset/k3yV4lue?token=${FILTERED}`,
+        )
+        expect(redactUrl('/password-resets/k3yV4lue', blocklist, {})).toBe('/password-resets/k3yV4lue')
+        expect(redactUrl('/password-resets/k3yV4lue', blocklist, null)).toBe('/password-resets/k3yV4lue')
+        expect(redactUrl('/password-resets/k3yV4lue', blocklist, 'k3yV4lue')).toBe('/password-resets/k3yV4lue')
+      })
+
+      // an optional parameter the request leaves out is bound as undefined
+      it('ignores a listed-name parameter without a string value', () => {
+        expect(redactUrl('/files', blocklist, { token: undefined })).toBe('/files')
+        expect(redactUrl('/files/1', blocklist, { token: 1, secret: '' })).toBe('/files/1')
+      })
+
+      it('does not modify the route parameters', () => {
+        const params = deepFreeze({ token: 'abc', id: '1' })
+
+        expect(redactUrl('/x/1/abc', blocklist, params)).toBe(`/x/1/${FILTERED}`)
+        expect(params).toEqual({ token: 'abc', id: '1' })
+      })
+    })
   })
 
   describe('redactHeaders', () => {
@@ -387,10 +508,11 @@ describe('boilerplate/api/src/conf/system/redactForLog.ts', () => {
       expect(source).toContain("import { redactBody, redactHeaders, redactUrl } from './redactForLog.js'")
       expect(source).toContain('redactHeaders(ctx.headers, headerBlocklist, bodyBlocklist)')
       expect(source).toContain('redactBody(ctx.request.body, bodyBlocklist)')
-      expect(source).toContain('redactUrl(ctx.url, bodyBlocklist)')
+      expect(source).toContain('redactUrl(ctx.url, bodyBlocklist, ctx.params)')
       expect(source.match(/ctx\.(?:request\.)?headers?\b/g)).toHaveLength(1)
       expect(source.match(/ctx\.request\.body/g)).toHaveLength(1)
       expect(source.match(/ctx\.url/g)).toHaveLength(1)
+      expect(source.match(/ctx\.params/g)).toHaveLength(1)
     })
 
     it('stays free of imports, so this suite can load it without winston or koa', () => {
