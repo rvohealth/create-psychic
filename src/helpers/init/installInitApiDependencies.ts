@@ -17,7 +17,6 @@ export default async function installInitApiDependencies(options: InitPsychicApp
     'luxon-jest-matchers',
     'prettier',
     'supertest',
-    'tsc-alias',
     'tsx',
     'tsx',
     'typescript-eslint',

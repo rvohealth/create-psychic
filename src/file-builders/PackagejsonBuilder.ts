@@ -267,11 +267,12 @@ export default class PackagejsonBuilder {
   }
 }
 
-// The boilerplate scripts call the Node toolchain by name — `tsx`, `node`,
-// `vitest`, `nodemon`, `cross-env`. Under Bun/Deno those bare names would resolve
+// The boilerplate scripts call the Node toolchain by name — `tsx`, `node`, `tsc`,
+// `vitest`, `nodemon`, `cross-env` — which npm, yarn and pnpm run from
+// `node_modules/.bin`. Under Bun/Deno those bare names would resolve
 // to the node-shebang `.bin` shims and execute under Node, defeating the runtime
-// choice, so rewrite them to run under the target runtime. The {{PM}} / {{TSC_*}}
-// placeholders are handled separately by replacePackageManagerInFileContents.
+// choice, so rewrite them to run under the target runtime. The {{PM}}
+// placeholder is handled separately by replacePackageManagerInFileContents.
 //
 // Verified shapes (runtime spike): `deno run -A` / `bun` for TS entrypoints,
 // `deno run -A npm:vitest` / `bunx vitest` for specs, `deno run -A npm:typescript/tsc`
@@ -292,6 +293,9 @@ function applyRuntimeRunners(scripts: Record<string, string>, runtime: 'bun' | '
   const run = runtime === 'bun' ? 'bun --no-env-file' : 'deno run -A'
   // run an npm-published bin (vitest, cross-env, prettier, eslint)
   const bin = (name: string) => (runtime === 'bun' ? `bunx ${name}` : `deno run -A npm:${name}`)
+  // the TypeScript compiler, which ships as the `tsc` bin of the `typescript` package
+  // (`npm:tsc` is an unrelated package)
+  const tsc = runtime === 'bun' ? 'bunx tsc' : 'deno run -A npm:typescript/tsc'
   // hot-reloading dev server (replaces nodemon, whose nodemon.json exec is `tsx ./src/main.ts`)
   const watch =
     runtime === 'bun' ? 'bun --no-env-file --watch src/main.ts' : 'deno run -A --watch src/main.ts'
@@ -301,6 +305,7 @@ function applyRuntimeRunners(scripts: Record<string, string>, runtime: 'bun' | '
       .replace(/\bnode --version\b/g, `${runtime} --version`)
       .replace(/\bcross-env\b/g, bin('cross-env'))
       .replace(/\bvitest\b/g, bin('vitest'))
+      .replace(/\btsc\b/g, tsc)
       .replace(/\btsx /g, `${run} `)
       .replace(/\bnode \.\//g, `${run} ./`)
 

@@ -415,6 +415,41 @@ describe('PackagejsonBuilder', () => {
       )
     })
 
+    context('build scripts', () => {
+      // the `&&`-separated steps of a script that compile a tsconfig, so a step appended to the
+      // script later does not change what this counts
+      const compileSteps = (script: string | undefined) =>
+        (script ?? '')
+          .split('&&')
+          .map(step => step.trim())
+          .filter(step => / -p \.\/tsconfig\./.test(step))
+
+      it.each([
+        ['npm', 'tsc'],
+        ['yarn', 'tsc'],
+        ['pnpm', 'tsc'],
+        ['bun', 'bunx tsc'],
+        ['deno', 'deno run -A npm:typescript/tsc'],
+      ] as const)('compiles once per build with no tsc-alias for %s', async (packageManager, tsc) => {
+        const res = await PackagejsonBuilder.buildAPI('howyadoin', {
+          ...baseOptions,
+          packageManager,
+          ...(packageManager === 'bun' || packageManager === 'deno' ? { runtime: packageManager } : {}),
+        })
+        const parsed = JSON.parse(res) as {
+          scripts: Record<string, string>
+          devDependencies: Record<string, string>
+        }
+
+        expect(compileSteps(parsed.scripts['build'])).toEqual([`${tsc} -p ./tsconfig.build.json`])
+        expect(compileSteps(parsed.scripts['build:spec'])).toEqual([
+          `${tsc} --pretty -p ./tsconfig.build-spec.json`,
+        ])
+        expect(Object.values(parsed.scripts).join('\n')).not.toMatch(/tsc-alias|\{\{TSC_/)
+        expect(parsed.devDependencies['tsc-alias']).toBeUndefined()
+      })
+    })
+
     context('psychic-skill link scripts', () => {
       const bothSkills = { claudePsychicSkill: true, agentsPsychicSkill: true }
 

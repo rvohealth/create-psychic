@@ -1,8 +1,6 @@
 import * as fs from 'node:fs/promises'
 import { PsychicPackageManager } from './newPsychicApp.js'
 import runCmdForPackageManager from './packageManager/runCmdForPackageManager.js'
-import tscAliasCmdForPackageManager from './packageManager/tscAliasCmdForPackageManager.js'
-import tscCmdForPackageManager from './packageManager/tscCmdForPackageManager.js'
 
 export default async function replacePackageManagerInFile(
   filepath: string,
@@ -14,7 +12,7 @@ export default async function replacePackageManagerInFile(
   await fs.writeFile(filepath, newFile)
 }
 
-// `{{PM}}` / `{{TSC_*}}` resolve against the API runtime's package manager.
+// `{{PM}}` resolves against the API runtime's package manager.
 // `{{PM_CWD}}` is different: it ONLY ever appears in the cross-directory front-end
 // client wrappers (`{{PM_CWD}}=../client next dev`, etc.), so it resolves against
 // the FRONT-END package manager — which differs from the API runtime only for Deno
@@ -27,14 +25,10 @@ export function replacePackageManagerInFileContents(
 ) {
   const runCmd = runCmdForPackageManager(packageManager)
   const feRunCmd = runCmdForPackageManager(frontEndPackageManager)
-  const tscCmd = tscCmdForPackageManager(packageManager)
-  const tscAliasCmd = tscAliasCmdForPackageManager(packageManager)
 
   return fileContents
     .replace(/\{\{PM\}\}/g, runCmd)
     .replace(/\{\{PM_CWD\}\}/g, `${feRunCmd} ${cwdOption(frontEndPackageManager)}`)
-    .replace(/\{\{TSC_COMMAND\}\}/g, tscCmd)
-    .replace(/\{\{TSC_ALIAS_COMMAND\}\}/g, tscAliasCmd)
 }
 
 function cwdOption(packageManager: PsychicPackageManager) {

@@ -4,6 +4,7 @@ import { join } from 'path'
 interface PackageJson {
   dependencies?: Record<string, string>
   devDependencies?: Record<string, string>
+  scripts?: Record<string, string>
   overrides?: unknown
   resolutions?: unknown
 }
@@ -56,5 +57,13 @@ describe('boilerplate/api/package.json', () => {
 
     expect(Object.keys(pkg.dependencies ?? {})).not.toContain('kysely-codegen')
     expect(Object.keys(pkg.devDependencies ?? {})).not.toContain('kysely-codegen')
+  })
+
+  it('omits tsc-alias, which `#` subpath imports do not need', () => {
+    const pkg = readBoilerplatePackageJson()
+
+    expect(Object.keys(pkg.dependencies ?? {})).not.toContain('tsc-alias')
+    expect(Object.keys(pkg.devDependencies ?? {})).not.toContain('tsc-alias')
+    expect(Object.values(pkg.scripts ?? {}).join('\n')).not.toMatch(/tsc-alias|\{\{TSC_/)
   })
 })
