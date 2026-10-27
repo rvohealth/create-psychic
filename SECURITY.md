@@ -27,6 +27,7 @@ The workflow:
 
 - runs only when a release is published, so a draft release publishes nothing;
 - fails before it builds if the release tag is not `v` followed by the `version` in `package.json`;
+- runs `pnpm/action-setup`, its one action from outside GitHub's own `actions` organization, pinned to a full commit SHA, so moving one of that action's tags cannot change the action code the job runs (`actions/checkout` and `actions/setup-node` are referenced by major-version tag);
 - installs dependencies with `pnpm install --frozen-lockfile`, under the cooldown above and with no dependency cache;
 - publishes each version with a signed [provenance attestation](https://docs.npmjs.com/generating-provenance-statements/) recording the repository, the workflow file, the tag and the commit it was built from. npm shows it on the version's page, and `npm audit signatures` verifies the attestations of installed packages. As npm notes, provenance shows where and how a package was built; it does not guarantee that the package has no malicious code.
 

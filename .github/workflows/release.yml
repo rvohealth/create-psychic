@@ -31,8 +31,11 @@ jobs:
           registry-url: "https://registry.npmjs.org"
           package-manager-cache: false # never cache dependencies in release builds
 
+      # Pinned to a full commit SHA, not the movable v6 tag: this job can
+      # publish to npm, so moving one of the action's tags must not change the
+      # action code it runs. RELEASING.md says how to update the pin.
       - name: Install pnpm
-        uses: pnpm/action-setup@v6
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
         with:
           version: 12.14.0
 

@@ -43,3 +43,9 @@ trusted publisher on npm:
   sets, which is not a valid token, so a failed exchange fails the release.
 - Publishing still runs the package's `prepack`/`build`, so a broken build
   blocks the release.
+- The workflow runs `pnpm/action-setup` pinned to a full commit SHA, with that
+  commit's release tag in a trailing comment (`# v6.0.10`). To move to a newer
+  release, run `git ls-remote --tags https://github.com/pnpm/action-setup.git`,
+  take the commit SHA, which is on that release's `refs/tags/vX.Y.Z^{}` line
+  (the line without `^{}` names the annotated tag object, not the commit), and
+  update both the SHA and the comment.
