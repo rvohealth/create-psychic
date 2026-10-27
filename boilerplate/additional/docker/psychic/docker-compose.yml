@@ -4,7 +4,7 @@ services:
       context: <CONTEXT_VALUE>
       dockerfile: Dockerfile.dev
       target: 'dev'
-    command: sh -c "{{PM}} install && {{PM}} psy db:migrate --skip-sync && {{PM}} psy db:seed && {{PM}} web:dev"
+    command: sh -c "<PACKAGE_MANAGER> install && {{PM}} psy db:migrate --skip-sync && {{PM}} psy db:seed && {{PM}} web:dev"
     environment:
       NODE_TLS_REJECT_UNAUTHORIZED: '${NODE_TLS_REJECT_UNAUTHORIZED:-0}'
       NPM_CONFIG_STRICT_SSL: 'false'
@@ -36,7 +36,7 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: howyadoin_development
+      POSTGRES_DB: <DEV_DB_NAME>
     user: postgres
     ports:
       - '7433:5432'

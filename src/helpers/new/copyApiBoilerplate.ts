@@ -45,7 +45,10 @@ export default async function copyApiBoilerplate(appName: string, options: NewPs
 
   fs.cpSync(internalSrcPath('..', 'boilerplate', 'README.md'), path.join(appRoot, 'README.md'))
 
-  fs.writeFileSync(path.join(appRoot, 'docker-compose.yml'), await DockerComposeBuilder.build(options))
+  fs.writeFileSync(
+    path.join(appRoot, 'docker-compose.yml'),
+    await DockerComposeBuilder.build(appName, options),
+  )
   fs.writeFileSync(path.join(apiRoot, 'Dockerfile.dev'), await PsychicDockerDevBuilder.build(options))
 
   await replacePackageManagerInFile(path.join(apiRoot, 'AGENTS.md'), options.packageManager, fePm)

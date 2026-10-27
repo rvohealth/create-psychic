@@ -35,12 +35,16 @@ const FIXTURE_PATHS = [
   'expected-files/dream/init/basic.ts',
   'expected-files/cli/dream-only.ts',
 
-  // docker-compose
+  // docker-compose: client-basic.yml for a Vite (react, vue) or Nuxt client,
+  // client-nextjs.yml for a Next.js one, whose dev server takes `--hostname`, not `--host`
   'expected-files/docker-compose/pnpm/client-basic.yml',
+  'expected-files/docker-compose/pnpm/client-nextjs.yml',
   'expected-files/docker-compose/pnpm/no-client-basic.yml',
   'expected-files/docker-compose/npm/client-basic.yml',
+  'expected-files/docker-compose/npm/client-nextjs.yml',
   'expected-files/docker-compose/npm/no-client-basic.yml',
   'expected-files/docker-compose/yarn/client-basic.yml',
+  'expected-files/docker-compose/yarn/client-nextjs.yml',
   'expected-files/docker-compose/yarn/no-client-basic.yml',
   'expected-files/docker-compose/yarn/workers-basic.yml',
   'expected-files/docker-compose/yarn/websockets-basic.yml',

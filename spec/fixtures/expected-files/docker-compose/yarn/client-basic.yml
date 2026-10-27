@@ -38,13 +38,13 @@ services:
       dockerfile: Dockerfile.dev
       target: 'dev'
     user: '0'
-    command: sh -c "yarn install && yarn web:dev"
+    command: sh -c "yarn install && yarn dev --host 0.0.0.0 --port 3000"
     environment:
       NODE_ENV: '${NODE_ENV:-development}'
       NODE_TLS_REJECT_UNAUTHORIZED: '${NODE_TLS_REJECT_UNAUTHORIZED:-0}'
       NPM_CONFIG_STRICT_SSL: 'false'
     ports:
-      - '3050:3050'
+      - '3000:3000'
     working_dir: /usr/src/app
     volumes:
       - ./client:/usr/src/app:cached

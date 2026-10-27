@@ -32,7 +32,7 @@ describe('newPsychicApp with nextjs client', () => {
     expect(clientPackageJson.dependencies.next).toMatch(/^\^\d+\.0\.0$/)
 
     await expectToMatchFixture(
-      'expected-files/docker-compose/pnpm/client-basic.yml',
+      'expected-files/docker-compose/pnpm/client-nextjs.yml',
       fs.readFileSync('./howyadoin/docker-compose.yml').toString(),
     )
 

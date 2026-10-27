@@ -26,7 +26,7 @@ describe('newPsychicApp with nextjs client', () => {
     await expectFileToContain('./howyadoin/client/.yarnrc.yml', 'npmMinimalAgeGate: 4320')
 
     await expectToMatchFixture(
-      'expected-files/docker-compose/yarn/client-basic.yml',
+      'expected-files/docker-compose/yarn/client-nextjs.yml',
       fs.readFileSync('./howyadoin/docker-compose.yml').toString(),
     )
 
