@@ -1,4 +1,5 @@
 import * as fs from 'node:fs/promises'
+import apiOnlyOptions from '../../helpers/apiOnlyOptions.js'
 import defaultDbCredentials from '../../helpers/defaultDbCredentials.js'
 import frontEndPackageManager from '../../helpers/frontEndPackageManager.js'
 import internalSrcPath from '../../helpers/internalSrcPath.js'
@@ -34,7 +35,9 @@ export default class DockerComposeBuilder {
       .replace(/<API_DEPENDS_ON_YAML>/g, this.apiDependsOnYaml(options))
       .replace(/<WS_DEPENDS_ON_YAML>/g, this.wsDependsOnYaml(options))
       .replace(/<WORKER_DEPENDS_ON_YAML>/g, this.workerDependsOnYaml(options))
-      .replace(/<CONTEXT_VALUE>/g, options.client === 'none' ? '.' : './api')
+      // the folder copyApiBoilerplate writes the api and its Dockerfile.dev into: ./api
+      // whenever the app has any client, admin and internal included
+      .replace(/<CONTEXT_VALUE>/g, apiOnlyOptions(options) ? '.' : './api')
       .replace(/\n{2,}/g, '\n\n')
 
     return replacePackageManagerInFileContents(contents, options.packageManager)
@@ -87,7 +90,8 @@ export default class DockerComposeBuilder {
   private static volumesYaml(options: NewPsychicAppCliOptions) {
     return `\
 volumes:
-  db:<REDIS><CLIENT_NODE_MODULES>\
+  db:<REDIS>
+  api_node_modules:<CLIENT_NODE_MODULES>\
 `
       .replace(/<REDIS>/, options.websockets || options.workers ? '\n  redis:' : '')
       .replace(/<CLIENT_NODE_MODULES>/, options.client !== 'none' ? '\n  client_node_modules:' : '')
@@ -179,6 +183,7 @@ networks:
       NODE_TLS_REJECT_UNAUTHORIZED: '\${NODE_TLS_REJECT_UNAUTHORIZED:-0}'
       NPM_CONFIG_STRICT_SSL: 'false'
       DB_HOST: db
+      REPLICA_DB_HOST: db
       WS_REDIS_HOST: redis
       BG_JOBS_REDIS_HOST: redis
       NODE_ENV: '\${NODE_ENV:-development}'
@@ -189,6 +194,7 @@ networks:
     working_dir: /usr/src/app
     volumes:
       - <CONTEXT_VALUE>:/usr/src/app:cached
+      - api_node_modules:/usr/src/app/node_modules
 <WS_DEPENDS_ON_YAML>
 `
   }
@@ -208,6 +214,7 @@ networks:
       GITHUB_OAUTH_TOKEN: '\${GITHUB_OAUTH_TOKEN}'
       BULLMQ_PRO_NPM_TOKEN: '\${BULLMQ_PRO_NPM_TOKEN}'
       DB_HOST: db
+      REPLICA_DB_HOST: db
       WS_REDIS_HOST: redis
       BG_JOBS_REDIS_HOST: redis
       NODE_ENV: '\${NODE_ENV:-development}'
@@ -216,6 +223,7 @@ networks:
     working_dir: /usr/src/app
     volumes:
       - <CONTEXT_VALUE>:/usr/src/app:cached
+      - api_node_modules:/usr/src/app/node_modules
 <WORKER_DEPENDS_ON_YAML>
 `
   }

@@ -9,6 +9,7 @@ services:
       NODE_TLS_REJECT_UNAUTHORIZED: '${NODE_TLS_REJECT_UNAUTHORIZED:-0}'
       NPM_CONFIG_STRICT_SSL: 'false'
       DB_HOST: db
+      REPLICA_DB_HOST: db
       WS_REDIS_HOST: redis
       BG_JOBS_REDIS_HOST: redis
       NODE_ENV: '${NODE_ENV:-development}'
@@ -19,6 +20,9 @@ services:
     working_dir: /usr/src/app
     volumes:
       - .:/usr/src/app:cached
+      # The container's own node_modules, shared with ws and worker, so its install of Linux
+      # builds of native packages (e.g. esbuild) never replaces the host's
+      - api_node_modules:/usr/src/app/node_modules
     healthcheck:
       test: ['CMD-SHELL', 'nc -z localhost 7777 || exit 1']
       interval: 10s
@@ -45,6 +49,7 @@ services:
       GITHUB_OAUTH_TOKEN: '${GITHUB_OAUTH_TOKEN}'
       BULLMQ_PRO_NPM_TOKEN: '${BULLMQ_PRO_NPM_TOKEN}'
       DB_HOST: db
+      REPLICA_DB_HOST: db
       WS_REDIS_HOST: redis
       BG_JOBS_REDIS_HOST: redis
       NODE_ENV: '${NODE_ENV:-development}'
@@ -53,6 +58,7 @@ services:
     working_dir: /usr/src/app
     volumes:
       - .:/usr/src/app:cached
+      - api_node_modules:/usr/src/app/node_modules
     networks:
       - backend
     depends_on:
@@ -74,7 +80,9 @@ services:
     ports:
       - '7433:5432'
     volumes:
-      - db:/var/lib/postgresql/data
+      # From 18 on, the image keeps its data under /var/lib/postgresql (in 18/docker), and
+      # its entrypoint exits before initdb while a volume is mounted at the old .../data
+      - db:/var/lib/postgresql
     networks:
       - backend
     healthcheck:
@@ -102,6 +110,7 @@ services:
 volumes:
   db:
   redis:
+  api_node_modules:
 
 networks:
   backend:
