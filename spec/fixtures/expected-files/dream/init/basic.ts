@@ -15,6 +15,8 @@ export default async (app: DreamApp) => {
   app.set('projectRoot', srcPath('..'))
   app.set('primaryKeyType', 'bigint')
   app.set('inflections', inflections)
+  app.set('importExtension', '.js')
+  app.set('importAliasPrefix', '#')
   app.set('packageManager', 'npm')
   await app.load('models', srcPath('..', 'src', 'api', 'app', 'models'), path => importDefault(path))
   await app.load('serializers', srcPath('..', 'src', 'api', 'app', 'serializers'), path => importAll(path))

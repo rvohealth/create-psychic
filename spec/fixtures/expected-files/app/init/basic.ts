@@ -43,6 +43,12 @@ export default async (psy: PsychicApp) => {
     controllerSpecs: 'spec/unit/controllers',
   })
 
+  // The import paths the generators (`psy g:model`, `psy g:resource` and the rest) write: their
+  // suffix, and their alias prefix (the `#` of `#models/User.js`). Declared here only: Psychic
+  // passes both to Dream, so conf/dream.ts does not set them.
+  psy.set('importExtension', '.js')
+  psy.set('importAliasPrefix', '#')
+
   psy.set('inflections', inflections)
   psy.set('routes', routesCb)
 

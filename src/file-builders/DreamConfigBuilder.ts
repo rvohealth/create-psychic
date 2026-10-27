@@ -40,11 +40,16 @@ export default class DreamConfigBuilder {
       .replace('<PSYCHIC_IMPORT>', '')
       .replace(/<PSYCHIC_OR_DREAM_APP>/g, 'DreamApp')
       .replace('<DREAM_PACKAGE_MANAGER>', `  app.set('packageManager', '${options.packageManager}')`)
+      // A Psychic app declares its import style in conf/app.ts (AppConfigBuilder), and Psychic
+      // throws at boot if conf/dream.ts sets a different, non-default value. A dream-only app has
+      // no conf/app.ts, so it declares the import style here.
       .replace(
         '<IMPORT_STYLE>',
-        options.importExtension === '.js'
-          ? ''
-          : `\n  app.set('importExtension', '${options.importExtension}')`,
+        options.dreamOnly
+          ? `
+  app.set('importExtension', '${options.importExtension}')
+  app.set('importAliasPrefix', '#')`
+          : '',
       )
       .replace(
         '<PROJECT_ROOT>',

@@ -35,7 +35,12 @@ export default async (psy: PsychicApp) => {
         key: AppEnv.string('APP_ENCRYPTION_KEY'),
       },
     },
-  })<IMPORT_STYLE><PSYCHIC_PATHS>
+  })<PSYCHIC_PATHS>
+
+  // The import paths the generators (`psy g:model`, `psy g:resource` and the rest) write: their
+  // suffix, and their alias prefix (the `#` of `#models/User.js`). Declared here only: Psychic
+  // passes both to Dream, so conf/dream.ts does not set them.
+<IMPORT_STYLE>
 
   psy.set('inflections', inflections)
   psy.set('routes', routesCb)
