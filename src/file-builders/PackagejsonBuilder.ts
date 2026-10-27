@@ -3,6 +3,17 @@ import { NewPsychicAppCliOptions } from '../helpers/newPsychicApp.js'
 import { replacePackageManagerInFileContents } from '../helpers/replacePackageManagerInFile.js'
 import safelyImportJsonFile from '../helpers/safelyImportJsonFile.js'
 
+// The `engines.pnpm` of every pnpm project a new app has: the api and each pnpm
+// client (addClientApp). A project is installed with the pnpm already on PATH,
+// so its 3-day cooldown in pnpm-workspace.yaml holds only if that pnpm reads it.
+// pnpm reads `minimumReleaseAge` from 10.16.0, pattern excludes such as
+// `'@rvoh/*'` from 10.17.0 and exact-version excludes such as `'express@4.22.3'`
+// from 10.19.0. pnpm always refuses to install under a root `engines.pnpm` it
+// does not satisfy, engine-strict or not, so an older pnpm stops with an error
+// naming this floor, in `new` and on every later install, instead of skipping
+// the cooldown.
+export const PNPM_COOLDOWN_ENGINE_RANGE = '>=10.19.0'
+
 export default class PackagejsonBuilder {
   public static async buildAPI(appName: string, options: NewPsychicAppCliOptions) {
     const imported = (await safelyImportJsonFile('../../boilerplate/api/package.json')) as { default: object }
@@ -229,16 +240,8 @@ export default class PackagejsonBuilder {
     }
 
     if (options.packageManager === 'pnpm') {
-      // `new` installs with the pnpm already on PATH, so the 3-day cooldown in
-      // pnpm-workspace.yaml holds only if that pnpm reads it. pnpm reads
-      // `minimumReleaseAge` from 10.16.0, pattern excludes such as `'@rvoh/*'` from
-      // 10.17.0 and exact-version excludes such as `'express@4.22.3'` from 10.19.0.
-      // pnpm always refuses to install under a root `engines.pnpm` it does not
-      // satisfy, engine-strict or not, so an older pnpm stops with an error naming
-      // this floor, in `new` and on every later install, instead of skipping the
-      // cooldown.
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      packagejson.engines.pnpm = '>=10.19.0'
+      packagejson.engines.pnpm = PNPM_COOLDOWN_ENGINE_RANGE
     }
 
     if (options.packageManager === 'bun') {

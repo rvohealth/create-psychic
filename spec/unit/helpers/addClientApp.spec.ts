@@ -8,6 +8,9 @@ import DreamCliLogger from '../../../src/logger/DreamCliLogger.js'
 
 vi.mock('../../../src/helpers/sspawn.js', () => ({ default: vi.fn() }))
 
+// create-vite 9.0.7's react-ts and vue-ts templates declare no `engines`
+const SCAFFOLDED_PACKAGE_JSON = { name: 'client', private: true, dependencies: { react: '^19.2.0' } }
+
 describe('addClientApp', () => {
   let parentWithSpace: string
   let clientRoot: string
@@ -21,6 +24,7 @@ describe('addClientApp', () => {
     fs.mkdirSync(clientRoot, { recursive: true })
     fs.writeFileSync(path.join(clientRoot, 'vite.config.ts'), 'export default defineConfig({})\n')
     fs.writeFileSync(path.join(clientRoot, '.gitignore'), 'node_modules\n')
+    fs.writeFileSync(path.join(clientRoot, 'package.json'), JSON.stringify(SCAFFOLDED_PACKAGE_JSON))
   })
 
   afterEach(() => {
@@ -56,6 +60,17 @@ describe('addClientApp', () => {
     return vi.mocked(sspawn).mock.calls
   }
 
+  function captureClientPackageJsonAtInstall(packageManager: NewPsychicAppCliOptions['packageManager']) {
+    const captured: { packageJson?: unknown } = {}
+    vi.mocked(sspawn).mockImplementation((command, spawnOptions) => {
+      if (command.endsWith(`${packageManager} install`) && spawnOptions?.cwd === clientRoot) {
+        captured.packageJson = JSON.parse(fs.readFileSync(path.join(clientRoot, 'package.json'), 'utf8'))
+      }
+      return Promise.resolve({})
+    })
+    return captured
+  }
+
   function expectNoPathInCommands(calls: Awaited<ReturnType<typeof addClient>>) {
     for (const [command] of calls) {
       expect(command).not.toContain('howyadoin')
@@ -87,6 +102,44 @@ describe('addClientApp', () => {
     ])
     expectNoPathInCommands(calls)
   })
+
+  // A pnpm client is its own pnpm project, so the api's `engines.pnpm` never
+  // applies there. Without the same floor, a pnpm older than 10.16 adds or
+  // updates a client dependency while ignoring the client's 3-day cooldown.
+  it("declares the api's pnpm floor in a pnpm client's package.json before installing there", async () => {
+    const captured = captureClientPackageJsonAtInstall('pnpm')
+
+    await addClient('pnpm')
+
+    expect(captured.packageJson).toEqual({ ...SCAFFOLDED_PACKAGE_JSON, engines: { pnpm: '>=10.19.0' } })
+    expect(fs.readFileSync(path.join(clientRoot, 'package.json'), 'utf8')).toMatch(/\n$/)
+  })
+
+  it("keeps the engines a scaffolder declared in a pnpm client's package.json", async () => {
+    fs.writeFileSync(
+      path.join(clientRoot, 'package.json'),
+      JSON.stringify({ ...SCAFFOLDED_PACKAGE_JSON, engines: { node: '>=20' } }),
+    )
+    const captured = captureClientPackageJsonAtInstall('pnpm')
+
+    await addClient('pnpm')
+
+    expect((captured.packageJson as { engines: unknown }).engines).toEqual({
+      node: '>=20',
+      pnpm: '>=10.19.0',
+    })
+  })
+
+  it.each(['yarn', 'npm', 'bun'] as const)(
+    "leaves a %s client's package.json as scaffolded",
+    async packageManager => {
+      const captured = captureClientPackageJsonAtInstall(packageManager)
+
+      await addClient(packageManager)
+
+      expect(captured.packageJson).toEqual(SCAFFOLDED_PACKAGE_JSON)
+    },
+  )
 
   // Outside corepack, `yarn set version stable` records the release it fetched as
   // `yarnPath` in .yarnrc.yml, and a global Yarn 1 hands the install to that
@@ -134,8 +187,10 @@ describe('addClientApp', () => {
 
       await addClient(packageManager, 'nuxt')
 
-      expect(packageJsonAtInstall).toEqual({
-        dependencies: { nuxt: '^4.0.0', vue: '^3.0.0', 'vue-router': '^5.0.0' },
+      expect((packageJsonAtInstall as { dependencies: unknown }).dependencies).toEqual({
+        nuxt: '^4.0.0',
+        vue: '^3.0.0',
+        'vue-router': '^5.0.0',
       })
     },
   )

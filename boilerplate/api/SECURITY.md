@@ -47,9 +47,10 @@ so routine security patching never has to bypass it.
   `package.json` sets `engines.pnpm` to `>=10.19.0`, the first pnpm that applies
   every cooldown setting in that file; an older pnpm would install without them,
   so pnpm refuses to install with one and names the version it needs. Each pnpm
-  client app (`client/`, `admin/`, `internal/`) is a separate pnpm project with its
-  own settings-only `pnpm-workspace.yaml` carrying the same cooldown, because pnpm
-  does not apply the api's settings to it.
+  client app (`client/`, `admin/`, `internal/`) is a separate pnpm project, so
+  pnpm applies neither the api's settings nor its `engines` there. Each carries
+  its own settings-only `pnpm-workspace.yaml` with the same cooldown, and its own
+  `package.json` sets the same `engines.pnpm`.
 - **Yarn** — `npmMinimalAgeGate: 4320` in `.yarnrc.yml`. Each Yarn client app
   is likewise a separate Yarn project with its own `.yarnrc.yml` carrying the
   same gate; without it, Yarn would apply its one-day default.

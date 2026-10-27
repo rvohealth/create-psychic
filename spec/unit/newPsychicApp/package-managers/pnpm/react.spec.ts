@@ -26,6 +26,11 @@ describe('newPsychicApp with react client', () => {
     // the client is its own pnpm project, so it carries its own cooldown
     await expectFileToContain('./howyadoin/client/pnpm-workspace.yaml', 'minimumReleaseAge: 4320')
     await expectFileToContain('./howyadoin/api/pnpm-workspace.yaml', 'minimumReleaseAge: 4320')
+    // and its own copy of the api's pnpm floor, which the api's `engines` does not reach
+    const clientPackageJson = JSON.parse(fs.readFileSync('./howyadoin/client/package.json', 'utf8')) as {
+      engines?: unknown
+    }
+    expect(clientPackageJson.engines).toEqual({ pnpm: '>=10.19.0' })
 
     await expectToMatchFixture(
       'expected-files/docker-compose/pnpm/client-basic.yml',

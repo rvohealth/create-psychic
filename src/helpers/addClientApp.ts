@@ -3,6 +3,7 @@ import * as path from 'node:path'
 import ESLintConfBuilder from '../file-builders/EslintConfBuilder.js'
 import NextConfigBuilder from '../file-builders/NextConfigBuilder.js'
 import NuxtConfigBuilder from '../file-builders/NuxtConfigBuilder.js'
+import { PNPM_COOLDOWN_ENGINE_RANGE } from '../file-builders/PackagejsonBuilder.js'
 import ViteConfBuilder from '../file-builders/ViteConfBuilder.js'
 import DreamCliLogger, { DreamCliForegroundColor } from '../logger/DreamCliLogger.js'
 import addMissingClientGitignoreStatements from './addMissingClientGitignoreStatements.js'
@@ -165,6 +166,7 @@ export default async function addClientApp({
       path.join(apiRoot, '..', clientRootFolderName, 'pnpm-workspace.yaml'),
       clientPnpmWorkspaceYaml(),
     )
+    requireCooldownPnpm(path.join(clientRoot, 'package.json'))
   }
 
   // only bother installing packages if not in test env to save time
@@ -192,6 +194,18 @@ function clientPnpmWorkspaceYaml() {
     '# (4320 min), matching the api. See SECURITY.md in the api.\n' +
     'minimumReleaseAge: 4320\n'
   )
+}
+
+// A pnpm client is its own pnpm project, so the api's `engines.pnpm` does not
+// apply to it either, and a pnpm too old to read the cooldown above would add or
+// update dependencies here without it. That file needs only pnpm 10.16.0 (it has
+// no excludes), but the client declares the api's floor so the app has one; a
+// pnpm below it stops with ERR_PNPM_UNSUPPORTED_ENGINE. Any `engines` the
+// scaffolder wrote is kept.
+function requireCooldownPnpm(packageJsonPath: string) {
+  const pkg = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8')) as { engines?: Record<string, string> }
+  pkg.engines = { ...pkg.engines, pnpm: PNPM_COOLDOWN_ENGINE_RANGE }
+  fs.writeFileSync(packageJsonPath, JSON.stringify(pkg, null, 2) + '\n')
 }
 
 // A yarn client is likewise its own yarn project, so it does not read the api's
