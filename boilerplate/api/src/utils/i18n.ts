@@ -1,7 +1,12 @@
 import locales from '#conf/locales/index.js'
 import { I18nProvider } from '@rvoh/psychic/system'
 
-const SUPPORTED_LOCALES = ['en-US']
+// The request language tags the app accepts. ApplicationController's locale
+// getter picks the one a request's Accept-Language header prefers. Each is
+// served by its language's locale file ('en-US' by 'en'), and the first is the
+// default. An app with a database enum of locales returns that enum's values
+// here instead (Dream's src/types/db.ts exports them, as in LocalesEnumValues)
+const SUPPORTED_LOCALES = ['en-US'] as const
 export function supportedLocales() {
   return SUPPORTED_LOCALES
 }

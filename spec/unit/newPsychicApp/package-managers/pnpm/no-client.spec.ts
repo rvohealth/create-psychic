@@ -1,4 +1,5 @@
 import * as fs from 'node:fs'
+import internalSrcPath from '../../../../../src/helpers/internalSrcPath.js'
 import sspawn from '../../../../../src/helpers/sspawn.js'
 import expectFile from '../../../../helpers/expectFile.js'
 import expectFileToContain from '../../../../helpers/expectFileToContain.js'
@@ -78,6 +79,22 @@ describe('newPsychicApp with no client', () => {
     await expectFileToContain(
       './howyadoin/src/app/models/User.ts',
       "import ApplicationModel from '#models/ApplicationModel.js'",
+    )
+
+    // The template's ApplicationController#locale getter needs Psychic and Koa, which
+    // create-psychic does not install, so its spec runs in this app (and ships in none):
+    // give the app a second supported locale and copy the spec in for the uspec below
+    const i18nPath = './howyadoin/src/utils/i18n.ts'
+    const i18n = fs.readFileSync(i18nPath, 'utf8')
+    expect(i18n).toContain("SUPPORTED_LOCALES = ['en-US']")
+    fs.writeFileSync(
+      i18nPath,
+      i18n.replace("SUPPORTED_LOCALES = ['en-US']", "SUPPORTED_LOCALES = ['en-US', 'es-ES']"),
+    )
+    fs.mkdirSync('./howyadoin/spec/unit/controllers', { recursive: true })
+    fs.copyFileSync(
+      internalSrcPath('../spec/fixtures/generated-app-specs/ApplicationController.locale.spec.ts'),
+      './howyadoin/spec/unit/controllers/ApplicationController.locale.spec.ts',
     )
 
     // `psy:js --help` boots the built app's conf graph from dist/ with no database, so it fails
