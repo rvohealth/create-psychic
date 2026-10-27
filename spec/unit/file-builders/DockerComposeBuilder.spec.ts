@@ -200,6 +200,28 @@ describe('DockerComposeBuilder', () => {
       )
     })
 
+    context('TLS certificate checks', () => {
+      it("leaves them on in every service that installs packages or runs the app's code", async () => {
+        const yml = await DockerComposeBuilder.build(APP_NAME, {
+          ...baseOptions,
+          packageManager: 'npm',
+          websockets: true,
+          workers: true,
+          client: 'react',
+        })
+
+        for (const name of [...API_SERVICES, 'client']) {
+          // Node turns certificate checks off only when this is '0'
+          expect(service(yml, name)).toContain(
+            "      NODE_TLS_REJECT_UNAUTHORIZED: '${NODE_TLS_REJECT_UNAUTHORIZED:-1}'\n",
+          )
+        }
+        // npm accepts any certificate once strict-ssl is false, even when Node checks them
+        expect(yml).not.toMatch(/strict.?ssl/i)
+        expect(yml).not.toContain('NODE_TLS_REJECT_UNAUTHORIZED:-0')
+      })
+    })
+
     context('the database hosts', () => {
       it('points each api service at the db service for both its primary and its replica connection', async () => {
         // the api's development .env sets DB_HOST and REPLICA_DB_HOST to localhost, which inside

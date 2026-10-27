@@ -54,7 +54,10 @@ so routine security patching never has to bypass it.
 - **Yarn** — `npmMinimalAgeGate: 4320` in `.yarnrc.yml`. Each Yarn client app
   is likewise a separate Yarn project with its own `.yarnrc.yml` carrying the
   same gate; without it, Yarn would apply its one-day default.
-- **npm** — `min-release-age=3` (days) in `.npmrc` (requires npm ≥ 11.10).
+- **npm** — `min-release-age=3` (days) in `.npmrc` (requires npm ≥ 11.10; an
+  older npm ignores it with only a warning). The compose dev containers use the
+  npm bundled with `Dockerfile.dev`'s `node:24.22.1-alpine`, npm 11.19.1; if you
+  change that image, keep it at Node 24.14.1 or later.
 
 `@rvoh/*` packages (Dream/Psychic) are exempt from the cooldown — they come from
 the trusted first-party publisher and ship frequently. pnpm/Yarn express this
@@ -66,6 +69,27 @@ per-package exemption, so on npm the cooldown applies to `@rvoh/*` too.
 `registry=https://registry.npmjs.org` (npm/pnpm) / `npmRegistryServer` (Yarn)
 pins installs to the public npm registry so they can't be silently redirected to
 a malicious mirror by a stray environment variable or a tampered config.
+
+The services in `docker-compose.yml` check TLS certificates, so nothing on the
+network path (shared Wi-Fi, a hostile proxy) can stand in for the registry during
+an install in a container, or for a host the app calls over HTTPS. Behind a
+TLS-intercepting proxy, give the containers the proxy's CA certificate instead of
+turning the checks off: Node, npm, pnpm, Yarn and Bun all trust the CA
+certificates in the file `NODE_EXTRA_CA_CERTS` names, as well as their own. For
+example, save the certificate as `proxy-ca.pem` beside `docker-compose.yml` and
+add a `docker-compose.override.yml`, which compose reads along with it:
+
+```yaml
+services:
+  api:
+    environment:
+      NODE_EXTRA_CA_CERTS: /etc/proxy-ca.pem
+    volumes:
+      - ./proxy-ca.pem:/etc/proxy-ca.pem:ro
+```
+
+and repeat the `api` block for each other service the app's `docker-compose.yml`
+has (`ws`, `worker`, `client`).
 
 ### 4. Node version
 
@@ -118,6 +142,9 @@ open the update PRs for you — review them, don't just merge.
   lets that dependency run arbitrary code at install time.
 - **Don't add third-party packages to the cooldown exclude list.** Keep it
   `@rvoh/*`-only.
+- **Don't turn TLS certificate checks off** with `NODE_TLS_REJECT_UNAUTHORIZED=0`
+  or npm's `strict-ssl=false` (npm honours it even when Node checks certificates).
+  Behind a TLS-intercepting proxy, trust its CA instead (see "Registry pinning").
 - **Don't unpin the CI actions** back to `@vN` tags, and **don't drop
   `--frozen-lockfile` / `--immutable` / `npm ci`** in CI.
 - **Don't commit production secrets.** The encryption keys and DB credentials in

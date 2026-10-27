@@ -17,8 +17,13 @@ const NODE_MODULES_COMMENT =
   '# docker-compose.yml mounts a volume over node_modules, which Docker creates with this\n' +
   "# directory's owner, so the image's user can install into it\n"
 
+const NODE_IMAGE_COMMENT =
+  '# Node 24, since the Node 25 and later images ship no corepack for `corepack enable`, and\n' +
+  '# 24.14.1 or later, whose npm (11.10+) applies the `min-release-age` cooldown in .npmrc\n'
+
 const NODE_DOCKERFILE =
-  'ARG NODE_IMAGE=node:24.12.0-alpine\n\nFROM $NODE_IMAGE AS dev\nRUN corepack enable\n' +
+  NODE_IMAGE_COMMENT +
+  'ARG NODE_IMAGE=node:24.22.1-alpine\n\nFROM $NODE_IMAGE AS dev\nRUN corepack enable\n' +
   NODE_MODULES_COMMENT +
   'RUN mkdir -p /usr/src/app/node_modules && chown node:node /usr/src/app/node_modules\nUSER node'
 

@@ -139,8 +139,7 @@ networks:
     command: sh -c "${this.clientCommand(options)}"
     environment:
       NODE_ENV: '\${NODE_ENV:-development}'
-      NODE_TLS_REJECT_UNAUTHORIZED: '\${NODE_TLS_REJECT_UNAUTHORIZED:-0}'
-      NPM_CONFIG_STRICT_SSL: 'false'
+      NODE_TLS_REJECT_UNAUTHORIZED: '\${NODE_TLS_REJECT_UNAUTHORIZED:-1}'
     ports:
       - '${CLIENT_DEV_PORT}:${CLIENT_DEV_PORT}'
     working_dir: /usr/src/app
@@ -180,8 +179,7 @@ networks:
       target: 'dev'
     command: sh -c "{{PM}} ws:dev"
     environment:
-      NODE_TLS_REJECT_UNAUTHORIZED: '\${NODE_TLS_REJECT_UNAUTHORIZED:-0}'
-      NPM_CONFIG_STRICT_SSL: 'false'
+      NODE_TLS_REJECT_UNAUTHORIZED: '\${NODE_TLS_REJECT_UNAUTHORIZED:-1}'
       DB_HOST: db
       REPLICA_DB_HOST: db
       WS_REDIS_HOST: redis
@@ -209,8 +207,7 @@ networks:
       target: 'dev'
     command: sh -c "{{PM}} worker:dev"
     environment:
-      NODE_TLS_REJECT_UNAUTHORIZED: '\${NODE_TLS_REJECT_UNAUTHORIZED:-0}'
-      NPM_CONFIG_STRICT_SSL: 'false'
+      NODE_TLS_REJECT_UNAUTHORIZED: '\${NODE_TLS_REJECT_UNAUTHORIZED:-1}'
       GITHUB_OAUTH_TOKEN: '\${GITHUB_OAUTH_TOKEN}'
       BULLMQ_PRO_NPM_TOKEN: '\${BULLMQ_PRO_NPM_TOKEN}'
       DB_HOST: db

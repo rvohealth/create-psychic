@@ -6,8 +6,9 @@ services:
       target: 'dev'
     command: sh -c "pnpm install && pnpm psy db:migrate --skip-sync && pnpm psy db:seed && pnpm web:dev"
     environment:
-      NODE_TLS_REJECT_UNAUTHORIZED: '${NODE_TLS_REJECT_UNAUTHORIZED:-0}'
-      NPM_CONFIG_STRICT_SSL: 'false'
+      # Certificates are checked. Behind a TLS-intercepting proxy, trust its CA with
+      # NODE_EXTRA_CA_CERTS (the api's SECURITY.md shows how) instead of turning this off
+      NODE_TLS_REJECT_UNAUTHORIZED: '${NODE_TLS_REJECT_UNAUTHORIZED:-1}'
       DB_HOST: db
       REPLICA_DB_HOST: db
       WS_REDIS_HOST: redis
@@ -45,8 +46,7 @@ services:
     command: sh -c "pnpm install && pnpm dev --hostname 0.0.0.0 --port 3000"
     environment:
       NODE_ENV: '${NODE_ENV:-development}'
-      NODE_TLS_REJECT_UNAUTHORIZED: '${NODE_TLS_REJECT_UNAUTHORIZED:-0}'
-      NPM_CONFIG_STRICT_SSL: 'false'
+      NODE_TLS_REJECT_UNAUTHORIZED: '${NODE_TLS_REJECT_UNAUTHORIZED:-1}'
     ports:
       - '3000:3000'
     working_dir: /usr/src/app
