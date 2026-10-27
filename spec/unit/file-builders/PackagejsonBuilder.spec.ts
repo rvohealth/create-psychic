@@ -35,6 +35,19 @@ describe('PackagejsonBuilder', () => {
       expect(JSON.parse(res).engines).toEqual({ node: '>=24' })
     })
 
+    // `new` installs with whatever pnpm runs, and an older pnpm installs without
+    // the cooldown. pnpm refuses to install under a root `engines.pnpm` it does
+    // not satisfy, so the floor stops an older pnpm with an error instead.
+    it('requires pnpm 10.19.0 or later for a pnpm app, the first pnpm that applies every cooldown setting the app writes', async () => {
+      const res = await PackagejsonBuilder.buildAPI('howyadoin', { ...baseOptions, packageManager: 'pnpm' })
+      expect(JSON.parse(res).engines).toEqual({ node: '>=24', pnpm: '>=10.19.0' })
+    })
+
+    it('declares no pnpm floor for an npm app', async () => {
+      const res = await PackagejsonBuilder.buildAPI('howyadoin', { ...baseOptions, packageManager: 'npm' })
+      expect(JSON.parse(res).engines).toEqual({ node: '>=24' })
+    })
+
     context('with backgroundWorkers: false and ws: false', () => {
       it('returns the app with the specified options', async () => {
         const options: NewPsychicAppCliOptions = { ...baseOptions }

@@ -43,7 +43,10 @@ cooldown rides it out. Three days sits under the typical critical-CVE patch SLA,
 so routine security patching never has to bypass it.
 
 - **pnpm** — `minimumReleaseAge: 4320` (minutes) in `pnpm-workspace.yaml`. pnpm
-  11+ reads it only there (release-age keys in `.npmrc` are ignored). Each pnpm
+  11+ reads it only there (release-age keys in `.npmrc` are ignored). The api's
+  `package.json` sets `engines.pnpm` to `>=10.19.0`, the first pnpm that applies
+  every cooldown setting in that file; an older pnpm would install without them,
+  so pnpm refuses to install with one and names the version it needs. Each pnpm
   client app (`client/`, `admin/`, `internal/`) is a separate pnpm project with its
   own settings-only `pnpm-workspace.yaml` carrying the same cooldown, because pnpm
   does not apply the api's settings to it.

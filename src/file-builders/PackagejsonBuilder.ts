@@ -228,6 +228,19 @@ export default class PackagejsonBuilder {
       }
     }
 
+    if (options.packageManager === 'pnpm') {
+      // `new` installs with the pnpm already on PATH, so the 3-day cooldown in
+      // pnpm-workspace.yaml holds only if that pnpm reads it. pnpm reads
+      // `minimumReleaseAge` from 10.16.0, pattern excludes such as `'@rvoh/*'` from
+      // 10.17.0 and exact-version excludes such as `'express@4.22.3'` from 10.19.0.
+      // pnpm always refuses to install under a root `engines.pnpm` it does not
+      // satisfy, engine-strict or not, so an older pnpm stops with an error naming
+      // this floor, in `new` and on every later install, instead of skipping the
+      // cooldown.
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      packagejson.engines.pnpm = '>=10.19.0'
+    }
+
     if (options.packageManager === 'bun') {
       // Bun runs lifecycle/postinstall scripts for a built-in allowlist of popular
       // packages (puppeteer among them) even when `trustedDependencies` is absent —

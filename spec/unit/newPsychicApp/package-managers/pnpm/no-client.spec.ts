@@ -56,6 +56,8 @@ describe('newPsychicApp with no client', () => {
     >
     expect(packageJson.overrides).toBeUndefined()
     expect(packageJson.resolutions).toBeUndefined()
+    // an older pnpm installs without the cooldown, so pnpm refuses to run it here
+    expect(packageJson.engines).toEqual({ node: '>=24', pnpm: '>=10.19.0' })
 
     const lockfile = fs.readFileSync('./howyadoin/pnpm-lock.yaml', 'utf8')
     expect(lockfile).toContain('express@4.22.3:')
