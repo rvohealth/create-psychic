@@ -35,6 +35,20 @@ describe('newPsychicApp with no client', () => {
     expect(workspaceBody).not.toContain('set this to true or false')
     expect(workspaceBody).not.toContain('overrides:')
     expect(workspaceBody).toContain("- 'express@4.22.3'")
+    // pnpm 11+ enforces the cooldown only from pnpm-workspace.yaml
+    expect(workspaceBody).toMatch(/^minimumReleaseAge: 4320$/m)
+    expect(workspaceBody).toContain("- '@rvoh/*'")
+
+    // .npmrc pins the registry only: pnpm 11+ ignores release-age keys there,
+    // and always-auth is inert
+    const npmrcSettings = fs
+      .readFileSync('./howyadoin/.npmrc', 'utf8')
+      .split('\n')
+      .filter(line => line.trim() !== '' && !line.trimStart().startsWith('#'))
+    expect(npmrcSettings).toEqual([
+      'registry=https://registry.npmjs.org',
+      '@rvoh:registry=https://registry.npmjs.org',
+    ])
 
     const packageJson = JSON.parse(fs.readFileSync('./howyadoin/package.json', 'utf8')) as Record<
       string,
@@ -48,7 +62,8 @@ describe('newPsychicApp with no client', () => {
     expect(lockfile).toContain('js-yaml@4.3.2:')
     expect(lockfile).toContain('path-to-regexp@0.1.13:')
     expect(lockfile).toContain('path-to-regexp@8.4.2:')
-    expect(lockfile).toContain('qs@6.16.0:')
+    // express@4.22.3 pulls in the patched qs; any later 6.x patch/minor is fine
+    expect(lockfile).toMatch(/^ {2}qs@6\.(1[6-9]|[2-9]\d)\.\d+:/m)
     await expectFile('./howyadoin/docker-compose.yml')
     await expectFile('./howyadoin/Dockerfile.dev')
 

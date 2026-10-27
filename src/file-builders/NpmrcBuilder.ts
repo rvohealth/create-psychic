@@ -6,7 +6,9 @@ import { PsychicPackageManager } from '../helpers/newPsychicApp.js'
  *
  * - **pnpm** reads `.npmrc` for registry config but takes its supply-chain
  *   cooldown (`minimumReleaseAge`) and build-script allowlist from
- *   `pnpm-workspace.yaml`, so its `.npmrc` only pins the registry.
+ *   `pnpm-workspace.yaml`, so its `.npmrc` only pins the registry. pnpm 11+
+ *   reads only registry/auth settings from `.npmrc` and silently ignores
+ *   release-age keys there, so none are written.
  * - **npm** has no per-package cooldown exclude and no per-package script
  *   carve-out, so its hardening is all-or-nothing: `min-release-age` (npm >= 11.10,
  *   in DAYS) plus `ignore-scripts=true`.

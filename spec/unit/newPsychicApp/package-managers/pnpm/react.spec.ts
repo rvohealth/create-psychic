@@ -23,6 +23,9 @@ describe('newPsychicApp with react client', () => {
     await expectFile('./howyadoin/api/Dockerfile.dev')
     await expectFile('./howyadoin/client/Dockerfile.dev')
     await expectFileToContain('./howyadoin/client/pnpm-workspace.yaml', 'strictDepBuilds: false')
+    // the client is its own pnpm project, so it carries its own cooldown
+    await expectFileToContain('./howyadoin/client/pnpm-workspace.yaml', 'minimumReleaseAge: 4320')
+    await expectFileToContain('./howyadoin/api/pnpm-workspace.yaml', 'minimumReleaseAge: 4320')
 
     await expectToMatchFixture(
       'expected-files/docker-compose/pnpm/client-basic.yml',

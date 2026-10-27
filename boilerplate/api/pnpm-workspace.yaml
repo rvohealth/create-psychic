@@ -31,7 +31,8 @@ allowBuilds:
 # cooldown rides it out. 3 days sits under the typical critical-CVE patch SLA, so
 # routine security patching never has to bypass it. @rvoh/* packages are excluded
 # because Psychic ships frequent releases that generated apps should pick up
-# immediately (and they come from the trusted first-party publisher).
+# immediately (and they come from the trusted first-party publisher). pnpm 11+
+# reads these settings only from this file; release-age keys in .npmrc are ignored.
 minimumReleaseAge: 4320
 
 minimumReleaseAgeExclude:
@@ -39,9 +40,4 @@ minimumReleaseAgeExclude:
   # dependencies to patched compatible releases. Keep the exception exact so
   # later Express releases still pass through the normal three-day cooldown.
   - 'express@4.22.3'
-  - '@rvoh/dream'
-  - '@rvoh/dream-spec-helpers'
-  - '@rvoh/psychic'
-  - '@rvoh/psychic-spec-helpers'
-  - '@rvoh/psychic-workers'
-  - '@rvoh/psychic-websockets'
+  - '@rvoh/*'

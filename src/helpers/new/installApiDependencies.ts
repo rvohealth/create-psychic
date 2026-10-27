@@ -3,6 +3,7 @@ import colorize from '../../logger/loggable/colorize.js'
 import getApiRoot from '../getApiRoot.js'
 import getLockfileName from '../getLockfileName.js'
 import { NewPsychicAppCliOptions } from '../newPsychicApp.js'
+import enableCmdForPackageManager from '../packageManager/enableCmdForPackageManager.js'
 import execCmdForPackageManager from '../packageManager/execCmdForPackageManager.js'
 import sspawn from '../sspawn.js'
 
@@ -19,7 +20,7 @@ export default async function installApiDependencies(
       // install (no lockfile is shipped to pin them), so no explicit `yarn up`
       // is needed — see the pnpm case for why only pnpm keeps a defensive one.
       await sspawn(
-        `cd ${apiRoot} && touch ${lockfileName} && corepack enable yarn && yarn set version stable && yarn install`,
+        `cd ${apiRoot} && touch ${lockfileName} && ${enableCmdForPackageManager('yarn')} && yarn set version stable && yarn install`,
         {
           onStdout: message => {
             logger.logContinueProgress(colorize('[api]', { color: 'cyan' }) + ' ' + message, {
@@ -39,13 +40,16 @@ export default async function installApiDependencies(
       // `resolution-mode=lowest-direct`, install would pin e.g. dream@2.13.0 and
       // this re-floats every @rvoh package to latest-in-range, so a freshly
       // scaffolded app always starts on the newest published Dream/Psychic.
-      await sspawn(`cd ${apiRoot} && corepack enable pnpm && pnpm install && pnpm up "@rvoh/*"`, {
-        onStdout: message => {
-          logger.logContinueProgress(colorize('[api]', { color: 'cyan' }) + ' ' + message, {
-            logPrefixColor: 'cyan',
-          })
+      await sspawn(
+        `cd ${apiRoot} && ${enableCmdForPackageManager('pnpm')} && pnpm install && pnpm up "@rvoh/*"`,
+        {
+          onStdout: message => {
+            logger.logContinueProgress(colorize('[api]', { color: 'cyan' }) + ' ' + message, {
+              logPrefixColor: 'cyan',
+            })
+          },
         },
-      })
+      )
       break
 
     case 'npm':

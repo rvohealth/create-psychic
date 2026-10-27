@@ -7,6 +7,7 @@ import ViteConfBuilder from '../file-builders/ViteConfBuilder.js'
 import DreamCliLogger, { DreamCliForegroundColor } from '../logger/DreamCliLogger.js'
 import addMissingClientGitignoreStatements from './addMissingClientGitignoreStatements.js'
 import dlxCmdForPackageManager from './packageManager/dlxCmdForPackageManager.js'
+import enableCmdForPackageManager from './packageManager/enableCmdForPackageManager.js'
 import frontEndPackageManager from './frontEndPackageManager.js'
 import { cliClientAppTypes, NewPsychicAppCliOptions, PsychicPackageManager } from './newPsychicApp.js'
 import sspawn from './sspawn.js'
@@ -117,7 +118,10 @@ export default async function addClientApp({
       const nextConfigPath = path.join(apiRoot, '..', clientRootFolderName, 'next.config.ts')
       const packageJsonPath = path.join(apiRoot, '..', clientRootFolderName, 'package.json')
       ensureNextCompatibleTypescript(packageJsonPath)
-      if (fePm === 'yarn') widenNextPinsForCooldown(packageJsonPath)
+      // yarn and pnpm clients both get a 3-day cooldown (clientYarnrcYml,
+      // clientPnpmWorkspaceYaml), and create-next-app exact-pins the
+      // just-published `next`, which has no mature fallback.
+      if (fePm === 'yarn' || fePm === 'pnpm') widenNextPinsForCooldown(packageJsonPath)
       fs.writeFileSync(nextConfigPath, await NextConfigBuilder.build(nextConfigPath))
 
       addFspecBuildDirToGitignore(path.join(apiRoot, '..', clientRootFolderName, '.gitignore'), '.next-fspec')
@@ -163,10 +167,7 @@ export default async function addClientApp({
   // use node-modules linker for yarn client apps to ensure compatibility
   // with vite's rolldown bundler, which doesn't support yarn PnP
   if (fePm === 'yarn') {
-    fs.writeFileSync(
-      path.join(apiRoot, '..', clientRootFolderName, '.yarnrc.yml'),
-      'nodeLinker: node-modules\n\nnpmPreapprovedPackages:\n  - "@rvoh/*"\n',
-    )
+    fs.writeFileSync(path.join(apiRoot, '..', clientRootFolderName, '.yarnrc.yml'), clientYarnrcYml())
   }
 
   // Prevent pnpm from traversing up and merging with a parent workspace (e.g. create-psychic's own pnpm-workspace.yaml during specs).
@@ -174,7 +175,7 @@ export default async function addClientApp({
   if (fePm === 'pnpm') {
     fs.writeFileSync(
       path.join(apiRoot, '..', clientRootFolderName, 'pnpm-workspace.yaml'),
-      'strictDepBuilds: false\n',
+      clientPnpmWorkspaceYaml(),
     )
   }
 
@@ -197,11 +198,44 @@ function testEnv() {
   return process.env.NODE_ENV === 'test'
 }
 
+// A pnpm client is its own pnpm project (own package.json + lockfile), so it
+// does not inherit the api's pnpm-workspace.yaml settings; it needs its own
+// copy of the supply-chain cooldown. pnpm 11+ reads minimumReleaseAge only from
+// pnpm-workspace.yaml (release-age keys in .npmrc are ignored). The settings-only
+// file (no `packages:` key) also keeps pnpm from treating a parent directory's
+// pnpm-workspace.yaml as this project's workspace root. Clients depend on no
+// @rvoh/* packages, so no cooldown exclude is needed here.
+function clientPnpmWorkspaceYaml() {
+  return (
+    'strictDepBuilds: false\n' +
+    '\n' +
+    "# SECURITY — don't install dependency versions published in the last 3 days\n" +
+    '# (4320 min), matching the api. See SECURITY.md in the api.\n' +
+    'minimumReleaseAge: 4320\n'
+  )
+}
+
+// A yarn client is likewise its own yarn project, so it does not read the api's
+// .yarnrc.yml. Without its own gate it gets Yarn's built-in default (1440 min,
+// one day, in Yarn 4.10+), so set the api's 3-day gate here too.
+function clientYarnrcYml() {
+  return (
+    'nodeLinker: node-modules\n' +
+    '\n' +
+    "# SECURITY — don't install dependency versions published in the last 3 days\n" +
+    '# (4320 min), matching the api. See SECURITY.md in the api.\n' +
+    'npmMinimalAgeGate: 4320\n' +
+    '\n' +
+    'npmPreapprovedPackages:\n' +
+    '  - "@rvoh/*"\n'
+  )
+}
+
 function initilizePackageManagerCmd(packageManager: PsychicPackageManager) {
   const lockfile = getLockfileName(packageManager)
   switch (packageManager) {
     case 'yarn':
-      return `&& touch ${lockfile} && corepack enable && yarn set version stable`
+      return `&& touch ${lockfile} && ${enableCmdForPackageManager('yarn')} && yarn set version stable`
     case 'pnpm':
     case 'npm':
     case 'bun':

@@ -22,6 +22,8 @@ describe('initPsychicApp with --template=nextjs flag', () => {
     await expectFile('howyadoin/src/instrumentation.mts')
     await expectFile('howyadoin/src/instrumentation-node.mts')
     await expectFileToContain('howyadoin/pnpm-workspace.yaml', 'strictDepBuilds: false')
+    await expectFileToContain('howyadoin/pnpm-workspace.yaml', 'minimumReleaseAge: 4320')
+    await expectFileToContain('howyadoin/pnpm-workspace.yaml', "- '@rvoh/*'")
 
     // swap out the default page.tsx file for one that calls to maybeInitializePsychicApp,
     // which will cause build to fail if anything crashes during psychic initialization.

@@ -3,6 +3,7 @@ import * as path from 'node:path'
 import psyCmdForInitOptions from '../../src/helpers/init/psyCmdForInitOptions.js'
 import initPsychicApp from '../../src/helpers/initPsychicApp.js'
 import { InitPsychicAppCliOptions } from '../../src/helpers/newPsychicApp.js'
+import enableCmdForPackageManager from '../../src/helpers/packageManager/enableCmdForPackageManager.js'
 import sspawn from '../../src/helpers/sspawn.js'
 import ensureNextCompatibleTypescript from '../../src/helpers/ensureNextCompatibleTypescript.js'
 import widenNextPinsForCooldown from '../../src/helpers/widenNextPinsForCooldown.js'
@@ -47,5 +48,7 @@ async function prepareYarnFixture(appDir: string) {
     path.join(appDir, '.yarnrc.yml'),
     'nodeLinker: node-modules\n\nnpmPreapprovedPackages:\n  - "@rvoh/*"\n',
   )
-  await sspawn(`cd ${appDir} && touch yarn.lock && corepack enable && yarn set version stable`)
+  await sspawn(
+    `cd ${appDir} && touch yarn.lock && ${enableCmdForPackageManager('yarn')} && yarn set version stable`,
+  )
 }

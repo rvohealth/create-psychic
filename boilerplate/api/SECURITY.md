@@ -42,8 +42,14 @@ worm-injected releases are caught and unpublished inside that window, so the
 cooldown rides it out. Three days sits under the typical critical-CVE patch SLA,
 so routine security patching never has to bypass it.
 
-- **pnpm** — `minimumReleaseAge: 4320` (minutes) in `pnpm-workspace.yaml`.
-- **Yarn** — `npmMinimalAgeGate: 4320` in `.yarnrc.yml`.
+- **pnpm** — `minimumReleaseAge: 4320` (minutes) in `pnpm-workspace.yaml`. pnpm
+  11+ reads it only there (release-age keys in `.npmrc` are ignored). Each pnpm
+  client app (`client/`, `admin/`, `internal/`) is a separate pnpm project with its
+  own settings-only `pnpm-workspace.yaml` carrying the same cooldown, because pnpm
+  does not apply the api's settings to it.
+- **Yarn** — `npmMinimalAgeGate: 4320` in `.yarnrc.yml`. Each Yarn client app
+  is likewise a separate Yarn project with its own `.yarnrc.yml` carrying the
+  same gate; without it, Yarn would apply its one-day default.
 - **npm** — `min-release-age=3` (days) in `.npmrc` (requires npm ≥ 11.10).
 
 `@rvoh/*` packages (Dream/Psychic) are exempt from the cooldown — they come from
@@ -83,8 +89,10 @@ almost always clears it in time. If you genuinely must install a version younger
 than 3 days, do it as a **transient, reverted** change — temporarily lower the
 cooldown (or, on pnpm/Yarn, add a one-off exclude for that exact package), run
 your install command (`pnpm install` / `yarn install` / `npm install`), then
-restore the config in the same change. Never leave a permanent third-party
-bypass behind.
+restore the config. Never leave a permanent third-party bypass behind. On pnpm,
+restore it only once that version is 3 days old: pnpm checks every
+`pnpm-lock.yaml` entry against the cooldown on each install, `--frozen-lockfile`
+included, so restoring it sooner fails every install, CI's among them.
 
 **Keeping the cooldown exclude list clean.** Only `@rvoh/*` belongs in the
 cooldown exemption (`minimumReleaseAgeExclude` / `npmPreapprovedPackages`). A
