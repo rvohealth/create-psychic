@@ -6,6 +6,9 @@ function readBoilerplateFile(...segments: string[]): string {
   return readFileSync(join(process.cwd(), 'boilerplate', 'api', ...segments), 'utf8')
 }
 
+// A call to Psychic's or Dream's logger, or to the console.
+const logCall = /\b(?:PsychicApp|DreamApp)\.log\w*\(|\bconsole\.\w+\(/
+
 // The text of `function <name>(...) { ... }` up to the next top-level closing brace.
 function functionBody(source: string, name: string): string {
   const body = source.match(new RegExp(`function ${name}\\([\\s\\S]*?\\n\\}`))?.[0]
@@ -91,14 +94,11 @@ describe('boilerplate credential helpers', () => {
         expect(body).toMatch(/\n\s+return null$/)
       })
 
-      // Dream's DecryptionError can carry the start of the token in its `cause`, and the logger
-      // util.inspects non-string arguments, so the warning must not pass the caught error.
-      it('logs one warning with fixed text: never the token, its contents, or the caught error', () => {
-        const { body } = catchBlock()
-        const logCalls = body.match(/PsychicApp\.log\w*\(/g) ?? []
-        expect(logCalls).toEqual(['PsychicApp.logWithLevel('])
-        // 'warn' plus one plain string literal: no interpolation and no further arguments
-        expect(body).toMatch(/PsychicApp\.logWithLevel\(\s*'warn',\s*'[^'$`\n]+',?\s*\)/)
+      // A credential the helper cannot open signs the visitor out without logging, as Psychic's
+      // getCookie does for a cookie it cannot open.
+      it('logs nothing when the credential cannot be opened', () => {
+        expect(catchBlock().body).not.toMatch(logCall)
+        expect(source()).not.toMatch(/\bPsychicApp\b/)
       })
 
       // A second parse would fail with a SyntaxError whose message carries the decrypted contents.
@@ -122,13 +122,13 @@ describe('boilerplate credential helpers', () => {
       })
 
       // A token of another realm (a user token on an admin route) opens to an object without this
-      // helper's key: signed out, with no warning, so ordinary cross-realm requests do not flood the log.
-      it(`signs out a payload without ${helper.idKey}, logging nothing beyond the one decryption warning`, () => {
+      // helper's key: signed out, with nothing logged, so ordinary cross-realm requests do not flood the log.
+      it(`signs out a payload without ${helper.idKey}, logging nothing`, () => {
         const text = source()
         expect(text).toContain(
           `const ${helper.idKey} = payload.${helper.idKey}\n  if (!${helper.idKey}) return null`,
         )
-        expect(text.match(/PsychicApp\.log\w*\(/g)).toHaveLength(1)
+        expect(text).not.toMatch(logCall)
       })
 
       it(`reads the ${helper.idKey} key that ${helper.minter} in spec/unit/helpers/authentication.ts mints`, () => {

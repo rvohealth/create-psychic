@@ -1,7 +1,7 @@
 import AppEnv from '@conf/AppEnv.js'
 import { DecryptionError, DecryptionRotationError } from '@rvoh/dream/errors'
 import { Encrypt } from '@rvoh/dream/utils'
-import { PsychicApp, PsychicController } from '@rvoh/psychic'
+import { PsychicController } from '@rvoh/psychic'
 /** uncomment after creating User model */
 // import User from '@models/User.js'
 
@@ -29,11 +29,7 @@ export default async function resolveCurrentUser(controller: PsychicController):
     // signed out. Anything else, such as a DecryptionParseError for a token that opens but
     // holds malformed contents, is a bug in the app's own token code, so it propagates.
     if (!(error instanceof DecryptionError || error instanceof DecryptionRotationError)) throw error
-    // Fixed text only: never log the token or the caught error (its cause can carry the token).
-    PsychicApp.logWithLevel(
-      'warn',
-      'resolveCurrentUser: the bearer token could not be decrypted; treating the request as signed out',
-    )
+    // Signed out without logging, as Psychic's getCookie does for a cookie it cannot open.
     return null
   }
 
