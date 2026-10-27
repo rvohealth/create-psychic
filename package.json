@@ -54,12 +54,12 @@
     "luxon-jest-matchers": "^0.1.14",
     "pg": "^8.23.0",
     "prettier": "^3.9.6",
-    "puppeteer": "~25.10.0",
+    "puppeteer": "~25.16.0",
     "supertest": "^7.2.2",
     "tslib": "^2.7.0",
     "tsx": "^4.23.13",
     "typedoc": "^0.28.20",
     "typescript-eslint": "^8.70.0",
-    "vitest": "^4.1.11"
+    "vitest": "^4.1.12"
   }
 }
