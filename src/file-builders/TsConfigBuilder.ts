@@ -61,6 +61,11 @@ export default class TsConfigBuilder {
     paths['#services/*'] = [`./${options.servicesPath}/*`]
     paths['#spec/*'] = [`./${options.modelSpecsPath.replace(/\/models/, '')}/*`]
     paths['#src/*'] = [`./src/*`]
+    // The copied files also import `#src/types/...` and `#src/utils/...`, which init
+    // copies to its types and utils paths, not necessarily under ./src. tsc, tsx and
+    // Next.js use the longest matching key, so these two win over `#src/*`.
+    paths['#src/types/*'] = [`./${options.typesPath}/*`]
+    paths['#src/utils/*'] = [`./${options.utilsPath}/*`]
 
     if (isPreexistingTsconfig) {
       const types = compilerOptions.types ?? []

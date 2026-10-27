@@ -1,7 +1,7 @@
 import { PsychicController } from '@rvoh/psychic'
 import { PsychicOpenapiNames } from '@rvoh/psychic/openapi'
 import psychicTypes from '#src/types/psychic.js'
-import { supportedLocales } from '../../utils/i18n.js'
+import { supportedLocales } from '#src/utils/i18n.js'
 
 export default class ApplicationController extends PsychicController {
   public override get psychicTypes() {
