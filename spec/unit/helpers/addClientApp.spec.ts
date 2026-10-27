@@ -28,16 +28,19 @@ describe('addClientApp', () => {
     fs.rmSync(parentWithSpace, { recursive: true, force: true })
   })
 
-  async function addReactClient(packageManager: NewPsychicAppCliOptions['packageManager']) {
+  async function addClient(
+    packageManager: NewPsychicAppCliOptions['packageManager'],
+    client: 'react' | 'nuxt' = 'react',
+  ) {
     await addClientApp({
-      client: 'react',
+      client,
       clientRootFolderName: 'client',
       rootPath: './howyadoin',
       appName: 'howyadoin',
       options: {
         packageManager,
         primaryKeyType: 'bigint',
-        client: 'react',
+        client,
         adminClient: 'none',
         internalClient: 'none',
         workers: false,
@@ -53,7 +56,7 @@ describe('addClientApp', () => {
     return vi.mocked(sspawn).mock.calls
   }
 
-  function expectNoPathInCommands(calls: Awaited<ReturnType<typeof addReactClient>>) {
+  function expectNoPathInCommands(calls: Awaited<ReturnType<typeof addClient>>) {
     for (const [command] of calls) {
       expect(command).not.toContain('howyadoin')
       expect(command).not.toContain(parentWithSpace)
@@ -62,7 +65,7 @@ describe('addClientApp', () => {
   }
 
   it('scaffolds from the app folder and installs in the client folder, both through `cwd`', async () => {
-    const calls = await addReactClient('pnpm')
+    const calls = await addClient('pnpm')
 
     expect(calls.map(([command, spawnOptions]) => [command, (spawnOptions as { cwd: string }).cwd])).toEqual([
       ['pnpm create vite@9.0.7 client --template react-ts', './howyadoin'],
@@ -72,7 +75,7 @@ describe('addClientApp', () => {
   })
 
   it('sets up yarn inside the client folder through `cwd` before installing there', async () => {
-    const calls = await addReactClient('yarn')
+    const calls = await addClient('yarn')
 
     expect(calls.map(([command, spawnOptions]) => [command, (spawnOptions as { cwd: string }).cwd])).toEqual([
       ['npx create-vite@9.0.7 client --template react-ts', './howyadoin'],
@@ -99,10 +102,41 @@ describe('addClientApp', () => {
       return Promise.resolve({})
     })
 
-    await addReactClient('yarn')
+    await addClient('yarn')
 
     expect(yarnrcAtInstall).toContain('yarnPath: .yarn/releases/yarn-4.18.1.cjs')
     expect(yarnrcAtInstall).toContain('nodeLinker: node-modules')
     expect(yarnrcAtInstall).toContain('npmMinimalAgeGate: 4320')
   })
+
+  // nuxt/starter moves these floors to each new release within hours of it
+  // shipping, so under the client's 3-day cooldown no release would meet them.
+  it.each(['pnpm', 'yarn'] as const)(
+    'widens the Nuxt starter floors to their major range before a %s client installs',
+    async packageManager => {
+      let packageJsonAtInstall: unknown
+      vi.mocked(sspawn).mockImplementation((command, spawnOptions) => {
+        const packageJsonPath = path.join(clientRoot, 'package.json')
+        // what `nuxi init --template minimal` leaves behind
+        if (command.includes('nuxi@latest init')) {
+          fs.writeFileSync(
+            packageJsonPath,
+            JSON.stringify({
+              dependencies: { nuxt: '^4.6.3', vue: '^3.5.44', 'vue-router': '^5.4.0' },
+            }),
+          )
+        }
+        if (command.endsWith(`${packageManager} install`) && spawnOptions?.cwd === clientRoot) {
+          packageJsonAtInstall = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'))
+        }
+        return Promise.resolve({})
+      })
+
+      await addClient(packageManager, 'nuxt')
+
+      expect(packageJsonAtInstall).toEqual({
+        dependencies: { nuxt: '^4.0.0', vue: '^3.0.0', 'vue-router': '^5.0.0' },
+      })
+    },
+  )
 })

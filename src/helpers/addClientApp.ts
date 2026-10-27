@@ -16,7 +16,7 @@ import getLockfileName from './getLockfileName.js'
 import getApiRoot from './getApiRoot.js'
 import ClientDockerDevBuilder from '../file-builders/docker/ClientDockerfileDevBuilder.js'
 import ensureNextCompatibleTypescript from './ensureNextCompatibleTypescript.js'
-import widenNextPinsForCooldown from './widenNextPinsForCooldown.js'
+import widenNextPinsForCooldown, { widenPinsForCooldown } from './widenNextPinsForCooldown.js'
 
 const CREATE_VITE_VERSION = '9.0.7'
 
@@ -131,6 +131,15 @@ export default async function addClientApp({
       await scaffoldClient(
         `${dlxCmdForPackageManager(fePm, 'nuxi@latest')} init ${clientRootFolderName} --template minimal --no-install --packageManager ${fePm} --no-gitInit -M ""`,
       )
+
+      // The minimal template is nuxt/starter's v4 branch, whose bot raises the
+      // `nuxt` floor to each new release within a day or two of it shipping, and
+      // bumps `vue` and `vue-router` the same way. Under the 3-day yarn and pnpm
+      // client cooldown no release meets such a floor, so widen each to its
+      // major and let the cooldown pick the newest mature release.
+      if (fePm === 'yarn' || fePm === 'pnpm') {
+        widenPinsForCooldown(path.join(clientRoot, 'package.json'), ['nuxt', 'vue', 'vue-router'])
+      }
 
       const nuxtConfigPath = path.join(apiRoot, '..', clientRootFolderName, 'nuxt.config.ts')
       if (fs.existsSync(nuxtConfigPath)) {

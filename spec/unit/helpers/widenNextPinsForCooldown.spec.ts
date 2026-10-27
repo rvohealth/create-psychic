@@ -1,7 +1,9 @@
 import * as fs from 'node:fs'
 import * as os from 'node:os'
 import * as path from 'node:path'
-import widenNextPinsForCooldown from '../../../src/helpers/widenNextPinsForCooldown.js'
+import widenNextPinsForCooldown, {
+  widenPinsForCooldown,
+} from '../../../src/helpers/widenNextPinsForCooldown.js'
 
 describe('widenNextPinsForCooldown', () => {
   it('widens exact Next pins to the full major range so the age gate can select a mature release', () => {
@@ -42,6 +44,20 @@ describe('widenNextPinsForCooldown', () => {
     widenNextPinsForCooldown(packageJsonPath)
 
     expect(readPackageJson(packageJsonPath)).toEqual(original)
+  })
+})
+
+describe('widenPinsForCooldown', () => {
+  it('widens only the packages it is given', () => {
+    const packageJsonPath = writePackageJson({
+      dependencies: { nuxt: '^4.6.3', vue: '^3.5.44', 'vue-router': '^5.4.0', next: '16.2.11' },
+    })
+
+    widenPinsForCooldown(packageJsonPath, ['nuxt', 'vue', 'vue-router'])
+
+    expect(readPackageJson(packageJsonPath)).toEqual({
+      dependencies: { nuxt: '^4.0.0', vue: '^3.0.0', 'vue-router': '^5.0.0', next: '16.2.11' },
+    })
   })
 })
 
