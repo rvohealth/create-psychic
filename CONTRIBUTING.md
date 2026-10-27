@@ -37,7 +37,7 @@ This guide covers getting from a fresh clone to a green pull request.
   **Older Node 24:** Node 24 releases before 24.12.0 bundle corepack 0.34.4 or earlier. That corepack cannot launch pnpm 12, so every `pnpm` command fails with `MODULE_NOT_FOUND …/bin/pnpm.cjs`. On those releases, run `npm i -g corepack@0.34.7` first, or use Node 26 or a standalone pnpm.
 
 - **yarn**, for the yarn specs. The generator uses the `yarn` on your `PATH` when `yarn --version` runs, and falls back to `corepack enable yarn` when it does not. On Node 26 you need corepack installed (as above) or a global yarn. Each generated yarn app then runs `yarn set version stable` for itself.
-- **Bun** (optional). The Bun runtime specs skip themselves unless `bun` is on your `PATH`. CI installs Bun.
+- **Bun** 1.4.0 or later (optional). The Bun runtime specs skip themselves unless `bun` is on your `PATH`. With an older Bun on your `PATH` they fail at the first `#` import with `Cannot find module`, because a generated Bun app needs Bun 1.4.0 (its `engines.bun`). CI installs Bun.
 - **Deno: do not put it on your `PATH`** while running the full suite. The Deno specs fail when `deno` is installed. This is expected, because Deno is hidden from the CLI until an upstream bug is fixed. See "Known Failure: Deno runtime specs" in [AGENTS.md](AGENTS.md) and [docs/deno-runtime-readiness.md](docs/deno-runtime-readiness.md).
 - **PostgreSQL** on `localhost:5432`, with a database named `howyadoin_test`. CI uses Postgres 18, and uuid7 primary keys need Postgres 18. Specs connect as:
   - your OS username, or `psychic` when `CI` is set;
