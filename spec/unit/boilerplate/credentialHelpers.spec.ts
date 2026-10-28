@@ -6,9 +6,6 @@ function readBoilerplateFile(...segments: string[]): string {
   return readFileSync(join(process.cwd(), 'boilerplate', 'api', ...segments), 'utf8')
 }
 
-// A call to Psychic's or Dream's logger, or to the console.
-const logCall = /\b(?:PsychicApp|DreamApp)\.log\w*\(|\bconsole\.\w+\(/
-
 // The text of `function <name>(...) { ... }` up to the next top-level closing brace.
 function functionBody(source: string, name: string): string {
   const body = source.match(new RegExp(`function ${name}\\([\\s\\S]*?\\n\\}`))?.[0]
