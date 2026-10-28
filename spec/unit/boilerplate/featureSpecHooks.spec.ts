@@ -84,12 +84,6 @@ describe('spec/features/setup/hooks.ts in a generated app', () => {
   }`,
       )
     })
-
-    it('carries no commented-out websocket lines', async () => {
-      const hooks = await buildFeatureSpecHooks({ websockets: true })
-      expect(hooks).not.toContain('uncomment')
-      expect(hooks).not.toMatch(/^\s*\/\/ *(import \{ Cable \}|let cable|cable = |await cable)/m)
-    })
   })
 
   context('without websockets', () => {

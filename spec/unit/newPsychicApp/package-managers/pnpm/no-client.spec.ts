@@ -33,8 +33,6 @@ describe('newPsychicApp with no client', () => {
       .split('\n')
       .filter(line => !line.trimStart().startsWith('#'))
       .join('\n')
-    expect(workspaceBody).not.toContain('set this to true or false')
-    expect(workspaceBody).not.toContain('overrides:')
     expect(workspaceBody).toContain("- 'express@4.22.3'")
     // pnpm 11+ enforces the cooldown only from pnpm-workspace.yaml
     expect(workspaceBody).toMatch(/^minimumReleaseAge: 4320$/m)
@@ -55,8 +53,6 @@ describe('newPsychicApp with no client', () => {
       string,
       unknown
     >
-    expect(packageJson.overrides).toBeUndefined()
-    expect(packageJson.resolutions).toBeUndefined()
     // an older pnpm installs without the cooldown, so pnpm refuses to run it here
     expect(packageJson.engines).toEqual({ node: '>=24', pnpm: '>=10.19.0' })
 

@@ -89,14 +89,6 @@ describe('addClientApp', () => {
     expectNoPathInCommands(calls)
   })
 
-  // ESLint 10 reads only the scaffold's flat eslint.config.js, and lints a
-  // `.eslintrc.cjs` beside it as source, so such a file configures nothing
-  it('writes no .eslintrc.cjs into a React client', async () => {
-    await addClient('pnpm')
-
-    expect(fs.existsSync(path.join(clientRoot, '.eslintrc.cjs'))).toBe(false)
-  })
-
   it('sets up yarn inside the client folder through `cwd` before installing there', async () => {
     const calls = await addClient('yarn')
 

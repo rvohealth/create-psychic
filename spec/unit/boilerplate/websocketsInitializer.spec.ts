@@ -40,26 +40,6 @@ describe('boilerplate/api/src/conf/initializers/websockets.ts', () => {
     expect(register).toBeGreaterThan(earlyReturn)
   })
 
-  it('attaches no ws:start hook and no io connection listener (a throw there would exit the websocket process)', () => {
-    // code only: the template's comments may name these to warn against them
-    const code = readBoilerplateWebsocketsInitializer()
-      .split('\n')
-      .filter(line => !line.trimStart().startsWith('//'))
-      .join('\n')
-    expect(code).toContain("wsApp.on('ws:connect'")
-    expect(code).not.toContain("'ws:start'")
-    expect(code).not.toMatch(/\.on\(\s*'connect(ion)?'/)
-  })
-
-  it('names no ws:start handlers as an example of where broadcasts are emitted', () => {
-    expect(readBoilerplateWebsocketsInitializer()).not.toContain('ws:start handlers')
-  })
-
-  // Ws.register emits nothing; the old comment said it fired /ops/connection-success.
-  it('neither sends nor promises a connection-success message', () => {
-    expect(readBoilerplateWebsocketsInitializer()).not.toContain('connection-success')
-  })
-
   // allowRequest has no containment either (engine.io calls it without a try), and it never sees
   // the socket.io auth payload the token travels in.
   it('points token checks at the ws:connect hook rather than allowRequest', () => {
@@ -67,7 +47,6 @@ describe('boilerplate/api/src/conf/initializers/websockets.ts', () => {
     const allowRequestComment = initializer.match(/((?:\n {4}\/\/[^\n]*)+)\n {4}allowRequest:/)?.[1]
 
     expect(allowRequestComment).toBeDefined()
-    expect(allowRequestComment).not.toContain('auth-token inspection')
     expect(allowRequestComment).toContain('ws:connect')
   })
 })

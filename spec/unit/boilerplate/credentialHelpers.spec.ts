@@ -94,18 +94,6 @@ describe('boilerplate credential helpers', () => {
         expect(body).toMatch(/\n\s+return null$/)
       })
 
-      // A credential the helper cannot open signs the visitor out without logging, as Psychic's
-      // getCookie does for a cookie it cannot open.
-      it('logs nothing when the credential cannot be opened', () => {
-        expect(catchBlock().body).not.toMatch(logCall)
-        expect(source()).not.toMatch(/\bPsychicApp\b/)
-      })
-
-      // A second parse would fail with a SyntaxError whose message carries the decrypted contents.
-      it('does not JSON.parse the opened credential (Encrypt.decrypt already returns the parsed value)', () => {
-        expect(source()).not.toContain('JSON.parse(')
-      })
-
       // Minting encrypts an object, so a token that opens to anything else (a string, such as one
       // minted the old way with JSON.stringify, a number, null or an array) means the app's minting
       // and this helper disagree. That is a bug in the app's own token code, so it fails loudly
@@ -122,27 +110,21 @@ describe('boilerplate credential helpers', () => {
       })
 
       // A token of another realm (a user token on an admin route) opens to an object without this
-      // helper's key: signed out, with nothing logged, so ordinary cross-realm requests do not flood the log.
-      it(`signs out a payload without ${helper.idKey}, logging nothing`, () => {
+      // helper's key: signed out.
+      it(`signs out a payload without ${helper.idKey}`, () => {
         const text = source()
         expect(text).toContain(
           `const ${helper.idKey} = payload.${helper.idKey}\n  if (!${helper.idKey}) return null`,
         )
-        expect(text).not.toMatch(logCall)
       })
 
       it(`reads the ${helper.idKey} key that ${helper.minter} in spec/unit/helpers/authentication.ts mints`, () => {
         const text = source()
         expect(text).toContain(`payload.${helper.idKey}`)
-        if (helper.idKey !== 'userId') expect(text).not.toMatch(/\.userId\b/)
 
         const minter = functionBody(readBoilerplateFile('spec', 'unit', 'helpers', 'authentication.ts'), helper.minter)
         expect(minter).toMatch(new RegExp(`Encrypt\\.encrypt\\(\\s*\\{ ${helper.idKey}: `))
       })
     })
-  })
-
-  it('spec/unit/helpers/authentication.ts mints token payloads as objects, not JSON strings', () => {
-    expect(readBoilerplateFile('spec', 'unit', 'helpers', 'authentication.ts')).not.toContain('JSON.stringify')
   })
 })

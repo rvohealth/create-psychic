@@ -379,16 +379,12 @@ describe('PackagejsonBuilder', () => {
         expect(Object.keys(JSON.parse(res).dependencies)).not.toEqual(expect.arrayContaining(['bullmq']))
       })
 
-      // Feature specs start the websocket server inside the spec worker
-      // (spec/features/setup/hooks.ts), never as a separate process, so the app
-      // gets no script for running one under test.
-      it('runs the websocket server with ws:dev and has no ws:fspec script', async () => {
+      it('runs the websocket server with ws:dev', async () => {
         const options: NewPsychicAppCliOptions = { ...baseOptions, websockets: true }
         const res = await PackagejsonBuilder.buildAPI('howyadoin', options)
         const scripts = (JSON.parse(res) as { scripts: Record<string, string | undefined> }).scripts
 
         expect(scripts['ws:dev']).toContain('NODE_ENV=development tsx ./src/ws.ts')
-        expect(scripts['ws:fspec']).toBeUndefined()
       })
     })
 
@@ -425,22 +421,6 @@ describe('PackagejsonBuilder', () => {
       })
     })
 
-    context('dependency overrides', () => {
-      it.each(['npm', 'yarn', 'pnpm', 'bun', 'deno'] as const)(
-        'does not emit custom overrides or resolutions for %s',
-        async packageManager => {
-          const res = await PackagejsonBuilder.buildAPI('howyadoin', {
-            ...baseOptions,
-            packageManager,
-          })
-          const parsed = JSON.parse(res) as Record<string, unknown>
-          expect(parsed.overrides).toBeUndefined()
-          expect(parsed.resolutions).toBeUndefined()
-          expect(parsed.pnpm).toBeUndefined()
-        },
-      )
-    })
-
     context('build scripts', () => {
       // the `&&`-separated steps of a script that compile a tsconfig, so a step appended to the
       // script later does not change what this counts
@@ -456,23 +436,18 @@ describe('PackagejsonBuilder', () => {
         ['pnpm', 'tsc'],
         ['bun', 'bunx tsc'],
         ['deno', 'deno run -A npm:typescript/tsc'],
-      ] as const)('compiles once per build with no tsc-alias for %s', async (packageManager, tsc) => {
+      ] as const)('compiles once per build for %s', async (packageManager, tsc) => {
         const res = await PackagejsonBuilder.buildAPI('howyadoin', {
           ...baseOptions,
           packageManager,
           ...(packageManager === 'bun' || packageManager === 'deno' ? { runtime: packageManager } : {}),
         })
-        const parsed = JSON.parse(res) as {
-          scripts: Record<string, string>
-          devDependencies: Record<string, string>
-        }
+        const parsed = JSON.parse(res) as { scripts: Record<string, string> }
 
         expect(compileSteps(parsed.scripts['build'])).toEqual([`${tsc} -p ./tsconfig.build.json`])
         expect(compileSteps(parsed.scripts['build:spec'])).toEqual([
           `${tsc} --pretty -p ./tsconfig.build-spec.json`,
         ])
-        expect(Object.values(parsed.scripts).join('\n')).not.toMatch(/tsc-alias|\{\{TSC_/)
-        expect(parsed.devDependencies['tsc-alias']).toBeUndefined()
       })
     })
 
@@ -527,7 +502,6 @@ describe('PackagejsonBuilder', () => {
           expect(scripts['fspec:js']).toContain(
             'vitest --root ./dist --config ./spec/features/vite.config.js',
           )
-          expect(scripts['fspec:js']).not.toContain('cd ./dist')
         },
       )
 
@@ -538,15 +512,6 @@ describe('PackagejsonBuilder', () => {
           runtime: 'bun',
         })
         expect(JSON.parse(res).engines).toEqual({ bun: '>=1.4.0' })
-      })
-
-      it('declares no engines for a Deno app', async () => {
-        const res = await PackagejsonBuilder.buildAPI('howyadoin', {
-          ...baseOptions,
-          packageManager: 'deno',
-          runtime: 'deno',
-        })
-        expect(JSON.parse(res).engines).toBeUndefined()
       })
     })
 

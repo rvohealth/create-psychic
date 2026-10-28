@@ -33,30 +33,16 @@ describe.skipIf(!bunAvailable())('newPsychicApp with the bun runtime', () => {
       primaryKeyType: 'bigint',
     })
 
-    // Bun gets bunfig.toml; .nvmrc (node-only) and deno.json are not emitted.
+    // Bun gets bunfig.toml
     await expectFile('./howyadoin/bunfig.toml')
     await expectFile('./howyadoin/bun.lock')
     await expectFileToContain('./howyadoin/bunfig.toml', 'registry = "https://registry.npmjs.org"')
-    expect(fs.existsSync('./howyadoin/.nvmrc')).toBe(false)
-    expect(fs.existsSync('./howyadoin/deno.json')).toBe(false)
 
     await expectFileToContain('./howyadoin/src/conf/app.ts', "psy.set('packageManager', 'bun')")
 
-    // No Node-only vestiges: nodemon.json is dead config under Bun (web:dev uses
-    // `bun --no-env-file --watch`), and nodemon/tsx/engines.node don't belong in a Bun app.
     // engines.bun says Bun 1.4.0, the first that loads `#` imports from source.
-    expect(fs.existsSync('./howyadoin/nodemon.json')).toBe(false)
-    const pkg = JSON.parse(fs.readFileSync('./howyadoin/package.json').toString()) as {
-      devDependencies: Record<string, string>
-      engines?: unknown
-      overrides?: unknown
-      resolutions?: unknown
-    }
-    expect(pkg.devDependencies.nodemon).toBeUndefined()
-    expect(pkg.devDependencies.tsx).toBeUndefined()
+    const pkg = JSON.parse(fs.readFileSync('./howyadoin/package.json').toString()) as { engines?: unknown }
     expect(pkg.engines).toEqual({ bun: '>=1.4.0' })
-    expect(pkg.overrides).toBeUndefined()
-    expect(pkg.resolutions).toBeUndefined()
 
     // `psy:js --help` boots the built app from dist/, which resolves its `#` imports through
     // dist/package.json

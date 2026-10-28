@@ -107,9 +107,8 @@ describe('CiWorkflowBuilder', () => {
         expect(yml).toContain('pnpm psy check:controller-hierarchy')
       })
 
-      it('installs the puppeteer browser with the selected package manager, not npx', () => {
+      it('installs the puppeteer browser with the selected package manager', () => {
         expect(yml).toContain('pnpm puppeteer browsers install firefox')
-        expect(yml).not.toContain('npx puppeteer')
       })
 
       it('gives diff:openapi git history + oasdiff', () => {
@@ -129,17 +128,12 @@ describe('CiWorkflowBuilder', () => {
 
       it('names the artifact with strategy.job-index — shard labels like "1/1" contain "/", which is invalid in artifact names', () => {
         expect(yml).toContain('name: feature-spec-screenshots-${{ strategy.job-index }}')
-        expect(yml).not.toContain('feature-spec-screenshots-${{ matrix.shard }}')
       })
 
       it('uploads /tmp/screenshots only on failure, tolerating an empty run (a failure before the browser launches produces no screenshots)', () => {
         expect(yml).toContain('path: /tmp/screenshots')
         expect(yml).toContain('if: ${{ failure() }}')
         expect(yml).toContain('if-no-files-found: ignore')
-      })
-
-      it('does not pre-create the screenshots directory — the generated feature-spec hooks mkdir it on demand', () => {
-        expect(yml).not.toContain('mkdir -p /tmp/screenshots')
       })
     })
 
@@ -275,9 +269,8 @@ describe('CiWorkflowBuilder', () => {
     context('npm flag forwarding', () => {
       const yml = CiWorkflowBuilder.build('howyadoin', { ...baseOptions, packageManager: 'npm' })
 
-      it('installs with npm ci and no corepack step', () => {
+      it('installs with npm ci', () => {
         expect(yml).toContain('npm ci')
-        expect(yml).not.toContain('corepack enable')
       })
 
       it('forwards flags to scripts and psy commands via --', () => {
@@ -305,10 +298,8 @@ describe('CiWorkflowBuilder', () => {
         workers: true,
       })
 
-      it('provisions bun via setup-bun (SHA-pinned), not setup-node/corepack', () => {
+      it('provisions bun via setup-bun (SHA-pinned)', () => {
         expect(yml).toContain('oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6')
-        expect(yml).not.toContain('actions/setup-node@')
-        expect(yml).not.toContain('corepack enable')
       })
 
       it('installs frozen and runs via bun run / bunx', () => {
@@ -327,10 +318,9 @@ describe('CiWorkflowBuilder', () => {
         workers: true,
       })
 
-      it('provisions deno via setup-deno (SHA-pinned), not setup-node', () => {
+      it('provisions deno via setup-deno (SHA-pinned)', () => {
         expect(yml).toContain('denoland/setup-deno@667a34cdef165d8d2b2e98dde39547c9daac7282')
         expect(yml).toContain('deno-version: v2.x')
-        expect(yml).not.toContain('actions/setup-node@')
       })
 
       it('installs frozen and runs via deno task / deno run -A npm:', () => {

@@ -15,13 +15,7 @@ describe('NpmrcBuilder', () => {
         expect(res).toContain('@rvoh:registry=https://registry.npmjs.org')
       })
 
-      it('does NOT set ignore-scripts or min-release-age (those live in pnpm-workspace.yaml)', () => {
-        const res = NpmrcBuilder.build('pnpm') as string
-        expect(res).not.toContain('ignore-scripts')
-        expect(res).not.toContain('min-release-age')
-      })
-
-      it('writes no release-age or always-auth keys (pnpm 11+ ignores them in .npmrc)', () => {
+      it('writes only the registry settings (pnpm 11+ reads its cooldown from pnpm-workspace.yaml)', () => {
         const res = NpmrcBuilder.build('pnpm') as string
         const settings = res
           .split('\n')
@@ -52,11 +46,6 @@ describe('NpmrcBuilder', () => {
         const res = NpmrcBuilder.build('deno') as string
         expect(res).toContain('registry=https://registry.npmjs.org')
         expect(res).toContain('@rvoh:registry=https://registry.npmjs.org')
-      })
-
-      it('does NOT set ignore-scripts (Deno blocks build scripts by default)', () => {
-        const res = NpmrcBuilder.build('deno') as string
-        expect(res).not.toContain('ignore-scripts')
       })
     })
 

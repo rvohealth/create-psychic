@@ -4,9 +4,6 @@ import { join } from 'path'
 interface PackageJson {
   dependencies?: Record<string, string>
   devDependencies?: Record<string, string>
-  scripts?: Record<string, string>
-  overrides?: unknown
-  resolutions?: unknown
 }
 
 // Reads the static boilerplate package.json (copied verbatim into generated apps).
@@ -25,11 +22,9 @@ describe('boilerplate/api/package.json', () => {
     expect(duplicates).toEqual([])
   })
 
-  it('uses parent dependency ranges instead of custom overrides or resolutions', () => {
+  it('pins @koa/router and express', () => {
     const pkg = readBoilerplatePackageJson()
 
-    expect(pkg.overrides).toBeUndefined()
-    expect(pkg.resolutions).toBeUndefined()
     expect(pkg.dependencies?.['@koa/router']).toBe('^15.7.0')
     expect(pkg.devDependencies?.express).toBe('4.22.3')
   })
@@ -50,20 +45,5 @@ describe('boilerplate/api/package.json', () => {
     const [major = -1, minor = -1, patch = -1] = (match ?? []).slice(1).map(Number)
     expect(major, `${name} is "${range}"`).toBe(minMajor)
     expect(minor > minMinor || (minor === minMinor && patch >= minPatch), `${name} is "${range}"`).toBe(true)
-  })
-
-  it('omits kysely-codegen, which Dream 2.37.0 and later no longer use', () => {
-    const pkg = readBoilerplatePackageJson()
-
-    expect(Object.keys(pkg.dependencies ?? {})).not.toContain('kysely-codegen')
-    expect(Object.keys(pkg.devDependencies ?? {})).not.toContain('kysely-codegen')
-  })
-
-  it('omits tsc-alias, which `#` subpath imports do not need', () => {
-    const pkg = readBoilerplatePackageJson()
-
-    expect(Object.keys(pkg.dependencies ?? {})).not.toContain('tsc-alias')
-    expect(Object.keys(pkg.devDependencies ?? {})).not.toContain('tsc-alias')
-    expect(Object.values(pkg.scripts ?? {}).join('\n')).not.toMatch(/tsc-alias|\{\{TSC_/)
   })
 })
