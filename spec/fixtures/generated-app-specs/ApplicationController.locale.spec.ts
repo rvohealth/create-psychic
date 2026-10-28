@@ -1,5 +1,5 @@
 import ApplicationController from '#controllers/ApplicationController.js'
-import { supportedLocales } from '#src/utils/i18n.js'
+import { DEFAULT_LOCALE, supportedLocales } from '#src/utils/i18n.js'
 import Koa from 'koa'
 import { IncomingMessage, ServerResponse } from 'node:http'
 import { Socket } from 'node:net'
@@ -7,8 +7,10 @@ import { expectTypeOf } from 'vitest'
 
 // No new app ships this spec. create-psychic's pnpm no-client generation spec
 // copies it into the app it generates, after changing that app's
-// supportedLocales() to ['en-US', 'es-ES'], and runs it with the app's uspec,
-// because create-psychic itself installs neither Psychic nor Koa
+// supportedLocales() to ['es-ES', 'en-US'], and runs it with the app's uspec,
+// because create-psychic itself installs neither Psychic nor Koa. The default,
+// en-US, is listed second, as Dream's alphabetical enum values list en-US
+// after de-DE
 
 class LocaleProbe extends ApplicationController {
   public get requestLocale() {
@@ -26,8 +28,9 @@ function localeFor(acceptLanguage: string | undefined) {
 }
 
 describe('ApplicationController#locale', () => {
-  it('runs against the two supported locales the generation spec wrote', () => {
-    expect(supportedLocales()).toEqual(['en-US', 'es-ES'])
+  it('runs against the two supported locales the generation spec wrote, default second', () => {
+    expect(supportedLocales()).toEqual(['es-ES', 'en-US'])
+    expect(DEFAULT_LOCALE).toEqual('en-US')
   })
 
   it.each([
@@ -43,11 +46,11 @@ describe('ApplicationController#locale', () => {
     ['ES-es', 'es-ES'],
     // quality values rank the languages, not their order
     ['es-ES;q=0.5,en-US;q=0.9', 'en-US'],
-    // any language: the first supported locale
+    // any language: the default
     ['*', 'en-US'],
     // q=0 rules a language out
     ['es;q=0', 'en-US'],
-    // nothing supported is acceptable: the first supported locale
+    // nothing supported is acceptable: the default
     ['fr', 'en-US'],
     // a sibling region alone is not a match
     ['es-MX', 'en-US'],
@@ -55,7 +58,7 @@ describe('ApplicationController#locale', () => {
     expect(localeFor(acceptLanguage)).toEqual(expected)
   })
 
-  it('is the first supported locale when the request sends no Accept-Language header', () => {
+  it('is the default when the request sends no Accept-Language header', () => {
     expect(localeFor(undefined)).toEqual('en-US')
   })
 

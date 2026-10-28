@@ -96,13 +96,14 @@ describe('newPsychicApp with no client', () => {
 
     // The template's ApplicationController#locale getter needs Psychic and Koa, which
     // create-psychic does not install, so its spec runs in this app (and ships in none):
-    // give the app a second supported locale and copy the spec in for the uspec below
+    // give the app a second supported locale, listed ahead of the default as a locale enum's
+    // alphabetical values can be, and copy the spec in for the uspec below
     const i18nPath = './howyadoin/src/utils/i18n.ts'
     const i18n = fs.readFileSync(i18nPath, 'utf8')
     expect(i18n).toContain("SUPPORTED_LOCALES = ['en-US']")
     fs.writeFileSync(
       i18nPath,
-      i18n.replace("SUPPORTED_LOCALES = ['en-US']", "SUPPORTED_LOCALES = ['en-US', 'es-ES']"),
+      i18n.replace("SUPPORTED_LOCALES = ['en-US']", "SUPPORTED_LOCALES = ['es-ES', 'en-US']"),
     )
     fs.mkdirSync('./howyadoin/spec/unit/controllers', { recursive: true })
     fs.copyFileSync(
