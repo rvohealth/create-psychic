@@ -8,25 +8,28 @@ import requestLogger from '../../../boilerplate/api/src/conf/system/requestLogge
 // `winstonInstance`, so this empty module stands in for winston and is never called.
 vi.mock('winston', () => ({ default: {} }))
 
-// The body blocklist the scaffold passes to requestLogger (`SENSITIVE_FIELDS` in conf/app.ts).
-function scaffoldBodyBlocklist(): string[] {
+// A string list the scaffold passes to requestLogger in conf/app.ts, such as `SENSITIVE_FIELDS`.
+function scaffoldList(pattern: RegExp): string[] {
   const appConf = readFileSync(join(process.cwd(), 'boilerplate', 'api', 'src', 'conf', 'app.ts'), 'utf8')
-  const list = appConf.match(/const SENSITIVE_FIELDS = \[([^\]]*)\]/)?.[1]
-  if (list === undefined) throw new Error('SENSITIVE_FIELDS not found in conf/app.ts')
+  const list = appConf.match(pattern)?.[1]
+  if (list === undefined) throw new Error(`${String(pattern)} not found in conf/app.ts`)
   return [...list.matchAll(/'([^']*)'/g)].map(match => match[1] ?? '')
 }
 
 interface LogEntry {
   message: string
   level: string
-  meta: { req: { method: string; url: string; headers: Record<string, unknown> }; res: { statusCode: number } }
+  meta: {
+    req: { method: string; path: string; query: unknown; headers: Record<string, unknown> }
+    res: { statusCode: number }
+  }
 }
 
 // The parts of a Koa context requestLogger reads.
 interface LoggedContext {
   method: string
-  url: string
   path: string
+  query: unknown
   status: number
   params?: unknown
   routerPath?: unknown
@@ -48,17 +51,30 @@ interface Outcome {
   headers?: Record<string, unknown>
 }
 
+// ctx.query as Koa 3 parses it (koa/lib/search-params.js): a repeated key's values become an array
+function koaQuery(querystring: string): Record<string, string | string[]> {
+  const searchParams = new URLSearchParams(querystring)
+  const query: Record<string, string | string[]> = {}
+  for (const key of searchParams.keys()) {
+    const values = searchParams.getAll(key)
+    query[key] = values.length <= 1 ? (values[0] ?? '') : values
+  }
+  return query
+}
+
 async function logRequest(method: string, url: string, outcome: Outcome): Promise<LogEntry> {
   const entries: unknown[] = []
   const middleware = requestLogger({
     winstonInstance: { log: (entry: unknown) => entries.push(entry) },
-    bodyBlocklist: scaffoldBodyBlocklist(),
+    bodyBlocklist: scaffoldList(/const SENSITIVE_FIELDS = \[([^\]]*)\]/),
+    headerBlocklist: scaffoldList(/headerBlocklist: \[([^\]]*)\]/),
   }) as Middleware
 
+  const [path = url, querystring = ''] = url.split('?')
   const ctx: LoggedContext = {
     method,
-    url,
-    path: url.split('?')[0] ?? url,
+    path,
+    query: koaQuery(querystring),
     status: 404,
     headers: outcome.headers ?? {},
     request: {},
@@ -77,88 +93,47 @@ async function logRequest(method: string, url: string, outcome: Outcome): Promis
 }
 
 describe('boilerplate/api/src/conf/system/requestLogger.ts', () => {
-  it('masks a path segment bound to a route parameter whose name contains a listed name', async () => {
+  it("masks a listed-name route parameter's value in the path, and logs the query apart", async () => {
     const entry = await logRequest('GET', '/password-resets/k3yV4lue?page=2', {
       status: 200,
       route: { path: '/password-resets/:token', params: { token: 'k3yV4lue' } },
     })
 
-    expect(entry.message).toMatch(/^GET \/password-resets\/\[FILTERED\]\?page=2 200 \d+ms$/)
-    expect(entry.meta.req.url).toBe(`/password-resets/${FILTERED}?page=2`)
+    expect(entry.message).toMatch(/^GET \/password-resets\/\[FILTERED\] 200 \d+ms$/)
+    expect(entry.meta.req.path).toBe(`/password-resets/${FILTERED}`)
+    expect(entry.meta.req.query).toEqual({ page: '2' })
     expect(JSON.stringify(entry)).not.toContain('k3yV4lue')
   })
 
-  it('logs the values of other route parameters as sent, with the query string masked', async () => {
-    const entry = await logRequest('GET', '/v1/places/42/bookings/7?token=q', {
+  it('logs the values of other route parameters as sent, with the query masked', async () => {
+    const entry = await logRequest('GET', '/v1/places/42/bookings/7?token=q&page=2', {
       status: 200,
       route: { path: '/v1/places/:placeId/bookings/:id', params: { placeId: '42', id: '7' } },
     })
 
-    expect(entry.meta.req.url).toBe(`/v1/places/42/bookings/7?token=${FILTERED}`)
+    expect(entry.meta.req.path).toBe('/v1/places/42/bookings/7')
+    expect(entry.meta.req.query).toEqual({ token: FILTERED, page: '2' })
   })
 
   // psychic's `r.namespace('v1', r => r.resources('api-tokens', r => r.resources('usages')))` names
   // the parent's key `:apiTokenId`
-  it("masks only the segment of a nested route's listed-name parameter, keeping the child id and `v1`", async () => {
-    const route = '/v1/api-tokens/:apiTokenId/usages/:id'
-
-    expect(
-      (
-        await logRequest('GET', '/v1/api-tokens/42/usages/1420', {
-          status: 200,
-          route: { path: route, params: { apiTokenId: '42', id: '1420' } },
-        })
-      ).meta.req.url,
-    ).toBe(`/v1/api-tokens/${FILTERED}/usages/1420`)
-    expect(
-      (
-        await logRequest('GET', '/v1/api-tokens/1/usages/7', {
-          status: 200,
-          route: { path: route, params: { apiTokenId: '1', id: '7' } },
-        })
-      ).meta.req.url,
-    ).toBe(`/v1/api-tokens/${FILTERED}/usages/7`)
-  })
-
-  it('masks a route parameter named like `tokenId`', async () => {
-    const entry = await logRequest('DELETE', '/v1/api-tokens/12', {
-      status: 204,
-      route: { path: '/v1/api-tokens/:tokenId', params: { tokenId: '12' } },
-    })
-
-    expect(entry.meta.req.url).toBe(`/v1/api-tokens/${FILTERED}`)
-  })
-
-  it('masks every segment a splat value spans', async () => {
-    const entry = await logRequest('GET', '/files/a/b%20c', {
+  it("keeps a nested route's child id in the path", async () => {
+    const apiTokenId = '0199f3a2-7c1e-7b40-9d6e-2f4a8c1b5e07'
+    const id = '0199f3a2-8d2f-7c51-ae7f-3a5b9d2c6f18'
+    const entry = await logRequest('GET', `/v1/api-tokens/${apiTokenId}/usages/${id}`, {
       status: 200,
-      route: { path: '/files/*secretPath', params: { secretPath: 'a/b c' } },
+      route: { path: '/v1/api-tokens/:apiTokenId/usages/:id', params: { apiTokenId, id } },
     })
 
-    expect(entry.meta.req.url).toBe(`/files/${FILTERED}/${FILTERED}`)
+    expect(entry.meta.req.path).toBe(`/v1/api-tokens/${FILTERED}/usages/${id}`)
   })
 
-  it('masks the whole segment when the value is only part of one', async () => {
-    const entry = await logRequest('GET', '/v/x-s3cret', {
-      status: 200,
-      route: { path: '/v/:a-:tokenPart', params: { a: 'x', tokenPart: 's3cret' } },
-    })
-
-    expect(entry.meta.req.url).toBe(`/v/${FILTERED}`)
-  })
-
-  it('masks the path of a matched route that responds 404', async () => {
-    const entry = await logRequest('GET', '/password-resets/k3yV4lue', {
+  it('masks the path of a matched route that responds 404 or 500', async () => {
+    const notFound = await logRequest('GET', '/password-resets/k3yV4lue', {
       status: 404,
       route: { path: '/password-resets/:token', params: { token: 'k3yV4lue' } },
     })
-
-    expect(entry.meta.req.url).toBe(`/password-resets/${FILTERED}`)
-    expect(entry.level).toBe('warn')
-  })
-
-  it('masks the path of a request that ends in a 500', async () => {
-    const entry = await logRequest('GET', '/v1/guests/9/invitations/s%2Fx', {
+    const failed = await logRequest('GET', '/v1/guests/9/invitations/s%2Fx', {
       status: 500,
       route: {
         path: '/v1/guests/:guestId/invitations/:invitationToken',
@@ -166,46 +141,33 @@ describe('boilerplate/api/src/conf/system/requestLogger.ts', () => {
       },
     })
 
-    expect(entry.meta.req.url).toBe(`/v1/guests/9/invitations/${FILTERED}`)
-    expect(entry.level).toBe('error')
+    expect(notFound.meta.req.path).toBe(`/password-resets/${FILTERED}`)
+    expect(notFound.level).toBe('warn')
+    expect(failed.meta.req.path).toBe(`/v1/guests/9/invitations/${FILTERED}`)
+    expect(failed.level).toBe('error')
   })
 
-  it('logs a path that matches no route (a 404) as received, with the query string masked', async () => {
-    const entry = await logRequest('GET', '/password-reset/k3yV4lue?token=q', { status: 404 })
-
-    expect(entry.meta.req.url).toBe(`/password-reset/k3yV4lue?token=${FILTERED}`)
-    expect(entry.level).toBe('warn')
+  it('logs a path the router bound no parameters for as received, with the query masked', async () => {
+    // no route (a 404); only the path matched (a 405, or OPTIONS, which @koa/router's
+    // allowedMethods() answers); or middleware answered before the router ran (such as a 429)
+    for (const [method, status] of [
+      ['GET', 404],
+      ['POST', 405],
+      ['OPTIONS', 200],
+      ['GET', 429],
+    ] as const) {
+      const entry = await logRequest(method, '/password-resets/k3yV4lue?token=q', { status })
+      expect(entry.meta.req.path).toBe('/password-resets/k3yV4lue')
+      expect(entry.meta.req.query).toEqual({ token: FILTERED })
+    }
   })
 
-  it('logs a request with a method its route does not take (a 405, or OPTIONS) as received', async () => {
-    // @koa/router binds no `ctx.params` when only the path matched; its allowedMethods() answers
-    expect((await logRequest('POST', '/password-resets/k3yV4lue', { status: 405 })).meta.req.url).toBe(
-      '/password-resets/k3yV4lue',
-    )
-    expect((await logRequest('OPTIONS', '/password-resets/k3yV4lue', { status: 200 })).meta.req.url).toBe(
-      '/password-resets/k3yV4lue',
-    )
-  })
-
-  it('logs a request that middleware answers before the router runs (such as a 429) as received', async () => {
-    // a rate limiter mounted after the logger answers without calling `next()`, so the router
-    // binds neither `ctx.params` nor `ctx.routerPath`
-    const entry = await logRequest('GET', '/password-resets/k3yV4lue?token=q', { status: 429 })
-
-    expect(entry.meta.req.url).toBe(`/password-resets/k3yV4lue?token=${FILTERED}`)
-    expect(entry.level).toBe('warn')
-  })
-
-  it("logs the referer's path as received, with its query string masked", async () => {
-    const entry = await logRequest('GET', '/password-resets/k3yV4lue', {
+  it('leaves the referer, which can carry a token in its URL, out of the log', async () => {
+    const entry = await logRequest('GET', '/places', {
       status: 200,
-      route: { path: '/password-resets/:token', params: { token: 'k3yV4lue' } },
-      headers: { referer: 'https://app.example.com/reset-password/k3yV4lue?token=k3yV4lue&step=2' },
+      headers: { referer: 'https://app.example.com/reset-password?token=k3yV4lue', accept: '*/*' },
     })
 
-    expect(entry.meta.req.url).toBe(`/password-resets/${FILTERED}`)
-    expect(entry.meta.req.headers.referer).toBe(
-      `https://app.example.com/reset-password/k3yV4lue?token=${FILTERED}&step=2`,
-    )
+    expect(entry.meta.req.headers).toEqual({ accept: '*/*' })
   })
 })

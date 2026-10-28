@@ -1,6 +1,6 @@
 import type Koa from 'koa'
 import winston from 'winston'
-import { redactBody, redactHeaders, redactUrl } from './redactForLog.js'
+import { redact, redactHeaders, redactPath } from './redactForLog.js'
 
 export interface RequestLoggerOptions {
   winstonInstance?: winston.Logger
@@ -9,8 +9,7 @@ export interface RequestLoggerOptions {
   // headers left out of the log (whole name, ignoring case)
   headerBlocklist?: string[]
   // body, query-string, header and route-parameter values masked in the log (any key, header or
-  // route-parameter name containing a listed name, ignoring case, at any depth; also the referer's
-  // query string; see redactForLog.ts)
+  // route-parameter name containing a listed name, ignoring case, at any depth; see redactForLog.ts)
   bodyBlocklist?: string[]
   ignoredRoutes?: string[]
 }
@@ -49,24 +48,17 @@ export default function requestLogger(options: RequestLoggerOptions = {}): Koa.M
     // a `bodyBlocklist` name, ignoring case, such as `token` from `SENSITIVE_FIELDS` in
     // conf/app.ts (`?token=…`, `{ resetToken: … }`, `x-auth-token`, `:token`, `:tokenId`), is
     // logged as `[FILTERED]`, so a request to `/password-resets/:token` logs
-    // `/password-resets/[FILTERED]`. In the path, only the segment the matched route binds such a
-    // parameter to is masked, so a request to `/v1/api-tokens/42/usages/1420` matched by
-    // `/v1/api-tokens/:apiTokenId/usages/:id` logs `/v1/api-tokens/[FILTERED]/usages/1420`. A
-    // header whose whole name is in `headerBlocklist`, such as `authorization` or `cookie`, is left
-    // out of the log instead. Under any other name a token is logged as sent. These paths are
-    // logged as received, with only their query string masked: a path that matches no route (a
-    // 404), a request with a method its route does not take (a 405, or an `OPTIONS` request), a
-    // request that middleware mounted after this logger answers before the router runs (such as a
-    // rate limiter's 429) and the path in a `referer` header. To keep such middleware's requests out
-    // of this log, mount it ahead of the logger: with `psy.use(…)` in conf/app.ts above the hook
-    // that mounts this logger, which keeps it after CORS, or with `psy.use('before-middleware', …)`,
-    // which also works from an initializer but runs before CORS, so a browser sees a CORS failure
-    // instead of the 429. For a link such as an emailed sign-in or reset link, the URL fragment
-    // (`/reset-password#token=…`), which browsers never send to the server, not even in a
-    // `referer`, is still the safest place for the token; have the page's JavaScript pass it on
-    // under a masked name.
-    const url = redactUrl(ctx.url, bodyBlocklist, ctx.params, ctx.routerPath)
-    const message = `${ctx.method} ${url} ${status} ${duration}ms`
+    // `/password-resets/[FILTERED]`. A header whose whole name is in `headerBlocklist`, such as
+    // `authorization`, `cookie` or `referer`, is left out of the log instead. A path the router did
+    // not bind parameters for is logged as received: one that matches no route (a 404), a method
+    // its route does not take (a 405, or `OPTIONS`), and a request that middleware mounted after
+    // this logger answers before the router runs (such as a rate limiter's 429). Mount such
+    // middleware ahead of the logger, with `psy.use(…)` in conf/app.ts above this hook, to keep its
+    // requests out of the log. For an emailed sign-in or reset link, the URL fragment
+    // (`/reset-password#token=…`), which browsers never send to the server, is still the safest
+    // place for the token; have the page's JavaScript pass it on under a masked name.
+    const path = redactPath(ctx.path, bodyBlocklist, ctx.params, ctx.routerPath)
+    const message = `${ctx.method} ${path} ${status} ${duration}ms`
 
     let level: string
     if (status >= 500) level = 'error'
@@ -74,13 +66,15 @@ export default function requestLogger(options: RequestLoggerOptions = {}): Koa.M
     else level = 'info'
 
     const logEntry: Record<string, unknown> = { message, level }
+    const query = redact(ctx.query, bodyBlocklist)
     const headers = redactHeaders(ctx.headers, headerBlocklist, bodyBlocklist)
-    const body = redactBody(ctx.request.body, bodyBlocklist)
+    const body = redact(ctx.request.body, bodyBlocklist)
 
     logEntry.meta = {
       req: {
         method: ctx.method,
-        url,
+        path,
+        query,
         headers,
         body,
       },

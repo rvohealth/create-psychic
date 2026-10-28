@@ -174,6 +174,7 @@ export default async (psy: PsychicApp) => {
             'content-length',
             'connection',
             'cookie',
+            'referer',
             'sec-ch-ua',
             'sec-ch-ua-mobile',
             'sec-ch-ua-platform',
