@@ -5,7 +5,9 @@ import { PsychicPackageManager } from '../newPsychicApp.js'
  * dependency — a scaffolder like `nuxi`, fetched on demand — with the selected
  * package manager / runtime. This is the "download-and-run" analogue of
  * {@link execCmdForPackageManager} (which runs an already-installed bin): npm and
- * bun use `npx`/`bunx`, pnpm/yarn use `dlx`, and Deno runs the npm specifier.
+ * yarn use `npx`, bun uses `bunx`, pnpm uses `dlx`, and Deno runs the npm specifier.
+ * Yarn 1, the Yarn a Node 25+ machine without corepack usually has, has no `dlx` and
+ * runs `yarn dlx` as the package.json script `dlx`, so yarn uses npm's `npx`.
  *
  * For a `create-<x>` initializer, prefer the package manager's `create` shorthand
  * (e.g. `pnpm create next-app`) instead — see `viteCmd`/`nextAppCmd` in addClientApp.
@@ -21,10 +23,10 @@ export default function dlxCmdForPackageManager(
 ): string {
   switch (packageManager) {
     case 'npm':
+    case 'yarn':
       return `npx ${packageSpec}`
     case 'pnpm':
-    case 'yarn':
-      return `${packageManager} dlx ${packageSpec}`
+      return `pnpm dlx ${packageSpec}`
     case 'bun':
       return `bunx ${packageSpec}`
     case 'deno':
