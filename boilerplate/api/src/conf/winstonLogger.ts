@@ -1,4 +1,4 @@
-import AppEnv from '@conf/AppEnv.js'
+import AppEnv from '#conf/AppEnv.js'
 import * as path from 'node:path'
 import * as winston from 'winston'
 
@@ -19,7 +19,7 @@ export default function winstonLogger(rootPath: string) {
     //   (i.e., error, fatal, but not other levels)
     //
     logger.add(
-      new winston.transports.File({ filename: path.join(logDirectory, 'error.log'), level: 'error' })
+      new winston.transports.File({ filename: path.join(logDirectory, 'error.log'), level: 'error' }),
     )
     //
     // - Write all logs with importance level of `info` or higher to `combined.log`

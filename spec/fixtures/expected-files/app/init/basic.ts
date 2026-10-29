@@ -1,15 +1,15 @@
 import { PsychicApp } from '@rvoh/psychic'
 
-import AppEnv from '@conf/AppEnv.js'
-import inflections from '@conf/inflections.js'
-import routesCb from '@conf/routes.js'
-import importDefault from '@conf/system/importDefault.js'
-import srcPath from '@conf/system/srcPath.js'
+import AppEnv from '#conf/AppEnv.js'
+import inflections from '#conf/inflections.js'
+import routesCb from '#conf/routes.js'
+import importDefault from '#conf/system/importDefault.js'
+import srcPath from '#conf/system/srcPath.js'
 import * as path from 'node:path'
 
-import allowedCorsOrigins from '@conf/system/allowedCorsOrigins.js'
-import requestLogger from '@conf/system/requestLogger.js'
-import winstonLogger from '@conf/winstonLogger.js'
+import allowedCorsOrigins from '#conf/system/allowedCorsOrigins.js'
+import requestLogger from '#conf/system/requestLogger.js'
+import winstonLogger from '#conf/winstonLogger.js'
 import type Koa from 'koa'
 import winston from 'winston'
 
@@ -42,6 +42,12 @@ export default async (psy: PsychicApp) => {
     services: 'src/api/app/services',
     controllerSpecs: 'spec/unit/controllers',
   })
+
+  // The import paths the generators (`psy g:model`, `psy g:resource` and the rest) write: their
+  // suffix, and their alias prefix (the `#` of `#models/User.js`). Declared here only: Psychic
+  // passes both to Dream, so conf/dream.ts does not set them.
+  psy.set('importExtension', '.js')
+  psy.set('importAliasPrefix', '#')
 
   psy.set('inflections', inflections)
   psy.set('routes', routesCb)
@@ -175,6 +181,7 @@ export default async (psy: PsychicApp) => {
             'content-length',
             'connection',
             'cookie',
+            'referer',
             'sec-ch-ua',
             'sec-ch-ua-mobile',
             'sec-ch-ua-platform',

@@ -2,7 +2,6 @@ import '../../src/conf/loadEnv.js'
 
 import babel, { defineRolldownBabelPreset } from '@rolldown/plugin-babel'
 import { defineConfig, type ViteUserConfig } from 'vitest/config'
-import srcPath from '../../src/conf/system/srcPath.js'
 
 const decorators = defineRolldownBabelPreset({
   preset: () => ({
@@ -16,17 +15,6 @@ const babelPlugin = (await babel(babelOptions)) as unknown as NonNullable<ViteUs
 
 export default defineConfig({
   plugins: [babelPlugin],
-  resolve: {
-    alias: {
-      '@conf': srcPath('conf'),
-      '@controllers': srcPath('app', 'controllers'),
-      '@models': srcPath('app', 'models'),
-      '@serializers': srcPath('app', 'serializers'),
-      '@services': srcPath('app', 'services'),
-      '@spec': srcPath('..', 'spec'),
-      '@src': srcPath(),
-    },
-  },
   test: {
     dir: './spec/features',
     globals: true,

@@ -1,4 +1,4 @@
-import AppEnv from '@conf/AppEnv.js'
+import AppEnv from '#conf/AppEnv.js'
 import { visit } from '@rvoh/psychic-spec-helpers'
 
 describe('puppeteer sample test', () => {

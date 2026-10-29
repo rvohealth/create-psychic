@@ -1,11 +1,11 @@
 import { DreamApp } from '@rvoh/dream'<PSYCHIC_IMPORT>
 import { type DreamDbConfig } from '@rvoh/dream/types'
 
-import AppEnv from '@conf/AppEnv.js'
-import inflections from '@conf/inflections.js'
-import importAll from '@conf/system/importAll.js'
-import importDefault from '@conf/system/importDefault.js'
-import srcPath from '@conf/system/srcPath.js'
+import AppEnv from '#conf/AppEnv.js'
+import inflections from '#conf/inflections.js'
+import importAll from '#conf/system/importAll.js'
+import importDefault from '#conf/system/importDefault.js'
+import srcPath from '#conf/system/srcPath.js'
 import { debuglog } from 'node:util'
 
 // Enable debug logging with NODE_DEBUG=sql
@@ -38,7 +38,7 @@ export default async (app: DreamApp) => {<PROJECT_ROOT>
   // and some local Docker images), drop verification:
   //   `ssl: { rejectUnauthorized: false }` — encrypted but unauthenticated.
   //
-  // Set `DB_NO_SSL=true` to disable TLS entirely (local dev only).
+  // Set `DB_NO_SSL=1` to disable TLS entirely (local dev and CI only). Any other value leaves TLS on.
   const dbSsl: { rejectUnauthorized: true } | false = AppEnv.boolean('DB_NO_SSL')
     ? false
     : { rejectUnauthorized: true }

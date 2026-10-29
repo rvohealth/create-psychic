@@ -2,7 +2,11 @@ import * as fs from 'node:fs/promises'
 import * as path from 'node:path'
 import apiOnlyOptions from '../helpers/apiOnlyOptions.js'
 import internalSrcPath from '../helpers/internalSrcPath.js'
-import { InitPsychicAppCliOptions, NewPsychicAppCliOptions } from '../helpers/newPsychicApp.js'
+import {
+  importExtensions,
+  InitPsychicAppCliOptions,
+  NewPsychicAppCliOptions,
+} from '../helpers/newPsychicApp.js'
 import pathToArgs from '../helpers/pathToArgs.js'
 import rewriteEsmImports from '../helpers/rewriteEsmImports.js'
 import runCmdForPackageManager from '../helpers/packageManager/runCmdForPackageManager.js'
@@ -11,7 +15,7 @@ export default class AppConfigBuilder {
   public static async build({ appName, options }: { appName: string; options: NewPsychicAppCliOptions }) {
     const baseContents = await this.buildCommon({ appName, options })
     return baseContents
-      .replace('<IMPORT_STYLE>', '')
+      .replace('<IMPORT_STYLE>', importStyle('.js'))
       .replace(/<PSYCHIC_OPENAPI_PATH>/g, "'src', 'openapi'")
       .replace('<PSYCHIC_PATHS>', '')
       .replace('<CONTROLLERS_PATH>', "srcPath('app', 'controllers')")
@@ -28,12 +32,7 @@ export default class AppConfigBuilder {
   }) {
     const baseContents = await this.buildCommon({ appName, options })
     const modifiedContents = baseContents
-      .replace(
-        '<IMPORT_STYLE>',
-        options.importExtension === '.js'
-          ? ''
-          : `\n  psy.set('importExtension', '${options.importExtension}')`,
-      )
+      .replace('<IMPORT_STYLE>', importStyle(options.importExtension))
       .replace(/<PSYCHIC_OPENAPI_PATH>/g, pathToArgs(options.openapiPath))
       .replace('<CONTROLLERS_PATH>', `srcPath('..', ${pathToArgs(options.controllersPath)})`)
       .replace('<SERVICES_PATH>', `srcPath('..', ${pathToArgs(options.servicesPath)})`)
@@ -77,6 +76,14 @@ export default class AppConfigBuilder {
       .replace('<APP_NAME>', appName)
       .replace('<API_ONLY>', apiOnlyOptions(options).toString())
   }
+}
+
+// A Psychic app declares its import style once, in conf/app.ts: Psychic passes both settings to
+// Dream, whose generators read them. DreamConfigBuilder writes them only for a dream-only app.
+function importStyle(importExtension: (typeof importExtensions)[number]) {
+  return `\
+  psy.set('importExtension', '${importExtension}')
+  psy.set('importAliasPrefix', '#')`
 }
 
 function startHookContent(options: NewPsychicAppCliOptions) {

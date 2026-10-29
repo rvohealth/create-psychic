@@ -97,7 +97,8 @@ function ensureLink(linkPath, relTarget, absTarget) {
     rmSync(linkPath, { recursive: true, force: true }) // broken symlink / win text-file / stale copy
   }
   try {
-    if (isWindows) symlinkSync(resolve(absTarget), linkPath, 'junction') // no privilege needed
+    if (isWindows)
+      symlinkSync(resolve(absTarget), linkPath, 'junction') // no privilege needed
     else symlinkSync(relTarget, linkPath) // portable relative symlink
     return
   } catch {

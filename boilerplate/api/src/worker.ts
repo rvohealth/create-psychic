@@ -1,6 +1,6 @@
-import '@conf/loadEnv.js'
+import '#conf/loadEnv.js'
 
-import initializePsychicApp from '@conf/system/initializePsychicApp.js'
+import initializePsychicApp from '#conf/system/initializePsychicApp.js'
 import { PsychicApp } from '@rvoh/psychic'
 import { background } from '@rvoh/psychic-workers'
 
@@ -33,7 +33,7 @@ worker.name: ${worker.name}
 worker.id: ${worker.id}
 job.name: ${job.name}
 job.id: ${job.id}`,
-          error
+          error,
         )
         //
       } else {
@@ -42,7 +42,7 @@ job.id: ${job.id}`,
           `Background job failed:
 worker ${worker.name}
 worker.id: ${worker.id}`,
-          error
+          error,
         )
       }
     })

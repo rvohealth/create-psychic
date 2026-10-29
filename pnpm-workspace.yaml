@@ -7,5 +7,13 @@ allowBuilds:
   esbuild: true
   puppeteer: true
 
+# SECURITY — supply-chain cooldown: don't install dependency versions published
+# in the last 3 days (4320 minutes). Kept under the CVE-patch SLA so routine
+# patching needs no bypass. pnpm 11+ reads this only from pnpm-workspace.yaml
+# (it ignores release-age keys in .npmrc).
+minimumReleaseAge: 4320
+
+# Only our own first-party packages are exempt: keep this list @rvoh/* only
+# (reviewed like any other change).
 minimumReleaseAgeExclude:
-  - '@rvoh/dream@2.17.0'
+  - '@rvoh/*'

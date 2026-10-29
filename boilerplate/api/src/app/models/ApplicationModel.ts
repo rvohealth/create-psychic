@@ -1,7 +1,7 @@
 import { Dream } from '@rvoh/dream'
-import { DB } from '@src/types/db.js'
-import { globalTypeConfig } from '@src/types/dream.globals.js'
-import { connectionTypeConfig, schema } from '@src/types/dream.js'
+import { DB } from '#src/types/db.js'
+import { globalTypeConfig } from '#src/types/dream.globals.js'
+import { connectionTypeConfig, schema } from '#src/types/dream.js'
 
 export default class ApplicationModel extends Dream {
   declare public DB: DB

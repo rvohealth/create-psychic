@@ -1,9 +1,9 @@
 /**
  * Builds `deno.json` for a Deno-targeted generated app.
  *
- * - `imports`: mirrors the tsconfig path aliases (`@conf`, `@src`, `@models`, …).
- *   Deno resolves bare specifiers through its own import map, not tsconfig
- *   `paths`, so without this every app import fails to resolve.
+ * - `imports`: the app's `#` import names (`#conf/`, `#src/`, `#models/`, …),
+ *   mapped to the same source folders as the `imports` field of package.json.
+ *   Deno resolves the app's `#` imports through this import map.
  * - `unstable: ["sloppy-imports"]`: the codebase imports `.js` specifiers that
  *   resolve to `.ts` files on disk (tsc/tsx rewrite the extension); Deno rejects
  *   that mismatch unless sloppy-imports is enabled.
@@ -23,13 +23,13 @@ export default class DenoJsonBuilder {
   public static build(): string {
     const denoJson = {
       imports: {
-        '@conf/': './src/conf/',
-        '@controllers/': './src/app/controllers/',
-        '@models/': './src/app/models/',
-        '@serializers/': './src/app/serializers/',
-        '@services/': './src/app/services/',
-        '@spec/': './spec/',
-        '@src/': './src/',
+        '#conf/': './src/conf/',
+        '#controllers/': './src/app/controllers/',
+        '#models/': './src/app/models/',
+        '#serializers/': './src/app/serializers/',
+        '#services/': './src/app/services/',
+        '#spec/': './spec/',
+        '#src/': './src/',
       },
       unstable: ['sloppy-imports'],
       nodeModulesDir: 'auto',

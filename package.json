@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "@rvoh/create-psychic",
-  "version": "3.7.11",
+  "version": "3.8.0",
   "description": "creates a new psychic app",
   "author": "RVO Health",
   "publishConfig": {
@@ -35,7 +35,7 @@
     "format": "pnpm prettier . --write"
   },
   "dependencies": {
-    "@rvoh/dream": "^2.30.1",
+    "@rvoh/dream": "^2.40.1",
     "@types/node": "^26.6.3",
     "commander": "^14.0.3",
     "pino-std-serializers": "^4.0.0",
@@ -50,16 +50,15 @@
     "@typescript-eslint/parser": "^8.70.0",
     "eslint": "^10.10.0",
     "kysely": "^0.29.5",
-    "kysely-codegen": "~0.20.0",
     "luxon-jest-matchers": "^0.1.14",
     "pg": "^8.23.0",
     "prettier": "^3.9.6",
-    "puppeteer": "~25.10.0",
+    "puppeteer": "~25.16.0",
     "supertest": "^7.2.2",
     "tslib": "^2.7.0",
     "tsx": "^4.23.13",
     "typedoc": "^0.28.20",
     "typescript-eslint": "^8.70.0",
-    "vitest": "^4.1.11"
+    "vitest": "^4.1.12"
   }
 }

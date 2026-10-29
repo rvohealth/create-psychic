@@ -3,8 +3,7 @@
     "allowUnreachableCode": false,
     "exactOptionalPropertyTypes": true,
     "forceConsistentCasingInFileNames": true,
-    "module": "Node16",
-    "moduleResolution": "node16",
+    "module": "nodenext",
     "noFallthroughCasesInSwitch": true,
     "noImplicitAny": true,
     "noImplicitOverride": true,
@@ -19,17 +18,7 @@
     "strictNullChecks": true,
     "strictPropertyInitialization": false,
     "target": "ES2022",
-    "useUnknownInCatchVariables": true,
-
-    "paths": {
-      "@conf/*": ["./src/conf/*"],
-      "@controllers/*": ["./src/app/controllers/*"],
-      "@models/*": ["./src/app/models/*"],
-      "@serializers/*": ["./src/app/serializers/*"],
-      "@services/*": ["./src/app/services/*"],
-      "@spec/*": ["./spec/*"],
-      "@src/*": ["./src/*"]
-    }
+    "useUnknownInCatchVariables": true
   },
   "include": ["src", "noop"]
 }

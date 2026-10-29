@@ -1,8 +1,12 @@
 import { spawn } from 'child_process'
 
+// Pass the directory a command runs in as `cwd`, never as `cd <path> &&` in the
+// command text: the shell then never parses the path, so a space or a shell
+// metacharacter in it (from the app name or a parent folder) cannot change what
+// runs.
 export default function sspawn(
   command: string,
-  opts: Record<string, unknown> & { onStdout?: (str: string) => void } = {},
+  opts: Record<string, unknown> & { cwd?: string; onStdout?: (str: string) => void } = {},
 ) {
   return new Promise((accept, reject) => {
     const proc = ssspawn(command, opts)
@@ -24,7 +28,8 @@ export default function sspawn(
     proc.on('close', code => {
       if (code !== 0) {
         const detail = stderrTail.trim() ? `\n--- stderr (tail) ---\n${stderrTail.trim()}` : ''
-        reject(new Error(`process exited with code ${code} running: ${command}${detail}`))
+        const where = opts.cwd ? ` (in ${opts.cwd})` : ''
+        reject(new Error(`process exited with code ${code} running: ${command}${where}${detail}`))
         return
       }
       accept({})

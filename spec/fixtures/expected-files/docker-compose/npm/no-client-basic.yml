@@ -3,24 +3,29 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.dev
-      target: "dev"
-    command: sh -c "npm run install && npm run psy db:migrate --skip-sync && npm run psy db:seed && npm run web:dev"
+      target: 'dev'
+    command: sh -c "npm install && npm run psy db:migrate --skip-sync && npm run psy db:seed && npm run web:dev"
     environment:
-      NODE_TLS_REJECT_UNAUTHORIZED: "${NODE_TLS_REJECT_UNAUTHORIZED:-0}"
-      NPM_CONFIG_STRICT_SSL: "false"
+      # Certificates are checked. Behind a TLS-intercepting proxy, trust its CA with
+      # NODE_EXTRA_CA_CERTS (the api's SECURITY.md shows how) instead of turning this off
+      NODE_TLS_REJECT_UNAUTHORIZED: '${NODE_TLS_REJECT_UNAUTHORIZED:-1}'
       DB_HOST: db
+      REPLICA_DB_HOST: db
       WS_REDIS_HOST: redis
       BG_JOBS_REDIS_HOST: redis
-      NODE_ENV: "${NODE_ENV:-development}"
+      NODE_ENV: '${NODE_ENV:-development}'
       DB_USER: postgres
       DB_PASSWORD: postgres
     ports:
-      - "7777:7777"
+      - '7777:7777'
     working_dir: /usr/src/app
     volumes:
       - .:/usr/src/app:cached
+      # The container's own node_modules, shared with ws and worker, so its install of Linux
+      # builds of native packages (e.g. esbuild) never replaces the host's
+      - api_node_modules:/usr/src/app/node_modules
     healthcheck:
-      test: ["CMD-SHELL", "nc -z localhost 7777 || exit 1"]
+      test: ['CMD-SHELL', 'nc -z localhost 7777 || exit 1']
       interval: 10s
       timeout: 10s
       retries: 12
@@ -40,19 +45,22 @@ services:
       POSTGRES_DB: howyadoin_development
     user: postgres
     ports:
-      - "7433:5432"
+      - '7433:5432'
     volumes:
-      - db:/var/lib/postgresql/data
+      # From 18 on, the image keeps its data under /var/lib/postgresql (in 18/docker), and
+      # its entrypoint exits before initdb while a volume is mounted at the old .../data
+      - db:/var/lib/postgresql
     networks:
       - backend
     healthcheck:
-      test: ["CMD", "pg_isready"]
+      test: ['CMD', 'pg_isready']
       interval: 10s
       timeout: 5s
       retries: 5
 
 volumes:
   db:
+  api_node_modules:
 
 networks:
   backend:

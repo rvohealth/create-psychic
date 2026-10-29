@@ -1,10 +1,10 @@
-import AppEnv from '@conf/AppEnv.js'
-import User from '@models/User.js'
+import AppEnv from '#conf/AppEnv.js'
+import User from '#models/User.js'
 import { Dream } from '@rvoh/dream'
 import { Encrypt } from '@rvoh/dream/utils'
 import { PsychicServer } from '@rvoh/psychic'
 import { OpenapiRequestBody, OpenapiRequestQuery, OpenapiSpecRequest } from '@rvoh/psychic-spec-helpers'
-import { paths as OpenapiPaths } from '@src/types/openapi/tests.openapi.js'
+import { paths as OpenapiPaths } from '#src/types/openapi/tests.openapi.js'
 
 export type SpecRequestType = Awaited<ReturnType<typeof session>>
 
@@ -26,10 +26,13 @@ async function userBearerToken(user: User): Promise<string> {
    * The current authentication scheme is only for early development.
    * Replace with a production grade authentication scheme.
    */
-  return Encrypt.encrypt(JSON.stringify({ userId: user.primaryKeyValue() }), {
-    algorithm: 'aes-256-gcm',
-    key: AppEnv.string('APP_ENCRYPTION_KEY'),
-  })
+  return Encrypt.encrypt(
+    { userId: user.primaryKeyValue() },
+    {
+      algorithm: 'aes-256-gcm',
+      key: AppEnv.string('APP_ENCRYPTION_KEY'),
+    },
+  )
 }
 
 // eslint-disable-next-line @typescript-eslint/require-await
@@ -38,10 +41,13 @@ async function adminUserBearerToken(adminUser: Dream): Promise<string> {
    * The current authentication scheme is only for early development.
    * Replace with a production grade authentication scheme.
    */
-  return Encrypt.encrypt(JSON.stringify({ adminUserId: adminUser.primaryKeyValue() }), {
-    algorithm: 'aes-256-gcm',
-    key: AppEnv.string('APP_ENCRYPTION_KEY'),
-  })
+  return Encrypt.encrypt(
+    { adminUserId: adminUser.primaryKeyValue() as string },
+    {
+      algorithm: 'aes-256-gcm',
+      key: AppEnv.string('APP_ENCRYPTION_KEY'),
+    },
+  )
 }
 
 // eslint-disable-next-line @typescript-eslint/require-await
@@ -50,10 +56,13 @@ async function internalUserBearerToken(internalUser: Dream): Promise<string> {
    * The current authentication scheme is only for early development.
    * Replace with a production grade authentication scheme.
    */
-  return Encrypt.encrypt(JSON.stringify({ internalUserId: internalUser.primaryKeyValue() }), {
-    algorithm: 'aes-256-gcm',
-    key: AppEnv.string('APP_ENCRYPTION_KEY'),
-  })
+  return Encrypt.encrypt(
+    { internalUserId: internalUser.primaryKeyValue() as string },
+    {
+      algorithm: 'aes-256-gcm',
+      key: AppEnv.string('APP_ENCRYPTION_KEY'),
+    },
+  )
 }
 
 export async function session(user: Dream) {

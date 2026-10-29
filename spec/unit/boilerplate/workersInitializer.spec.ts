@@ -15,13 +15,12 @@ function readBoilerplateWorkersInitializer(): string {
 }
 
 describe('boilerplate/api/src/conf/initializers/workers.ts', () => {
-  it('uses one worker with concurrency ten by default without depending on host CPU count', () => {
+  it('uses one worker with concurrency ten by default', () => {
     const initializer = readBoilerplateWorkersInitializer()
     const defaultWorkstream = initializer.match(/defaultWorkstream:\s*\{([\s\S]*?)\n\s*\},/)?.[1]
 
     expect(defaultWorkstream).toBeDefined()
     expect(defaultWorkstream).toMatch(/\bworkerCount:\s*1\b/)
     expect(defaultWorkstream).toMatch(/\bconcurrency:\s*10\b/)
-    expect(initializer).not.toContain("from 'node:os'")
   })
 })

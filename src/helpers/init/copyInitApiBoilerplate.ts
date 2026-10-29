@@ -60,6 +60,7 @@ export default async function copyInitApiBoilerplate(appName: string, options: I
     // and swap out problematic files so that dream can drive the application instead
     rmFileSync(path.join(options.confPath, 'system', 'initializePsychicApp.ts'))
     rmFileSync(path.join(options.confPath, 'system', 'requestLogger.ts'))
+    rmFileSync(path.join(options.confPath, 'system', 'redactForLog.ts'))
     rmFileSync(path.join(options.confPath, 'app.ts'))
     rmFileSync(path.join(options.confPath, 'routes.ts'))
     rmFileSync(path.join(options.confPath, 'routes.admin.ts'))
@@ -244,14 +245,7 @@ function pnpmWorkspaceYaml() {
   // the trusted first-party publisher) are always available immediately.
   const allowBuilds = 'allowBuilds:\n  esbuild: false\n  msgpackr-extract: false\n  puppeteer: false\n'
 
-  const rvohExcludes =
-    'minimumReleaseAgeExclude:\n' +
-    "  - '@rvoh/dream'\n" +
-    "  - '@rvoh/dream-spec-helpers'\n" +
-    "  - '@rvoh/psychic'\n" +
-    "  - '@rvoh/psychic-spec-helpers'\n" +
-    "  - '@rvoh/psychic-workers'\n" +
-    "  - '@rvoh/psychic-websockets'\n"
+  const rvohExcludes = 'minimumReleaseAgeExclude:\n' + "  - '@rvoh/*'\n"
 
   return 'strictDepBuilds: false\n\n' + allowBuilds + '\nminimumReleaseAge: 4320\n\n' + rvohExcludes
 }

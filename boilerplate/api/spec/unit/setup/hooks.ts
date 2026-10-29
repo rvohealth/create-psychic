@@ -1,6 +1,6 @@
-import '@conf/loadEnv.js'
+import '#conf/loadEnv.js'
 
-import initializePsychicApp from '@conf/system/initializePsychicApp.js'
+import initializePsychicApp from '#conf/system/initializePsychicApp.js'
 import { Dream, DreamApp } from '@rvoh/dream'
 import { cleanTestDb, provideDreamViteMatchers } from '@rvoh/dream-spec-helpers'
 

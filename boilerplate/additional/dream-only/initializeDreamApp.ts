@@ -1,4 +1,4 @@
-import dreamConfCb from '@conf/dream.js'
+import dreamConfCb from '#conf/dream.js'
 import { DreamApp } from '@rvoh/dream'
 import { DreamAppInitOptions } from '@rvoh/dream/types'
 

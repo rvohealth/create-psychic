@@ -1,4 +1,4 @@
-import ApplicationController from '@controllers/ApplicationController.js'
+import ApplicationController from '#controllers/ApplicationController.js'
 import { PsychicOpenapiNames } from '@rvoh/psychic/openapi'
 
 export default class AdminUnauthedController extends ApplicationController {

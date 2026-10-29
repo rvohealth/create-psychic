@@ -42,9 +42,22 @@ worm-injected releases are caught and unpublished inside that window, so the
 cooldown rides it out. Three days sits under the typical critical-CVE patch SLA,
 so routine security patching never has to bypass it.
 
-- **pnpm** — `minimumReleaseAge: 4320` (minutes) in `pnpm-workspace.yaml`.
-- **Yarn** — `npmMinimalAgeGate: 4320` in `.yarnrc.yml`.
-- **npm** — `min-release-age=3` (days) in `.npmrc` (requires npm ≥ 11.10).
+- **pnpm** — `minimumReleaseAge: 4320` (minutes) in `pnpm-workspace.yaml`. pnpm
+  11+ reads it only there (release-age keys in `.npmrc` are ignored). The api's
+  `package.json` sets `engines.pnpm` to `>=10.19.0`, the first pnpm that applies
+  every cooldown setting in that file; an older pnpm would install without them,
+  so pnpm refuses to install with one and names the version it needs. Each pnpm
+  client app (`client/`, `admin/`, `internal/`) is a separate pnpm project, so
+  pnpm applies neither the api's settings nor its `engines` there. Each carries
+  its own settings-only `pnpm-workspace.yaml` with the same cooldown, and its own
+  `package.json` sets the same `engines.pnpm`.
+- **Yarn** — `npmMinimalAgeGate: 4320` in `.yarnrc.yml`. Each Yarn client app
+  is likewise a separate Yarn project with its own `.yarnrc.yml` carrying the
+  same gate; without it, Yarn would apply its one-day default.
+- **npm** — `min-release-age=3` (days) in `.npmrc` (requires npm ≥ 11.10; an
+  older npm ignores it with only a warning). The compose dev containers use the
+  npm bundled with `Dockerfile.dev`'s `node:24.22.1-alpine`, npm 11.19.1; if you
+  change that image, keep it at Node 24.14.1 or later.
 
 `@rvoh/*` packages (Dream/Psychic) are exempt from the cooldown — they come from
 the trusted first-party publisher and ship frequently. pnpm/Yarn express this
@@ -56,6 +69,27 @@ per-package exemption, so on npm the cooldown applies to `@rvoh/*` too.
 `registry=https://registry.npmjs.org` (npm/pnpm) / `npmRegistryServer` (Yarn)
 pins installs to the public npm registry so they can't be silently redirected to
 a malicious mirror by a stray environment variable or a tampered config.
+
+The services in `docker-compose.yml` check TLS certificates, so nothing on the
+network path (shared Wi-Fi, a hostile proxy) can stand in for the registry during
+an install in a container, or for a host the app calls over HTTPS. Behind a
+TLS-intercepting proxy, give the containers the proxy's CA certificate instead of
+turning the checks off: Node, npm, pnpm, Yarn and Bun all trust the CA
+certificates in the file `NODE_EXTRA_CA_CERTS` names, as well as their own. For
+example, save the certificate as `proxy-ca.pem` beside `docker-compose.yml` and
+add a `docker-compose.override.yml`, which compose reads along with it:
+
+```yaml
+services:
+  api:
+    environment:
+      NODE_EXTRA_CA_CERTS: /etc/proxy-ca.pem
+    volumes:
+      - ./proxy-ca.pem:/etc/proxy-ca.pem:ro
+```
+
+and repeat the `api` block for each other service the app's `docker-compose.yml`
+has (`ws`, `worker`, `client`).
 
 ### 4. Node version
 
@@ -83,8 +117,10 @@ almost always clears it in time. If you genuinely must install a version younger
 than 3 days, do it as a **transient, reverted** change — temporarily lower the
 cooldown (or, on pnpm/Yarn, add a one-off exclude for that exact package), run
 your install command (`pnpm install` / `yarn install` / `npm install`), then
-restore the config in the same change. Never leave a permanent third-party
-bypass behind.
+restore the config. Never leave a permanent third-party bypass behind. On pnpm,
+restore it only once that version is 3 days old: pnpm checks every
+`pnpm-lock.yaml` entry against the cooldown on each install, `--frozen-lockfile`
+included, so restoring it sooner fails every install, CI's among them.
 
 **Keeping the cooldown exclude list clean.** Only `@rvoh/*` belongs in the
 cooldown exemption (`minimumReleaseAgeExclude` / `npmPreapprovedPackages`). A
@@ -106,6 +142,9 @@ open the update PRs for you — review them, don't just merge.
   lets that dependency run arbitrary code at install time.
 - **Don't add third-party packages to the cooldown exclude list.** Keep it
   `@rvoh/*`-only.
+- **Don't turn TLS certificate checks off** with `NODE_TLS_REJECT_UNAUTHORIZED=0`
+  or npm's `strict-ssl=false` (npm honours it even when Node checks certificates).
+  Behind a TLS-intercepting proxy, trust its CA instead (see "Registry pinning").
 - **Don't unpin the CI actions** back to `@vN` tags, and **don't drop
   `--frozen-lockfile` / `--immutable` / `npm ci`** in CI.
 - **Don't commit production secrets.** The encryption keys and DB credentials in
@@ -149,10 +188,12 @@ WORKDIR /app
 ENV NODE_ENV=production
 # Drop privileges: never run the app as root.
 USER node
+# `pnpm build` copies package.json into dist/, and Node resolves the built
+# app's `#` imports through that copy, so ship dist/ whole.
 COPY --chown=node:node --from=build /app/dist ./dist
 COPY --chown=node:node --from=build /app/node_modules ./node_modules
 COPY --chown=node:node --from=build /app/package.json ./
-CMD ["node", "dist/src/index.js"]
+CMD ["node", "dist/src/main.js"]
 ```
 
 Run it read-only with no privilege escalation (compose example; the k8s
@@ -164,9 +205,9 @@ any temp/log paths):
 services:
   api:
     read_only: true
-    tmpfs: ["/tmp"]
-    security_opt: ["no-new-privileges:true"]
-    cap_drop: ["ALL"]
+    tmpfs: ['/tmp']
+    security_opt: ['no-new-privileges:true']
+    cap_drop: ['ALL']
 ```
 
 Restrict egress with a Kubernetes NetworkPolicy so a compromised dependency can
@@ -181,7 +222,7 @@ metadata:
 spec:
   podSelector:
     matchLabels: { app: api }
-  policyTypes: ["Egress"]
+  policyTypes: ['Egress']
   egress:
     - to: [{ podSelector: { matchLabels: { app: postgres } } }]
     - to: [{ podSelector: { matchLabels: { app: redis } } }]

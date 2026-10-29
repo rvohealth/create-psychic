@@ -1,14 +1,12 @@
-import '@conf/loadEnv.js'
+import '#conf/loadEnv.js'
 
 import * as fs from 'node:fs'
-import initializePsychicApp from '@conf/system/initializePsychicApp.js'
+import initializePsychicApp from '#conf/system/initializePsychicApp.js'
 import { Dream, DreamApp } from '@rvoh/dream'
 import { cleanTestDb, provideDreamViteMatchers } from '@rvoh/dream-spec-helpers'
 import { PsychicServer } from '@rvoh/psychic'
-import { providePuppeteerViteMatchers, resetBrowserState } from '@rvoh/psychic-spec-helpers'
-/** uncomment if a feature spec needs a live Ws.emit push to reach the browser */
-// import { Cable } from '@rvoh/psychic-websockets'
-import getPage from '@spec/features/setup/getPage.js'
+import { providePuppeteerViteMatchers, resetBrowserState } from '@rvoh/psychic-spec-helpers'<WEBSOCKETS_IMPORTS>
+import getPage from '#spec/features/setup/getPage.js'
 
 provideDreamViteMatchers(Dream)
 providePuppeteerViteMatchers()
@@ -16,9 +14,7 @@ providePuppeteerViteMatchers()
 // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
 ;(global as any).context = describe
 
-let server: PsychicServer
-/** uncomment if a feature spec needs a live Ws.emit push to reach the browser */
-// let cable: Cable
+let server: PsychicServer<WEBSOCKETS_DECLARATION>
 
 beforeAll(async () => {
   /*
@@ -36,11 +32,7 @@ beforeAll(async () => {
    * it at http://localhost:7778
    */
   server = new PsychicServer()
-  await server.start(parseInt(process.env.DEV_SERVER_PORT || '7778'))
-
-  /** uncomment if a feature spec needs a live Ws.emit push to reach the browser */
-  // cable = new Cable()
-  // await cable.start(8889)
+  await server.start(parseInt(process.env.DEV_SERVER_PORT || '7778'))<WEBSOCKETS_START>
 
   /*
    * Launch a web browser
@@ -79,7 +71,5 @@ afterEach(async ctx => {
 })
 
 afterAll(async () => {
-  await server.stop()
-  /** uncomment if a feature spec needs a live Ws.emit push to reach the browser */
-  // await cable?.stop()
+<STOP_SERVERS>
 })

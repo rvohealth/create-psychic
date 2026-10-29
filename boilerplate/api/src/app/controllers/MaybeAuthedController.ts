@@ -1,8 +1,8 @@
-import ApplicationController from '@controllers/ApplicationController.js'
-import resolveCurrentUser from '@controllers/helpers/resolveCurrentUser.js'
+import ApplicationController from '#controllers/ApplicationController.js'
 import { BeforeAction } from '@rvoh/psychic'
 /** uncomment after creating User model */
-// import User from '@models/User.js'
+// import resolveCurrentUser from '#controllers/helpers/resolveCurrentUser.js'
+// import User from '#models/User.js'
 
 export default class MaybeAuthedController extends ApplicationController {
   /** uncomment after creating User model */

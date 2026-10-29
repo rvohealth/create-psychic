@@ -11,6 +11,15 @@ describe('AppConfBuilder', () => {
       const res = await AppConfigBuilder.buildForInit({ appName: 'howyadoin', options: baseOptions })
       await expectToMatchFixture('expected-files/app/init/basic.ts', res)
     })
+
+    it('declares the chosen import extension along with # aliases', async () => {
+      const options: InitPsychicAppCliOptions = { ...baseOptions, importExtension: 'none' }
+      const res = await AppConfigBuilder.buildForInit({ appName: 'howyadoin', options })
+      expect(res).toContain(`\
+  psy.set('importExtension', 'none')
+  psy.set('importAliasPrefix', '#')
+`)
+    })
   })
 
   describe('.build', () => {

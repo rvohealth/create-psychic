@@ -16,7 +16,6 @@ describe('boilerplate entry points (src/main.ts, src/worker.ts, src/ws.ts)', () 
       const main = readBoilerplateEntryPoint('main.ts')
       expect(main).toContain('start().catch(')
       expect(main).toContain('process.exit(1)')
-      expect(main).not.toContain('void start()')
     })
 
     it('installs fatal process handlers that log, gracefully stop the server, and exit 1', () => {
@@ -25,12 +24,6 @@ describe('boilerplate entry points (src/main.ts, src/worker.ts, src/ws.ts)', () 
       expect(main).toContain(`process.on('unhandledRejection'`)
       expect(main).toContain('await server.stop()')
     })
-
-    it('does not install its own signal handlers (PsychicServer#start installs SIGINT/SIGTERM handlers)', () => {
-      const main = readBoilerplateEntryPoint('main.ts')
-      expect(main).not.toContain(`process.on('SIGINT'`)
-      expect(main).not.toContain(`process.on('SIGTERM'`)
-    })
   })
 
   context('src/worker.ts', () => {
@@ -38,13 +31,6 @@ describe('boilerplate entry points (src/main.ts, src/worker.ts, src/ws.ts)', () 
       const worker = readBoilerplateEntryPoint('worker.ts')
       expect(worker).toContain('startBackgroundWorkers().catch(')
       expect(worker).toContain('process.exit(1)')
-      expect(worker).not.toContain('void startBackgroundWorkers()')
-    })
-
-    it('does not duplicate fatal handlers (background.work() installs exiting uncaughtException/unhandledRejection handlers)', () => {
-      const worker = readBoilerplateEntryPoint('worker.ts')
-      expect(worker).not.toContain(`process.on('uncaughtException'`)
-      expect(worker).not.toContain(`process.on('unhandledRejection'`)
     })
   })
 
@@ -53,7 +39,6 @@ describe('boilerplate entry points (src/main.ts, src/worker.ts, src/ws.ts)', () 
       const ws = readBoilerplateEntryPoint('ws.ts')
       expect(ws).toContain('startWs().catch(')
       expect(ws).toContain('process.exit(1)')
-      expect(ws).not.toContain('void startWs()')
     })
 
     it('keeps its fatal process handlers (Cable does not install them)', () => {

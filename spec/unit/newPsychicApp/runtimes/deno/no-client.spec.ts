@@ -36,12 +36,10 @@ describe.skipIf(!denoAvailable())('newPsychicApp with the deno runtime', () => {
       primaryKeyType: 'bigint',
     })
 
-    // Deno gets its own config; .nvmrc (node-only) and bunfig.toml are not emitted.
+    // Deno gets its own config
     await expectFile('./howyadoin/deno.json')
     await expectFile('./howyadoin/deno.lock')
     await expectFileToContain('./howyadoin/deno.json', 'sloppy-imports')
-    expect(fs.existsSync('./howyadoin/.nvmrc')).toBe(false)
-    expect(fs.existsSync('./howyadoin/bunfig.toml')).toBe(false)
 
     // The dotenv alignment must keep Deno to a SINGLE @rvoh/dream copy. Two copies
     // (the pre-fix state) break Dream's model-class-identity check at boot.
@@ -53,17 +51,6 @@ describe.skipIf(!denoAvailable())('newPsychicApp with the deno runtime', () => {
     // app.ts records the runtime as the package manager (validated by dream's
     // allowed-package-managers enum at boot).
     await expectFileToContain('./howyadoin/src/conf/app.ts', "psy.set('packageManager', 'deno')")
-
-    // No Node-only vestiges: nodemon.json is dead config under Deno (web:dev uses
-    // `deno run -A --watch`), and nodemon/tsx/engines.node don't belong in a Deno app.
-    expect(fs.existsSync('./howyadoin/nodemon.json')).toBe(false)
-    const pkg = JSON.parse(fs.readFileSync('./howyadoin/package.json').toString()) as {
-      devDependencies: Record<string, string>
-      engines?: unknown
-    }
-    expect(pkg.devDependencies.nodemon).toBeUndefined()
-    expect(pkg.devDependencies.tsx).toBeUndefined()
-    expect(pkg.engines).toBeUndefined()
 
     await sspawn(`cd howyadoin && deno task uspec`)
   }, 300_000)

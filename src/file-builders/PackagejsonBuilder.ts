@@ -3,6 +3,17 @@ import { NewPsychicAppCliOptions } from '../helpers/newPsychicApp.js'
 import { replacePackageManagerInFileContents } from '../helpers/replacePackageManagerInFile.js'
 import safelyImportJsonFile from '../helpers/safelyImportJsonFile.js'
 
+// The `engines.pnpm` of every pnpm project a new app has: the api and each pnpm
+// client (addClientApp). A project is installed with the pnpm already on PATH,
+// so its 3-day cooldown in pnpm-workspace.yaml holds only if that pnpm reads it.
+// pnpm reads `minimumReleaseAge` from 10.16.0, pattern excludes such as
+// `'@rvoh/*'` from 10.17.0 and exact-version excludes such as `'express@4.22.3'`
+// from 10.19.0. pnpm always refuses to install under a root `engines.pnpm` it
+// does not satisfy, engine-strict or not, so an older pnpm stops with an error
+// naming this floor, in `new` and on every later install, instead of skipping
+// the cooldown.
+export const PNPM_COOLDOWN_ENGINE_RANGE = '>=10.19.0'
+
 export default class PackagejsonBuilder {
   public static async buildAPI(appName: string, options: NewPsychicAppCliOptions) {
     const imported = (await safelyImportJsonFile('../../boilerplate/api/package.json')) as { default: object }
@@ -195,7 +206,6 @@ export default class PackagejsonBuilder {
 
     if (!options.websockets) {
       removeScript(packagejson, 'ws:dev')
-      removeScript(packagejson, 'ws:fspec')
       removeDependency(packagejson, '@rvoh/psychic-websockets')
       removeDependency(packagejson, '@socket.io/redis-adapter')
       removeDependency(packagejson, '@socket.io/redis-emitter')
@@ -216,8 +226,22 @@ export default class PackagejsonBuilder {
       // removed in copyApiBoilerplate.
       removeDevDependency(packagejson, 'nodemon')
       removeDevDependency(packagejson, 'tsx')
+      if (options.packageManager === 'bun') {
+        // Bun loads the `.ts` file behind a `#` import (package.json `imports`,
+        // whose targets carry no extension) only from 1.4.0; Bun 1.3 cannot start
+        // the app from source. Bun itself ignores `engines.bun`; the generated CI's
+        // setup-bun reads it to pick the Bun version.
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        packagejson.engines = { bun: '>=1.4.0' }
+      } else {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        delete packagejson.engines
+      }
+    }
+
+    if (options.packageManager === 'pnpm') {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      delete packagejson.engines
+      packagejson.engines.pnpm = PNPM_COOLDOWN_ENGINE_RANGE
     }
 
     if (options.packageManager === 'bun') {
@@ -258,19 +282,21 @@ export default class PackagejsonBuilder {
 
     // `{{PM}}` resolves to the API runtime; `{{PM_CWD}}` (front-end client wrappers)
     // resolves to the front-end PM — they diverge only for a Deno API (→ pnpm).
+    // The final newline is what Prettier writes, so the app's own `prettier --check` passes.
     return replacePackageManagerInFileContents(
-      JSON.stringify(packagejson, null, 2),
+      JSON.stringify(packagejson, null, 2) + '\n',
       options.packageManager,
       fePm,
     )
   }
 }
 
-// The boilerplate scripts call the Node toolchain by name — `tsx`, `node`,
-// `vitest`, `nodemon`, `cross-env`. Under Bun/Deno those bare names would resolve
+// The boilerplate scripts call the Node toolchain by name — `tsx`, `node`, `tsc`,
+// `vitest`, `nodemon`, `cross-env` — which npm, yarn and pnpm run from
+// `node_modules/.bin`. Under Bun/Deno those bare names would resolve
 // to the node-shebang `.bin` shims and execute under Node, defeating the runtime
-// choice, so rewrite them to run under the target runtime. The {{PM}} / {{TSC_*}}
-// placeholders are handled separately by replacePackageManagerInFileContents.
+// choice, so rewrite them to run under the target runtime. The {{PM}}
+// placeholder is handled separately by replacePackageManagerInFileContents.
 //
 // Verified shapes (runtime spike): `deno run -A` / `bun` for TS entrypoints,
 // `deno run -A npm:vitest` / `bunx vitest` for specs, `deno run -A npm:typescript/tsc`
@@ -291,6 +317,9 @@ function applyRuntimeRunners(scripts: Record<string, string>, runtime: 'bun' | '
   const run = runtime === 'bun' ? 'bun --no-env-file' : 'deno run -A'
   // run an npm-published bin (vitest, cross-env, prettier, eslint)
   const bin = (name: string) => (runtime === 'bun' ? `bunx ${name}` : `deno run -A npm:${name}`)
+  // the TypeScript compiler, which ships as the `tsc` bin of the `typescript` package
+  // (`npm:tsc` is an unrelated package)
+  const tsc = runtime === 'bun' ? 'bunx tsc' : 'deno run -A npm:typescript/tsc'
   // hot-reloading dev server (replaces nodemon, whose nodemon.json exec is `tsx ./src/main.ts`)
   const watch =
     runtime === 'bun' ? 'bun --no-env-file --watch src/main.ts' : 'deno run -A --watch src/main.ts'
@@ -300,6 +329,7 @@ function applyRuntimeRunners(scripts: Record<string, string>, runtime: 'bun' | '
       .replace(/\bnode --version\b/g, `${runtime} --version`)
       .replace(/\bcross-env\b/g, bin('cross-env'))
       .replace(/\bvitest\b/g, bin('vitest'))
+      .replace(/\btsc\b/g, tsc)
       .replace(/\btsx /g, `${run} `)
       .replace(/\bnode \.\//g, `${run} ./`)
 

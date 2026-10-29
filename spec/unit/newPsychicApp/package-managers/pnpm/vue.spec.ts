@@ -8,7 +8,9 @@ describe('newPsychicApp with vue client', () => {
   it('correctly provisions a vue client', async () => {
     await newSpecPsychicApp('howyadoin', {
       packageManager: 'pnpm',
-      websockets: false,
+      // with websockets, the feature specs below also start and stop the live Cable
+      // that spec/features/setup/hooks.ts runs beside the api server
+      websockets: true,
       claudePsychicSkill: false,
       agentsPsychicSkill: false,
       workers: false,
@@ -23,7 +25,7 @@ describe('newPsychicApp with vue client', () => {
     await expectFile('./howyadoin/client/Dockerfile.dev')
 
     await expectToMatchFixture(
-      'expected-files/docker-compose/pnpm/client-basic.yml',
+      'expected-files/docker-compose/pnpm/client-websockets.yml',
       fs.readFileSync('./howyadoin/docker-compose.yml').toString(),
     )
 

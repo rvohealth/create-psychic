@@ -10,6 +10,7 @@ import DreamConfigBuilder from '../../file-builders/DreamConfigBuilder.js'
 import EnvBuilder from '../../file-builders/EnvBuilder.js'
 import FeatureSpecExampleBuilder from '../../file-builders/FeatureSpecExampleBuilder.js'
 import FeatureSpecGlobalBuilder from '../../file-builders/FeatureSpecGlobalBuilder.js'
+import FeatureSpecHooksBuilder from '../../file-builders/FeatureSpecHooksBuilder.js'
 import NpmrcBuilder from '../../file-builders/NpmrcBuilder.js'
 import PackagejsonBuilder from '../../file-builders/PackagejsonBuilder.js'
 import SrcPathHelperBuilder from '../../file-builders/SrcPathHelperBuilder.js'
@@ -45,7 +46,10 @@ export default async function copyApiBoilerplate(appName: string, options: NewPs
 
   fs.cpSync(internalSrcPath('..', 'boilerplate', 'README.md'), path.join(appRoot, 'README.md'))
 
-  fs.writeFileSync(path.join(appRoot, 'docker-compose.yml'), await DockerComposeBuilder.build(options))
+  fs.writeFileSync(
+    path.join(appRoot, 'docker-compose.yml'),
+    await DockerComposeBuilder.build(appName, options),
+  )
   fs.writeFileSync(path.join(apiRoot, 'Dockerfile.dev'), await PsychicDockerDevBuilder.build(options))
 
   await replacePackageManagerInFile(path.join(apiRoot, 'AGENTS.md'), options.packageManager, fePm)
@@ -99,7 +103,7 @@ export default async function copyApiBoilerplate(appName: string, options: NewPs
   )
 
   // Runtime config. Deno and Bun get their own config files instead of `.nvmrc`:
-  //   - deno.json: import map for the path aliases + sloppy-imports + node_modules dir
+  //   - deno.json: import map for the `#` import names + sloppy-imports + node_modules dir
   //   - bunfig.toml: registry pin (+ default-deny lifecycle scripts)
   if (options.runtime === 'deno') {
     fs.writeFileSync(path.join(apiRoot, 'deno.json'), DenoJsonBuilder.build())
@@ -145,6 +149,11 @@ export default async function copyApiBoilerplate(appName: string, options: NewPs
   fs.writeFileSync(
     path.join(apiRoot, 'spec', 'features', 'setup', 'globalSetup.ts'),
     await FeatureSpecGlobalBuilder.build({ appName, options }),
+  )
+
+  fs.writeFileSync(
+    path.join(apiRoot, 'spec', 'features', 'setup', 'hooks.ts'),
+    await FeatureSpecHooksBuilder.build(options),
   )
 
   fs.writeFileSync(

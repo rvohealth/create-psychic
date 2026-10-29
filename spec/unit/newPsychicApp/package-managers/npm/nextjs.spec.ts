@@ -24,7 +24,7 @@ describe.skipIf(NPM_APP_GENERATION_SPECS_DISABLED)('newPsychicApp with nextjs cl
     await expectFile('./howyadoin/client/Dockerfile.dev')
 
     await expectToMatchFixture(
-      'expected-files/docker-compose/npm/client-basic.yml',
+      'expected-files/docker-compose/npm/client-nextjs.yml',
       fs.readFileSync('./howyadoin/docker-compose.yml').toString(),
     )
 

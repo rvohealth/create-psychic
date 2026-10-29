@@ -1,11 +1,11 @@
 import { DreamApp } from '@rvoh/dream'
 import { type DreamDbConfig } from '@rvoh/dream/types'
 
-import AppEnv from '@conf/AppEnv.js'
-import inflections from '@conf/inflections.js'
-import importAll from '@conf/system/importAll.js'
-import importDefault from '@conf/system/importDefault.js'
-import srcPath from '@conf/system/srcPath.js'
+import AppEnv from '#conf/AppEnv.js'
+import inflections from '#conf/inflections.js'
+import importAll from '#conf/system/importAll.js'
+import importDefault from '#conf/system/importDefault.js'
+import srcPath from '#conf/system/srcPath.js'
 import { debuglog } from 'node:util'
 
 // Enable debug logging with NODE_DEBUG=sql
@@ -15,6 +15,8 @@ export default async (app: DreamApp) => {
   app.set('projectRoot', srcPath('..'))
   app.set('primaryKeyType', 'bigint')
   app.set('inflections', inflections)
+  app.set('importExtension', '.js')
+  app.set('importAliasPrefix', '#')
   app.set('packageManager', 'npm')
   await app.load('models', srcPath('..', 'src', 'api', 'app', 'models'), path => importDefault(path))
   await app.load('serializers', srcPath('..', 'src', 'api', 'app', 'serializers'), path => importAll(path))
@@ -47,7 +49,7 @@ export default async (app: DreamApp) => {
   // and some local Docker images), drop verification:
   //   `ssl: { rejectUnauthorized: false }` — encrypted but unauthenticated.
   //
-  // Set `DB_NO_SSL=true` to disable TLS entirely (local dev only).
+  // Set `DB_NO_SSL=1` to disable TLS entirely (local dev and CI only). Any other value leaves TLS on.
   const dbSsl: { rejectUnauthorized: true } | false = AppEnv.boolean('DB_NO_SSL')
     ? false
     : { rejectUnauthorized: true }

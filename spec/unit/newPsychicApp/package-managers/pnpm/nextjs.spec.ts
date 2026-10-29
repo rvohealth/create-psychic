@@ -1,6 +1,7 @@
 import * as fs from 'node:fs'
 import sspawn from '../../../../../src/helpers/sspawn.js'
 import expectFile from '../../../../helpers/expectFile.js'
+import expectFileToContain from '../../../../helpers/expectFileToContain.js'
 import expectToMatchFixture from '../../../../helpers/expectToMatchFixture.js'
 import newSpecPsychicApp from '../../../../helpers/newSpecPsychicApp.js'
 
@@ -21,9 +22,17 @@ describe('newPsychicApp with nextjs client', () => {
     await expectFile('./howyadoin/api/pnpm-lock.yaml')
     await expectFile('./howyadoin/api/Dockerfile.dev')
     await expectFile('./howyadoin/client/Dockerfile.dev')
+    await expectFileToContain('./howyadoin/client/pnpm-workspace.yaml', 'minimumReleaseAge: 4320')
+
+    // create-next-app exact-pins the just-published `next`; it is widened to its
+    // major range so the client's 3-day cooldown can fall back to a mature release
+    const clientPackageJson = JSON.parse(fs.readFileSync('./howyadoin/client/package.json', 'utf8')) as {
+      dependencies: Record<string, string>
+    }
+    expect(clientPackageJson.dependencies.next).toMatch(/^\^\d+\.0\.0$/)
 
     await expectToMatchFixture(
-      'expected-files/docker-compose/pnpm/client-basic.yml',
+      'expected-files/docker-compose/pnpm/client-nextjs.yml',
       fs.readFileSync('./howyadoin/docker-compose.yml').toString(),
     )
 

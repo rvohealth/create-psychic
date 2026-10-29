@@ -7,7 +7,8 @@ export default async function gitInit(appName: string, logger: DreamCliLogger) {
   logger.logStartProgress(`initializing git repository...`)
 
   // only do this if not test, since using git in CI will fail
-  await sspawn(`cd ${path.join(process.cwd(), appName)} && git init`, {
+  await sspawn('git init', {
+    cwd: path.join(process.cwd(), appName),
     onStdout: message => {
       logger.logContinueProgress(colorize('[api]', { color: 'cyan' }) + ' ' + message, {
         logPrefixColor: 'cyan',
