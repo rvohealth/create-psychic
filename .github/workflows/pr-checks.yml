@@ -88,7 +88,13 @@ jobs:
         with:
           version: 12.14.0
 
-      - run: corepack enable
+      # Node 25 and later bundle no corepack, but the runner image's own Node 22 leaves one on
+      # the PATH. Deleting it lets the Node 26 specs generate apps as a stock Node 26 machine
+      # does, with the pnpm and Yarn it has installed. The Node 24 specs keep corepack.
+      - if: matrix.node-version >= 25
+        run: command -v corepack | xargs --no-run-if-empty sudo rm
+      - if: matrix.node-version < 25
+        run: corepack enable
 
       - run: pnpm install --frozen-lockfile
 
@@ -121,8 +127,6 @@ jobs:
         with:
           version: 12.14.0
 
-      - run: corepack enable
-
       - run: pnpm install --frozen-lockfile
       - run: pnpm lint
 
@@ -147,8 +151,6 @@ jobs:
         uses: pnpm/action-setup@v6
         with:
           version: 12.14.0
-
-      - run: corepack enable
 
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
