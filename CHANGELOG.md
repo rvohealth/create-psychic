@@ -1,7 +1,6 @@
 ## 3.8.1
 
 - `new` no longer fails to scaffold a Nuxt client in a yarn app on a machine whose Yarn is Yarn 1 and that has no corepack, which is usual on Node 25 and later: they bundle no corepack, and `npm install -g yarn` installs Yarn 1. It ran the `nuxi` scaffolder with `yarn dlx`, and Yarn 1 has no `dlx` command. It runs `yarn dlx` as a `package.json` script named `dlx`, so the scaffold stopped before creating the client. `new` now runs `nuxi` with `npx`, as a yarn app's Vite client already runs `create-vite`. With Yarn 2 or later, from corepack or anywhere else, `yarn dlx` worked and `npx` works the same. In a yarn or npm app, `npx` now fetches `nuxi` with `--min-release-age=3`, so `new` runs a `nuxi` release at least 3 days old, the same cooldown a new npm app's `.npmrc` sets. Before, an npm app's `npx nuxi@latest` got no cooldown from the app, because the scaffolder runs in the app folder and that `.npmrc` is in the api folder. Yarn 2 and later's `yarn dlx` applied Yarn's default 1-day cooldown. npm before 11.10 warns `Unknown cli config "--min-release-age"` and runs the newest release.
-- create-psychic's own CI now runs its Node 26 specs without corepack, as on a stock Node 26 install. GitHub's runner image puts its own Node 22's corepack on the PATH even when a job selects Node 26, so a generator command that needs corepack, such as the unconditional `corepack enable` that 3.8.0 removed, or this `yarn dlx`, passed CI there. The Node 24 specs still run with corepack enabled, so CI covers both setups.
 
 ## 3.8.0
 
