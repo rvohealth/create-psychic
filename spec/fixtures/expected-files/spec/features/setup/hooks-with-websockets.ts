@@ -86,9 +86,14 @@ afterEach(async ctx => {
     await page.screenshot({ path: `${SCREENSHOT_DIR}/${name}.png`, fullPage: true })
   }
 
-  // Reset the shared browser between specs: clears localStorage/cookies for
-  // real isolation, and the about:blank navigation releases any pooled DB
-  // client held by in-flight requests so server teardown isn't blocked.
+  // Reset the shared browser between specs: on Firefox (launchPage's default)
+  // it waits up to 2 seconds for in-flight requests to get their responses,
+  // and it clears localStorage/sessionStorage and cookies, then navigates to
+  // about:blank. That navigation aborts a request only in the browser; its
+  // handler keeps running on the server, and work a handler does after
+  // responding is never waited for, so end each spec by asserting the visible
+  // outcome of its last action. Details: resetBrowserState's TSDoc in
+  // @rvoh/psychic-spec-helpers.
   await resetBrowserState()
 })
 

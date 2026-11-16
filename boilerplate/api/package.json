@@ -70,7 +70,7 @@
     "@pollyjs/core": "^6.0.6",
     "@pollyjs/persister-fs": "^6.0.6",
     "@rvoh/dream-spec-helpers": "^2.4.0",
-    "@rvoh/psychic-spec-helpers": "^3.5.0",
+    "@rvoh/psychic-spec-helpers": "^3.6.0",
     "@types/koa": "^3.0.3",
     "@types/koa-conditional-get": "^2.0.3",
     "@types/koa__cors": "^5.0.1",
