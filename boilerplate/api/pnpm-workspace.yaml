@@ -41,3 +41,15 @@ minimumReleaseAgeExclude:
   # later Express releases still pass through the normal three-day cooldown.
   - 'express@4.22.3'
   - '@rvoh/*'
+
+# SECURITY — `pnpm audit` skips this one advisory and still reports every other.
+# GHSA-g3hv-75wg-m249 is a moderate denial of service in minimatch >=7.0.0
+# <11.0.1, which this app reaches only through dev tooling (eslint,
+# typescript-eslint, nodemon), never at runtime. The only fix is minimatch 11,
+# a major version: minimatch has no fixed 10.x, and nodemon 3.1.14, its latest
+# release, still requires minimatch ^10.2.1. Remove this entry once those dev
+# tools resolve minimatch >=11.0.1 without it. This is the older spelling of
+# pnpm 12's `audit.ignore`; pnpm 12 still reads it, and pnpm 10 reads only it.
+auditConfig:
+  ignoreGhsas:
+    - GHSA-g3hv-75wg-m249
