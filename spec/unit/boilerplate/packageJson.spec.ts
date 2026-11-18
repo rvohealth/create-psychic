@@ -37,8 +37,19 @@ describe('boilerplate/api/package.json', () => {
     ['@rvoh/psychic', [3, 18, 0]],
     // the first release that closes the race between the template's `ws:connect` await and `Ws.register`
     ['@rvoh/psychic-websockets', [3, 5, 3]],
+    // the first release whose peer ranges accept BullMQ 6 and ioredis 6
+    ['@rvoh/psychic-workers', [2, 10, 0]],
+    // psychic-workers' BullMQ 6 peer floor; BullMQ 6 also drops the deprecated cron-parser 4
+    ['bullmq', [6, 7, 4]],
+    // the ioredis major `init` installs, so `new` and `init` give the same one
+    ['ioredis', [6, 0, 0]],
+    // the first release whose resetBrowserState waits for in-flight requests (Firefox) and whose
+    // docs stop claiming the about:blank navigation releases server-side resources; the template's
+    // hooks.ts comment describes that behavior
+    ['@rvoh/psychic-spec-helpers', [3, 6, 0]],
   ] as const)('floors %s at a caret range no lower than %j', (name, [minMajor, minMinor, minPatch]) => {
-    const range = readBoilerplatePackageJson().dependencies?.[name]
+    const pkg = readBoilerplatePackageJson()
+    const range = pkg.dependencies?.[name] ?? pkg.devDependencies?.[name]
     const match = /^\^(\d+)\.(\d+)\.(\d+)$/.exec(range ?? '')
     expect(match, `${name} is "${range}"`).not.toBeNull()
 
